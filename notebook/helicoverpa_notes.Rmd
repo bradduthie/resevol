@@ -1,0 +1,50 @@
+---
+title: "The helicoverpa package"
+author: "Brad Duthie and Rose McKeon"
+output:
+  html_document: default
+  pdf_document:
+    fig_caption: yes
+  word_document:
+    fig_caption: yes
+linestretch: 1
+header-includes:
+- \usepackage{amsmath}
+- \usepackage{natbib}
+- \usepackage{lineno}
+- \linenumbers
+- \bibliographystyle{amnatnat}
+bibliography: references.bib
+---
+
+```{r, echo=FALSE}
+library(shiny)
+library(rhandsontable)
+```
+
+
+********************************************************************************
+
+> **This notebook tracks progress on the development of [helicoverpa](https://bradduthie.github.io/helicoverpa/) R package, a BBSRC [FAPESP Newton Funded](http://www.fapesp.br/en/9552) Project to model how the spatial scale of heterogeneity in fungal isolate application and crop plant cultivation affects variation in the selection landscape for biopesticide resistance.**
+
+*******************************************************************************
+
+<a name="contents">Contents:</a>
+================================================================================
+
+[Project updates](#updates)
+
+ - **2018**
+
+     - **JUL** [18](#u-18-JUL-2018),
+
+********************************************************************************
+
+<a name="updates">Project updates:</a>
+================================================================================
+
+> <a name="u-18-JUL-2018">Update: 18 JUL 2018</a>
+
+I have now initialised this lab notebook for the helicoverpa R package and model.
+
+References
