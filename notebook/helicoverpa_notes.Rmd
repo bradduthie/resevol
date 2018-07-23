@@ -36,15 +36,52 @@ library(rhandsontable)
 
  - **2018**
 
-     - **JUL** [18](#u-18-JUL-2018),
+     - **JUL** [18](#u-18-JUL-2018), **JUL** [23](#u-23-JUL-2018)
+
+[Project comments](#comments)
 
 ********************************************************************************
 
 <a name="updates">Project updates:</a>
 ================================================================================
 
+> <a name="u-23-JUL-2018">Update: 23 JUL 2018</a>
+
+I have attempted to set this notebook up with [Disqus](https://disqus.com/) commenting enabled with [the universal code optoins](https://helicoverpa.disqus.com/admin/install/platforms/universalcode/) (embedded HTML), which will ideally allow everyone on the project to make comments on the notes.
+
+Data structures
+--------------------------------------------------------------------------------
+
+There are two data structures that we need to think about in particular, and these include the **pests**, which will be represented individually
+
 > <a name="u-18-JUL-2018">Update: 18 JUL 2018</a>
 
 I have now initialised this lab notebook for the helicoverpa R package and model.
 
+Comments {.comments}
+--------------------------------------------------------------------------------
+
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL; https://bradduthie.github.io/helicoverpa/notebook/helicoverpa_notes.html
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://helicoverpa.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
+
 References
+--------------------------------------------------------------------------------
