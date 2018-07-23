@@ -146,10 +146,37 @@ $(document).ready(function () {
 <blockquote>
 <p><a name="u-23-JUL-2018">Update: 23 JUL 2018</a></p>
 </blockquote>
-<p>I have attempted to set this notebook up with <a href="https://disqus.com/">Disqus</a> commenting enabled with <a href="https://helicoverpa.disqus.com/admin/install/platforms/universalcode/">the universal code optoins</a> (embedded HTML), which will ideally allow everyone on the project to make comments on the notes.</p>
+<p>I have attempted to set this notebook up with <a href="https://disqus.com/">Disqus</a> commenting enabled with <a href="https://helicoverpa.disqus.com/admin/install/platforms/universalcode/">the universal code options</a> (embedded HTML), which will ideally allow everyone on the project to make comments on the notes.</p>
 <div id="data-structures" class="section level2">
 <h2>Data structures</h2>
-<p>There are two data structures that we need to think about in particular, and these include the <strong>pests</strong>, which will be represented individually</p>
+<p>There are two data structures that we need to think about in particular, and these include the <strong>pests</strong>, which will be represented individually, and the <strong>landscape</strong>, which will be a large 3D array. The biopesticide will not be modelled discretely, but through a change in landscape values.</p>
+<p><strong>Pests</strong></p>
+<p>Pests will need to be represented by some sort of data structure. We could create a custom structure in C, but this would get messy if and when we decide to convert the model into an R package so that users can simulate by calling an R function. I really don’t see why pests cannot be represented by a large table, which is how I have always represented individuals in the past, and I already <a href="https://github.com/bradduthie/gmse/blob/master/src/resource.c#L344">have the code</a> for reading R tables into C. The way that this will work then is to have each individual represented by a different row in the table, with columns corresponding to individual traits. Some traits that will be important include:</p>
+<ul>
+<li>Individual ID</li>
+<li>Sex (female or male)</li>
+<li>Traits 1-T: This includes traits such as dispersal ability, location (x and y), fecundity, and resistance to different biopesticides</li>
+<li>Loci 1-L: This will be a diploid system with allele values (<span class="math inline">\(A^{v}_{i}\)</span>) and dominance coefficients <span class="math inline">\(A^{h}_{v}\)</span>, the notation of which will likely change, but three <code>double</code> values will be used for each haploid loci: 1. allele number (<span class="math inline">\(i\)</span>), value (<span class="math inline">\(v\)</span>), and dominance (<span class="math inline">\(h\)</span>). Since alleles are diploid, we will need <span class="math inline">\(6L\)</span> <code>double</code> columns in total, which will be the last columns of the table (this is just easier)</li>
+</ul>
+<p>The idea of each individual having its own ID and sex is fairly straightforward, but what I’m thinking we can do with the traits will be a bit different. We want the evolving genome to affect resistance through a evolving traits, such that the genome affects traits underlying resistance, which then affect the evolution of the genetic architecture itself. The idea then is that each trait will be modelled as a <code>double</code> real number that is ‘visible’ to selection – in most cases we will want the value of each trait will be a function of the genome, but this wouldn’t necessarily be a requirement (e.g., if we just wanted to fix dispersal ability to some value, we could set it to whatever we desire in the relevant row and column – this will also be useful for location on the landscape, which will be represented by two values x and y). We could then write a specific modular function <code>build_traits</code>, which loops through each individual and derives a single number from the individual’s genome, which is then placed in the relevant trait column (1-T). Trait columns can by dynamic – we can have anywhere from 1 to T of them, and the value of T will need to be stored somewhere – better, if in the code we define ID and Sex as traits, we can just have loci start at T (or T + 1 in R).</p>
+<p>By having a modular <code>build_traits</code> function, we can keep the code flexible enough to have different ways of deriving single trait values for any given genome. The genome itself is probably easiest to model by breaking it down into L blocks of six, taking up 6L total columns of the 2D <strong>pest</strong> array. The first three values of a block will be the number (1), value (2), and dominance (3) for an allele, while the next three values will be the same for a homologous allele at the locus. The dominance values could be compared to calculate which allele has a stronger effect, similar to <span class="citation">Duthie and Reid (2016 <a href="https://github.com/bradduthie/Inbreeding">code</a>)</span>, and this could be pre-set or randomised in some way for different allele types. The values could mean whatever we want them to, but a good starting point would be to think of them as additively effecting one or more trait as in <span class="citation">Duthie et al. (2018 <a href="https://github.com/bradduthie/pre_post_cop">code</a>)</span>. We could of course just have the allele numbers in the genome, with a separate lookup table to match them with values and dominance coefficients, but I actually think this would be slower and more difficult to code. The <code>build_traits</code> function will loop through all of the loci, gathering in the relevant values to build each trait – a sub-function (e.g., <code>calc_trait</code>) could do this for an individual trait, identifying where and what in the genome should be used to make a single trait such as resistance to a particular biopesticide. So, for example, the pest data structure for one (non ID or Sex) trait and one locus would look like this:</p>
+<pre class="r"><code>simple_pests &lt;- matrix(data = 0, nrow = 4, ncol = 9);
+colnames(simple_pests) &lt;- c(&quot;ID&quot;, &quot;Sex&quot;, &quot;Trait_1&quot;, &quot;L1A1_i&quot;, &quot;L1A1_v&quot;, 
+                            &quot;L1A1_h&quot;, &quot;L1A2_i&quot;, &quot;L1A2_v&quot;, &quot;L1A2_h&quot;);
+simple_pests[,1] &lt;- 1:4;
+simple_pests[,2] &lt;- c(0, 1, 0, 1);
+simple_pests[,3] &lt;- runif(n = 4);
+simple_pests[,4] &lt;- sample(x = 1:2, size = 4, replace = TRUE);
+simple_pests[,7] &lt;- sample(x = 1:2, size = 4, replace = TRUE);
+print(simple_pests);</code></pre>
+<pre><code>##      ID Sex   Trait_1 L1A1_i L1A1_v L1A1_h L1A2_i L1A2_v L1A2_h
+## [1,]  1   0 0.4985680      1      0      0      1      0      0
+## [2,]  2   1 0.3047065      1      0      0      1      0      0
+## [3,]  3   0 0.1554599      1      0      0      2      0      0
+## [4,]  4   1 0.7138051      2      0      0      2      0      0</code></pre>
+<p>I’ve not included the allele values or dominance coefficients for alleles 1 and 2. Note that in the columns ‘L1’ refers to locus 1, and ‘A1’ and ‘A2’ refer to alleles 1 and 2, respectively. As mentioned earlier, these will need to be represented by doubles in C, and the table could get quite big (well over 1000 columns, and potentially tens of thousands of rows).</p>
+<p><strong>Landscape</strong></p>
+<p>The landscape will be modelled using a three dimensional array.</p>
 <blockquote>
 <p><a name="u-18-JUL-2018">Update: 18 JUL 2018</a></p>
 </blockquote>
@@ -182,8 +209,16 @@ s.setAttribute('data-timestamp', +new Date());
 Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
 </noscript>
 </div>
-<div id="references" class="section level2">
+<div id="references" class="section level2 unnumbered">
 <h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-Duthie2016a">
+<p>Duthie, A Bradley, and Jane M Reid. 2016. “Evolution of inbreeding avoidance and inbreeding preference through mate choice among interacting relatives.” <em>American Naturalist</em> 188 (6): 000–000. doi:<a href="https://doi.org/10.1086/688919">10.1086/688919</a>.</p>
+</div>
+<div id="ref-Duthie2017">
+<p>Duthie, A Bradley, Greta Bocedi, Ryan R Germain, and Jane M Reid. 2018. “Evolution of pre-copulatory and post-copulatory strategies of inbreeding avoidance and associated polyandry.” <em>Journal of Evolutionary Biology</em>. doi:<a href="https://doi.org/10.1111/jeb.13189">10.1111/jeb.13189</a>.</p>
+</div>
+</div>
 </div>
 </div>
 
