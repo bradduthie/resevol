@@ -36,7 +36,7 @@ library(rhandsontable)
 
  - **2018**
 
-     - **JUL** [18](#u-18-JUL-2018), **JUL** [23](#u-23-JUL-2018)
+     - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018)
 
 [Project comments](#comments)
 
