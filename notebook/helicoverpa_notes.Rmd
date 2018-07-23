@@ -79,11 +79,36 @@ simple_pests[,7] <- sample(x = 1:2, size = 4, replace = TRUE);
 print(simple_pests);
 ```
 
-I've not included the allele values or dominance coefficients for alleles 1 and 2. Note that in the columns 'L1' refers to locus 1, and 'A1' and 'A2' refer to alleles 1 and 2, respectively. As mentioned earlier, these will need to be represented by doubles in C, and the table could get quite big (well over 1000 columns, and potentially tens of thousands of rows).
+I've not included the allele values or dominance coefficients for alleles 1 and 2. Note that in the columns 'L1' refers to locus 1, and 'A1' and 'A2' refer to alleles 1 and 2, respectively. As mentioned earlier, these will need to be represented by doubles in C, and the table could get quite big (well over 1000 columns, and potentially tens of thousands of rows). The benefit of doing all this is that we can potentially use multiple different types of infection models, as desired (e.g., gene for gene, quantative, threshold).
 
 **Landscape**
 
-The landscape will be modelled using a three dimensional array.
+The landscape will be modelled using a three dimensional array. We want space to be explicit, and the easiest way to do this is to have the first two dimensions of the array correspond to the x and y locations on a region of landscape. Interactions can happen at the scale of landscape cells (array elements), and distance between cells in any location can allow for explicit spatial processes (typically, count the number of cells in any of 8 directions, including diagonally, but other neighbour distances could be used, or cells could be hexagonal if there is good reason to do it). Having different cells with different values allows for landscape level heterogeneity (could also make values autocorrelated as desired as in @Duthie2013). Perhaps each cell starts with having some ID for the farm, as in the case of the 8 by 8 landscape below (actually x and y dimensions will be a variable in the model -- I usually use 100 by 100, with a torus landscape that wraps around itself to avoid edge effects).
+
+```{r}
+land_IDs <- matrix(data = 0, nrow = 8, ncol = 8);
+land_IDs[1:2, 1:8] <- 1;
+land_IDs[3:6, 1:5] <- 2;
+land_IDs[3:8, 6:8] <- 3;
+land_IDs[7:8, 1:3] <- 4;
+land_IDs[7:8, 4:5] <- 5;
+print(land_IDs);
+```
+
+So each of five farms or types of farms (or something else) are represented in the landscape. But we need lots of pieces of information for each cell, including what is planted on the cell, local environmental variables, and biopesticide applied. To get this, we can then add multiple layers on the z axis of a 3D array. So the landscape layer above is just the 'top', with multiple layers beneath coding critical information in a `land` array. Assume, for now that we need three layers (we'll actually need a lot more): (1) `land_IDs`, (2) crop used, (3) biopesticide 1 applied.
+
+```{r}
+land      <- array(data = 0, dim = c(8, 8, 3));
+land[,,1] <- land_IDs;
+land[,,2] <- sample(x = 1:3, size = 64, replace = TRUE);
+land[,,3] <- round(x = runif(n = 64, min = 0, max = 1), digits = 3);
+print(land);
+```
+
+The details aren't so important for now; what matters is the idea that we can represent information about landscape cells dynamically using array layers, which can therefore correspond to any number of things that we want to affect pests. The above structures can be initialised in R and diverted to a toy model that could help accomplish the short-term goals of the project, but also diverted to C to do the more intense simulatoin involving complex genetic architecture (we'll want a standalone C version too for speed and high-performance cluster computing). The toy model is probably the fist step -- to have something loop over time steps showing that something (e.g., allelic diversity) is maintained under variable landscapes, but is not when landscapes are homogenous (or when dispersal is infinite). Probably best to simplify the genetics as much as possible (e.g., 1 locus, fewer than 5 alleles) for this, then return some numbers that can be extracted from these data structures to build a graphic.
+
+I see these two structures (**PEST** and **LAND**) as being the two most important ones to get right early on because these are the ones that will be used in almost every part of the model. The code will otherwise be written modularly, meaning that if we don't like the way that we're, e.g., deriving pest traits from their genetic architecture, or setting dispersal rules, or modelling sex, then we can simply rewrite the specific function that does these things and plug it back into the model. With this, some list or vector is also needed to hold parameter values (**PARA**), at lesat from the transition from R to C.
+
 
 
 > <a name="u-18-JUL-2018">Update: 18 JUL 2018</a>
