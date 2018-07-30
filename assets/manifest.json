@@ -1,0 +1,44 @@
+{
+  "dependencies": {
+    "main.js": {
+      "bower": [
+	      "tether",
+	      "bootstrap",
+        "seiyria-bootstrap-slider",
+        "respond",
+        "html5shiv"
+      ],
+      "files": [
+        "scripts/main.js"
+      ],
+      "main": true
+    },
+    "jquery.min.js": {
+      "bower": [
+        "jquery"
+      ]
+    },
+    "masonry.pkgd.min.js": {
+      "bower": [
+        "masonry-layout"
+      ]
+    },
+    "main.css": {
+	    "bower": [
+        "bootstrap",
+        "seiyria-bootstrap-slider"
+      ],
+      "files": [
+        "styles/main.scss"
+      ],
+      "main": true
+    }
+  },
+  "paths": {
+    "source": "./",
+    "dist": "dist/"
+  },
+  "config": {
+    "devUrl": "http://127.0.0.1:3000/"
+  }
+}

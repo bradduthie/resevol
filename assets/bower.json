@@ -1,0 +1,31 @@
+{
+  "name": "helicoverpa",
+  "description": "Helicoverpa modelling for sustainable pest control.",
+  "version": "0.0.0",
+  "homepage": "http://helicoverpa.rosemckeon.co.uk",
+  "authors": [
+    "Rose McKeon <rose@rosemckeon.co.uk>",
+    "Brad Duthie"
+  ],
+  "license": "MIT",
+  "private": true,
+  "main": [
+    "dist/css/main.css",
+    "dist/scripts/main.js"
+  ],
+  "ignore": [
+    ".*",
+    "node_modules",
+    "bower_components",
+    "gulpfile.js",
+    "*.Rproj"
+  ],
+  "dependencies": {
+    "tether": "^1.4.4",
+    "bootstrap": "4.0.0-alpha.6",
+    "respond": "1.4.2",
+    "html5shiv": "3.7.3",
+    "seiyria-bootstrap-slider": "^10.0.0",
+    "masonry-layout": "^4.2.2"
+  }
+}
