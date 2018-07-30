@@ -27,7 +27,12 @@ library(rhandsontable)
 
 > **This notebook tracks progress on the development of [helicoverpa](https://bradduthie.github.io/helicoverpa/) R package, a BBSRC [FAPESP Newton Funded](http://www.fapesp.br/en/9552) Project to model how the spatial scale of heterogeneity in fungal isolate application and crop plant cultivation affects variation in the selection landscape for biopesticide resistance.**
 
-*******************************************************************************
+********************************************************************************
+
+<center>**[Go to comments](#comments)**</center>
+
+********************************************************************************
+
 
 <a name="contents">Contents:</a>
 ================================================================================
@@ -36,7 +41,7 @@ library(rhandsontable)
 
  - **2018**
 
-     - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018)
+     - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018), [30](#u-30-JUL-2018)
 
 [Project comments](#comments)
 
@@ -44,6 +49,44 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+> <a name="u-30-JUL-2018">Update: 30 JUL 2018</a>
+
+**Some general thoughts about code structure**
+
+There are some high-level functions that will be useful to think about before coding; that is, functions that need to do something in sequence during simulation initialisation and then during each time step of the simulation. These functions will call subfunctions that run key routines -- I think that all of these function, and the outer function (e.g., `simulate_resistance`, which runs through multiple time steps to test a particular set of parameter combinations), should be written in C for efficiency. An R function can call `simulate_resistance` and return the results to R, or an outer C function can also call it and print results to a text file (faster and easier with the computing cluster). The point is to have a single funtion that everything feeds to that does the work by calling multiple subfunctions -- this workhorse function `simulate_resistance` will contain the main loop over $N$ `time_steps`.
+
+Prior to the loop, there will be some initialisation of the landscape `LAND` and the pests `PEST`. This will include all of the values in each layer `LAND` based on parameter initialisation. The functions `initialise_land` and `initialise_pest` are therefore called once at the start of the simulation; they will need to decide the distribution of landscape values and pests, and the sizes of each. It will not be necessary to initialise the `PEST` traits, only their genomes (based on allele and loci parameters, dominance, etc.) and non-genetic attributes such as location and ID (sex might or might not be based on genome). Before starting the big loop, the key structures of `PEST` and `LAND` need to otherwise be built. Any other key data structures will need to be initialised -- I am thinking that the `simulate_resistance` function, or maybe some small other function, should send a vector of information so that everything can be stored handily, then individual parameter values can be set in the small outer function then compiled into the vector for ease of use.
+
+After initialisation, one big loop will run the simulation over multiple time steps (some pseudocode below).
+
+```
+simulate_resistance(parameter_values){
+    error_checks(parameter_values);
+    initialise_land(LAND);
+    initialise_pest(PEST);
+    for(time_step = 0; time_step < time_max; time_step++){
+        build_pest_traits(PEST, build_type);
+        set_crops(LAND, crop_parameters);
+        set_biopesticide(LAND, biopesticide_parameters);
+        move_pest(PEST, move_parameters);
+        feed_pest(PEST, LAND, feeding_parameters);
+        kill_pest(PEST, LAND, death_parameters);
+        reproduce_pest(PEST, evolution_parameters);
+        collect_PEST_data(PEST);
+        collect_LAND_data(LAND);
+        summarise_time_step(PEST, LAND);
+        status_check(PEST, LAND);
+    }
+    summarise_simulation();
+}
+```
+
+Multiple events will occur in each time step, including (but not limited to) the following: The `build_pest_traits()` function will simply read in and out the `PEST` array, building the traits from the pest genome according to some `build_type` in each generation.  The `set_crops` function will assign `LAND` cel layer values basedon on the crop parameter values underlying, e.g., spatial heterogeneity; similarly, `set_biopesticide` will affect `LAND` cell layer values. Then the `move_pest` function will cause the pests to move according to some sort of disperal rules set in `parameter_values`. Note that the landscape and the pests have not interacted in the time step yet (though we can imagine the landscape affecting pest movement rules), and will now do so in `feed_pest`, where they will affect crops, followed by `kill_pest` and `reproduce_pest`, where they will suffer mortality and reproduce as a consequence of their interactions. **We might want to think about the order of these operations.** After pest reproduction (which will include sex and genetic -- but not trait -- transmission), then summary data on the pests and landscape need to be collected (could even have an option to print everything out at this point, but it might be a lot of information) -- followed by a sort of grand summary of the time step. When the whole simulation has finished, then the results can be printed.
+
+Note also that some error checks and status checks will be useful, since we'll want to make this function able to run from R. The error checks will just make sure nothing will crash the simulation (some of this might be better programmed in R instead of C), while the `status_check` might look to see, e.g., if pests have gone extinct, or have some sort of rule for termination of the simulation if something happens.
+
+I suspect that the above structure will need rearranging and rethinking, but it's a starting point. Subfunctions will be the difficult part, coding efficient ways of building traits from the genome, movement rules, reproduction, etc.
 
 > <a name="u-23-JUL-2018">Update: 23 JUL 2018</a>
 
@@ -115,7 +158,7 @@ I see these two structures (**PEST** and **LAND**) as being the two most importa
 
 I have now initialised this lab notebook for the helicoverpa R package and model.
 
-Comments {.comments}
+Comments {#comments}
 --------------------------------------------------------------------------------
 
 <div id="disqus_thread"></div>
