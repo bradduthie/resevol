@@ -3,6 +3,14 @@
 (function($){
 	// when the page is fully loaded...
 	$(document).ready(function(){
+		// reverse slider controls (for vertical sliders)
+		$('.form-control').slider({
+			reversed : true
+		});
+		// the sidebar
+		$('#toggle-controls').on('click', function () {
+        $('.wrapper').toggleClass('toggle');
+    });
 		/* 
 		Get the data (output by R) formatted as:
 		---

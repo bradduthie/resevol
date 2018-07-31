@@ -1,0 +1,45 @@
+.wrapper {
+	display: flex;
+	width: 100%;
+	#controls {
+		min-width: 250px;
+		max-width: 250px;
+		height: 100vh;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		transition: all .3s;
+		@media (max-width: 768px) {
+			margin-left: -250px;
+		}
+	}
+	#content {
+		width: calc(100% - 250px);
+		min-height: 100vh;
+		transition: all .3s;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	#toggle-controls {
+		position: fixed;
+		top: 10px;
+		left: 270px;
+		z-index: 999;
+	}
+	&.toggle {
+		#controls {
+			margin-left: -250px;
+			@media (max-width: 768px) {
+				margin-left: 0;
+			}
+		}
+		#content {
+			width: 100%;
+		}
+		#toggle-controls {
+			left: 15px;
+		}
+	}
+}

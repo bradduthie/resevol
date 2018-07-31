@@ -12,15 +12,34 @@
     <link href="./assets/dist/styles/main.css" rel="stylesheet">
   </head>
   <body>
-    <div class="container-fluid">
-      <div class="patches"></div>
-        <form class="sr-only">
-	        <input type="text" name="somename" data-provide="slider" data-slider-ticks="[1, 2, 3]" data-slider-ticks-labels='["short", "medium", "long"]'	data-slider-min="1"	data-slider-max="3"	data-slider-step="1" data-slider-value="2" data-slider-tooltip="hide">
-        </form>
-      </div>
+  <div class="wrapper">
+    <nav id="controls">
+	    <div class="sidebar-header">
+		    <h3>Control the Landscape</h3>
+	    </div>
+	    <form>
+		    <div class="form-group">
+		    	<label for="crops">Crop species</label>
+					<input type="text" name="crops" id="crops" class="form-control" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-ticks-labels="['1','2','3']" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical">
+		    </div>
+		    <div class="form-group">
+		    	<label for="pathogens">Pathogen strains</label>
+					<input type="text" name="pathogens" id="pathogens" class="form-control" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical">
+		    </div>
+    </form>
+    </nav>
+    <div id="content" class="patches">
+      <nav>
+        <button type="button" id="toggle-controls" class="btn btn-info">
+          <i class="fas fa-cog"></i>
+          <span class="sr-only">Toggle sidebar controls</span>
+        </button>
+	    </nav>
     </div>
+	</div>
     <script src="./assets/dist/scripts/jquery.min.js"></script>
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="./assets/dist/scripts/main.js"></script>
   </body>
 </html>
