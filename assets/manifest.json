@@ -18,11 +18,6 @@
         "jquery"
       ]
     },
-    "masonry.pkgd.min.js": {
-      "bower": [
-        "masonry-layout"
-      ]
-    },
     "main.css": {
 	    "bower": [
         "bootstrap",

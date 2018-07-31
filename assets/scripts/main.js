@@ -11,7 +11,7 @@
 			"helicoverpa": [{crop, pathogen, genotype, resistance},{crop, pathogen, genotype, resistance}]
 		---
 		*/
-		$.getJSON("../../../data/output.json", function(patches){
+		$.getJSON("./data/output.json", function(patches){
 			if($.isEmptyObject(patches)) {
 				// Handle missing data...
 				console.log("No patch data");	
