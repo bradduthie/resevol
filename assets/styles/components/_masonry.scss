@@ -12,7 +12,7 @@
 	.patch {
 		margin: 0 auto;
 		//border-left: 2px solid black;
-		overflow: visible;
+		overflow: inherit;
 		min-height: 100vh;
 		max-height: 100vh;
 		&.two-high {

@@ -3,14 +3,6 @@
 (function($){
 	// when the page is fully loaded...
 	$(document).ready(function(){
-		// reverse slider controls (for vertical sliders)
-		$('.form-control').slider({
-			reversed : true
-		});
-		// the sidebar
-		$('#toggle-controls').on('click', function () {
-        $('.wrapper').toggleClass('toggle');
-    });
 		/* 
 		Get the data (output by R) formatted as:
 		---
@@ -59,15 +51,25 @@
 					}
 					$('.crop-'+element.crop+' .pathogen-'+element.pathogen).append('<div class="helicoverpa grid-item genotype-'+element.genotype+' '+icon+'" style="font-size:'+size+';width: '+size+';height:'+size+';"></div>');
 				});
-				// arrange the individuals
-				$('.grid').masonry({
-				  // options...
+				// arrange helicoverpa
+				var $grid = $('.grid').masonry({
 				  itemSelector: '.grid-item',
 				  columnWidth: 20,
 				  horizontalOrder: false,
 				  originTop: false,
+				  isInitLayout: false,
+				  //resize: false
 				  //stagger: 30
 				});
+				$grid.masonry();
+				// the sidebar
+				$('#toggle-controls').click(function(){			
+		      $('.wrapper').toggleClass('toggle');
+		      $('.wrapper #content').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function(e) {
+				    // rearrarange helicoverpa when the transistion ends
+						$grid.masonry();
+				  });
+		    });
 			}
 		});
 	}); // end document ready
