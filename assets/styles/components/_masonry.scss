@@ -1,0 +1,108 @@
+.patches {
+	//border: 2px solid black;
+	text-align: center;
+	height: 100vh;
+	.row {
+		//border: 2px solid black;
+		//border-top: 2px solid black;
+		&:first-child {
+			//border-top: none;
+		}
+	}
+	.patch {
+		margin: 0 auto;
+		//border-left: 2px solid black;
+		overflow: inherit;
+		min-height: 100vh;
+		max-height: 100vh;
+		&.two-high {
+			min-height: 50vh;
+			max-height: 50vh;
+		}
+		&.three-high {
+			min-height: 33vh;
+			max-height: 33vh;
+		}
+		&:first-child {
+			//border-left: none;
+		}
+	}
+	.crop-1 {
+		.pathogen-0 {
+			background-color: $green-1;
+		}
+		.pathogen-1 {
+			background-color: $green-4;
+		}
+		.pathogen-2 {
+			background-color: $green-3;
+		}
+		.pathogen-3 {
+			background-color: $green-2;
+		}
+	}
+	.crop-2 {
+		.pathogen-0 {
+			background-color: $green-3;
+		}
+		.pathogen-1 {
+			background-color: $green-2;
+		}
+		.pathogen-2 {
+			background-color: $green-4;
+		}
+		.pathogen-3 {
+			background-color: $green-1;
+		}
+	}
+	.crop-3 {
+		.pathogen-0 {
+			background-color: $green-2;
+		}
+		.pathogen-1 {
+			background-color: $green-1;
+		}
+		.pathogen-2 {
+			background-color: $green-4;
+		}
+		.pathogen-3 {
+			background-color: $green-3;
+		}
+	}
+	.helicoverpa {
+		&::before {
+			text-shadow: 0px 0px 10px black;
+		}
+		&.genotype-1::before {
+			color: $genotype-1;
+		}
+		&.genotype-2::before {
+			color: $genotype-2;
+		}
+		&.genotype-3::before {
+			color: $genotype-3;
+		}
+		&.genotype-4::before {
+			color: $genotype-4;
+		}
+		&.genotype-5::before {
+			color: $genotype-5;
+		}
+		&.genotype-6::before {
+			color: $genotype-6;
+		}
+		&.genotype-7::before {
+			color: $genotype-7;
+		}
+		&.genotype-8::before {
+			color: $genotype-8;
+		}
+		&.genotype-9::before {
+			color: $genotype-9;
+		}
+		&.genotype-10::before {
+			color: $genotype-10;
+		}
+	}
+}
+
