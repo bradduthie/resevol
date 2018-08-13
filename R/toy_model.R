@@ -6,18 +6,19 @@
 # but also don't want to worry about not being able to name functions like
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
-toy_simulate_resistance <- function(generations = 20,   
-                                    xdim = 2, 
-                                    ydim = 2, 
-                                    pathogens = 1, 
-                                    crops = 1, 
-                                    pest_init = 100, 
-                                    crop_rotate = "static", 
-                                    path_rotate = "static", 
-                                    pest_move_pr = 0.1,
-                                    pest_move_dist = 1, 
-                                    fecundity = 2, 
-                                    cell_K = 100){
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
     
     if(pest_move_dist > xdim & pest_move_dist > ydim){
         pest_move_dist <- max(c(xdim, ydim)); # Avoids error
@@ -36,16 +37,16 @@ toy_simulate_resistance <- function(generations = 20,
         PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
         PEST <- toy_feed_pest(PEST, LAND);                                      
         if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
-            print("feed"); break;
+            break;
         }
         PEST <- toy_kill_pest(PEST, LAND);
         if(toy_check_extinction(PEST, gen) == TRUE){
-            print("kill"); break;
+            break;
         }
         PEST <- toy_reproduce_pest(PEST, LAND, pathogens, crops, fecundity, 
                                    cell_K);
         if(toy_check_extinction(PEST, gen) == TRUE){
-            print("repr"); break;
+            break;
         }
         PEST_DATA[[gen]] <- PEST;
         gen <- gen + 1;
@@ -55,7 +56,7 @@ toy_simulate_resistance <- function(generations = 20,
 
 summarise_pest_data <- function(PEST_DATA){
     # Density estimates
-    den_list <- unlist(lapply(PEST_DATA, length));
+    den_list <- unlist(lapply(PEST_DATA, dim));
     den_list <- den_list[c(TRUE, FALSE)];
     return(den_list);
 }
