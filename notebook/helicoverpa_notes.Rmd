@@ -51,7 +51,7 @@ library(rhandsontable)
 <a name="updates">Project updates:</a>
 ================================================================================
 
-> <a name="u-18-AUG-2018">Update: 18 AUG 2018</a>
+> <a name="u-13-AUG-2018">Update: 13 AUG 2018</a>
 
 **Visual stuff looks good!**
 
