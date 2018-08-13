@@ -7,6 +7,63 @@
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
 
+toy_simulate_resistance <- function(generations = 10, xdim = 2, ydim = 2, 
+                                    pathogens = 1, crops = 1, pest_init = 100, 
+                                    crop_rotate = "random", 
+                                    path_rotate = "random", pest_move_pr = 0.1,
+                                    pest_move_dist = 1, fecundity = 2, 
+                                    cell_K = 100){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = pathogens, 
+                                c_al = crops);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    gen         <- 1;
+    exti        <- FALSE;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
+        PEST <- toy_feed_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        gen <- gen + 1;
+    }
+    return(PEST_DATA);
+}
+
+toy_check_extinction <- function(PEST, gen){
+    if(is.vector(PEST) == TRUE){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(dim(PEST)[1] < 4){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    return(FALSE);
+}
+
 # Initialise the landscape
 toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
     LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
@@ -40,7 +97,7 @@ toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
 
 # Just going to make this a simple function at first, randomly changing crops
 toy_set_crops <- function(LAND, crops = 1, type = "rotate"){
-    if(crops == 1){
+    if(crops == 1 | crops == "static"){
         return(LAND);
     }
     if(type == "rotate"){
@@ -114,7 +171,7 @@ toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
 toy_feed_pest <- function(PEST, LAND){
     # I'm just going to use a loop here, else matching to LAND cells is rough
     pests <- dim(PEST)[1];
-    eaten <- rep(x = 0, times = pests);
+    eaten <- rep(x = 0, times = pests); 
     for(i in 1:pests){
         x_loc <- PEST[i, 3];
         y_loc <- PEST[i, 4];
@@ -136,7 +193,7 @@ toy_kill_pest <- function(PEST, LAND){
         x_loc <- PEST[i, 3];
         y_loc <- PEST[i, 4];
         patho <- LAND[x_loc, y_loc, 2];
-        if(PEST[i, 7] == patho | PEST[i, 8] == patho){
+        if(PEST[i, 5] == patho | PEST[i, 6] == patho){
             survived[i] <- 1;
         }
     }
@@ -159,9 +216,13 @@ toy_reproduce_pest <- function(PEST, LAND, births = 2, K = 100){
             if( length(locals) > 1 ){
                 local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
             }
-            lst_ID            <- lst_ID + dim(local_offs)[1];
-            total_offspring   <- total_offspring + dim(local_offs)[1];
-            offspring[[cell]] <- local_offs;
+            if(length(local_offs) > 0){
+                lst_ID            <- lst_ID + dim(local_offs)[1];
+                total_offspring   <- total_offspring + dim(local_offs)[1];
+                offspring[[cell]] <- local_offs;
+            }else{
+                offspring[[cell]] <- NULL;
+            }
             cell              <- cell + 1;
         }
     }
@@ -177,8 +238,8 @@ toy_breed_locals <- function(PEST, locals, births, K, last_ID){
     }
     females       <- loc_PEST[loc_PEST[,2] == 0,];
     males         <- loc_PEST[loc_PEST[,2] == 1,];
-    new_offs      <- dim(females)[1] * floor(births);
-    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);
+    new_offs      <- dim(females)[1] * floor(births);  
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);     
     offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
     offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
     offspring[,3] <- loc_PEST[1, 3];
@@ -212,20 +273,27 @@ toy_breed_locals <- function(PEST, locals, births, K, last_ID){
 }
 
 # Merge the different layers into a new pest array
-build_new_pest <- function(offspring, total_offspring){
+build_new_pest <- function(offspring, total_offspring, mutation = 0.01){
     new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
     start_row  <- 1; # Again, avoids an rbind memory issue
     for(cell in 1:length(offspring)){
-        cell_offs       <- dim(offspring[[cell]])[1];
-        rows            <- start_row:(start_row + cell_offs - 1);
-        new_PEST[rows,] <- offspring[[cell]];
-        start_row       <- start_row + cell_offs;
+        if(length(offspring[[cell]]) > 0){
+            cell_offs       <- dim(offspring[[cell]])[1];
+            rows            <- start_row:(start_row + cell_offs - 1);
+            new_PEST[rows,] <- offspring[[cell]];
+            start_row       <- start_row + cell_offs;
+        }
     }
+    mu5 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    new_PEST[mu5, 5] <- sample(x = 1:10, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:10, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:10, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:10, size = length(mu8), replace = TRUE);
     return(new_PEST);
 }
-
-
-
 
 
 
