@@ -6,12 +6,17 @@
 # but also don't want to worry about not being able to name functions like
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
-
-toy_simulate_resistance <- function(generations = 10, xdim = 2, ydim = 2, 
-                                    pathogens = 1, crops = 1, pest_init = 100, 
-                                    crop_rotate = "random", 
-                                    path_rotate = "random", pest_move_pr = 0.1,
-                                    pest_move_dist = 1, fecundity = 2, 
+toy_simulate_resistance <- function(generations = 20,   
+                                    xdim = 2, 
+                                    ydim = 2, 
+                                    pathogens = 1, 
+                                    crops = 1, 
+                                    pest_init = 100, 
+                                    crop_rotate = "static", 
+                                    path_rotate = "static", 
+                                    pest_move_pr = 0.1,
+                                    pest_move_dist = 1, 
+                                    fecundity = 2, 
                                     cell_K = 100){
     
     if(pest_move_dist > xdim & pest_move_dist > ydim){
@@ -25,27 +30,34 @@ toy_simulate_resistance <- function(generations = 10, xdim = 2, ydim = 2,
     # Start the generations
     PEST_DATA   <- NULL;
     gen         <- 1;
-    exti        <- FALSE;
     while(gen < generations){
-        LAND <- toy_set_crops(LAND, crops, crop_rotate);
-        LAND <- toy_set_paths(LAND, pathogens, path_rotate);
-        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
-        PEST <- toy_feed_pest(PEST, LAND);
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
         if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
-            break;
+            print("feed"); break;
         }
         PEST <- toy_kill_pest(PEST, LAND);
         if(toy_check_extinction(PEST, gen) == TRUE){
-            break;
+            print("kill"); break;
         }
-        PEST <- toy_reproduce_pest(PEST, LAND, fecundity, cell_K);
+        PEST <- toy_reproduce_pest(PEST, LAND, pathogens, crops, fecundity, 
+                                   cell_K);
         if(toy_check_extinction(PEST, gen) == TRUE){
-            break;
+            print("repr"); break;
         }
         PEST_DATA[[gen]] <- PEST;
         gen <- gen + 1;
     }
     return(PEST_DATA);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list <- unlist(lapply(PEST_DATA, length));
+    den_list <- den_list[c(TRUE, FALSE)];
+    return(den_list);
 }
 
 toy_check_extinction <- function(PEST, gen){
@@ -96,8 +108,8 @@ toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
 }
 
 # Just going to make this a simple function at first, randomly changing crops
-toy_set_crops <- function(LAND, crops = 1, type = "rotate"){
-    if(crops == 1 | crops == "static"){
+toy_set_crops <- function(LAND, crops = 1, type = "static"){
+    if(crops == 1 | type == "static"){
         return(LAND);
     }
     if(type == "rotate"){
@@ -116,8 +128,8 @@ toy_set_crops <- function(LAND, crops = 1, type = "rotate"){
 }
 
 # Ditto here -- just a simple function changing pathogens
-toy_set_paths <- function(LAND, paths = 1, type = "rotate"){
-    if(paths == 1){
+toy_set_paths <- function(LAND, paths = 1, type = "static"){
+    if(paths == 1 | type == "static"){
         return(LAND);
     }
     if(type == "rotate"){
@@ -130,7 +142,7 @@ toy_set_paths <- function(LAND, paths = 1, type = "rotate"){
         ydim      <- dim(LAND)[2];
         new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
         new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
-        LAND[,,3] <- new_path;
+        LAND[,,2] <- new_path;
     }
     return(LAND);
 }
@@ -202,7 +214,7 @@ toy_kill_pest <- function(PEST, LAND){
 }
 
 # Then, reproduce pests that are left
-toy_reproduce_pest <- function(PEST, LAND, births = 2, K = 100){
+toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
     x_dim           <- dim(LAND)[1];
     y_dim           <- dim(LAND)[2];
     offspring       <- NULL;
@@ -226,7 +238,7 @@ toy_reproduce_pest <- function(PEST, LAND, births = 2, K = 100){
             cell              <- cell + 1;
         }
     }
-    offspring <- build_new_pest(offspring, total_offspring);
+    offspring <- build_new_pest(offspring, total_offspring, pa, cr);
     return(offspring);
 }
 
@@ -273,7 +285,7 @@ toy_breed_locals <- function(PEST, locals, births, K, last_ID){
 }
 
 # Merge the different layers into a new pest array
-build_new_pest <- function(offspring, total_offspring, mutation = 0.01){
+build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
     new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
     start_row  <- 1; # Again, avoids an rbind memory issue
     for(cell in 1:length(offspring)){
@@ -288,10 +300,10 @@ build_new_pest <- function(offspring, total_offspring, mutation = 0.01){
     mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
     mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
     mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
-    new_PEST[mu5, 5] <- sample(x = 1:10, size = length(mu5), replace = TRUE);
-    new_PEST[mu6, 6] <- sample(x = 1:10, size = length(mu6), replace = TRUE);
-    new_PEST[mu7, 7] <- sample(x = 1:10, size = length(mu7), replace = TRUE);
-    new_PEST[mu8, 8] <- sample(x = 1:10, size = length(mu8), replace = TRUE);
+    new_PEST[mu5, 5] <- sample(x = 1:cr, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:cr, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:pa, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:pa, size = length(mu8), replace = TRUE);
     return(new_PEST);
 }
 
