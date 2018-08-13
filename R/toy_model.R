@@ -58,5 +58,65 @@ toy_set_crops <- function(LAND, crops = 1, type = "rotate"){
     return(LAND);
 }
 
+# Ditto here -- just a simple function changing pathogens
+toy_set_paths <- function(LAND, paths = 1, type = "rotate"){
+    if(paths == 1){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_path                   <- LAND[,,3];
+        new_path                   <- old_path + 1;
+        new_path[new_path > paths] <- 1;
+        LAND[,,2]                  <- new_path;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
+        new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
+        LAND[,,3] <- new_path;
+    }
+    return(LAND);
+}
+
+# Just a function to move pests at a given value, randomly on the landscape. The
+# `prob` is just probability of moving in a time step, while `dist` is just the
+# maximum distance moved in cells, in any direction.
+toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
+    xdim                     <- dim(LAND)[1];
+    ydim                     <- dim(LAND)[2];
+    pests                    <- dim(PEST)[1];
+    to_move                  <- rbinom(n = pests, size = 1, pr = prob);
+    move_x                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    move_y                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    PEST[to_move == 1, 3]    <- PEST[to_move == 1, 3] + move_x[to_move == 1];
+    PEST[to_move == 1, 4]    <- PEST[to_move == 1, 4] + move_y[to_move == 1];
+    # The ifs below make a torus landscape so that pests don't move off of it
+    # In C, this will be done with a loop that looks cleaner; the below is just
+    # avoiding using a loop in R, though it would probably be fine.
+    if(length(PEST[PEST[,3] < 1, 3]) > 0){ 
+        PEST[PEST[,3] < 1, 3] <- PEST[PEST[,3] < 1, 3] + xdim;
+    }
+    if(length(PEST[PEST[,3] > xdim, 3]) > 0){
+        PEST[PEST[,3] > xdim, 3] <- PEST[PEST[,3] > xdim, 3] - xdim;
+    }
+    if(length(PEST[PEST[,4] < 1, 4]) > 0){
+        PEST[PEST[,4] < 1, 4] <- PEST[PEST[,4] < 1, 4] + ydim;
+    }
+    if(length(PEST[PEST[,4] > ydim, 4]) > 0){
+        PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
+    }
+    return(PEST);
+}
+
+
+
+
+
+
+
+
+
 
 
