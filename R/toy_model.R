@@ -110,8 +110,119 @@ toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
     return(PEST);
 }
 
+# Need to now feed the pests and remove those that don't feed (crop unavailable)
+toy_feed_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests <- dim(PEST)[1];
+    eaten <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        food  <- LAND[x_loc, y_loc, 3];
+        if(PEST[i, 7] == food | PEST[i, 8] == food){
+            eaten[i] <- 1;
+        }
+    }
+    PEST <- PEST[eaten == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
 
+# Then need to have pests resist pathogens, kill those that cannot
+toy_kill_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests    <- dim(PEST)[1];
+    survived <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        patho <- LAND[x_loc, y_loc, 2];
+        if(PEST[i, 7] == patho | PEST[i, 8] == patho){
+            survived[i] <- 1;
+        }
+    }
+    PEST <- PEST[survived == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
 
+# Then, reproduce pests that are left
+toy_reproduce_pest <- function(PEST, LAND, births = 2, K = 100){
+    x_dim           <- dim(LAND)[1];
+    y_dim           <- dim(LAND)[2];
+    offspring       <- NULL;
+    total_offspring <- 0; # This and the below are just to avoid an rbind(),
+    cell            <- 1; # which is a massive memory sink
+    lst_ID          <- max(PEST[,1]);
+    for(xloc in 1:x_dim){ # Double loop is just much cleaner here
+        for(yloc in 1:y_dim){
+            locals     <- which(PEST[,3] == xloc & PEST[,4] == yloc);
+            local_offs <- NULL;
+            if( length(locals) > 1 ){
+                local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
+            }
+            lst_ID            <- lst_ID + dim(local_offs)[1];
+            total_offspring   <- total_offspring + dim(local_offs)[1];
+            offspring[[cell]] <- local_offs;
+            cell              <- cell + 1;
+        }
+    }
+    offspring <- build_new_pest(offspring, total_offspring);
+    return(offspring);
+}
+
+# Need to recombine the genomes correctly in the offspring
+toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
+    if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
+        return(NULL);
+    }
+    females       <- loc_PEST[loc_PEST[,2] == 0,];
+    males         <- loc_PEST[loc_PEST[,2] == 1,];
+    new_offs      <- dim(females)[1] * floor(births);
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);
+    offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
+    offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
+    offspring[,3] <- loc_PEST[1, 3];
+    offspring[,4] <- loc_PEST[1, 4];
+    # Below grabs all of the alleles from females and males
+    p_fem_alleles <- c(females[,5], females[,6]);
+    p_mal_alleles <- c(males[,5], males[,6]);
+    c_fem_alleles <- c(females[,7], females[,8]);
+    c_mal_alleles <- c(males[,7], males[,8]);
+    # Now add them to the offspring randomly, one from female and one from male
+    for(i in 1:new_offs){
+        if(runif(n = 1) < 0.5){
+            offspring[i, 5] <- sample(x = p_fem_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_mal_alleles, size = 1);
+        }else{
+            offspring[i, 5] <- sample(x = p_mal_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_fem_alleles, size = 1);            
+        }
+        if(runif(n = 1) < 0.5){
+            offspring[i, 7] <- sample(x = c_fem_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_mal_alleles, size = 1);
+        }else{
+            offspring[i, 7] <- sample(x = c_mal_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_fem_alleles, size = 1);            
+        }
+    }
+    if(dim(offspring)[1] > K){
+        offspring <- offspring[1:K,];
+    }
+    return(offspring);
+}
+
+# Merge the different layers into a new pest array
+build_new_pest <- function(offspring, total_offspring){
+    new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
+    start_row  <- 1; # Again, avoids an rbind memory issue
+    for(cell in 1:length(offspring)){
+        cell_offs       <- dim(offspring[[cell]])[1];
+        rows            <- start_row:(start_row + cell_offs - 1);
+        new_PEST[rows,] <- offspring[[cell]];
+        start_row       <- start_row + cell_offs;
+    }
+    return(new_PEST);
+}
 
 
 
