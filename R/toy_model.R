@@ -29,7 +29,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
                                 pathogens = pathogens, crops = crops);
     PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
-                                crop_alleles = crops);
+                                c_al = crop_alleles);
     # Start the generations
     PEST_DATA   <- NULL;
     gen         <- 1;
@@ -58,9 +58,26 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
 
 summarise_pest_data <- function(PEST_DATA){
     # Density estimates
-    den_list <- unlist(lapply(PEST_DATA, dim));
-    den_list <- den_list[c(TRUE, FALSE)];
-    return(den_list);
+    den_list  <- unlist(lapply(PEST_DATA, dim));
+    den_vect  <- den_list[c(TRUE, FALSE)];
+    gens      <- length(PEST_DATA);
+    p_alleles <- max(c(PEST_DATA[[1]][,5], PEST_DATA[[1]][,6]));
+    c_alleles <- max(c(PEST_DATA[[1]][,7], PEST_DATA[[1]][,8])); 
+    p_tabl    <- matrix(data = 0, nrow = gens, ncol = p_alleles);
+    c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
+    # Allele frequencies
+    for(gen in 1:length(PEST_DATA)){
+        for(allele in 1:p_alleles){
+            p_tabl[gen, allele]  <- sum(PEST_DATA[[gen]][,5:6] == allele);
+        }
+        for(allele in 1:c_alleles){
+            c_tabl[gen, allele]  <- sum(PEST_DATA[[gen]][,7:8] == allele);
+        }
+    }
+    p_sum <- apply(X = p_tabl, MARGIN = 1, FUN = sum);
+    c_sum <- apply(X = c_tabl, MARGIN = 1, FUN = sum);
+    
+    return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
 }
 
 toy_check_extinction <- function(PEST, gen){
