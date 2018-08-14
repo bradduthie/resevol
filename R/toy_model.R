@@ -67,16 +67,17 @@ summarise_pest_data <- function(PEST_DATA){
     c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
     # Allele frequencies
     for(gen in 1:length(PEST_DATA)){
+        total_p_alleles <- length(PEST_DATA[[gen]][,5:6]);
+        total_c_alleles <- length(PEST_DATA[[gen]][,7:8]);
         for(allele in 1:p_alleles){
-            p_tabl[gen, allele]  <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            allele_count         <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            p_tabl[gen, allele]  <- allele_count / total_p_alleles
         }
         for(allele in 1:c_alleles){
-            c_tabl[gen, allele]  <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            allele_count         <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            c_tabl[gen, allele]  <- allele_count / total_c_alleles
         }
     }
-    p_sum <- apply(X = p_tabl, MARGIN = 1, FUN = sum);
-    c_sum <- apply(X = c_tabl, MARGIN = 1, FUN = sum);
-    
     return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
 }
 
