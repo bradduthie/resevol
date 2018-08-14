@@ -11,6 +11,8 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     ydim = 2,               # Land dimension 2
                                     pathogens = 1,          # Pathogen strains
                                     crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
                                     pest_init = 2000,       # Initial pests 
                                     crop_rotate = "static", # Crops rotated
                                     path_rotate = "static", # Pathogens rotated
@@ -26,8 +28,8 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     # Start initialising the landscape and pests
     LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
                                 pathogens = pathogens, crops = crops);
-    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = pathogens, 
-                                c_al = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                crop_alleles = crops);
     # Start the generations
     PEST_DATA   <- NULL;
     gen         <- 1;
@@ -43,8 +45,8 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
         if(toy_check_extinction(PEST, gen) == TRUE){
             break;
         }
-        PEST <- toy_reproduce_pest(PEST, LAND, pathogens, crops, fecundity, 
-                                   cell_K);
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
         if(toy_check_extinction(PEST, gen) == TRUE){
             break;
         }
