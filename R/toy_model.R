@@ -94,9 +94,13 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     data[,8]  <- c_geno;
     data[,9]  <- r_path;
     data[,10] <- r_crop;
+    poss_path <- sort(unique(as.vector(land[,,2])));
+    poss_land <- sort(unique(as.vector(land[,,3])));
     colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
                         "p_geno", "c_geno", "resist_path", "eat_crop");
-    modsim <- list( traits = colnames(data), 
+    modsim <- list( crops     = poss_land,
+                    pathogens = poss_path,
+                    traits = colnames(data), 
                     values = unname(apply(data, 1, 
                                           function(x) as.data.frame(t(x))))
     );
