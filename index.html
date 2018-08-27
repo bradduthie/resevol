@@ -13,23 +13,25 @@
   </head>
   <body>
   <div class="wrapper">
-    <nav id="controls">
+    <nav id="controls" role="application">
 	    <div class="sidebar-header">
 		    <h3>Control the Landscape</h3>
 	    </div>
 	    <form>
 		    <div class="form-group">
 		    	<label for="crops">Crop species</label><br />
-					<input type="text" name="crops" id="crops" class="form-control" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-ticks-labels="['1','2','3']" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0">
+					<input type="text" name="crops" id="crops" class="form-control" data-slider-id="crops-slider" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-ticks-labels="['1','2','3']" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0">
 		    </div>
 		    <div class="form-group">
 		    	<label for="pathogens">Pathogen strains</label><br />
-					<input type="text" name="pathogens" id="pathogens" class="form-control" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0">
+					<input type="text" name="pathogens" id="pathogens" class="form-control" data-slider-id="pathogens-slider" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="0">
 		    </div>
-    </form>
+    	</form>
+			<aside class="summary" role="contentinfo">
+			</aside>
     </nav>
-    <div id="content">
-      <nav>
+    <div id="content" role="main">
+      <nav role="application">
         <button type="button" id="toggle-controls" class="btn btn-info">
           <i class="fas fa-cog"></i>
           <span class="sr-only">Toggle sidebar controls</span>

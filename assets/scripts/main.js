@@ -3,6 +3,24 @@
 (function($){
 	// when the page is fully loaded...
 	$(document).ready(function(){
+		// default input (0 crops, 0 pathogens)
+		var crops = 0;
+		var pathogens = 0;
+		var input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
+		//console.log(input);
+		// Watch the sliders
+		$("#crops, #pathogens").on("change", function(slideEvt) {
+			if(slideEvt.currentTarget.id == "crops"){
+				// update crops if change detected
+				crops = slideEvt.value.newValue;
+			}else if(slideEvt.currentTarget.id == "pathogens"){
+				// update pathogens if change detected
+				pathogens = slideEvt.value.newValue;
+			}
+			// parse updated JSON to send to R function
+			input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
+			//console.log(input);
+		});
 		/* 
 		Get the data (output by R) formatted as:
 		---
