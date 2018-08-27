@@ -32,6 +32,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                 c_al = crop_alleles);
     # Start the generations
     PEST_DATA   <- NULL;
+    LAND_DATA   <- NULL;
     gen         <- 1;
     while(gen < generations){
         LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
@@ -51,19 +52,52 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
             break;
         }
         PEST_DATA[[gen]] <- PEST;
+        LAND_DATA[[gen]] <- LAND;
         gen <- gen + 1;
     }
-    return(PEST_DATA);
+    return(list(PEST_DATA = PEST_DATA, LAND_DATA = LAND_DATA));
 }
 
-results_to_json <- function(sim, printit = TRUE, filename = "sim.json"){
+results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     if("package:jsonlite" %in% search() == FALSE){
         stop("Error: Need to load the R package 'jsonlite'")
     }
-    colnames(sim) <- c("ID", "sex", "xloc", "yloc", "p_al_1", "p_al_2", 
-                       "c_al_1", "c_al_2");
-    modsim <- list( traits = colnames(sim), 
-                    values = unname(apply(sim, 1, 
+    inds   <- dim(pest)[1];
+    p_geno <- rep(x = 0, times = inds);
+    c_geno <- rep(x = 0, times = inds);
+    path   <- rep(x = 0, times = inds);
+    crop   <- rep(x = 0, times = inds);
+    r_path <- rep(x = 0, times = inds);
+    r_crop <- rep(x = 0, times = inds);
+    for(i in 1:inds){ # Doing this a bit lazily, without refactoring the rest
+        p_geno[i] <- as.numeric( paste(pest[i,5], pest[i,6], sep = ""));
+        c_geno[i] <- as.numeric( paste(pest[i,7], pest[i,8], sep = ""));
+        xloc      <- pest[i, 3];
+        yloc      <- pest[i, 4];
+        path[i]   <- land[xloc, yloc, 2];
+        crop[i]   <- land[xloc, yloc, 3];
+        if(pest[i,5] == path[i] | pest[i,5] == path[i]){
+            r_path <- 1;
+        }
+        if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
+            r_crop <- 1;
+        }
+    }
+    data      <- matrix(data = 0, nrow = inds, ncol = 10);
+    data[,1]  <- pest[,1];
+    data[,2]  <- pest[,2];
+    data[,3]  <- pest[,3];
+    data[,4]  <- pest[,4];
+    data[,5]  <- path;
+    data[,6]  <- crop;
+    data[,7]  <- p_geno;
+    data[,8]  <- c_geno;
+    data[,9]  <- r_path;
+    data[,10] <- r_crop;
+    colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
+                        "p_geno", "c_geno", "resist_path", "eat_crop");
+    modsim <- list( traits = colnames(data), 
+                    values = unname(apply(data, 1, 
                                           function(x) as.data.frame(t(x))))
     );
     sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
