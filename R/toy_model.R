@@ -56,6 +56,24 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     return(PEST_DATA);
 }
 
+results_to_json <- function(sim, printit = TRUE, filename = "sim.json"){
+    if("package:jsonlite" %in% search() == FALSE){
+        stop("Error: Need to load the R package 'jsonlite'")
+    }
+    colnames(sim) <- c("ID", "sex", "xloc", "yloc", "p_al_1", "p_al_2", 
+                       "c_al_1", "c_al_2");
+    modsim <- list( traits = colnames(sim), 
+                    values = unname(apply(sim, 1, 
+                                          function(x) as.data.frame(t(x))))
+    );
+    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+                       pretty = TRUE);
+    if(printit == TRUE){
+        write(sim_json, filename);
+    }
+    return(sim_json);
+}
+
 summarise_pest_data <- function(PEST_DATA){
     # Density estimates
     den_list  <- unlist(lapply(PEST_DATA, dim));
