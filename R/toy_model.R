@@ -63,6 +63,13 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
         stop("Error: Need to load the R package 'jsonlite'")
     }
     inds   <- dim(pest)[1];
+    cells  <- dim(land)[1] * dim(land)[2];
+    s_size <- cells * 100;
+    if(inds > s_size){
+        keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
+        pest <- pest[keep,];
+        inds <- s_size;
+    }
     p_geno <- rep(x = 0, times = inds);
     c_geno <- rep(x = 0, times = inds);
     path   <- rep(x = 0, times = inds);
