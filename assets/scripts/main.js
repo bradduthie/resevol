@@ -32,45 +32,50 @@
 		$.getJSON('./data/output.json').done(function(patches) {
 	    if($.isEmptyObject(patches)) {
 				// Handle missing data...
-				console.log("No patch data");	// the sidebar
+				console.log("No patch data");	
+				// make the sidebar work without redrawing missing helicoverpa
 				$('#toggle-controls').click(function(){			
 		      $('.wrapper').toggleClass('open-controls');
 		    });
 			} else {
 				// If we have data Make the patches...
-				//console.log(patches);
+				console.log(patches);
 				var row = 'one-high';
-				if(patches.crops.length == 2){
+				if(patches.values.crops.length == 2){
 					row = 'two-high';
-				} else if (patches.crops.length == 3){
+				} else if (patches.values.crops.length == 3){
 					row = 'three-high';
 				}
 				var col = 'col-sm-12';
-				if(patches.pathogens.length == 2){
+				if(patches.values.pathogens.length == 2){
 					col = 'col-sm-6';
-				} else if (patches.pathogens.length == 3){
+				} else if (patches.values.pathogens.length == 3){
 					col = 'col-sm-4';
 				}
 				// make a row for every crop
-				$.each(patches.crops, function(index, element){
+				$.each(patches.values.crops, function(index, element){
 					$('.patches').append('<div class="row crop-'+element+'"></div>');
 				});
 				// add a column for every pathogen
-				$.each(patches.pathogens, function(index, element){
+				$.each(patches.values.pathogens, function(index, element){
 					$('.row').append('<div class="patch grid pathogen-'+element+' '+row+' '+col+'"></div>');
 				});
 				// fill each patch
-				$.each(patches.helicoverpa, function(index, element){
-					var size = element.resistance+'px';
+				$.each(patches.values.values, function(index, element){
+					element = element[0];
+					console.log(element);
 					var icon = null;
-					if(element.resistance <= 20){
+					if(!element.eat_crop && !element.resist_path){
+						// can neither resist pathogen or eat crop
 						icon = 'fas fa-frown';
-					} else if(element.resistance < 35){
-						icon = 'fas fa-meh';
-					} else {
+					}else if(element.eat_crop && element.resist_path){
+						// can eat crop and resist pathogen
 						icon = 'fas fa-smile';
+					} else {
+						// can eat crop or resist pathogen, but can't do both
+						icon = 'fas fa-meh';
 					}
-					$('.crop-'+element.crop+' .pathogen-'+element.pathogen).append('<div class="helicoverpa grid-item genotype-'+element.genotype+' '+icon+'" style="font-size:'+size+';width: '+size+';height:'+size+';"></div>');
+					$('.crop-'+element.crop+' .pathogen-'+element.path).append('<div class="helicoverpa grid-item genotype-c'+element.c_geno+'-p'+element.p_geno+' '+icon+'"></div>');
 				});
 				// arrange helicoverpa
 				var $grid = $('.grid').masonry({
@@ -95,7 +100,8 @@
 	  })
 	  .fail(function() {
 	    // Handle missing data...
-			console.log("No output file");	// the sidebar
+			console.log("No output file");
+			// make the sidebar work without redrawing missing helicoverpa
 			$('#toggle-controls').click(function(){			
 	      $('.wrapper').toggleClass('open-controls');
 	    });
