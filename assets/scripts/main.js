@@ -82,7 +82,7 @@
 				$grid.masonry();
 				// the sidebar
 				$('#toggle-controls').click(function(){			
-		      $('.wrapper').toggleClass('toggle');
+		      $('.wrapper').toggleClass('open-controls');
 		      $('.wrapper #content').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function(e) {
 				    // rearrarange helicoverpa when the transistion ends
 						$grid.masonry();
