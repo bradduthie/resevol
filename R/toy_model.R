@@ -381,6 +381,3 @@ build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
 }
 
 
-
-
-
