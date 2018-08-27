@@ -3,12 +3,14 @@ body {
 	overflow: hidden;
 }
 .wrapper {
+	position: relative;
 	display: flex;
 	width: 100%;
 	max-width: 100%;
 	#controls {
 		min-width: 250px;
 		max-width: 250px;
+		margin-left: -250px;
 		height: 100vh;
 		position: fixed;
 		top: 0;
@@ -17,46 +19,45 @@ body {
 		padding: 1em;
 		transition: all .3s;
 		@media (max-width: 768px) {
-			margin-left: -250px;
+			margin-left: -100vw;;
 		}
 	}
 	#content {
-		width: calc(100% - 250px);
+		width: 100vw;
 		min-height: 100vh;
 		transition: all .3s;
 		position: absolute;
 		top: 0;
 		right: 0;
 		@media (max-width: 768px) {
-			width: 100%;
+			width: 100vw;
 		}
 	}
 	#toggle-controls {
 		position: fixed;
 		top: 10px;
-		left: 265px;
+		left: 15px;
 		z-index: 999;
-		@media (max-width: 768px) {
-			left: 15px;
-		}
+		cursor: pointer;
 	}
-	&.toggle {
+	&.open-controls {
 		#controls {
-			margin-left: -250px;
+			margin-left: 0;
 			@media (max-width: 768px) {
-				margin-left: 0;
+				max-width: 100vw;
+				width: 100vw;
 			}
 		}
 		#content {
-			width: 100%;
+			width: calc(100vw - 250px);
 			@media (max-width: 768px) {
-				width: calc(100% - 250px);
+				width: 0;
 			}
 		}
 		#toggle-controls {
-			left: 15px;
+			left: 265px;
 			@media (max-width: 768px) {
-				left: 265px;
+				left: calc(100vw - 60px);
 			}
 		}
 	}

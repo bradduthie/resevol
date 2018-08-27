@@ -1,0 +1,20 @@
+#crops-slider,
+#pathogens-slider {
+	width: 80%;
+	margin-left: 1.5em;
+	left: -1px;
+	&:before {
+		content: "0";
+		display: inline-block;
+		position: absolute;
+		left: -1.5em;
+		top: -2px;
+	}
+	&:after {
+		content: "3";
+		display: inline-block;
+		position: absolute;
+		right: -1.5em;
+		top: -2px;
+	}
+}
