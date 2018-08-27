@@ -17,4 +17,7 @@
 		right: -1.5em;
 		top: -2px;
 	}
+	@media (max-width: 768px) {
+		width: calc(100vw - 75px);
+	}
 }

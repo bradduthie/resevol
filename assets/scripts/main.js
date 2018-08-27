@@ -29,10 +29,13 @@
 			"helicoverpa": [{crop, pathogen, genotype, resistance},{crop, pathogen, genotype, resistance}]
 		---
 		*/
-		$.getJSON("./data/output.json", function(patches){
-			if($.isEmptyObject(patches)) {
+		$.getJSON('./data/output.json').done(function(patches) {
+	    if($.isEmptyObject(patches)) {
 				// Handle missing data...
-				console.log("No patch data");	
+				console.log("No patch data");	// the sidebar
+				$('#toggle-controls').click(function(){			
+		      $('.wrapper').toggleClass('open-controls');
+		    });
 			} else {
 				// If we have data Make the patches...
 				//console.log(patches);
@@ -88,7 +91,14 @@
 						$grid.masonry();
 				  });
 		    });
-			}
-		});
+			}			
+	  })
+	  .fail(function() {
+	    // Handle missing data...
+			console.log("No output file");	// the sidebar
+			$('#toggle-controls').click(function(){			
+	      $('.wrapper').toggleClass('open-controls');
+	    });
+	  });	
 	}); // end document ready
 })(jQuery); // Fully reference jQuery after this point.
