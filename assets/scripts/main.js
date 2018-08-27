@@ -21,14 +21,7 @@
 			input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
 			//console.log(input);
 		});
-		/* 
-		Get the data (output by R) formatted as:
-		---
-			"crops": [array or crop values for Y axis],
-			"pathogens": [array of pathogens for X axis],
-			"helicoverpa": [{crop, pathogen, genotype, resistance},{crop, pathogen, genotype, resistance}]
-		---
-		*/
+		// Get the data (output by R):
 		$.getJSON('./data/output.json').done(function(patches) {
 	    if($.isEmptyObject(patches)) {
 				// Handle missing data...
@@ -63,7 +56,11 @@
 				// fill each patch
 				$.each(patches.values.values, function(index, element){
 					element = element[0];
-					console.log(element);
+					var R = element.c_geno * 3;
+					var G = element.p_geno * 3;
+					var B = element.c_geno * 2 + element.p_geno * 2; 
+					rgb = "rgb("+R+","+G+","+B+")";
+					//console.log(element);
 					var icon = null;
 					if(!element.eat_crop && !element.resist_path){
 						// can neither resist pathogen or eat crop
@@ -75,7 +72,7 @@
 						// can eat crop or resist pathogen, but can't do both
 						icon = 'fas fa-meh';
 					}
-					$('.crop-'+element.crop+' .pathogen-'+element.path).append('<div class="helicoverpa grid-item genotype-c'+element.c_geno+'-p'+element.p_geno+' '+icon+'"></div>');
+					$('.crop-'+element.crop+' .pathogen-'+element.path).append('<div class="helicoverpa grid-item c-'+element.c_geno+' p-'+element.p_geno+' '+icon+'" style="color: '+rgb+'"></div>');
 				});
 				// arrange helicoverpa
 				var $grid = $('.grid').masonry({
