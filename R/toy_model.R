@@ -119,9 +119,8 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
                     cell_vals = unname(apply(mat, 1, 
                                              function(x) as.data.frame(t(x))))
     );
-    sim_json <- toJSON(list(landscape = names(modsim), land_vals = modsim,
-                            cells     = names(modsim), cell_vals = modsim),
-                            pretty = TRUE);
+    sim_json <- toJSON(list(landscape = names(modsim), cells = names(modsim), 
+                            values = modsim), pretty = TRUE);
     if(printit == TRUE){
         write(sim_json, filename);
     }
