@@ -59,9 +59,9 @@
 				$.each(patches.values.values, function(index, element){
 					element = element[0];
 					// generate colours based on genotype
-					var R = element.c_geno * 3;
-					var G = element.p_geno * 3;
-					var B = element.c_geno * 2 + element.p_geno * 2; 
+					var R = element.c_geno * 4;
+					var G = element.p_geno * 4;
+					var B = element.c_geno * 3 + element.p_geno * 3; 
 					var rgb = "rgb("+R+","+G+","+B+")";
 					// set icon based on resulting traits
 					var icon = null;
