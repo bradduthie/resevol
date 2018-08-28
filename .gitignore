@@ -10,3 +10,5 @@
 assets/bower_components
 assets/node_modules
 assets/npm-debug.log
+
+data/output.json

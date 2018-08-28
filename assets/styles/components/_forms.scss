@@ -21,3 +21,7 @@
 		width: calc(100vw - 75px);
 	}
 }
+button[type="submit"] {
+	cursor: pointer;
+	margin-bottom: 2em;
+}

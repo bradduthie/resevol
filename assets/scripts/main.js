@@ -8,7 +8,8 @@
 		var pathogens = 0;
 		var input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
 		//console.log(input);
-		// Watch the sliders
+		// Watch the sliders - submitted now via GET as easier to get working wth rApache
+		/*
 		$("#crops, #pathogens").on("change", function(slideEvt) {
 			if(slideEvt.currentTarget.id == "crops"){
 				// update crops if change detected
@@ -18,9 +19,14 @@
 				pathogens = slideEvt.value.newValue;
 			}
 			// parse updated JSON to send to R function
-			input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
-			//console.log(input);
+			// input = $.parseJSON( '{"crops": '+crops+', "pathogens": '+pathogens+'}' );
+			// set cookies with form data to access from R
+			$.cookie('crops', crops);
+			$.cookie('pathogens', pathogens);
+			console.log($.cookie('crops'));
+			console.log($.cookie('pathogens'));
 		});
+		*/
 		// Get the data (output by R):
 		$.getJSON('./data/sample_sim2.json').done(function(patches) {
 	    if($.isEmptyObject(patches)) {
