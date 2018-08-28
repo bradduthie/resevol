@@ -27,7 +27,12 @@ library(rhandsontable)
 
 > **This notebook tracks progress on the development of [helicoverpa](https://bradduthie.github.io/helicoverpa/) R package, a BBSRC [FAPESP Newton Funded](http://www.fapesp.br/en/9552) Project to model how the spatial scale of heterogeneity in fungal isolate application and crop plant cultivation affects variation in the selection landscape for biopesticide resistance.**
 
-*******************************************************************************
+********************************************************************************
+
+<center>**[Go to comments](#comments)**</center>
+
+********************************************************************************
+
 
 <a name="contents">Contents:</a>
 ================================================================================
@@ -36,7 +41,8 @@ library(rhandsontable)
 
  - **2018**
 
-     - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018)
+     - **AUG** [13](#u-13-AUG-2018), [14](#u-14-AUG-2018), [27](#u-27-AUG-2018)
+     - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018), [30](#u-30-JUL-2018)
 
 [Project comments](#comments)
 
@@ -44,6 +50,1798 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+> <a name="u-27-AUG-2018">Update: 27 AUG 2018</a>
+
+**Update to transferring to JSON**
+
+```{r, echo = FALSE}
+# ==============================================================================
+# This is just a toy version of the model, for the presentation
+# ==============================================================================
+# Note that I'm adding 'toy' at the start of each function; this is just in case
+# we actually want to keep some of these functions in the eventual R package, 
+# but also don't want to worry about not being able to name functions like
+# "initialise_land" the same here as elsewhere in the eventual bigger model.
+# ==============================================================================
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    LAND_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        LAND_DATA[[gen]] <- LAND;
+        gen <- gen + 1;
+    }
+    return(list(PEST_DATA = PEST_DATA, LAND_DATA = LAND_DATA));
+}
+
+results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
+    if("package:jsonlite" %in% search() == FALSE){
+        stop("Error: Need to load the R package 'jsonlite'")
+    }
+    inds   <- dim(pest)[1];
+    p_geno <- rep(x = 0, times = inds);
+    c_geno <- rep(x = 0, times = inds);
+    path   <- rep(x = 0, times = inds);
+    crop   <- rep(x = 0, times = inds);
+    r_path <- rep(x = 0, times = inds);
+    r_crop <- rep(x = 0, times = inds);
+    for(i in 1:inds){ # Doing this a bit lazily, without refactoring the rest
+        p_geno[i] <- as.numeric( paste(pest[i,5], pest[i,6], sep = ""));
+        c_geno[i] <- as.numeric( paste(pest[i,7], pest[i,8], sep = ""));
+        xloc      <- pest[i, 3];
+        yloc      <- pest[i, 4];
+        path[i]   <- land[xloc, yloc, 2];
+        crop[i]   <- land[xloc, yloc, 3];
+        if(pest[i,5] == path[i] | pest[i,5] == path[i]){
+            r_path <- 1;
+        }
+        if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
+            r_crop <- 1;
+        }
+    }
+    data      <- matrix(data = 0, nrow = inds, ncol = 10);
+    data[,1]  <- pest[,1];
+    data[,2]  <- pest[,2];
+    data[,3]  <- pest[,3];
+    data[,4]  <- pest[,4];
+    data[,5]  <- path;
+    data[,6]  <- crop;
+    data[,7]  <- p_geno;
+    data[,8]  <- c_geno;
+    data[,9]  <- r_path;
+    data[,10] <- r_crop;
+    colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
+                        "p_geno", "c_geno", "resist_path", "eat_crop");
+    modsim <- list( traits = colnames(data), 
+                    values = unname(apply(data, 1, 
+                                          function(x) as.data.frame(t(x))))
+    );
+    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+                       pretty = TRUE);
+    if(printit == TRUE){
+        write(sim_json, filename);
+    }
+    return(sim_json);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list  <- unlist(lapply(PEST_DATA, dim));
+    den_vect  <- den_list[c(TRUE, FALSE)];
+    gens      <- length(PEST_DATA);
+    p_alleles <- max(c(PEST_DATA[[1]][,5], PEST_DATA[[1]][,6]));
+    c_alleles <- max(c(PEST_DATA[[1]][,7], PEST_DATA[[1]][,8])); 
+    p_tabl    <- matrix(data = 0, nrow = gens, ncol = p_alleles);
+    c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
+    # Allele frequencies
+    for(gen in 1:length(PEST_DATA)){
+        total_p_alleles <- length(PEST_DATA[[gen]][,5:6]);
+        total_c_alleles <- length(PEST_DATA[[gen]][,7:8]);
+        for(allele in 1:p_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            p_tabl[gen, allele]  <- allele_count / total_p_alleles
+        }
+        for(allele in 1:c_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            c_tabl[gen, allele]  <- allele_count / total_c_alleles
+        }
+    }
+    return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
+}
+
+toy_check_extinction <- function(PEST, gen){
+    if(is.vector(PEST) == TRUE){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(dim(PEST)[1] < 4){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    return(FALSE);
+}
+
+# Initialise the landscape
+toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    p_values  <- sample(x = 1:pathogens, size = xdim * ydim, replace = TRUE);
+    p_layer   <- matrix(data = p_values, ncol = xdim, nrow = ydim);
+    c_values  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+    c_layer   <- matrix(data = c_values, ncol = xdim, nrow = ydim);
+    LAND[,,2] <- p_layer; # Just occurred to me that we might want a layer for
+    LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
+    return(LAND);
+}
+
+# Initialise some *very* simple pests. Each allele is just going to map one to
+# one for whether a crop can be attacked or a pathogen resisted. I am not even
+# going to add traits affecting dispersal in the toy version -- this can be
+# uniform for all individuals
+toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
+    xdim     <- dim(LAND)[1]; # This is needed to put the pests on some
+    ydim     <- dim(LAND)[2]; # landscape cell
+    PEST     <- matrix(data = 0, nrow = N, ncol = 8);
+    PEST[,1] <- 1:N;                                           # ID
+    PEST[,2] <- sample(x = c(0, 1), size = N, replace = TRUE); # Sex
+    PEST[,3] <- sample(x = 1:xdim,  size = N, replace = TRUE); # x-location
+    PEST[,4] <- sample(x = 1:ydim,  size = N, replace = TRUE); # y-location
+    PEST[,5] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 1
+    PEST[,6] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 2
+    PEST[,7] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 1
+    PEST[,8] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 2
+    return(PEST);
+}
+
+# Just going to make this a simple function at first, randomly changing crops
+toy_set_crops <- function(LAND, crops = 1, type = "static"){
+    if(crops == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_crop                   <- LAND[,,3];
+        new_crop                   <- old_crop + 1;
+        new_crop[new_crop > crops] <- 1;
+        LAND[,,3]                  <- new_crop;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_cval  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+        new_crop  <- matrix(data = new_cval, nrow = xdim, ncol = ydim);
+        LAND[,,3] <- new_crop;
+    }
+    return(LAND);
+}
+
+# Ditto here -- just a simple function changing pathogens
+toy_set_paths <- function(LAND, paths = 1, type = "static"){
+    if(paths == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_path                   <- LAND[,,3];
+        new_path                   <- old_path + 1;
+        new_path[new_path > paths] <- 1;
+        LAND[,,2]                  <- new_path;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
+        new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
+        LAND[,,2] <- new_path;
+    }
+    return(LAND);
+}
+
+# Just a function to move pests at a given value, randomly on the landscape. The
+# `prob` is just probability of moving in a time step, while `dist` is just the
+# maximum distance moved in cells, in any direction.
+toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
+    xdim                     <- dim(LAND)[1];
+    ydim                     <- dim(LAND)[2];
+    pests                    <- dim(PEST)[1];
+    to_move                  <- rbinom(n = pests, size = 1, pr = prob);
+    move_x                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    move_y                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    PEST[to_move == 1, 3]    <- PEST[to_move == 1, 3] + move_x[to_move == 1];
+    PEST[to_move == 1, 4]    <- PEST[to_move == 1, 4] + move_y[to_move == 1];
+    # The ifs below make a torus landscape so that pests don't move off of it
+    # In C, this will be done with a loop that looks cleaner; the below is just
+    # avoiding using a loop in R, though it would probably be fine.
+    if(length(PEST[PEST[,3] < 1, 3]) > 0){ 
+        PEST[PEST[,3] < 1, 3] <- PEST[PEST[,3] < 1, 3] + xdim;
+    }
+    if(length(PEST[PEST[,3] > xdim, 3]) > 0){
+        PEST[PEST[,3] > xdim, 3] <- PEST[PEST[,3] > xdim, 3] - xdim;
+    }
+    if(length(PEST[PEST[,4] < 1, 4]) > 0){
+        PEST[PEST[,4] < 1, 4] <- PEST[PEST[,4] < 1, 4] + ydim;
+    }
+    if(length(PEST[PEST[,4] > ydim, 4]) > 0){
+        PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
+    }
+    return(PEST);
+}
+
+# Need to now feed the pests and remove those that don't feed (crop unavailable)
+toy_feed_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests <- dim(PEST)[1];
+    eaten <- rep(x = 0, times = pests); 
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        food  <- LAND[x_loc, y_loc, 3];
+        if(PEST[i, 7] == food | PEST[i, 8] == food){
+            eaten[i] <- 1;
+        }
+    }
+    PEST <- PEST[eaten == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then need to have pests resist pathogens, kill those that cannot
+toy_kill_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests    <- dim(PEST)[1];
+    survived <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        patho <- LAND[x_loc, y_loc, 2];
+        if(PEST[i, 5] == patho | PEST[i, 6] == patho){
+            survived[i] <- 1;
+        }
+    }
+    PEST <- PEST[survived == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then, reproduce pests that are left
+toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
+    x_dim           <- dim(LAND)[1];
+    y_dim           <- dim(LAND)[2];
+    offspring       <- NULL;
+    total_offspring <- 0; # This and the below are just to avoid an rbind(),
+    cell            <- 1; # which is a massive memory sink
+    lst_ID          <- max(PEST[,1]);
+    for(xloc in 1:x_dim){ # Double loop is just much cleaner here
+        for(yloc in 1:y_dim){
+            locals     <- which(PEST[,3] == xloc & PEST[,4] == yloc);
+            local_offs <- NULL;
+            if( length(locals) > 1 ){
+                local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
+            }
+            if(length(local_offs) > 0){
+                lst_ID            <- lst_ID + dim(local_offs)[1];
+                total_offspring   <- total_offspring + dim(local_offs)[1];
+                offspring[[cell]] <- local_offs;
+            }else{
+                offspring[[cell]] <- NULL;
+            }
+            cell              <- cell + 1;
+        }
+    }
+    offspring <- build_new_pest(offspring, total_offspring, pa, cr);
+    return(offspring);
+}
+
+# Need to recombine the genomes correctly in the offspring
+toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
+    if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
+        return(NULL);
+    }
+    females       <- loc_PEST[loc_PEST[,2] == 0,];
+    males         <- loc_PEST[loc_PEST[,2] == 1,];
+    new_offs      <- dim(females)[1] * floor(births);  
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);     
+    offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
+    offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
+    offspring[,3] <- loc_PEST[1, 3];
+    offspring[,4] <- loc_PEST[1, 4];
+    # Below grabs all of the alleles from females and males
+    p_fem_alleles <- c(females[,5], females[,6]);
+    p_mal_alleles <- c(males[,5], males[,6]);
+    c_fem_alleles <- c(females[,7], females[,8]);
+    c_mal_alleles <- c(males[,7], males[,8]);
+    # Now add them to the offspring randomly, one from female and one from male
+    for(i in 1:new_offs){
+        if(runif(n = 1) < 0.5){
+            offspring[i, 5] <- sample(x = p_fem_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_mal_alleles, size = 1);
+        }else{
+            offspring[i, 5] <- sample(x = p_mal_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_fem_alleles, size = 1);            
+        }
+        if(runif(n = 1) < 0.5){
+            offspring[i, 7] <- sample(x = c_fem_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_mal_alleles, size = 1);
+        }else{
+            offspring[i, 7] <- sample(x = c_mal_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_fem_alleles, size = 1);            
+        }
+    }
+    if(dim(offspring)[1] > K){
+        offspring <- offspring[1:K,];
+    }
+    return(offspring);
+}
+
+# Merge the different layers into a new pest array
+build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
+    new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
+    start_row  <- 1; # Again, avoids an rbind memory issue
+    for(cell in 1:length(offspring)){
+        if(length(offspring[[cell]]) > 0){
+            cell_offs       <- dim(offspring[[cell]])[1];
+            rows            <- start_row:(start_row + cell_offs - 1);
+            new_PEST[rows,] <- offspring[[cell]];
+            start_row       <- start_row + cell_offs;
+        }
+    }
+    mu5 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    new_PEST[mu5, 5] <- sample(x = 1:cr, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:cr, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:pa, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:pa, size = length(mu8), replace = TRUE);
+    return(new_PEST);
+}
+```
+
+The function below has now been modified, along with the outer function for simulating resistance.
+
+```{r}
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    LAND_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        LAND_DATA[[gen]] <- LAND;
+        gen <- gen + 1;
+    }
+    return(list(PEST_DATA = PEST_DATA, LAND_DATA = LAND_DATA));
+}
+
+results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
+    if("package:jsonlite" %in% search() == FALSE){
+        stop("Error: Need to load the R package 'jsonlite'")
+    }
+    inds   <- dim(pest)[1];
+    p_geno <- rep(x = 0, times = inds);
+    c_geno <- rep(x = 0, times = inds);
+    path   <- rep(x = 0, times = inds);
+    crop   <- rep(x = 0, times = inds);
+    r_path <- rep(x = 0, times = inds);
+    r_crop <- rep(x = 0, times = inds);
+    for(i in 1:inds){ # Doing this a bit lazily, without refactoring the rest
+        p_geno[i] <- as.numeric( paste(pest[i,5], pest[i,6], sep = ""));
+        c_geno[i] <- as.numeric( paste(pest[i,7], pest[i,8], sep = ""));
+        xloc      <- pest[i, 3];
+        yloc      <- pest[i, 4];
+        path[i]   <- land[xloc, yloc, 2];
+        crop[i]   <- land[xloc, yloc, 3];
+        if(pest[i,5] == path[i] | pest[i,5] == path[i]){
+            r_path <- 1;
+        }
+        if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
+            r_crop <- 1;
+        }
+    }
+    data      <- matrix(data = 0, nrow = inds, ncol = 10);
+    data[,1]  <- pest[,1];
+    data[,2]  <- pest[,2];
+    data[,3]  <- pest[,3];
+    data[,4]  <- pest[,4];
+    data[,5]  <- path;
+    data[,6]  <- crop;
+    data[,7]  <- p_geno;
+    data[,8]  <- c_geno;
+    data[,9]  <- r_path;
+    data[,10] <- r_crop;
+    colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
+                        "p_geno", "c_geno", "resist_path", "eat_crop");
+    modsim <- list( traits = colnames(data), 
+                    values = unname(apply(data, 1, 
+                                          function(x) as.data.frame(t(x))))
+    );
+    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+                       pretty = TRUE);
+    if(printit == TRUE){
+        write(sim_json, filename);
+    }
+    return(sim_json);
+}
+```
+
+We can run things the same way to generate the output. Note that the output from `toy_simulate_resistance` has changed, so now we need to read the list into `results_to_json`. The list contains the elements `PEST_DATA` and `LAND_DATA`.
+
+```{r}
+library(jsonlite);
+sim  <- toy_simulate_resistance(pathogens = 3, crops = 3);
+json <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]],
+                        filename = "../data/sample_sim.json");
+```
+
+ The output is [here]([sample_sim.json](https://github.com/bradduthie/helicoverpa/blob/dev/data/sample_sim.json)).
+
+```{r, echo = FALSE}
+# ==============================================================================
+# This is just a toy version of the model, for the presentation
+# ==============================================================================
+# Note that I'm adding 'toy' at the start of each function; this is just in case
+# we actually want to keep some of these functions in the eventual R package, 
+# but also don't want to worry about not being able to name functions like
+# "initialise_land" the same here as elsewhere in the eventual bigger model.
+# ==============================================================================
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        gen <- gen + 1;
+    }
+    return(PEST_DATA);
+}
+
+results_to_json <- function(sim, filename = "sim.json"){
+    if("package:jsonlite" %in% search() == FALSE){
+        stop("Error: Need to load the R package 'jsonlite'")
+    }
+    colnames(sim) <- c("ID", "sex", "xloc", "yloc", "p_al_1", "p_al_2", 
+                       "c_al_1", "c_al_2");
+    modsim <- list( traits = colnames(sim), 
+                    values = unname(apply(sim, 1, 
+                                          function(x) as.data.frame(t(x))))
+              );
+    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+                   pretty = TRUE);                   
+    write(sim_json, filename);
+    return(sim_json);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list  <- unlist(lapply(PEST_DATA, dim));
+    den_vect  <- den_list[c(TRUE, FALSE)];
+    gens      <- length(PEST_DATA);
+    p_alleles <- max(c(PEST_DATA[[1]][,5], PEST_DATA[[1]][,6]));
+    c_alleles <- max(c(PEST_DATA[[1]][,7], PEST_DATA[[1]][,8])); 
+    p_tabl    <- matrix(data = 0, nrow = gens, ncol = p_alleles);
+    c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
+    # Allele frequencies
+    for(gen in 1:length(PEST_DATA)){
+        total_p_alleles <- length(PEST_DATA[[gen]][,5:6]);
+        total_c_alleles <- length(PEST_DATA[[gen]][,7:8]);
+        for(allele in 1:p_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            p_tabl[gen, allele]  <- allele_count / total_p_alleles
+        }
+        for(allele in 1:c_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            c_tabl[gen, allele]  <- allele_count / total_c_alleles
+        }
+    }
+    return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
+}
+
+toy_check_extinction <- function(PEST, gen){
+    if(is.vector(PEST) == TRUE){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(dim(PEST)[1] < 4){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    return(FALSE);
+}
+
+# Initialise the landscape
+toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    p_values  <- sample(x = 1:pathogens, size = xdim * ydim, replace = TRUE);
+    p_layer   <- matrix(data = p_values, ncol = xdim, nrow = ydim);
+    c_values  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+    c_layer   <- matrix(data = c_values, ncol = xdim, nrow = ydim);
+    LAND[,,2] <- p_layer; # Just occurred to me that we might want a layer for
+    LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
+    return(LAND);
+}
+
+# Initialise some *very* simple pests. Each allele is just going to map one to
+# one for whether a crop can be attacked or a pathogen resisted. I am not even
+# going to add traits affecting dispersal in the toy version -- this can be
+# uniform for all individuals
+toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
+    xdim     <- dim(LAND)[1]; # This is needed to put the pests on some
+    ydim     <- dim(LAND)[2]; # landscape cell
+    PEST     <- matrix(data = 0, nrow = N, ncol = 8);
+    PEST[,1] <- 1:N;                                           # ID
+    PEST[,2] <- sample(x = c(0, 1), size = N, replace = TRUE); # Sex
+    PEST[,3] <- sample(x = 1:xdim,  size = N, replace = TRUE); # x-location
+    PEST[,4] <- sample(x = 1:ydim,  size = N, replace = TRUE); # y-location
+    PEST[,5] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 1
+    PEST[,6] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 2
+    PEST[,7] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 1
+    PEST[,8] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 2
+    return(PEST);
+}
+
+# Just going to make this a simple function at first, randomly changing crops
+toy_set_crops <- function(LAND, crops = 1, type = "static"){
+    if(crops == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_crop                   <- LAND[,,3];
+        new_crop                   <- old_crop + 1;
+        new_crop[new_crop > crops] <- 1;
+        LAND[,,3]                  <- new_crop;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_cval  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+        new_crop  <- matrix(data = new_cval, nrow = xdim, ncol = ydim);
+        LAND[,,3] <- new_crop;
+    }
+    return(LAND);
+}
+
+# Ditto here -- just a simple function changing pathogens
+toy_set_paths <- function(LAND, paths = 1, type = "static"){
+    if(paths == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_path                   <- LAND[,,3];
+        new_path                   <- old_path + 1;
+        new_path[new_path > paths] <- 1;
+        LAND[,,2]                  <- new_path;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
+        new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
+        LAND[,,2] <- new_path;
+    }
+    return(LAND);
+}
+
+# Just a function to move pests at a given value, randomly on the landscape. The
+# `prob` is just probability of moving in a time step, while `dist` is just the
+# maximum distance moved in cells, in any direction.
+toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
+    xdim                     <- dim(LAND)[1];
+    ydim                     <- dim(LAND)[2];
+    pests                    <- dim(PEST)[1];
+    to_move                  <- rbinom(n = pests, size = 1, pr = prob);
+    move_x                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    move_y                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    PEST[to_move == 1, 3]    <- PEST[to_move == 1, 3] + move_x[to_move == 1];
+    PEST[to_move == 1, 4]    <- PEST[to_move == 1, 4] + move_y[to_move == 1];
+    # The ifs below make a torus landscape so that pests don't move off of it
+    # In C, this will be done with a loop that looks cleaner; the below is just
+    # avoiding using a loop in R, though it would probably be fine.
+    if(length(PEST[PEST[,3] < 1, 3]) > 0){ 
+        PEST[PEST[,3] < 1, 3] <- PEST[PEST[,3] < 1, 3] + xdim;
+    }
+    if(length(PEST[PEST[,3] > xdim, 3]) > 0){
+        PEST[PEST[,3] > xdim, 3] <- PEST[PEST[,3] > xdim, 3] - xdim;
+    }
+    if(length(PEST[PEST[,4] < 1, 4]) > 0){
+        PEST[PEST[,4] < 1, 4] <- PEST[PEST[,4] < 1, 4] + ydim;
+    }
+    if(length(PEST[PEST[,4] > ydim, 4]) > 0){
+        PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
+    }
+    return(PEST);
+}
+
+# Need to now feed the pests and remove those that don't feed (crop unavailable)
+toy_feed_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests <- dim(PEST)[1];
+    eaten <- rep(x = 0, times = pests); 
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        food  <- LAND[x_loc, y_loc, 3];
+        if(PEST[i, 7] == food | PEST[i, 8] == food){
+            eaten[i] <- 1;
+        }
+    }
+    PEST <- PEST[eaten == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then need to have pests resist pathogens, kill those that cannot
+toy_kill_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests    <- dim(PEST)[1];
+    survived <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        patho <- LAND[x_loc, y_loc, 2];
+        if(PEST[i, 5] == patho | PEST[i, 6] == patho){
+            survived[i] <- 1;
+        }
+    }
+    PEST <- PEST[survived == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then, reproduce pests that are left
+toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
+    x_dim           <- dim(LAND)[1];
+    y_dim           <- dim(LAND)[2];
+    offspring       <- NULL;
+    total_offspring <- 0; # This and the below are just to avoid an rbind(),
+    cell            <- 1; # which is a massive memory sink
+    lst_ID          <- max(PEST[,1]);
+    for(xloc in 1:x_dim){ # Double loop is just much cleaner here
+        for(yloc in 1:y_dim){
+            locals     <- which(PEST[,3] == xloc & PEST[,4] == yloc);
+            local_offs <- NULL;
+            if( length(locals) > 1 ){
+                local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
+            }
+            if(length(local_offs) > 0){
+                lst_ID            <- lst_ID + dim(local_offs)[1];
+                total_offspring   <- total_offspring + dim(local_offs)[1];
+                offspring[[cell]] <- local_offs;
+            }else{
+                offspring[[cell]] <- NULL;
+            }
+            cell              <- cell + 1;
+        }
+    }
+    offspring <- build_new_pest(offspring, total_offspring, pa, cr);
+    return(offspring);
+}
+
+# Need to recombine the genomes correctly in the offspring
+toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
+    if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
+        return(NULL);
+    }
+    females       <- loc_PEST[loc_PEST[,2] == 0,];
+    males         <- loc_PEST[loc_PEST[,2] == 1,];
+    new_offs      <- dim(females)[1] * floor(births);  
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);     
+    offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
+    offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
+    offspring[,3] <- loc_PEST[1, 3];
+    offspring[,4] <- loc_PEST[1, 4];
+    # Below grabs all of the alleles from females and males
+    p_fem_alleles <- c(females[,5], females[,6]);
+    p_mal_alleles <- c(males[,5], males[,6]);
+    c_fem_alleles <- c(females[,7], females[,8]);
+    c_mal_alleles <- c(males[,7], males[,8]);
+    # Now add them to the offspring randomly, one from female and one from male
+    for(i in 1:new_offs){
+        if(runif(n = 1) < 0.5){
+            offspring[i, 5] <- sample(x = p_fem_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_mal_alleles, size = 1);
+        }else{
+            offspring[i, 5] <- sample(x = p_mal_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_fem_alleles, size = 1);            
+        }
+        if(runif(n = 1) < 0.5){
+            offspring[i, 7] <- sample(x = c_fem_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_mal_alleles, size = 1);
+        }else{
+            offspring[i, 7] <- sample(x = c_mal_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_fem_alleles, size = 1);            
+        }
+    }
+    if(dim(offspring)[1] > K){
+        offspring <- offspring[1:K,];
+    }
+    return(offspring);
+}
+
+# Merge the different layers into a new pest array
+build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
+    new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
+    start_row  <- 1; # Again, avoids an rbind memory issue
+    for(cell in 1:length(offspring)){
+        if(length(offspring[[cell]]) > 0){
+            cell_offs       <- dim(offspring[[cell]])[1];
+            rows            <- start_row:(start_row + cell_offs - 1);
+            new_PEST[rows,] <- offspring[[cell]];
+            start_row       <- start_row + cell_offs;
+        }
+    }
+    mu5 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    new_PEST[mu5, 5] <- sample(x = 1:cr, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:cr, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:pa, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:pa, size = length(mu8), replace = TRUE);
+    return(new_PEST);
+}
+```
+
+**Transferring simulation results to json**
+
+I've written a short bit of code to link the simulation results to the code. The input for this is a single *generation* of the model (this could be easily changed). So if we run the `toy_simulate_resistance` function [as before](#u-14-AUG-2018), we get a list with elements being each generation.
+
+```{r}
+sim <- toy_simulate_resistance(crops = 3, pathogens = 3);
+```
+
+We can look at just the last generation below.
+
+```{r}
+head(sim[[19]]);
+```
+
+The code below sticks all of this into the json format (for the one generation), prints the json output to a file if `printit == TRUE`, and returns the json output.
+
+```{r}
+results_to_json <- function(sim, printit = TRUE, filename = "sim.json"){
+    if("package:jsonlite" %in% search() == FALSE){
+        stop("Error: Need to load the R package 'jsonlite'")
+    }
+    colnames(sim) <- c("ID", "sex", "xloc", "yloc", "p_al_1", "p_al_2", 
+                       "c_al_1", "c_al_2");
+    modsim <- list( traits = colnames(sim), 
+                    values = unname(apply(sim, 1, 
+                                          function(x) as.data.frame(t(x))))
+              );
+    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+                   pretty = TRUE);
+    if(printit == TRUE){
+        write(sim_json, filename);
+    }
+    return(sim_json);
+}
+```
+
+Using the function below to print and return the json. This relies on the `jsonlite` package, which must be installed and loaded.
+
+```{r}
+library(jsonlite);
+sim_json <- results_to_json(sim = sim[[19]], 
+                            filename = "../data/sample_sim.json");
+```
+
+The `sim_json` output should be easy to modify as necessary. I've not added it here because it's much too large for the notebook, but it can be accessed on the dev branch in the file [sample_sim.json](https://github.com/bradduthie/helicoverpa/blob/dev/data/sample_sim.json).
+
+> <a name="u-14-AUG-2018">Update: 14 AUG 2018</a>
+
+```{r, echo = FALSE}
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        gen <- gen + 1;
+    }
+    return(PEST_DATA);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list  <- unlist(lapply(PEST_DATA, dim));
+    den_vect  <- den_list[c(TRUE, FALSE)];
+    gens      <- length(PEST_DATA);
+    p_alleles <- max(c(PEST_DATA[[1]][,5], PEST_DATA[[1]][,6]));
+    c_alleles <- max(c(PEST_DATA[[1]][,7], PEST_DATA[[1]][,8])); 
+    p_tabl    <- matrix(data = 0, nrow = gens, ncol = p_alleles);
+    c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
+    # Allele frequencies
+    for(gen in 1:length(PEST_DATA)){
+        total_p_alleles <- length(PEST_DATA[[gen]][,5:6]);
+        total_c_alleles <- length(PEST_DATA[[gen]][,7:8]);
+        for(allele in 1:p_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            p_tabl[gen, allele]  <- allele_count / total_p_alleles
+        }
+        for(allele in 1:c_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            c_tabl[gen, allele]  <- allele_count / total_c_alleles
+        }
+    }
+    return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
+}
+
+toy_check_extinction <- function(PEST, gen){
+    if(is.vector(PEST) == TRUE){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(dim(PEST)[1] < 4){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    return(FALSE);
+}
+
+# Initialise the landscape
+toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    p_values  <- sample(x = 1:pathogens, size = xdim * ydim, replace = TRUE);
+    p_layer   <- matrix(data = p_values, ncol = xdim, nrow = ydim);
+    c_values  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+    c_layer   <- matrix(data = c_values, ncol = xdim, nrow = ydim);
+    LAND[,,2] <- p_layer; # Just occurred to me that we might want a layer for
+    LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
+    return(LAND);
+}
+
+# Initialise some *very* simple pests. Each allele is just going to map one to
+# one for whether a crop can be attacked or a pathogen resisted. I am not even
+# going to add traits affecting dispersal in the toy version -- this can be
+# uniform for all individuals
+toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
+    xdim     <- dim(LAND)[1]; # This is needed to put the pests on some
+    ydim     <- dim(LAND)[2]; # landscape cell
+    PEST     <- matrix(data = 0, nrow = N, ncol = 8);
+    PEST[,1] <- 1:N;                                           # ID
+    PEST[,2] <- sample(x = c(0, 1), size = N, replace = TRUE); # Sex
+    PEST[,3] <- sample(x = 1:xdim,  size = N, replace = TRUE); # x-location
+    PEST[,4] <- sample(x = 1:ydim,  size = N, replace = TRUE); # y-location
+    PEST[,5] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 1
+    PEST[,6] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 2
+    PEST[,7] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 1
+    PEST[,8] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 2
+    return(PEST);
+}
+
+# Just going to make this a simple function at first, randomly changing crops
+toy_set_crops <- function(LAND, crops = 1, type = "static"){
+    if(crops == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_crop                   <- LAND[,,3];
+        new_crop                   <- old_crop + 1;
+        new_crop[new_crop > crops] <- 1;
+        LAND[,,3]                  <- new_crop;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_cval  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+        new_crop  <- matrix(data = new_cval, nrow = xdim, ncol = ydim);
+        LAND[,,3] <- new_crop;
+    }
+    return(LAND);
+}
+
+# Ditto here -- just a simple function changing pathogens
+toy_set_paths <- function(LAND, paths = 1, type = "static"){
+    if(paths == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_path                   <- LAND[,,3];
+        new_path                   <- old_path + 1;
+        new_path[new_path > paths] <- 1;
+        LAND[,,2]                  <- new_path;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
+        new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
+        LAND[,,2] <- new_path;
+    }
+    return(LAND);
+}
+
+# Just a function to move pests at a given value, randomly on the landscape. The
+# `prob` is just probability of moving in a time step, while `dist` is just the
+# maximum distance moved in cells, in any direction.
+toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
+    xdim                     <- dim(LAND)[1];
+    ydim                     <- dim(LAND)[2];
+    pests                    <- dim(PEST)[1];
+    to_move                  <- rbinom(n = pests, size = 1, pr = prob);
+    move_x                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    move_y                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    PEST[to_move == 1, 3]    <- PEST[to_move == 1, 3] + move_x[to_move == 1];
+    PEST[to_move == 1, 4]    <- PEST[to_move == 1, 4] + move_y[to_move == 1];
+    # The ifs below make a torus landscape so that pests don't move off of it
+    # In C, this will be done with a loop that looks cleaner; the below is just
+    # avoiding using a loop in R, though it would probably be fine.
+    if(length(PEST[PEST[,3] < 1, 3]) > 0){ 
+        PEST[PEST[,3] < 1, 3] <- PEST[PEST[,3] < 1, 3] + xdim;
+    }
+    if(length(PEST[PEST[,3] > xdim, 3]) > 0){
+        PEST[PEST[,3] > xdim, 3] <- PEST[PEST[,3] > xdim, 3] - xdim;
+    }
+    if(length(PEST[PEST[,4] < 1, 4]) > 0){
+        PEST[PEST[,4] < 1, 4] <- PEST[PEST[,4] < 1, 4] + ydim;
+    }
+    if(length(PEST[PEST[,4] > ydim, 4]) > 0){
+        PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
+    }
+    return(PEST);
+}
+
+# Need to now feed the pests and remove those that don't feed (crop unavailable)
+toy_feed_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests <- dim(PEST)[1];
+    eaten <- rep(x = 0, times = pests); 
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        food  <- LAND[x_loc, y_loc, 3];
+        if(PEST[i, 7] == food | PEST[i, 8] == food){
+            eaten[i] <- 1;
+        }
+    }
+    PEST <- PEST[eaten == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then need to have pests resist pathogens, kill those that cannot
+toy_kill_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests    <- dim(PEST)[1];
+    survived <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        patho <- LAND[x_loc, y_loc, 2];
+        if(PEST[i, 5] == patho | PEST[i, 6] == patho){
+            survived[i] <- 1;
+        }
+    }
+    PEST <- PEST[survived == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then, reproduce pests that are left
+toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
+    x_dim           <- dim(LAND)[1];
+    y_dim           <- dim(LAND)[2];
+    offspring       <- NULL;
+    total_offspring <- 0; # This and the below are just to avoid an rbind(),
+    cell            <- 1; # which is a massive memory sink
+    lst_ID          <- max(PEST[,1]);
+    for(xloc in 1:x_dim){ # Double loop is just much cleaner here
+        for(yloc in 1:y_dim){
+            locals     <- which(PEST[,3] == xloc & PEST[,4] == yloc);
+            local_offs <- NULL;
+            if( length(locals) > 1 ){
+                local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
+            }
+            if(length(local_offs) > 0){
+                lst_ID            <- lst_ID + dim(local_offs)[1];
+                total_offspring   <- total_offspring + dim(local_offs)[1];
+                offspring[[cell]] <- local_offs;
+            }else{
+                offspring[[cell]] <- NULL;
+            }
+            cell              <- cell + 1;
+        }
+    }
+    offspring <- build_new_pest(offspring, total_offspring, pa, cr);
+    return(offspring);
+}
+
+# Need to recombine the genomes correctly in the offspring
+toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
+    if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
+        return(NULL);
+    }
+    females       <- loc_PEST[loc_PEST[,2] == 0,];
+    males         <- loc_PEST[loc_PEST[,2] == 1,];
+    new_offs      <- dim(females)[1] * floor(births);  
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);     
+    offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
+    offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
+    offspring[,3] <- loc_PEST[1, 3];
+    offspring[,4] <- loc_PEST[1, 4];
+    # Below grabs all of the alleles from females and males
+    p_fem_alleles <- c(females[,5], females[,6]);
+    p_mal_alleles <- c(males[,5], males[,6]);
+    c_fem_alleles <- c(females[,7], females[,8]);
+    c_mal_alleles <- c(males[,7], males[,8]);
+    # Now add them to the offspring randomly, one from female and one from male
+    for(i in 1:new_offs){
+        if(runif(n = 1) < 0.5){
+            offspring[i, 5] <- sample(x = p_fem_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_mal_alleles, size = 1);
+        }else{
+            offspring[i, 5] <- sample(x = p_mal_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_fem_alleles, size = 1);            
+        }
+        if(runif(n = 1) < 0.5){
+            offspring[i, 7] <- sample(x = c_fem_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_mal_alleles, size = 1);
+        }else{
+            offspring[i, 7] <- sample(x = c_mal_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_fem_alleles, size = 1);            
+        }
+    }
+    if(dim(offspring)[1] > K){
+        offspring <- offspring[1:K,];
+    }
+    return(offspring);
+}
+
+# Merge the different layers into a new pest array
+build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
+    new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
+    start_row  <- 1; # Again, avoids an rbind memory issue
+    for(cell in 1:length(offspring)){
+        if(length(offspring[[cell]]) > 0){
+            cell_offs       <- dim(offspring[[cell]])[1];
+            rows            <- start_row:(start_row + cell_offs - 1);
+            new_PEST[rows,] <- offspring[[cell]];
+            start_row       <- start_row + cell_offs;
+        }
+    }
+    mu5 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    new_PEST[mu5, 5] <- sample(x = 1:cr, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:cr, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:pa, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:pa, size = length(mu8), replace = TRUE);
+    return(new_PEST);
+}
+```
+
+**More playing around with the toy model**
+
+Following up on [yesterday](#skip_AUG_code), I have tweaked two functions to allow us to manipulate the number of alleles underlying pathogen resistance and crop feeding. In effect, this allows us to see how selection can sweep through to nearly fix an allele for resistance to a particular pathogen or for feeding on a particular crop (since only one allele is needed, other neutral alleles can hide in the heterozygotes). But, when crops are rotated, or pathogens are rotated, we have higher genetic diversity -- note that we are making an implicit assumption of a strong negative genetic correlation; pests can only have two alleles for resistance, e.g., and if there are three pathogens, then all pests must necessarily be susceptible to 1-2 pathogens.
+
+```{r}
+# ==============================================================================
+# This is just a toy version of the model, for the presentation
+# ==============================================================================
+# Note that I'm adding 'toy' at the start of each function; this is just in case
+# we actually want to keep some of these functions in the eventual R package, 
+# but also don't want to worry about not being able to name functions like
+# "initialise_land" the same here as elsewhere in the eventual bigger model.
+# ==============================================================================
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        gen <- gen + 1;
+    }
+    return(PEST_DATA);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list  <- unlist(lapply(PEST_DATA, dim));
+    den_vect  <- den_list[c(TRUE, FALSE)];
+    gens      <- length(PEST_DATA);
+    p_alleles <- max(c(PEST_DATA[[1]][,5], PEST_DATA[[1]][,6]));
+    c_alleles <- max(c(PEST_DATA[[1]][,7], PEST_DATA[[1]][,8])); 
+    p_tabl    <- matrix(data = 0, nrow = gens, ncol = p_alleles);
+    c_tabl    <- matrix(data = 0, nrow = gens, ncol = c_alleles);
+    # Allele frequencies
+    for(gen in 1:length(PEST_DATA)){
+        total_p_alleles <- length(PEST_DATA[[gen]][,5:6]);
+        total_c_alleles <- length(PEST_DATA[[gen]][,7:8]);
+        for(allele in 1:p_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,5:6] == allele);
+            p_tabl[gen, allele]  <- allele_count / total_p_alleles
+        }
+        for(allele in 1:c_alleles){
+            allele_count         <- sum(PEST_DATA[[gen]][,7:8] == allele);
+            c_tabl[gen, allele]  <- allele_count / total_c_alleles
+        }
+    }
+    return(list(densities = den_vect, pathogen_fr = p_tabl, crop_fr = c_tabl));
+}
+```
+
+
+I'm going to run the same analysis as [yesterday](#skip_AUG_code), but now show how allele frequencies change over generations. I've not broken this down by landscape cell yet, but this will be easy to do (just let me know the format the data would be best presented in). In each case, now there will be 3 alleles underlying pathogen resistance, and 3 alleles underlying crop feeding.
+
+```{r}
+sim1 <- toy_simulate_resistance(pathogens = 1, crops = 1, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "static", path_rotate = "static");
+dat1 <- summarise_pest_data(sim1);
+plot(x = 1:length(dat1$densities), y = dat1$densities, type = "b", pch = 20, 
+     lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19),
+     xlab = "Generation", ylab = "Pest density");
+plot(x = 1:length(dat1$pathogen_fr[,1]), y = dat1$pathogen_fr[,1], type = "b", 
+     pch = 20, lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 1), 
+     xlim = c(1, 19), xlab = "Generation", ylab = "Allele frequency");
+points(x = 1:length(dat1$pathogen_fr[,2]), y = dat1$pathogen_fr[,2], type = "b", 
+     pch = 20, lwd = 2, col = "red");
+points(x = 1:length(dat1$pathogen_fr[,3]), y = dat1$pathogen_fr[,3], type = "b", 
+     pch = 20, lwd = 2, col = "blue");
+```
+
+Next, we can see what happens when we instead have 3 pathogens under otherwise identical conditions. In each generation, one of three pathogens is randomly applied to each landscape cell.
+
+```{r}
+sim2 <- toy_simulate_resistance(pathogens = 3, crops = 1, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "static", path_rotate = "random");
+dat2 <- summarise_pest_data(sim2);
+plot(x = 1:length(dat2$densities), y = dat2$densities, type = "b", pch = 20, 
+     lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19),
+     xlab = "Generation", ylab = "Pest density");
+plot(x = 1:length(dat2$pathogen_fr[,1]), y = dat2$pathogen_fr[,1], type = "b", 
+     pch = 20, lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 1), 
+     xlim = c(1, 19), xlab = "Generation", ylab = "Allele frequency");
+points(x = 1:length(dat2$pathogen_fr[,2]), y = dat2$pathogen_fr[,2], type = "b", 
+     pch = 20, lwd = 2, col = "red");
+points(x = 1:length(dat2$pathogen_fr[,3]), y = dat2$pathogen_fr[,3], type = "b", 
+     pch = 20, lwd = 2, col = "blue");
+```
+
+Next, we can see what happens when we instead have 3 pathogens *and* 3 crops under otherwise identical conditions. In each generation, one of three pathogens and one of three crops are randomly applied to each landscape cell.
+
+```{r}
+sim3 <- toy_simulate_resistance(pathogens = 3, crops = 3, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "random", path_rotate = "random");
+dat3 <- summarise_pest_data(sim3);
+plot(x = 1:length(dat3$densities), y = dat3$densities, type = "b", pch = 20, 
+     lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19),
+     xlab = "Generation", ylab = "Pest density");
+plot(x = 1:length(dat3$pathogen_fr[,1]), y = dat3$pathogen_fr[,1], type = "b", 
+     pch = 20, lwd = 2, cex.lab = 1.5, cex.axis = 1.5, ylim = c(0, 1), 
+     xlim = c(1, 19), xlab = "Generation", ylab = "Allele frequency");
+points(x = 1:length(dat3$pathogen_fr[,2]), y = dat3$pathogen_fr[,2], type = "b", 
+     pch = 20, lwd = 2, col = "red");
+points(x = 1:length(dat3$pathogen_fr[,3]), y = dat3$pathogen_fr[,3], type = "b", 
+     pch = 20, lwd = 2, col = "blue");
+```
+
+As is evident, pathogen and crop rotation decreases pest density and increases the diversity of alleles underlying pathogen resistance and crop feeding. 
+
+
+
+
+> <a name="u-13-AUG-2018">Update: 13 AUG 2018</a>
+
+**Visual stuff looks good!**
+
+Rose has created a very nice [visual display](http://r.rosemckeon.co.uk/helicoverpa/) of the landscape, with sliders allowing for multiple crop species and pathogen strains.
+
+**Toy model prototype**
+
+I have managed to complete a toy model today, which should be sufficient to produce the simulated data needed to get the key ideas across. I'm going to dump the code below, which is located in the [toy_model.R](https://github.com/bradduthie/helicoverpa/blob/dev/R/toy_model.R) data file, not yet pushed on to master. We'll need to merge the interface branch with the dev branch soon, which should be easy enough. The whole thing is in R, and includes all of the basic steps from the code structure mentioned on [30 JUL 2018](#u-30-JUL-2018), including mutation, recombination, dispersal, and pathogen and crop rotation (random or sequential). The output isn't in that helpful of a form yet, but it will get there soon. To skip the many lines of code from the [toy_model.R](https://github.com/bradduthie/helicoverpa/blob/dev/R/toy_model.R) file, [go here](#skip_AUG_code). 
+
+To quickly summarise, there are 12 parameters we can play with in the toy simulation model:
+
+1. Number of generations to simulate (`generations`)
+2. X dimension (longitude), i.e., cell number, on the landscape (`xdim`)
+3. Y dimension (latitude), i.e., cell number, on the landscape (`ydim`)
+4. Total number of pathogen strains that can be applied (`pathogens`)
+5. Total number of crops that can be planted (`crops`)
+6. Initial number of pests (`pest_init`)
+7. How to rotate crops on the landscape (`crop_rotate`: where `crop_rotate = "static"` means don't rotate between generations, `crop_rotate = "rotate"` means sequence through each crop one at a time over generations, and `crop_rotate = "random"` means apply a random crop in each generation -- all done independently for each landscape cell)
+8. How to rotate pathogen application on the landscape (`path_rotate`: where `path_rotate = "static"` means don't rotate between generations, `path_rotate = "rotate"` means sequence through each pathogen one at a time over generations, and `path_rotate = "random"` means apply a random pathogen in each generation -- all done independently for each landscape cell)
+9. Probability that a pest will move to a new cell in the generation (`pest_move_pr`)
+10. Distance a pest will move up to in any direction from its natal cell (`pest_move_dist`; note, the landscape is a torus, and there is therefore no edge -- pests that move off of one side end up on the other)
+11. Number of offspring each *female* pest produces (`fecundity`)
+12. Carrying capacity of pests *per cell* (`cell_K`)
+
+Default parameter values are shown below. Note that the model is an individual-based simulation with an *extremely* simple diploid genetic architecture with two loci (one for pathogens, and one for crops). If there are $N$ pathogens, then there are $N$ alleles for pathogen resistance, and pests must have at least one allele to resist (else they die). Similarly, if there are $N$ crops, then there are $N$ alleles for being able to eat crops, and pests must have at least one to eat (else they die). 
+
+
+```{r}
+toy_simulate_resistance <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 1,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000           # K per cell
+                                    ){
+    
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = pathogens, 
+                                c_al = crops);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    gen         <- 1;
+    while(gen < generations){
+        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, pathogens, crops, fecundity, 
+                                   cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST_DATA[[gen]] <- PEST;
+        gen <- gen + 1;
+    }
+    return(PEST_DATA);
+}
+
+summarise_pest_data <- function(PEST_DATA){
+    # Density estimates
+    den_list <- unlist(lapply(PEST_DATA, dim));
+    den_list <- den_list[c(TRUE, FALSE)];
+    return(den_list);
+}
+
+toy_check_extinction <- function(PEST, gen){
+    if(is.vector(PEST) == TRUE){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(dim(PEST)[1] < 4){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
+        print(paste("Extinction occurred in generation", gen));
+        return(TRUE);
+    }
+    return(FALSE);
+}
+
+# Initialise the landscape
+toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    p_values  <- sample(x = 1:pathogens, size = xdim * ydim, replace = TRUE);
+    p_layer   <- matrix(data = p_values, ncol = xdim, nrow = ydim);
+    c_values  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+    c_layer   <- matrix(data = c_values, ncol = xdim, nrow = ydim);
+    LAND[,,2] <- p_layer; # Just occurred to me that we might want a layer for
+    LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
+    return(LAND);
+}
+
+# Initialise some *very* simple pests. Each allele is just going to map one to
+# one for whether a crop can be attacked or a pathogen resisted. I am not even
+# going to add traits affecting dispersal in the toy version -- this can be
+# uniform for all individuals
+toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
+    xdim     <- dim(LAND)[1]; # This is needed to put the pests on some
+    ydim     <- dim(LAND)[2]; # landscape cell
+    PEST     <- matrix(data = 0, nrow = N, ncol = 8);
+    PEST[,1] <- 1:N;                                           # ID
+    PEST[,2] <- sample(x = c(0, 1), size = N, replace = TRUE); # Sex
+    PEST[,3] <- sample(x = 1:xdim,  size = N, replace = TRUE); # x-location
+    PEST[,4] <- sample(x = 1:ydim,  size = N, replace = TRUE); # y-location
+    PEST[,5] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 1
+    PEST[,6] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 2
+    PEST[,7] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 1
+    PEST[,8] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 2
+    return(PEST);
+}
+
+# Just going to make this a simple function at first, randomly changing crops
+toy_set_crops <- function(LAND, crops = 1, type = "static"){
+    if(crops == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_crop                   <- LAND[,,3];
+        new_crop                   <- old_crop + 1;
+        new_crop[new_crop > crops] <- 1;
+        LAND[,,3]                  <- new_crop;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_cval  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+        new_crop  <- matrix(data = new_cval, nrow = xdim, ncol = ydim);
+        LAND[,,3] <- new_crop;
+    }
+    return(LAND);
+}
+
+# Ditto here -- just a simple function changing pathogens
+toy_set_paths <- function(LAND, paths = 1, type = "static"){
+    if(paths == 1 | type == "static"){
+        return(LAND);
+    }
+    if(type == "rotate"){
+        old_path                   <- LAND[,,3];
+        new_path                   <- old_path + 1;
+        new_path[new_path > paths] <- 1;
+        LAND[,,2]                  <- new_path;
+    }else{ # Else it just randomises -- can think about fancier ways later
+        xdim      <- dim(LAND)[1];
+        ydim      <- dim(LAND)[2];
+        new_pval  <- sample(x = 1:paths, size = xdim * ydim, replace = TRUE);
+        new_path  <- matrix(data = new_pval, nrow = xdim, ncol = ydim);
+        LAND[,,2] <- new_path;
+    }
+    return(LAND);
+}
+
+# Just a function to move pests at a given value, randomly on the landscape. The
+# `prob` is just probability of moving in a time step, while `dist` is just the
+# maximum distance moved in cells, in any direction.
+toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
+    xdim                     <- dim(LAND)[1];
+    ydim                     <- dim(LAND)[2];
+    pests                    <- dim(PEST)[1];
+    to_move                  <- rbinom(n = pests, size = 1, pr = prob);
+    move_x                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    move_y                   <- sample(x = -dist:dist, size = pests, 
+                                       replace = TRUE);
+    PEST[to_move == 1, 3]    <- PEST[to_move == 1, 3] + move_x[to_move == 1];
+    PEST[to_move == 1, 4]    <- PEST[to_move == 1, 4] + move_y[to_move == 1];
+    # The ifs below make a torus landscape so that pests don't move off of it
+    # In C, this will be done with a loop that looks cleaner; the below is just
+    # avoiding using a loop in R, though it would probably be fine.
+    if(length(PEST[PEST[,3] < 1, 3]) > 0){ 
+        PEST[PEST[,3] < 1, 3] <- PEST[PEST[,3] < 1, 3] + xdim;
+    }
+    if(length(PEST[PEST[,3] > xdim, 3]) > 0){
+        PEST[PEST[,3] > xdim, 3] <- PEST[PEST[,3] > xdim, 3] - xdim;
+    }
+    if(length(PEST[PEST[,4] < 1, 4]) > 0){
+        PEST[PEST[,4] < 1, 4] <- PEST[PEST[,4] < 1, 4] + ydim;
+    }
+    if(length(PEST[PEST[,4] > ydim, 4]) > 0){
+        PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
+    }
+    return(PEST);
+}
+
+# Need to now feed the pests and remove those that don't feed (crop unavailable)
+toy_feed_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests <- dim(PEST)[1];
+    eaten <- rep(x = 0, times = pests); 
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        food  <- LAND[x_loc, y_loc, 3];
+        if(PEST[i, 7] == food | PEST[i, 8] == food){
+            eaten[i] <- 1;
+        }
+    }
+    PEST <- PEST[eaten == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then need to have pests resist pathogens, kill those that cannot
+toy_kill_pest <- function(PEST, LAND){
+    # I'm just going to use a loop here, else matching to LAND cells is rough
+    pests    <- dim(PEST)[1];
+    survived <- rep(x = 0, times = pests);
+    for(i in 1:pests){
+        x_loc <- PEST[i, 3];
+        y_loc <- PEST[i, 4];
+        patho <- LAND[x_loc, y_loc, 2];
+        if(PEST[i, 5] == patho | PEST[i, 6] == patho){
+            survived[i] <- 1;
+        }
+    }
+    PEST <- PEST[survived == 1,]; # You don't eat, you don't live
+    return(PEST);
+}
+
+# Then, reproduce pests that are left
+toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
+    x_dim           <- dim(LAND)[1];
+    y_dim           <- dim(LAND)[2];
+    offspring       <- NULL;
+    total_offspring <- 0; # This and the below are just to avoid an rbind(),
+    cell            <- 1; # which is a massive memory sink
+    lst_ID          <- max(PEST[,1]);
+    for(xloc in 1:x_dim){ # Double loop is just much cleaner here
+        for(yloc in 1:y_dim){
+            locals     <- which(PEST[,3] == xloc & PEST[,4] == yloc);
+            local_offs <- NULL;
+            if( length(locals) > 1 ){
+                local_offs <- toy_breed_locals(PEST, locals, births, K, lst_ID);
+            }
+            if(length(local_offs) > 0){
+                lst_ID            <- lst_ID + dim(local_offs)[1];
+                total_offspring   <- total_offspring + dim(local_offs)[1];
+                offspring[[cell]] <- local_offs;
+            }else{
+                offspring[[cell]] <- NULL;
+            }
+            cell              <- cell + 1;
+        }
+    }
+    offspring <- build_new_pest(offspring, total_offspring, pa, cr);
+    return(offspring);
+}
+
+# Need to recombine the genomes correctly in the offspring
+toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
+    if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
+        return(NULL);
+    }
+    females       <- loc_PEST[loc_PEST[,2] == 0,];
+    males         <- loc_PEST[loc_PEST[,2] == 1,];
+    new_offs      <- dim(females)[1] * floor(births);  
+    offspring     <- matrix(data = 0, nrow = new_offs, ncol = 8);     
+    offspring[,1] <- (last_ID + 1):(last_ID + new_offs);
+    offspring[,2] <- sample(x = c(0, 1), size = new_offs, replace = TRUE);
+    offspring[,3] <- loc_PEST[1, 3];
+    offspring[,4] <- loc_PEST[1, 4];
+    # Below grabs all of the alleles from females and males
+    p_fem_alleles <- c(females[,5], females[,6]);
+    p_mal_alleles <- c(males[,5], males[,6]);
+    c_fem_alleles <- c(females[,7], females[,8]);
+    c_mal_alleles <- c(males[,7], males[,8]);
+    # Now add them to the offspring randomly, one from female and one from male
+    for(i in 1:new_offs){
+        if(runif(n = 1) < 0.5){
+            offspring[i, 5] <- sample(x = p_fem_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_mal_alleles, size = 1);
+        }else{
+            offspring[i, 5] <- sample(x = p_mal_alleles, size = 1);
+            offspring[i, 6] <- sample(x = p_fem_alleles, size = 1);            
+        }
+        if(runif(n = 1) < 0.5){
+            offspring[i, 7] <- sample(x = c_fem_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_mal_alleles, size = 1);
+        }else{
+            offspring[i, 7] <- sample(x = c_mal_alleles, size = 1);
+            offspring[i, 8] <- sample(x = c_fem_alleles, size = 1);            
+        }
+    }
+    if(dim(offspring)[1] > K){
+        offspring <- offspring[1:K,];
+    }
+    return(offspring);
+}
+
+# Merge the different layers into a new pest array
+build_new_pest <- function(offspring, total_offspring, pa, cr, mutation = 0.01){
+    new_PEST   <- matrix(data = 0, nrow = total_offspring, ncol = 8);
+    start_row  <- 1; # Again, avoids an rbind memory issue
+    for(cell in 1:length(offspring)){
+        if(length(offspring[[cell]]) > 0){
+            cell_offs       <- dim(offspring[[cell]])[1];
+            rows            <- start_row:(start_row + cell_offs - 1);
+            new_PEST[rows,] <- offspring[[cell]];
+            start_row       <- start_row + cell_offs;
+        }
+    }
+    mu5 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu6 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu7 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    mu8 <- which(rbinom(n = total_offspring, size = 1, pr = mutation) == 1);
+    new_PEST[mu5, 5] <- sample(x = 1:cr, size = length(mu5), replace = TRUE);
+    new_PEST[mu6, 6] <- sample(x = 1:cr, size = length(mu6), replace = TRUE);
+    new_PEST[mu7, 7] <- sample(x = 1:pa, size = length(mu7), replace = TRUE);
+    new_PEST[mu8, 8] <- sample(x = 1:pa, size = length(mu8), replace = TRUE);
+    return(new_PEST);
+}
+```
+
+
+<a name="skip_AUG_code">Okay</a>, so what can the above code do? I'll get some fancy results later, but for now, let's just look at many simulations across different `pathogens` and `crops` to see how it affects pest global density. Below I run and plot the situation with just one pathogen and one crop. Note that when there is only 1 pathogen or crop, set rotation to `static`.
+
+```{r}
+sim1 <- toy_simulate_resistance(pathogens = 1, crops = 1, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "static", path_rotate = "static");
+dat1 <- summarise_pest_data(sim1);
+plot(x = 1:length(dat1), y = dat1, type = "b", pch = 20, lwd = 2, cex.lab = 1.5,
+     cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19), xlab = "Generation",
+     ylab = "Pest density");
+```
+
+Next, we can see what happens when we instead have 3 pathogens under otherwise identical conditions. In each generation, one of three pathogens is randomly applied to each landscape cell.
+
+```{r}
+sim2 <- toy_simulate_resistance(pathogens = 3, crops = 1, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "static", path_rotate = "random");
+dat2 <- summarise_pest_data(sim2);
+plot(x = 1:length(dat2), y = dat2, type = "b", pch = 20, lwd = 2, cex.lab = 1.5,
+     cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19), xlab = "Generation",
+     ylab = "Pest density");
+```
+
+Next, we can see what happens when we instead have 3 pathogens *and* 3 crops under otherwise identical conditions. In each generation, one of three pathogens and one of three crops are randomly applied to each landscape cell.
+
+```{r}
+sim3 <- toy_simulate_resistance(pathogens = 3, crops = 3, cell_K = 2000, 
+                                pest_init = 2000, fecundity = 8, 
+                                generations = 20, pest_move_pr = 0.1, 
+                                crop_rotate = "random", path_rotate = "random");
+dat3 <- summarise_pest_data(sim3);
+plot(x = 1:length(dat3), y = dat3, type = "b", pch = 20, lwd = 2, cex.lab = 1.5,
+     cex.axis = 1.5, ylim = c(0, 8000), xlim = c(1, 19), xlab = "Generation",
+     ylab = "Pest density");
+```
+
+As is evident, pathogen and crop rotation decreases pest density. More on this later, including diversity results, but this demonstrates a working toy model. As the heterogeneity of pathogens and crops increases, pest resistance seems to go down.
+
+> <a name="u-30-JUL-2018">Update: 30 JUL 2018</a>
+
+**Some general thoughts about code structure**
+
+There are some high-level functions that will be useful to think about before coding; that is, functions that need to do something in sequence during simulation initialisation and then during each time step of the simulation. These functions will call subfunctions that run key routines -- I think that all of these function, and the outer function (e.g., `simulate_resistance`, which runs through multiple time steps to test a particular set of parameter combinations), should be written in C for efficiency. An R function can call `simulate_resistance` and return the results to R, or an outer C function can also call it and print results to a text file (faster and easier with the computing cluster). The point is to have a single funtion that everything feeds to that does the work by calling multiple subfunctions -- this workhorse function `simulate_resistance` will contain the main loop over $N$ `time_steps`.
+
+Prior to the loop, there will be some initialisation of the landscape `LAND` and the pests `PEST`. This will include all of the values in each layer `LAND` based on parameter initialisation. The functions `initialise_land` and `initialise_pest` are therefore called once at the start of the simulation; they will need to decide the distribution of landscape values and pests, and the sizes of each. It will not be necessary to initialise the `PEST` traits, only their genomes (based on allele and loci parameters, dominance, etc.) and non-genetic attributes such as location and ID (sex might or might not be based on genome). Before starting the big loop, the key structures of `PEST` and `LAND` need to otherwise be built. Any other key data structures will need to be initialised -- I am thinking that the `simulate_resistance` function, or maybe some small other function, should send a vector of information so that everything can be stored handily, then individual parameter values can be set in the small outer function then compiled into the vector for ease of use.
+
+After initialisation, one big loop will run the simulation over multiple time steps (some pseudocode below).
+
+```
+simulate_resistance(parameter_values){
+    error_checks(parameter_values);
+    initialise_land(LAND);
+    initialise_pest(PEST);
+    for(time_step = 0; time_step < time_max; time_step++){
+        build_pest_traits(PEST, build_type);
+        set_crops(LAND, crop_parameters);
+        set_biopesticide(LAND, biopesticide_parameters);
+        move_pest(PEST, move_parameters);
+        feed_pest(PEST, LAND, feeding_parameters);
+        kill_pest(PEST, LAND, death_parameters);
+        reproduce_pest(PEST, evolution_parameters);
+        collect_PEST_data(PEST);
+        collect_LAND_data(LAND);
+        summarise_time_step(PEST, LAND);
+        status_check(PEST, LAND);
+    }
+    summarise_simulation();
+}
+```
+
+Multiple events will occur in each time step, including (but not limited to) the following: The `build_pest_traits()` function will simply read in and out the `PEST` array, building the traits from the pest genome according to some `build_type` in each generation.  The `set_crops` function will assign `LAND` cel layer values basedon on the crop parameter values underlying, e.g., spatial heterogeneity; similarly, `set_biopesticide` will affect `LAND` cell layer values. Then the `move_pest` function will cause the pests to move according to some sort of disperal rules set in `parameter_values`. Note that the landscape and the pests have not interacted in the time step yet (though we can imagine the landscape affecting pest movement rules), and will now do so in `feed_pest`, where they will affect crops, followed by `kill_pest` and `reproduce_pest`, where they will suffer mortality and reproduce as a consequence of their interactions. **We might want to think about the order of these operations.** After pest reproduction (which will include sex and genetic -- but not trait -- transmission), then summary data on the pests and landscape need to be collected (could even have an option to print everything out at this point, but it might be a lot of information) -- followed by a sort of grand summary of the time step. When the whole simulation has finished, then the results can be printed.
+
+Note also that some error checks and status checks will be useful, since we'll want to make this function able to run from R. The error checks will just make sure nothing will crash the simulation (some of this might be better programmed in R instead of C), while the `status_check` might look to see, e.g., if pests have gone extinct, or have some sort of rule for termination of the simulation if something happens.
+
+I suspect that the above structure will need rearranging and rethinking, but it's a starting point. Subfunctions will be the difficult part, coding efficient ways of building traits from the genome, movement rules, reproduction, etc.
 
 > <a name="u-23-JUL-2018">Update: 23 JUL 2018</a>
 
@@ -115,7 +1913,7 @@ I see these two structures (**PEST** and **LAND**) as being the two most importa
 
 I have now initialised this lab notebook for the helicoverpa R package and model.
 
-Comments {.comments}
+Comments {#comments}
 --------------------------------------------------------------------------------
 
 <div id="disqus_thread"></div>
