@@ -2,9 +2,10 @@
 source("R/toy_model.R");
 library(jsonlite);
 # Set default vals
-crops = 0;
-pathogens = 0;
-
+crops <- 0;
+pathogens <- 0;
+sim <- NULL;
+output <- NULL;
 # check for input
 if(length(GET) != 0){
 	# update vals
@@ -13,7 +14,7 @@ if(length(GET) != 0){
 	# run simulation
 	sim <- toy_simulate_resistance(pathogens = pathogens, crops = crops);
 	#print(str(sim));
-	json <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]], filename = "data/output.json");
+	output <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]], filename = "data/output.json");
 	#print(json);
 }
 %>
@@ -75,5 +76,15 @@ if(length(GET) != 0){
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
   <script src="./assets/dist/scripts/main.js"></script>
+  <script type="text/javascript">
+	  (function($){
+		  $(document).ready(function(){
+				<% if(!is.null(output)){ %>
+					buildLandscape(<%= output %>);
+					//console.log(output);
+				<% } %>
+		  });
+		})(jQuery);
+	</script>
   </body>
 </html>
