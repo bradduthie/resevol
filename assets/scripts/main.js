@@ -22,7 +22,7 @@
 			//console.log(input);
 		});
 		// Get the data (output by R):
-		$.getJSON('./data/sample_sim.json').done(function(patches) {
+		$.getJSON('./data/sample_sim2.json').done(function(patches) {
 	    if($.isEmptyObject(patches)) {
 				// Handle missing data...
 				console.log("No patch data");	
@@ -31,30 +31,16 @@
 		      $('.wrapper').toggleClass('open-controls');
 		    });
 			} else {
-				// If we have data Make the patches...
-				/*console.log(patches);
-				var row = 'one-high';
-				if(patches.values.crops.length == 2){
-					row = 'two-high';
-				} else if (patches.values.crops.length == 3){
-					row = 'three-high';
-				}
-				var col = 'col-sm-12';
-				if(patches.values.pathogens.length == 2){
-					col = 'col-sm-6';
-				} else if (patches.values.pathogens.length == 3){
-					col = 'col-sm-4';
-				}
-				// make a row for every crop
-				$.each(patches.values.crops, function(index, element){
-					var y = index+1; // I think this might actually need to go backwards?
-					$('.patches').append('<div class="row y-'+y+' crop-'+element+'"></div>');
+				// If we have data label the patches...
+				//console.log(patches);
+				$.each(patches.crop_val.crop_val, function(index, element){
+					element = element[0]; 
+					$('.y-'+element.yloc+' .x-'+element.xloc).addClass('crop-'+element.val);
 				});
-				// add a column for every pathogen
-				$.each(patches.values.pathogens, function(index, element){
-					var x = index+1;
-					$('.row').append('<div class="patch grid x-'+x+' pathogen-'+element+' '+row+' '+col+'"></div>');
-				});*/
+				$.each(patches.path_val.path_val, function(index, element){
+					element = element[0]; 
+					$('.y-'+element.yloc+' .x-'+element.xloc).addClass('pathogen-'+element.val);
+				});
 				// fill each patch
 				$.each(patches.values.values, function(index, element){
 					element = element[0];
