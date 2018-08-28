@@ -32,7 +32,7 @@
 		    });
 			} else {
 				// If we have data Make the patches...
-				console.log(patches);
+				/*console.log(patches);
 				var row = 'one-high';
 				if(patches.values.crops.length == 2){
 					row = 'two-high';
@@ -54,7 +54,7 @@
 				$.each(patches.values.pathogens, function(index, element){
 					var x = index+1;
 					$('.row').append('<div class="patch grid x-'+x+' pathogen-'+element+' '+row+' '+col+'"></div>');
-				});
+				});*/
 				// fill each patch
 				$.each(patches.values.values, function(index, element){
 					element = element[0];
