@@ -1,0 +1,122 @@
+{
+  "landscape": ["landscape", "land_vals", "cells", "cell_vals"],
+  "land_vals": {
+    "landscape": ["pop_size", "resist_genotypes", "crop_genotypes", "percentage_resistant", "percentage_crop_eaters"],
+    "land_vals": [680, 9, 9, 53.3824, 37.9412],
+    "cells": ["xloc", "yloc", "crop", "pathogen", "pop_size", "genotypes_resist", "genotypes_crop", "percentage_resistant", "percentage_crop_eaters"],
+    "cell_vals": [
+      [
+        {
+          "xloc": 1,
+          "yloc": 1,
+          "crop": 1,
+          "pathogen": 3,
+          "pop_size": 444,
+          "genotypes_resist": 9,
+          "genotypes_crop": 9,
+          "percentage_resistant": 41.6667,
+          "percentage_crop_eaters": 17.3423
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 1,
+          "crop": 2,
+          "pathogen": 1,
+          "pop_size": 40,
+          "genotypes_resist": 8,
+          "genotypes_crop": 8,
+          "percentage_resistant": 75,
+          "percentage_crop_eaters": 65
+        }
+      ],
+      [
+        {
+          "xloc": 1,
+          "yloc": 2,
+          "crop": 2,
+          "pathogen": 1,
+          "pop_size": 173,
+          "genotypes_resist": 9,
+          "genotypes_crop": 9,
+          "percentage_resistant": 80.9249,
+          "percentage_crop_eaters": 85.5491
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 2,
+          "crop": 2,
+          "pathogen": 3,
+          "pop_size": 23,
+          "genotypes_resist": 8,
+          "genotypes_crop": 7,
+          "percentage_resistant": 34.7826,
+          "percentage_crop_eaters": 30.4348
+        }
+      ]
+    ]
+  },
+  "cells": ["landscape", "land_vals", "cells", "cell_vals"],
+  "cell_vals": {
+    "landscape": ["pop_size", "resist_genotypes", "crop_genotypes", "percentage_resistant", "percentage_crop_eaters"],
+    "land_vals": [680, 9, 9, 53.3824, 37.9412],
+    "cells": ["xloc", "yloc", "crop", "pathogen", "pop_size", "genotypes_resist", "genotypes_crop", "percentage_resistant", "percentage_crop_eaters"],
+    "cell_vals": [
+      [
+        {
+          "xloc": 1,
+          "yloc": 1,
+          "crop": 1,
+          "pathogen": 3,
+          "pop_size": 444,
+          "genotypes_resist": 9,
+          "genotypes_crop": 9,
+          "percentage_resistant": 41.6667,
+          "percentage_crop_eaters": 17.3423
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 1,
+          "crop": 2,
+          "pathogen": 1,
+          "pop_size": 40,
+          "genotypes_resist": 8,
+          "genotypes_crop": 8,
+          "percentage_resistant": 75,
+          "percentage_crop_eaters": 65
+        }
+      ],
+      [
+        {
+          "xloc": 1,
+          "yloc": 2,
+          "crop": 2,
+          "pathogen": 1,
+          "pop_size": 173,
+          "genotypes_resist": 9,
+          "genotypes_crop": 9,
+          "percentage_resistant": 80.9249,
+          "percentage_crop_eaters": 85.5491
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 2,
+          "crop": 2,
+          "pathogen": 3,
+          "pop_size": 23,
+          "genotypes_resist": 8,
+          "genotypes_crop": 7,
+          "percentage_resistant": 34.7826,
+          "percentage_crop_eaters": 30.4348
+        }
+      ]
+    ]
+  }
+}

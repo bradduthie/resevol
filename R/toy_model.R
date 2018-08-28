@@ -64,84 +64,68 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     if("package:jsonlite" %in% search() == FALSE){
         stop("Error: Need to load the R package 'jsonlite'")
     }
-    inds   <- dim(pest)[1];
-    cells  <- dim(land)[1] * dim(land)[2];
-    s_size <- cells * 100;
-    if(inds > s_size){
-        keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
-        pest <- pest[keep,];
-        inds <- s_size;
-    }
-    p_geno <- rep(x = 0, times = inds);
-    c_geno <- rep(x = 0, times = inds);
-    path   <- rep(x = 0, times = inds);
-    crop   <- rep(x = 0, times = inds);
-    r_path <- rep(x = 0, times = inds);
-    r_crop <- rep(x = 0, times = inds);
-    for(i in 1:inds){ # Doing this a bit lazily, without refactoring the rest
-        p_geno[i] <- as.numeric( paste(pest[i,5], pest[i,6], sep = ""));
-        c_geno[i] <- as.numeric( paste(pest[i,7], pest[i,8], sep = ""));
-        xloc      <- pest[i, 3];
-        yloc      <- pest[i, 4];
+    xdim <- dim(land)[1];
+    ydim <- dim(land)[2];
+    rows <- xdim * ydim;
+    locs <- as.matrix(expand.grid(1:xdim, 1:ydim));
+    mat  <- cbind(locs, matrix(data = 0, ncol = 7, nrow = dim(locs)[1]));
+    path <- rep(x = 0, times = dim(mat)[1]);
+    crop <- rep(x = 0, times = dim(mat)[1]);
+    resr <- rep(x = 0, times = dim(mat)[1]);
+    eatr <- rep(x = 0, times = dim(mat)[1]);
+    for(i in 1:dim(mat)[1]){
+        yloc      <- mat[i, 1];
+        xloc      <- mat[i, 2];
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
-        if(pest[i,5] == path[i] | pest[i,6] == path[i]){
-            r_path[i] <- 1;
-        }
-        if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
-            r_crop[i] <- 1;
-        }
+        inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
+        pop_size  <- dim(inds_on)[1];
+        genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
+        getyp_pth <- length(unique(genos_pth));
+        raw_res   <- sum(inds_on[,5] == path[i] | inds_on[,6] == path[i]);
+        genos_eat <- as.numeric(paste(inds_on[,7], inds_on[,8], sep = ""));
+        getyp_eat <- length(unique(genos_eat));
+        raw_eat   <- sum(inds_on[,7] == crop[i] | inds_on[,8] == crop[i]);
+        pct_res   <- 100 * raw_res / pop_size;
+        pct_eat   <- 100 * raw_eat / pop_size;
+        mat[i, 3] <- crop[i];
+        mat[i, 4] <- path[i];
+        mat[i, 5] <- pop_size;
+        mat[i, 6] <- getyp_pth;
+        mat[i, 7] <- getyp_eat;
+        mat[i, 8] <- pct_res;
+        mat[i, 9] <- pct_eat;
+        resr[i]   <- raw_res;
+        eatr[i]   <- raw_eat;
+        
     }
-    data      <- matrix(data = 0, nrow = inds, ncol = 10);
-    data[,1]  <- pest[,1];
-    data[,2]  <- pest[,2];
-    data[,3]  <- pest[,3];
-    data[,4]  <- pest[,4];
-    data[,5]  <- path;
-    data[,6]  <- crop;
-    data[,7]  <- p_geno;
-    data[,8]  <- c_geno;
-    data[,9]  <- r_path;
-    data[,10] <- r_crop;
-    poss_path <- json_land(land[,,2]);
-    poss_land <- json_land(land[,,3]);
-    colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
-                        "p_geno", "c_geno", "resist_path", "eat_crop");
-    modsim <- list( crop_nme  = colnames(poss_land),
-                    crop_val  = unname(apply(poss_land, 1, 
-                                             function(x) as.data.frame(t(x)))),
-                    path_nme  = colnames(poss_path),
-                    path_val  = unname(apply(poss_path, 1, 
-                                             function(x) as.data.frame(t(x)))),
-                    traits    = colnames(data), 
-                    values    = unname(apply(data, 1, 
-                                           function(x) as.data.frame(t(x))))
+    population  <- dim(pest)[1];
+    p_genos     <- as.numeric(paste(pest[,5], pest[,6], sep = ""));
+    p_genotypes <- length(unique(p_genos));
+    c_genos     <- as.numeric(paste(pest[,7], pest[,8], sep = ""));
+    c_genotypes <- length(unique(c_genos));
+    pct_resist  <- 100 * sum(resr) / population;
+    pct_eaters  <- 100 * sum(eatr) / population;
+    landscape   <- c(population, p_genotypes, c_genotypes, pct_resist, 
+                     pct_eaters);
+    names(landscape) <- c("pop_size", "resist_genotypes", "crop_genotypes", 
+                          "percentage_resistant", "percentage_crop_eaters");
+    colnames(mat)    <- c("xloc", "yloc", "crop", "pathogen", "pop_size", 
+                          "genotypes_resist", "genotypes_crop", 
+                          "percentage_resistant", "percentage_crop_eaters");
+    modsim <- list( landscape = names(landscape),
+                    land_vals = unname(landscape),
+                    cells     = colnames(mat),
+                    cell_vals = unname(apply(mat, 1, 
+                                             function(x) as.data.frame(t(x))))
     );
-    sim_json <- toJSON(list(crops = names(modsim), crop_val = modsim,
-                            pests = names(modsim), path_val = modsim,
-                            traits = names(modsim), values = modsim), 
-                       pretty = TRUE);
+    sim_json <- toJSON(list(landscape = names(modsim), land_vals = modsim,
+                            cells     = names(modsim), cell_vals = modsim),
+                            pretty = TRUE);
     if(printit == TRUE){
         write(sim_json, filename);
     }
     return(sim_json);
-}
-
-json_land <- function(layer){
-    rows <- length(layer);
-    ltab <- matrix(data = 0, nrow = rows, ncol = 3);
-    xdim <- dim(layer)[1];
-    ydim <- dim(layer)[2];
-    mat  <- as.matrix(expand.grid(1:xdim, 1:ydim));
-    val  <- rep(x = 0, times = dim(mat)[1]);
-    for(i in 1:dim(mat)[1]){
-        yloc   <- mat[i, 1];
-        xloc   <- mat[i, 2];
-        val[i] <- layer[xloc, yloc];
-    }
-    out <- cbind(mat, val);
-    colnames(out) <- c("xloc", "yloc", "val");
-    return(out);
 }
 
 summarise_pest_data <- function(PEST_DATA){
