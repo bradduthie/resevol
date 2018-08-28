@@ -22,7 +22,7 @@
 			//console.log(input);
 		});
 		// Get the data (output by R):
-		$.getJSON('./data/output.json').done(function(patches) {
+		$.getJSON('./data/sample_sim.json').done(function(patches) {
 	    if($.isEmptyObject(patches)) {
 				// Handle missing data...
 				console.log("No patch data");	
