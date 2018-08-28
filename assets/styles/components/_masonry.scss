@@ -73,6 +73,15 @@
 		&::before {
 			text-shadow: 0px 0px 10px black;
 		}
+		&.fa-smile {
+			font-size: 2em;
+		}
+		&.fa-meh {
+			font-size: 1.25em;
+		}
+		&.fa-frown {
+			font-size: .5em;
+		}
 	}
 }
 
