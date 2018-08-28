@@ -37,7 +37,11 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     while(gen < generations){
         LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
         LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
-        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);        
+        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
+        # ------------- Collecte some data
+        PEST_DATA[[gen]] <- PEST;
+        LAND_DATA[[gen]] <- LAND;
+        # ------------- Back to the biology
         PEST <- toy_feed_pest(PEST, LAND);                                      
         if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
             break;
@@ -51,8 +55,6 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
         if(toy_check_extinction(PEST, gen) == TRUE){
             break;
         }
-        PEST_DATA[[gen]] <- PEST;
-        LAND_DATA[[gen]] <- LAND;
         gen <- gen + 1;
     }
     return(list(PEST_DATA = PEST_DATA, LAND_DATA = LAND_DATA));
@@ -83,11 +85,11 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
         yloc      <- pest[i, 4];
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
-        if(pest[i,5] == path[i] | pest[i,5] == path[i]){
-            r_path <- 1;
+        if(pest[i,5] == path[i] | pest[i,6] == path[i]){
+            r_path[i] <- 1;
         }
         if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
-            r_crop <- 1;
+            r_crop[i] <- 1;
         }
     }
     data      <- matrix(data = 0, nrow = inds, ncol = 10);
