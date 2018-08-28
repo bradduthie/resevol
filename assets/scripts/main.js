@@ -47,32 +47,35 @@
 				}
 				// make a row for every crop
 				$.each(patches.values.crops, function(index, element){
-					$('.patches').append('<div class="row crop-'+element+'"></div>');
+					var y = index+1; // I think this might actually need to go backwards?
+					$('.patches').append('<div class="row y-'+y+' crop-'+element+'"></div>');
 				});
 				// add a column for every pathogen
 				$.each(patches.values.pathogens, function(index, element){
-					$('.row').append('<div class="patch grid pathogen-'+element+' '+row+' '+col+'"></div>');
+					var x = index+1;
+					$('.row').append('<div class="patch grid x-'+x+' pathogen-'+element+' '+row+' '+col+'"></div>');
 				});
 				// fill each patch
 				$.each(patches.values.values, function(index, element){
 					element = element[0];
+					// generate colours based on genotype
 					var R = element.c_geno * 3;
 					var G = element.p_geno * 3;
 					var B = element.c_geno * 2 + element.p_geno * 2; 
-					rgb = "rgb("+R+","+G+","+B+")";
-					//console.log(element);
+					var rgb = "rgb("+R+","+G+","+B+")";
+					// set icon based on resulting traits
 					var icon = null;
 					if(!element.eat_crop && !element.resist_path){
 						// can neither resist pathogen or eat crop
 						icon = 'fas fa-frown';
-					}else if(element.eat_crop && element.resist_path){
+					} else if(element.eat_crop && element.resist_path){
 						// can eat crop and resist pathogen
 						icon = 'fas fa-smile';
 					} else {
 						// can eat crop or resist pathogen, but can't do both
 						icon = 'fas fa-meh';
 					}
-					$('.crop-'+element.crop+' .pathogen-'+element.path).append('<div class="helicoverpa grid-item c-'+element.c_geno+' p-'+element.p_geno+' '+icon+'" style="color: '+rgb+'"></div>');
+					$('.y-'+element.yloc+' .x-'+element.xloc).append('<div class="helicoverpa grid-item c-'+element.c_geno+' p-'+element.p_geno+' '+icon+'" style="color: '+rgb+'"></div>');
 				});
 				// arrange helicoverpa
 				var $grid = $('.grid').masonry({
