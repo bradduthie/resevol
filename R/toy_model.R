@@ -103,22 +103,45 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     data[,8]  <- c_geno;
     data[,9]  <- r_path;
     data[,10] <- r_crop;
-    poss_path <- sort(unique(as.vector(land[,,2])));
-    poss_land <- sort(unique(as.vector(land[,,3])));
+    poss_path <- json_land(land[,,2]);
+    poss_land <- json_land(land[,,3]);
     colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
                         "p_geno", "c_geno", "resist_path", "eat_crop");
-    modsim <- list( crops     = poss_land,
-                    pathogens = poss_path,
-                    traits = colnames(data), 
-                    values = unname(apply(data, 1, 
-                                          function(x) as.data.frame(t(x))))
+    modsim <- list( crop_nme  = colnames(poss_land),
+                    crop_val  = unname(apply(poss_land, 1, 
+                                             function(x) as.data.frame(t(x)))),
+                    path_nme  = colnames(poss_path),
+                    path_val  = unname(apply(poss_path, 1, 
+                                             function(x) as.data.frame(t(x)))),
+                    traits    = colnames(data), 
+                    values    = unname(apply(data, 1, 
+                                           function(x) as.data.frame(t(x))))
     );
-    sim_json <- toJSON(list(traits = names(modsim), values = modsim), 
+    sim_json <- toJSON(list(crops = names(modsim), crop_val = modsim,
+                            pests = names(modsim), path_val = modsim,
+                            traits = names(modsim), values = modsim), 
                        pretty = TRUE);
     if(printit == TRUE){
         write(sim_json, filename);
     }
     return(sim_json);
+}
+
+json_land <- function(layer){
+    rows <- length(layer);
+    ltab <- matrix(data = 0, nrow = rows, ncol = 3);
+    xdim <- dim(layer)[1];
+    ydim <- dim(layer)[2];
+    mat  <- as.matrix(expand.grid(1:xdim, 1:ydim));
+    val  <- rep(x = 0, times = dim(mat)[1]);
+    for(i in 1:dim(mat)[1]){
+        yloc   <- mat[i, 1];
+        xloc   <- mat[i, 2];
+        val[i] <- layer[xloc, yloc];
+    }
+    out <- cbind(mat, val);
+    colnames(out) <- c("xloc", "yloc", "val");
+    return(out);
 }
 
 summarise_pest_data <- function(PEST_DATA){
