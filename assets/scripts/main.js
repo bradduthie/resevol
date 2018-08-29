@@ -110,13 +110,42 @@
 	}); // end document ready
 })(jQuery); // Fully reference jQuery after this point.
 
+function buildSummary(summary, labels){
+	if($.isArray(summary)){
+		// build summary
+		var title = '<h4>Summary</h4>';
+		var list = '<ul class="list-group">';
+		$.each(summary, function(index, element){
+			var colourclass = '';
+			if(index >= 3){ 
+					// Percentage resistant / crop-eaters
+					if(element > 50){
+						colourclass = " list-group-item-warning";
+					}
+					if(element > 75){
+						colourclass = " list-group-item-danger";
+					}
+					if(element <= 50){
+						colourclass = " list-group-item-success";
+					}
+					element = element+' %';
+			}
+			list += '<li class="list-group-item'+colourclass+'"><span class="summary-label">'+labels[index]+'</span><strong class="summary-value">'+element+'</strong></li>';
+		});
+		list += '</ul>';
+		$('.summary').append(title+list);
+	} else {
+		// handle error
+		console.log('summary data is not an array');
+	}
+}
+
 function buildLandscape(patches){
 	if(typeof patches == 'object'){
-		//console.log(patches);
+		console.log(patches);
 		if($.isEmptyObject(patches)) {
 				// Handle missing data...
 				console.log("No patch data");	
-				
 			} else {
 				// If we have data label the patches...
 				//console.log(patches);
@@ -167,6 +196,8 @@ function buildLandscape(patches){
 						$grid.masonry();
 				  });
 		    });
+		    // build the summary pane
+		    buildSummary(patches.values.land_vals, ['Population size', 'Resistance genotypes', 'Crop-eating genotypes', 'Percentage resistant', 'Percentage crop-eaters']);
 			}			
 	} else {
 		console.log('landscape data not in JSON format');

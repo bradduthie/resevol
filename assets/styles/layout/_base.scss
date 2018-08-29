@@ -63,3 +63,14 @@ body {
 		}
 	}
 }
+
+.summary {
+	.summary-label,
+	.summary-value {
+		display: block;
+		width: 100%;
+	}	
+	.summary-value {
+		text-align: right;
+	}
+}
