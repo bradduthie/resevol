@@ -14,7 +14,7 @@ if(length(GET) != 0){
 	# run simulation
 	sim <- toy_simulate_resistance(pathogens = pathogens, crops = crops);
 	#print(str(sim));
-	output <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]], filename = "data/output.json");
+	output <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]], printit = F);
 	#print(json);
 }
 %>
@@ -48,8 +48,7 @@ if(length(GET) != 0){
 		    </div>
 		    <button type="submit" class="btn btn-info">Simulate!</button>
     	</form>
-			<aside class="summary" role="contentinfo">
-			</aside>
+			<aside class="summary" role="contentinfo"></aside>
     </nav>
     <div id="content" role="main">
       <nav role="application">
@@ -81,7 +80,6 @@ if(length(GET) != 0){
 		  $(document).ready(function(){
 				<% if(!is.null(output)){ %>
 					buildLandscape(<%= output %>);
-					//console.log(output);
 				<% } %>
 		  });
 		})(jQuery);

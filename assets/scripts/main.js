@@ -112,7 +112,7 @@
 
 function buildLandscape(patches){
 	if(typeof patches == 'object'){
-		console.log(patches);
+		//console.log(patches);
 		if($.isEmptyObject(patches)) {
 				// Handle missing data...
 				console.log("No patch data");	
