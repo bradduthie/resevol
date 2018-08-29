@@ -198,15 +198,12 @@ summarise_pest_data <- function(PEST_DATA){
 
 toy_check_extinction <- function(PEST, gen){
     if(is.vector(PEST) == TRUE){
-        print(paste("Extinction occurred in generation", gen));
         return(TRUE);
     }
     if(dim(PEST)[1] < 4){
-        print(paste("Extinction occurred in generation", gen));
         return(TRUE);
     }
     if(sum(PEST[,2] == 0) < 1 | sum(PEST[,2] == 1) < 1){
-        print(paste("Extinction occurred in generation", gen));
         return(TRUE);
     }
     return(FALSE);
