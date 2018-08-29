@@ -64,6 +64,45 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     if("package:jsonlite" %in% search() == FALSE){
         stop("Error: Need to load the R package 'jsonlite'")
     }
+    inds   <- dim(pest)[1];
+    cells  <- dim(land)[1] * dim(land)[2];
+    s_size <- cells * 100;
+    if(inds > s_size){
+        keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
+        pest <- pest[keep,];
+        inds <- s_size;
+    }
+    p_geno <- rep(x = 0, times = inds);
+    c_geno <- rep(x = 0, times = inds);
+    path   <- rep(x = 0, times = inds);
+    crop   <- rep(x = 0, times = inds);
+    r_path <- rep(x = 0, times = inds);
+    r_crop <- rep(x = 0, times = inds);
+    for(i in 1:inds){ # Doing this a bit lazily, without refactoring the rest
+        p_geno[i] <- as.numeric( paste(pest[i,5], pest[i,6], sep = ""));
+        c_geno[i] <- as.numeric( paste(pest[i,7], pest[i,8], sep = ""));
+        xloc      <- pest[i, 3];
+        yloc      <- pest[i, 4];
+        path[i]   <- land[xloc, yloc, 2];
+        crop[i]   <- land[xloc, yloc, 3];
+        if(pest[i,5] == path[i] | pest[i,6] == path[i]){
+            r_path[i] <- 1;
+        }
+        if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
+            r_crop[i] <- 1;
+        }
+    }
+    data      <- matrix(data = 0, nrow = inds, ncol = 10);
+    data[,1]  <- pest[,1];
+    data[,2]  <- pest[,2];
+    data[,3]  <- pest[,3];
+    data[,4]  <- pest[,4];
+    data[,5]  <- path;
+    data[,6]  <- crop;
+    data[,7]  <- p_geno;
+    data[,8]  <- c_geno;
+    data[,9]  <- r_path;
+    data[,10] <- r_crop;
     xdim <- dim(land)[1];
     ydim <- dim(land)[2];
     rows <- xdim * ydim;
@@ -108,6 +147,8 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     pct_eaters  <- 100 * sum(eatr) / population;
     landscape   <- c(population, p_genotypes, c_genotypes, pct_resist, 
                      pct_eaters);
+    colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
+                        "p_geno", "c_geno", "resist_path", "eat_crop");
     names(landscape) <- c("pop_size", "resist_genotypes", "crop_genotypes", 
                           "percentage_resistant", "percentage_crop_eaters");
     colnames(mat)    <- c("xloc", "yloc", "crop", "pathogen", "pop_size", 
@@ -117,6 +158,9 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
                     land_vals = unname(landscape),
                     cells     = colnames(mat),
                     cell_vals = unname(apply(mat, 1, 
+                                             function(x) as.data.frame(t(x)))),
+                    traits = colnames(data), 
+                    values    = unname(apply(data, 1, 
                                              function(x) as.data.frame(t(x))))
     );
     sim_json <- toJSON(list(landscape = names(modsim), cells = names(modsim), 
