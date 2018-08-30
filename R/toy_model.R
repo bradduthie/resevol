@@ -64,10 +64,10 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     if("package:jsonlite" %in% search() == FALSE){
         stop("Error: Need to load the R package 'jsonlite'")
     }
-    gens   <- length(pest);
-    if(gens > 2){
-        pest <- pest[[gens - 2]];
-        land <- land[[gens - 2]];
+    gens   <- length(pest) - 2;
+    if(gens > 0){
+        pest <- pest[[gens]];
+        land <- land[[gens]];
     }else{
         stop("Not enough generations to continue");
     }
@@ -125,25 +125,26 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
         inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
-        pop_size  <- dim(inds_on)[1];
-        genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
-        getyp_pth <- length(unique(genos_pth));
-        raw_res   <- sum(inds_on[,5] == path[i] | inds_on[,6] == path[i]);
-        genos_eat <- as.numeric(paste(inds_on[,7], inds_on[,8], sep = ""));
-        getyp_eat <- length(unique(genos_eat));
-        raw_eat   <- sum(inds_on[,7] == crop[i] | inds_on[,8] == crop[i]);
-        pct_res   <- 100 * raw_res / pop_size;
-        pct_eat   <- 100 * raw_eat / pop_size;
-        mat[i, 3] <- crop[i];
-        mat[i, 4] <- path[i];
-        mat[i, 5] <- pop_size;
-        mat[i, 6] <- getyp_pth;
-        mat[i, 7] <- getyp_eat;
-        mat[i, 8] <- pct_res;
-        mat[i, 9] <- pct_eat;
-        resr[i]   <- raw_res;
-        eatr[i]   <- raw_eat;
-        
+        if(length(inds_on) > dim(pest)[2]){
+            pop_size  <- dim(inds_on)[1];
+            genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
+            getyp_pth <- length(unique(genos_pth));
+            raw_res   <- sum(inds_on[,5] == path[i] | inds_on[,6] == path[i]);
+            genos_eat <- as.numeric(paste(inds_on[,7], inds_on[,8], sep = ""));
+            getyp_eat <- length(unique(genos_eat));
+            raw_eat   <- sum(inds_on[,7] == crop[i] | inds_on[,8] == crop[i]);
+            pct_res   <- 100 * raw_res / pop_size;
+            pct_eat   <- 100 * raw_eat / pop_size;
+            mat[i, 3] <- crop[i];
+            mat[i, 4] <- path[i];
+            mat[i, 5] <- pop_size;
+            mat[i, 6] <- getyp_pth;
+            mat[i, 7] <- getyp_eat;
+            mat[i, 8] <- pct_res;
+            mat[i, 9] <- pct_eat;
+            resr[i]   <- raw_res;
+            eatr[i]   <- raw_eat;
+        }        
     }
     population  <- dim(pest)[1];
     p_genos     <- as.numeric(paste(pest[,5], pest[,6], sep = ""));
