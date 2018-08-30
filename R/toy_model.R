@@ -125,7 +125,7 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
         inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
-        if(inds_on > 1){
+        if(length(inds_on) > dim(pest)[2]){
             pop_size  <- dim(inds_on)[1];
             genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
             getyp_pth <- length(unique(genos_pth));
