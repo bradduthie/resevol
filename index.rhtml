@@ -13,7 +13,7 @@ if(length(GET) != 0){
 	pathogens = strtoi(GET$pathogens);
 	# run simulation
 	sim <- toy_simulate_resistance(pathogens = pathogens, crops = crops, cell_K = 2000, pest_init = 2000, fecundity = 8, generations = 20, pest_move_pr = 0.1, crop_rotate = "random", path_rotate = "random");
-	output <- results_to_json(pest = sim$PEST_DATA[[1]], land = sim$LAND_DATA[[1]], printit = F);
+	output <- results_to_json(pest = sim$PEST_DATA, land = sim$LAND_DATA, printit = F);
 }
 %>
 <!DOCTYPE html>
