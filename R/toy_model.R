@@ -64,10 +64,10 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     if("package:jsonlite" %in% search() == FALSE){
         stop("Error: Need to load the R package 'jsonlite'")
     }
-    gens   <- length(pest);
-    if(gens > 2){
-        pest <- pest[[gens - 2]];
-        land <- land[[gens - 2]];
+    gens   <- length(pest) - 2;
+    if(gens > 0){
+        pest <- pest[[gens]];
+        land <- land[[gens]];
     }else{
         stop("Not enough generations to continue");
     }
