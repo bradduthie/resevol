@@ -1,0 +1,86 @@
+<%
+source("R/toy_model.R");
+library(jsonlite);
+# Set default vals
+crops <- 0;
+pathogens <- 0;
+sim <- NULL;
+output <- NULL;
+# check for input
+if(length(GET) != 0){
+	# update vals
+	crops = strtoi(GET$crops);
+	pathogens = strtoi(GET$pathogens);
+	# run simulation
+	sim <- toy_simulate_resistance(pathogens = pathogens, crops = crops, cell_K = 2000, pest_init = 2000, fecundity = 8, generations = 20, pest_move_pr = 0.1, crop_rotate = "random", path_rotate = "random");
+	output <- results_to_json(pest = sim$PEST_DATA, land = sim$LAND_DATA, printit = F);
+}
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Helicoverpa amigera - Sustainable control?</title>
+    <link rel="icon" href="assets/dist/images/frown.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/solid.css" integrity="sha384-wnAC7ln+XN0UKdcPvJvtqIH3jOjs9pnKnq9qX68ImXvOGz2JuFoEiCjT8jyZQX2z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
+    <link href="./assets/dist/styles/main.css" rel="stylesheet">
+  </head>
+  <body>
+  <div class="wrapper open-controls">
+    <nav id="controls" role="application">
+	    <div class="sidebar-header">
+		    <h3>Control the Landscape</h3>
+	    </div>
+	    <form method="GET">
+		    <div class="form-group">
+		    	<label for="crops">Crop species</label><br />
+					<input type="text" name="crops" id="crops" class="form-control" data-slider-id="crops-slider" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-ticks-labels="['1','2','3']" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="<%= crops %>">
+		    </div>
+		    <div class="form-group">
+		    	<label for="pathogens">Pathogen strains</label><br />
+					<input type="text" name="pathogens" id="pathogens" class="form-control" data-slider-id="pathogens-slider" data-provide="slider" data-slider-ticks="[0, 1, 2, 3]" data-slider-min="0"	data-slider-max="3"	data-slider-step="1" data-slider-value="<%= pathogens %>">
+		    </div>
+		    <button type="submit" class="btn btn-info">Simulate!</button>
+    	</form>
+			<aside class="summary" role="contentinfo"></aside>
+    </nav>
+    <div id="content" role="main">
+      <nav role="application">
+        <button type="button" id="toggle-controls" class="btn btn-info">
+          <i class="fas fa-cog"></i>
+          <span class="sr-only">Toggle sidebar controls</span>
+        </button>
+	    </nav>
+	    <div class="container-fluid">
+		    <div class="patches">
+			    <div class="row y-2">
+				    <div class="patch grid x-1 col-sm-6 two-high"></div>
+				    <div class="patch grid x-2 col-sm-6 two-high"></div>
+			    </div>
+			    <div class="row y-1">
+				    <div class="patch grid x-1 col-sm-6 two-high"></div>
+				    <div class="patch grid x-2 col-sm-6 two-high"></div>
+			    </div>
+		    </div>
+	    </div>
+    </div>
+	</div>
+  <script src="./assets/dist/scripts/jquery.min.js"></script>
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+  <script src="./assets/dist/scripts/main.js"></script>
+  <script type="text/javascript">
+	  (function($){
+		  $(document).ready(function(){
+				<% if(!is.null(output)){ %>
+					buildLandscape(<%= output %>);
+				<% } %>
+		  });
+		})(jQuery);
+	</script>
+  </body>
+</html>

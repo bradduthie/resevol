@@ -1,0 +1,3762 @@
+{
+  "landscape": ["landscape", "land_vals", "cells", "cell_vals", "traits", "values"],
+  "cells": ["landscape", "land_vals", "cells", "cell_vals", "traits", "values"],
+  "values": {
+    "landscape": ["pop_size", "resist_genotypes", "crop_genotypes", "percentage_resistant", "percentage_crop_eaters"],
+    "land_vals": [264, 9, 9, 26.1364, 67.4242],
+    "cells": ["xloc", "yloc", "crop", "pathogen", "pop_size", "genotypes_resist", "genotypes_crop", "percentage_resistant", "percentage_crop_eaters"],
+    "cell_vals": [
+      [
+        {
+          "xloc": 1,
+          "yloc": 1,
+          "crop": 2,
+          "pathogen": 3,
+          "pop_size": 72,
+          "genotypes_resist": 8,
+          "genotypes_crop": 9,
+          "percentage_resistant": 40.2778,
+          "percentage_crop_eaters": 56.9444
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 1,
+          "crop": 3,
+          "pathogen": 2,
+          "pop_size": 33,
+          "genotypes_resist": 7,
+          "genotypes_crop": 8,
+          "percentage_resistant": 81.8182,
+          "percentage_crop_eaters": 81.8182
+        }
+      ],
+      [
+        {
+          "xloc": 1,
+          "yloc": 2,
+          "crop": 3,
+          "pathogen": 3,
+          "pop_size": 91,
+          "genotypes_resist": 5,
+          "genotypes_crop": 8,
+          "percentage_resistant": 1.0989,
+          "percentage_crop_eaters": 61.5385
+        }
+      ],
+      [
+        {
+          "xloc": 2,
+          "yloc": 2,
+          "crop": 1,
+          "pathogen": 1,
+          "pop_size": 68,
+          "genotypes_resist": 8,
+          "genotypes_crop": 8,
+          "percentage_resistant": 17.6471,
+          "percentage_crop_eaters": 79.4118
+        }
+      ]
+    ],
+    "traits": ["ID", "sex", "xloc", "yloc", "path", "crop", "p_geno", "c_geno", "resist_path", "eat_crop"],
+    "values": [
+      [
+        {
+          "ID": 20126,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20127,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20128,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20129,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 31,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20130,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 23,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20131,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20132,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20133,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20134,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20135,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20136,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20137,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20138,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 33,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20139,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20140,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20141,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20142,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20143,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20144,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20145,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20146,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20147,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 33,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20148,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20149,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20150,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 23,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20151,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20152,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20153,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20154,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20155,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20156,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20157,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20158,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20159,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 23,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20160,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 33,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20161,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20162,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20163,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20164,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20165,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20166,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20167,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20168,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20169,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20170,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20171,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20172,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20173,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20174,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20175,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20176,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20177,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20178,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20179,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 33,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20180,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20181,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20182,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20183,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20184,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20185,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 31,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20186,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20187,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20188,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20189,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 23,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20190,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20191,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20192,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20193,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20194,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20195,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20196,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20197,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 31,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20198,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20199,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 23,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20200,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 31,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20201,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20202,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20203,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20204,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20205,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20206,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20207,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20208,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20209,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 23,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20210,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20211,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20212,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20213,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 23,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20214,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20215,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20216,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20217,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20218,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20219,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20220,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20221,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 23,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20222,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20223,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20224,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20225,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20226,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20227,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20228,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20229,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20230,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20231,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20232,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20233,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20234,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20235,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20236,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20237,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20238,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20239,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20240,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20241,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20242,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20243,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20244,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20245,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20246,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20247,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20248,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20249,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 12,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20250,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20251,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20252,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20253,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20254,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20255,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20256,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20257,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20258,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20259,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20260,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20261,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20262,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20263,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20264,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20265,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20266,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20267,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20268,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20269,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20270,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20271,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20272,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20273,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 21,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20274,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20275,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20276,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20277,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20278,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20279,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20280,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20281,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20282,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20283,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20284,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20285,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20286,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20287,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20288,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20289,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20290,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20291,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20292,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20293,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20294,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20295,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20296,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20297,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20298,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20299,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20300,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20301,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20302,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20303,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20304,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20305,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20306,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20307,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20308,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20309,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20310,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 12,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20311,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20312,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20313,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20314,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20315,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20316,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 11,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20317,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 33,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20318,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20319,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20320,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20321,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20322,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20323,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20324,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20325,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20326,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20327,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 13,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20328,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20329,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20330,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20331,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20332,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20333,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20334,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20335,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20336,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20337,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20338,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20339,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20340,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20341,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20342,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20343,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20344,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20345,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 21,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20346,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20347,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20348,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20349,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20350,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20351,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20352,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 1,
+          "path": 3,
+          "crop": 3,
+          "p_geno": 21,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20353,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20354,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20355,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20356,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 12,
+          "c_geno": 21,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20357,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20358,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20359,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20360,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20361,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 31,
+          "c_geno": 21,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20362,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20363,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 21,
+          "c_geno": 21,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20364,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 23,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20365,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20366,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20367,
+          "sex": 0,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 22,
+          "c_geno": 22,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20368,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 32,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20369,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 1,
+          "path": 3,
+          "crop": 2,
+          "p_geno": 22,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20370,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20371,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 33,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20372,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 13,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20373,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20374,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20375,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 12,
+          "c_geno": 21,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20376,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 33,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20377,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20378,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 22,
+          "resist_path": 0,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20379,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20380,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 31,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20381,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 31,
+          "c_geno": 11,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20382,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 12,
+          "c_geno": 12,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20383,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 22,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20384,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 21,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20385,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 32,
+          "c_geno": 11,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20386,
+          "sex": 0,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 31,
+          "c_geno": 11,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20387,
+          "sex": 1,
+          "xloc": 1,
+          "yloc": 2,
+          "path": 2,
+          "crop": 3,
+          "p_geno": 23,
+          "c_geno": 11,
+          "resist_path": 1,
+          "eat_crop": 0
+        }
+      ],
+      [
+        {
+          "ID": 20388,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 23,
+          "c_geno": 12,
+          "resist_path": 0,
+          "eat_crop": 1
+        }
+      ],
+      [
+        {
+          "ID": 20389,
+          "sex": 1,
+          "xloc": 2,
+          "yloc": 2,
+          "path": 1,
+          "crop": 1,
+          "p_geno": 11,
+          "c_geno": 21,
+          "resist_path": 1,
+          "eat_crop": 1
+        }
+      ]
+    ]
+  }
+}
