@@ -1,0 +1,15 @@
+Brad Duthie is a theoretical biologist with a proven track record in modelling complex ecological and evolutionary systems (1-2). His previous research has included modelling evolutionary dynamics of inbreeding behaviour given complex genetic architectures and population pedigrees (3-5), ecological interactions among species on spatially explicit landscapes (6), and software development for modelling population management (7).
+
+(1) Duthie, A. B., Abbott, K. C., & Nason, J. D. (2014). Trade-offs and coexistence: A lottery model applied to fig wasp communities. American Naturalist, 183(6), 826–841. https://doi.org/10.1086/675897
+
+(2) Duthie, A. B., Lee, A. M., & Reid, J. M. (2016). Inbreeding parents should invest more resources in fewer offspring. Proceedings of The Royal Society B, 20161845. https://doi.org/10.1098/rspb.2016.184
+
+(3) Duthie, A. B., Bocedi, G., & Reid, J. M. (2016). When does female multiple mating evolve to adjust inbreeding? Effects of inbreeding depression, direct costs, mating constraints, and polyandry as a threshold trait. Evolution, 70(9), 1927–1943. https://doi.org/10.1111/evo.13005
+
+(4) Duthie, A. B., & Reid, J. M. (2016). Evolution of inbreeding avoidance and inbreeding preference through mate choice among interacting relatives. American Naturalist, 188(6), 000–000. https://doi.org/10.1086/688919
+
+(5) Duthie, A. B., Bocedi, G., Germain, R. R., & Reid, J. M. (2018). Evolution of pre-copulatory and post-copulatory strategies of inbreeding avoidance and associated polyandry. Journal of Evolutionary Biology. https://doi.org/10.1111/jeb.13189
+
+(6) Duthie, A. B., & Falcy, M. R. (2013). The influence of habitat autocorrelation on plants and their seed-eating pollinators. Ecological Modelling, 251, 260–270. https://doi.org/10.1016/j.ecolmodel.2012.12.019
+
+(7) Duthie, A. B., Cusack, J. J., Jones, I. L., Nilsen, E. B., Pozo, R. A., Rakotonarivo, O. S., … Bunnefeld, N. (2018). GMSE: an R package for generalised management strategy evaluation. Methods in Ecology and Evolution. https://doi.org/10.1101/221432
