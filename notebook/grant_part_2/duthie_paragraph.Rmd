@@ -1,3 +1,19 @@
+---
+title: "Duthie Work Package"
+author: "Brad Duthie"
+date: "17 September 2018"
+output:
+  word_document:
+    reference_docx: docx_template.docx
+  pdf_document: default
+  html_document: default
+bibliography: references.bib
+link-citations: yes
+linkcolor: blue
+csl: science.csl
+biblio-style: apalike
+---
+
 
 Duthie Suitability
 ================================================================================
@@ -25,6 +41,8 @@ Duthie Work Package
 To demonstrate how rotating biopesticide strains and crop species at the local scale can ultimately overcome pest resistance in the long-term at the landscape scale, we will simulate the full social-ecological system using an individual-based model (IBM). IBMs allow for interactions among discrete individuals (*H. armigera* pests) on a spatially-explicit landscape where key landscape properties (biopesticide application, crop species) vary locally [@Bocedi2014a; @Duthie2018]. Individuals can have complex genetic architectures that underly relevant quantitative traits such as bipesticide resistance, feeding efficiency, and dispersal behaviour [@Grimm2005; @DeAngelis2005; @Duthie2015]. Landscapes can be equally complex, allowing individual traits to interact with the unique set of landscape properties that occur on an landscape cell [@Duthie2013; @Peer2013; @Aben2014]. By parameterising pest genetic architecture with real estimates of dispersal and measures of genetic associations from Phase I/1a, then simulating different biopesticide application and crop choice regimes on landscape cells, we can use IBMs to model the evolution of bipesticide resistance *in silico* [@Stratonovitch2014].
 
 A prototype model of the evolution of *H. armigera* biopesticide resistance has already been developed using a simplified genetic achitecture and landscape. Simulations from this prototype demonstrate that biopesticide and crop rotatation can overcome biopesticide resistance in principle (see http://r.rosemckeon.co.uk/helicoverpa/), but these results have yet to be demonstrated with a suitably realistic genetic architecture and landscape properties. This work package will include the required realism in an expanded model to simulate the long-term evolution of *H. armigera* resistance. The model will be built as an open-source R package, written in R and C, and made accessible to all on GitHub. The R package will be externally evaluated by the rOpenSci community, which will include review by two independent experts who will comment on code usability and quality.
+
+<div id="refs"></div>
 
 
 Duthie Costings
