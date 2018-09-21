@@ -19,7 +19,8 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     pest_move_pr = 0.1,     # Pest movement
                                     pest_move_dist = 1,     # Pest move distance
                                     fecundity = 8,          # Offspring per fem
-                                    cell_K = 2000           # K per cell
+                                    cell_K = 2000,          # K per cell
+                                    print_gen =  FALSE      # Option print gen
                                     ){
     
     if(pest_move_dist > xdim & pest_move_dist > ydim){
@@ -54,6 +55,9 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                    fecundity, cell_K);
         if(toy_check_extinction(PEST, gen) == TRUE){
             break;
+        }
+        if(print_gen == TRUE){
+            print(paste("Generation ",gen," of ",generations));
         }
         gen <- gen + 1;
     }
@@ -318,6 +322,62 @@ toy_move_pest <- function(PEST, LAND, prob = 0.1, dist = 1){
         PEST[PEST[,4] > ydim, 4] <- PEST[PEST[,4] > ydim, 4] - ydim;
     }
     return(PEST);
+}
+
+# Simulate Poisson movement of toys -- a nasty loop here -- faster in C
+toy_pois_move_pest <- function(PEST, LAND, dist = 1){
+    pest_n   <- dim(PEST)[1];
+    xlim     <- dim(LAND)[2];
+    ylim     <- dim(LAND)[1];
+    distance <- rpois(n = pest_n, lambda = dist);
+    for(pest in 1:pest_n){
+        move <- distance[pest];
+        while(move > 0){
+            move_x  <- sample(x = -move:move, size = 1); 
+            move_y  <- sample(x = -move:move, size = 1);
+            PEST[pest, 3] <- PEST[pest, 3] + move_x;
+            PEST[pest, 4] <- PEST[pest, 4] + move_y;
+            move    <- move - 1;
+        }
+        while(PEST[pest, 3] < 1){
+            PEST[pest, 3] <- PEST[pest, 3] + xlim;
+        }
+        while(PEST[pest, 3] > xlim){
+            PEST[pest, 3] <- PEST[pest, 3] - xlim;
+        }
+        while(PEST[pest, 4] < 1){
+            PEST[pest, 4] <- PEST[pest, 4] + ylim;
+        }
+        while(PEST[pest, 4] > ylim){
+            PEST[pest, 4] <- PEST[pest, 4] - ylim;
+        }
+    }
+    return(PEST);
+}
+
+# Summarise the distance travelled for all pests
+toy_move_distribution <- function(PEST_before, PEST_after, LAND){
+    same_dim <- identical( dim(PEST_before), dim(PEST_after) );
+    if(same_dim == FALSE){
+        stop("The pest array dimensions need to be the same");
+    }
+    xlim   <- dim(LAND)[2];
+    ylim   <- dim(LAND)[1];
+    pest_n <- dim(PEST_before)[1];
+    pest_d <- rep(x = 0, length = pest_n);
+    for(pest in 1:pest_n){
+        xdist1  <- (PEST_before[pest, 3] - PEST_after[pest, 3])^2;
+        ydist1  <- (PEST_before[pest, 4] - PEST_after[pest, 4])^2;
+        xdist2  <- (PEST_before[pest, 3] - PEST_after[pest, 3] - xlim)^2;
+        ydist2  <- (PEST_before[pest, 4] - PEST_after[pest, 4] - ylim)^2;
+        xdist3  <- (PEST_before[pest, 3] - PEST_after[pest, 3] + xlim)^2;
+        ydist3  <- (PEST_before[pest, 4] - PEST_after[pest, 4] + ylim)^2;
+        xdist   <- min(c(xdist1, xdist2, xdist3));
+        ydist   <- min(c(ydist1, ydist2, ydist3));
+        tdist  <- sqrt(xdist + ydist);
+        pest_d[pest] <- tdist;
+    }
+    return(pest_d);
 }
 
 # Need to now feed the pests and remove those that don't feed (crop unavailable)
