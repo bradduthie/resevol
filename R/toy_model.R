@@ -17,19 +17,27 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     crop_rotate = "static", # Crops rotated
                                     path_rotate = "static", # Pathogens rotated
                                     pest_move_pr = 0.1,     # Pest movement
-                                    pest_move_dist = 1,     # Pest move distance
+                                    pest_move_dist = 5,     # Pest move distance
                                     fecundity = 8,          # Offspring per fem
                                     cell_K = 2000,          # K per cell
                                     print_gen = FALSE,      # Option print gen
-                                    pois_move = TRUE        # Kind of movement
+                                    pois_move = TRUE,       # Kind of movement
+                                    land_bloc = TRUE,       # Blocked land  
+                                    block_len = 1           # Length block
                                     ){
     
     if(pest_move_dist > xdim & pest_move_dist > ydim){
         pest_move_dist <- max(c(xdim, ydim)); # Avoids error
     }
     # Start initialising the landscape and pests
-    LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+    if(land_bloc == TRUE){
+        LAND <- toy_block_land(xdim = xdim, ydim = ydim, 
+                               pathogens = pathogens, crops = crops, 
+                               block_len = block_len);
+    }else{
+        LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
                                 pathogens = pathogens, crops = crops);
+    }
     PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
                                 c_al = crop_alleles);
     # Start the generations
