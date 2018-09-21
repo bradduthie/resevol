@@ -20,7 +20,8 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     pest_move_dist = 1,     # Pest move distance
                                     fecundity = 8,          # Offspring per fem
                                     cell_K = 2000,          # K per cell
-                                    print_gen =  FALSE      # Option print gen
+                                    print_gen = FALSE,      # Option print gen
+                                    pois_move = TRUE        # Kind of movement
                                     ){
     
     if(pest_move_dist > xdim & pest_move_dist > ydim){
@@ -37,8 +38,12 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     gen         <- 1;
     while(gen < generations){
         LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
-        LAND <- toy_set_paths(LAND, pathogens, path_rotate);                    
-        PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
+        LAND <- toy_set_paths(LAND, pathogens, path_rotate);
+        if(pois_move == TRUE){
+            PEST <- toy_pois_move_pest(PEST, LAND, pest_move_dist);
+        }else{
+            PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
+        }
         # ------------- Collecte some data
         PEST_DATA[[gen]] <- PEST;
         LAND_DATA[[gen]] <- LAND;
@@ -232,6 +237,30 @@ toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
     LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
     return(LAND);
 }
+
+
+toy_block_land <- function(xdim, ydim, pathogens, crops, block_len){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    tx0       <- 1;
+    tx1       <- block_len;
+    ty0       <- 1;
+    ty1       <- block_len;
+    block_num <- 1;
+    while(tx0 <= xdim & ty0 <= ydim){
+        LAND[tx0:tx1, ty0:ty1, 1] <- block_num;
+        tx0                       <- tx1 + 1;
+        tx1                       <- tx1 + block_len;
+        if(tx0 > xdim){
+            tx0 <- 0;
+            tx1 <- block_len;
+            ty0 <- ty1 + 1;
+            ty1 <- ty1 + block_len;
+        }
+        block_num <- block_num + 1;
+    }
+    return(LAND);
+}
+
 
 # Initialise some *very* simple pests. Each allele is just going to map one to
 # one for whether a crop can be attacked or a pathogen resisted. I am not even
