@@ -41,6 +41,7 @@ library(rhandsontable)
 
  - **2018**
 
+     - **SEP** [21](#u-21-SEP-2018)
      - **AUG** [13](#u-13-AUG-2018), [14](#u-14-AUG-2018), [27](#u-27-AUG-2018)
      - **JUL** [18](#u-18-JUL-2018), [23](#u-23-JUL-2018), [30](#u-30-JUL-2018)
 
@@ -50,6 +51,188 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+> <a name="u-21-SEP-2018">Update: 21 SEP 2018</a>
+
+**Success with the graphical display**
+
+While I did not update this journal during its development very much, the [graphical display](http://r.rosemckeon.co.uk/helicoverpa/) looks really good, and received positive feedback from colleagues in Brazil.
+
+**Simulations for Phase II**
+
+```{r, echo = FALSE}
+toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    p_values  <- sample(x = 1:pathogens, size = xdim * ydim, replace = TRUE);
+    p_layer   <- matrix(data = p_values, ncol = xdim, nrow = ydim);
+    c_values  <- sample(x = 1:crops, size = xdim * ydim, replace = TRUE);
+    c_layer   <- matrix(data = c_values, ncol = xdim, nrow = ydim);
+    LAND[,,2] <- p_layer; # Just occurred to me that we might want a layer for
+    LAND[,,3] <- c_layer; # carrying capacity of the cell in LAND later
+    return(LAND);
+}
+
+toy_initialise_pest <- function(LAND, N = 10, p_al = 1, c_al = 1){
+    xdim     <- dim(LAND)[1]; # This is needed to put the pests on some
+    ydim     <- dim(LAND)[2]; # landscape cell
+    PEST     <- matrix(data = 0, nrow = N, ncol = 8);
+    PEST[,1] <- 1:N;                                           # ID
+    PEST[,2] <- sample(x = c(0, 1), size = N, replace = TRUE); # Sex
+    PEST[,3] <- sample(x = 1:xdim,  size = N, replace = TRUE); # x-location
+    PEST[,4] <- sample(x = 1:ydim,  size = N, replace = TRUE); # y-location
+    PEST[,5] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 1
+    PEST[,6] <- sample(x = 1:p_al,  size = N, replace = TRUE); # p allele 2
+    PEST[,7] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 1
+    PEST[,8] <- sample(x = 1:c_al,  size = N, replace = TRUE); # c allele 2
+    return(PEST);
+}
+```
+
+While the toy model of the [graphical display](http://r.rosemckeon.co.uk/helicoverpa/) demonstrated the key points, a couple more functions are needed to do some initial simulations to get results to put in Phase II. First, new movement rules are needed for more realistic dispersal of *Helicoverpa* among cells. This is done now with the `toy_pois_move_pest` function. In the function below, for each pest, movement in a time step proceeds by (1) selecting how many jumps that the pest gets by sampling from a poisson distribution with mean `dist`, then moving up to `dist` cells away in any direction during each jump (uniform probability of all cells within `dist` of the original cell).
+
+```{r}
+# Simulate Poisson movement of toys -- a nasty loop here -- faster in C
+toy_pois_move_pest <- function(PEST, LAND, dist = 1){
+    pest_n   <- dim(PEST)[1];
+    xlim     <- dim(LAND)[2];
+    ylim     <- dim(LAND)[1];
+    distance <- rpois(n = pest_n, lambda = dist);
+    for(pest in 1:pest_n){
+        move <- distance[pest];
+        while(move > 0){
+            move_x  <- sample(x = -move:move, size = 1); 
+            move_y  <- sample(x = -move:move, size = 1);
+            PEST[pest, 3] <- PEST[pest, 3] + move_x;
+            PEST[pest, 4] <- PEST[pest, 4] + move_y;
+            move    <- move - 1;
+        }
+        while(PEST[pest, 3] < 1){
+            PEST[pest, 3] <- PEST[pest, 3] + xlim;
+        }
+        while(PEST[pest, 3] > xlim){
+            PEST[pest, 3] <- PEST[pest, 3] - xlim;
+        }
+        while(PEST[pest, 4] < 1){
+            PEST[pest, 4] <- PEST[pest, 4] + ylim;
+        }
+        while(PEST[pest, 4] > ylim){
+            PEST[pest, 4] <- PEST[pest, 4] - ylim;
+        }
+    }
+    return(PEST);
+}
+```
+
+We can check out the distribution of distance away from the original cell when the above function is implemented.
+
+```{r}
+LAND     <- toy_initialise_land(xdim = 50, ydim = 50, pathogens = 1, crops = 1);
+PEST_1   <- toy_initialise_pest(LAND, N = 10000);
+PEST_2   <- toy_pois_move_pest(PEST_1, LAND, dist = 5);
+diffx_1  <- (PEST_1[,3] - PEST_2[,3])^2;
+diffx_2  <- (PEST_1[,3] - PEST_2[,3] + 50)^2; # Account for the torus
+diffx_3  <- (PEST_1[,3] - PEST_2[,3] - 50)^2;
+diffy_1  <- (PEST_1[,4] - PEST_2[,4])^2;
+diffy_2  <- (PEST_1[,4] - PEST_2[,4] + 50)^2; # Account for the torus
+diffy_3  <- (PEST_1[,4] - PEST_2[,4] - 50)^2;
+diffx    <- rep(x = 0, times = 10000);
+diffy    <- rep(x = 0, times = 10000); 
+for(i in 1:10000){ # Assuming no one goes too far
+    diffx[i] <- min(c(diffx_1[i], diffx_2[i], diffx_3[i]));
+    diffy[i] <- min(c(diffy_1[i], diffy_2[i], diffy_3[i]));
+}
+dist_mv1 <- sqrt(diffx + diffy);
+par(mar = c(5, 5, 2, 1));
+hist(dist_mv1, main = "", col = "grey", cex.lab = 1.5, cex.axis = 1.5, 
+     xlab = "Total distance travelled (km)", ylab = "Count", 
+     ylim = c(0, 2500), xlim = c(0, 50));
+```
+
+The next part is to initialise the land in blocks so that we can control how big of an area is deadicated toward a paricular fungal biopesticide and crop area. We want to be able to control how many blocks are put down over the landscape. The code below does this, albeit in not the most efficient way.
+
+```{r}
+toy_block_land <- function(xdim, ydim, pathogens, crops, block_len){
+    cells     <- xdim * ydim;
+    cell_left <- cells %% (block_len * block_len);
+    if(cell_left > 0){
+        stop("Landscape cannot be divided into squares of size 'block_len'");
+    }
+    LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
+    tx0       <- 1;
+    tx1       <- block_len;
+    ty0       <- 1;
+    ty1       <- block_len;
+    block_num <- 1;
+    while(tx0 <= xdim & ty0 <= ydim){
+        LAND[tx0:tx1, ty0:ty1, 1] <- block_num;
+        tx0                       <- tx1 + 1;
+        tx1                       <- tx1 + block_len;
+        if(tx0 > xdim){
+            tx0 <- 0;
+            tx1 <- block_len;
+            ty0 <- ty1 + 1;
+            ty1 <- ty1 + block_len;
+        }
+        block_num <- block_num + 1;
+    }
+    block_num  <- block_num - 1;
+    for(block in 1:block_num){
+        rand_path <- sample(x = 1:pathogens, size = 1);
+        rand_crop <- sample(x = 1:crops, size = 1);
+        for(xx in 1:xdim){
+            for(yy in 1:ydim){
+                if(LAND[xx, yy, 1] == block){
+                    LAND[xx, yy, 2] <- rand_path;
+                    LAND[xx, yy, 3] <- rand_crop;
+                }
+            }
+        }
+    }
+    return(LAND);
+}
+```
+
+One reason I don't mind all of the loops in the toy model is that they will need to be used when this is translated to C -- there's not really a way around it (I don't think), so there's no reason to worry too much about making everything elegant and avoiding R loops. It does take a while for landscapes to be initialised in the toy model, but not nearly as long as it takes most generations to run (at least, not ones with lots of pests). Here are some ways of using `toy_block_land` to make landscapes. I'll show fungal biopesticide blocks being put down randomly below
+
+**Block length 1**: Each cell is its own block, corresponding to applying fungal biopesticides in each 1 km by 1 km square on the landscape.
+
+```{r}
+LAND1 <- toy_block_land(xdim = 100, ydim = 100, pathogens = 3, crops = 3,
+                        block_len = 1);
+par(mar = c(1, 1, 1, 1));
+image(LAND1[,,2], xaxt = "n", yaxt = "n");
+```
+
+**Block length 5**: Each cell is its own block, corresponding to applying fungal biopesticides in each 2 km by 2 km square on the landscape.
+
+```{r}
+LAND5 <- toy_block_land(xdim = 100, ydim = 100, pathogens = 3, crops = 3,
+                        block_len = 5);
+par(mar = c(1, 1, 1, 1));
+image(LAND5[,,2], xaxt = "n", yaxt = "n");
+```
+
+**Block length 10**: Each cell is its own block, corresponding to applying fungal biopesticides in each 10 km by 10 km square on the landscape.
+
+```{r}
+LAND10 <- toy_block_land(xdim = 100, ydim = 100, pathogens = 3, crops = 3,
+                        block_len = 10);
+par(mar = c(1, 1, 1, 1));
+image(LAND10[,,2], xaxt = "n", yaxt = "n");
+```
+
+
+**Block length 25**: Each cell is its own block, corresponding to applying fungal biopesticides in each 2 km by 2 km square on the landscape.
+
+```{r}
+LAND25 <- toy_block_land(xdim = 100, ydim = 100, pathogens = 3, crops = 3,
+                        block_len = 25);
+par(mar = c(1, 1, 1, 1));
+image(LAND25[,,2], xaxt = "n", yaxt = "n");
+```
+
+Of course, for even the Phase II toy simulations, we'll want a bigger landscape. I'll try to do this for 1000 km by 1000 km and see how it goes. 
+
 
 > <a name="u-27-AUG-2018">Update: 27 AUG 2018</a>
 
