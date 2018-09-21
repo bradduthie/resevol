@@ -240,6 +240,11 @@ toy_initialise_land <- function(xdim = 2, ydim = 2, pathogens = 1, crops = 1){
 
 
 toy_block_land <- function(xdim, ydim, pathogens, crops, block_len){
+    cells     <- xdim * ydim;
+    cell_left <- cells %% (block_len * block_len);
+    if(cell_left > 0){
+        stop("Landscape cannot be divided into squares of size 'block_len'");
+    }
     LAND      <- array(data = 0, dim = c(xdim, ydim, 3));
     tx0       <- 1;
     tx1       <- block_len;
@@ -257,6 +262,19 @@ toy_block_land <- function(xdim, ydim, pathogens, crops, block_len){
             ty1 <- ty1 + block_len;
         }
         block_num <- block_num + 1;
+    }
+    block_num  <- block_num - 1;
+    for(block in 1:block_num){
+        rand_path <- sample(x = 1:pathogens, size = 1);
+        rand_crop <- sample(x = 1:crops, size = 1);
+        for(xx in 1:xdim){
+            for(yy in 1:ydim){
+                if(LAND[xx, yy, 1] == block){
+                    LAND[xx, yy, 2] <- rand_path;
+                    LAND[xx, yy, 3] <- rand_crop;
+                }
+            }
+        }
     }
     return(LAND);
 }
