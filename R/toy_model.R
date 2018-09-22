@@ -6,6 +6,15 @@
 # but also don't want to worry about not being able to name functions like
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
+
+###
+
+# TODO: Create a 'crop_freq' and 'path_freq'  to be used in the workhorse
+##      toy_simulate_resistance function. Use the trick of if gen %% crop_freq
+##      equals zero, then call toy_set_crops and toy_set_paths, changing stuff
+
+###
+
 replicate_toy_sims <- function(generations = 20,       # Generations to sim
                                xdim = 100,             # Land dimension 1
                                ydim = 100,             # Land dimension 2
