@@ -6,7 +6,58 @@
 # but also don't want to worry about not being able to name functions like
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
-
+replicate_toy_sims <- function(generations = 20,       # Generations to sim
+                               xdim = 100,             # Land dimension 1
+                               ydim = 100,             # Land dimension 2
+                               pathogens = 3,          # Pathogen strains
+                               crops = 3,              # Crop species
+                               path_alleles = 3,       # Pathogen alleles
+                               crop_alleles = 3,       # Crop alleles
+                               pest_init = 50000,      # Initial pests 
+                               crop_rotate = "rotate", # Crops rotated
+                               path_rotate = "rotate", # Pathogens rotated
+                               pest_move_pr = 0.1,     # Pest movement
+                               pest_move_dist = 5,     # Pest move distance
+                               fecundity = 500,        # Offspring per fem
+                               cell_K = 1000,          # K per cell
+                               print_gen = TRUE,       # Option print gen
+                               pois_move = TRUE,       # Kind of movement
+                               land_bloc = TRUE,       # Blocked land  
+                               block_len = 1,          # Length block
+                               replicates = 1          # How many times
+                              ){
+  results <- NULL;
+  while(replicates > 0){
+      sim <- toy_simulate_resistance(generations = generations,
+                                     xdim = xdim,            
+                                     ydim = ydim,             
+                                     pathogens = pathogens,          
+                                     crops = crops,              
+                                     path_alleles = path_alleles,       
+                                     crop_alleles = crop_alleles,       
+                                     pest_init = pest_init,      
+                                     crop_rotate = crop_rotate, 
+                                     path_rotate = path_rotate, 
+                                     pest_move_pr = pest_move_pr,     
+                                     pest_move_dist = pest_move_dist,     
+                                     fecundity = fecundity,       
+                                     cell_K = cell_K,          
+                                     print_gen = print_gen,     
+                                     pois_move = pois_move,    
+                                     land_bloc = land_bloc,  
+                                     block_len = block_len);
+      sim_summ <- summarise_gens(sim);
+      rows_tot <- 1;
+      if(is.matrix(sim_sum) == TRUE){
+          rows_tot <- dim(sim_summ)[1];
+      }
+      rep_col    <- rep(x = replicates, times = rows_tot);
+      sim_summ   <- cbind(rep_col, sim_summ);
+      results    <- rbind(results, sim_summ);
+      replicates <- replicates - 1;
+  }
+  return(results);
+}
 
 
 # This is the workhorse function that actually simulates resistance
@@ -24,7 +75,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     pest_move_dist = 5,     # Pest move distance
                                     fecundity = 8,          # Offspring per fem
                                     cell_K = 2000,          # K per cell
-                                    print_gen = FALSE,      # Option print gen
+                                    print_gen = TRUE,       # Option print gen
                                     pois_move = TRUE,       # Kind of movement
                                     land_bloc = TRUE,       # Blocked land  
                                     block_len = 1           # Length block
@@ -48,7 +99,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     PEST_DATA   <- NULL;
     LAND_DATA   <- NULL;
     gen         <- 1;
-    while(gen < generations){
+    while(gen <= generations){
         LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
         LAND <- toy_set_paths(LAND, pathogens, path_rotate);
         if(pois_move == TRUE){
@@ -74,7 +125,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
             break;
         }
         if(print_gen == TRUE){
-            print(paste("Generation ",gen," of ",generations));
+            print(paste("Simulating generation ",gen," of ",generations));
         }
         gen <- gen + 1;
     }
@@ -200,7 +251,8 @@ results_to_json <- function(pest, land, printit = TRUE, filename = "sim.json"){
     return(sim_json);
 }
 
-summarise_gens <- function(sim){
+# Summarise over generations
+summarise_gens <- function(sim, print_gen = TRUE){
     PEST_DATA <- sim$PEST_DATA;
     LAND_DATA <- sim$LAND_DATA;
     gens      <- length(PEST_DATA);
@@ -210,6 +262,9 @@ summarise_gens <- function(sim){
                                land = LAND_DATA[[gen]]);
       land_vec <- as.vector(res$landscape)
       land_res[gen,] <- c(gen, land_vec);
+      if(print_gen == TRUE){
+          print(paste("Summarising generation ",gen," of ",gens));
+      }
     }
     colnames(land_res) <- c("generation", "pop_size", "resist_genotypes", 
                             "crop_genotypes",  "percentage_resistant", 
