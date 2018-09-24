@@ -6,15 +6,6 @@
 # but also don't want to worry about not being able to name functions like
 # "initialise_land" the same here as elsewhere in the eventual bigger model.
 # ==============================================================================
-
-###
-
-# TODO: Create a 'crop_freq' and 'path_freq'  to be used in the workhorse
-##      toy_simulate_resistance function. Use the trick of if gen %% crop_freq
-##      equals zero, then call toy_set_crops and toy_set_paths, changing stuff
-
-###
-
 replicate_toy_sims <- function(generations = 20,       # Generations to sim
                                xdim = 100,             # Land dimension 1
                                ydim = 100,             # Land dimension 2
@@ -33,10 +24,14 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
                                pois_move = TRUE,       # Kind of movement
                                land_bloc = TRUE,       # Blocked land  
                                block_len = 1,          # Length block
-                               replicates = 1          # How many times
+                               rep_num   = 1,          # How many times
+                               crop_freq = 10,         # Rel freq crop change
+                               path_freq = 10,         # Rel freq path change
+                               print_it  = TRUE,       # Print to file
+                               print_file = "toy.csv"  # Print to file
                               ){
-  results <- NULL;
-  while(replicates > 0){
+  results    <- NULL;
+  while(rep_num > 0){
       sim <- toy_simulate_resistance(generations = generations,
                                      xdim = xdim,            
                                      ydim = ydim,             
@@ -54,16 +49,23 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
                                      print_gen = print_gen,     
                                      pois_move = pois_move,    
                                      land_bloc = land_bloc,  
-                                     block_len = block_len);
+                                     block_len = block_len,
+                                     crop_freq = crop_freq,
+                                     path_freq = path_freq);
       sim_summ <- summarise_gens(sim);
       rows_tot <- 1;
-      if(is.matrix(sim_sum) == TRUE){
-          rows_tot <- dim(sim_summ)[1];
+      if(is.matrix(sim_summ) == TRUE){
+          rows_tot   <- dim(sim_summ)[1];
+          rep_col    <- rep(x = rep_num, times = rows_tot);
+          sim_summ   <- cbind(rep_col, sim_summ);
+          results    <- rbind(results, sim_summ);
+      }else{
+          results    <- c(rows_tot, sim_summ);
       }
-      rep_col    <- rep(x = replicates, times = rows_tot);
-      sim_summ   <- cbind(rep_col, sim_summ);
-      results    <- rbind(results, sim_summ);
-      replicates <- replicates - 1;
+      rep_num    <- rep_num - 1;
+  }
+  if(print_it == TRUE){
+      write.csv(x = results, file = print_file);
   }
   return(results);
 }
@@ -87,9 +89,10 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     print_gen = TRUE,       # Option print gen
                                     pois_move = TRUE,       # Kind of movement
                                     land_bloc = TRUE,       # Blocked land  
-                                    block_len = 1           # Length block
+                                    block_len = 1,          # Length block
+                                    crop_freq = 10,         # Freq crop change
+                                    path_freq = 10          # Freq path change
                                     ){
-    
     if(pest_move_dist > xdim & pest_move_dist > ydim){
         pest_move_dist <- max(c(xdim, ydim)); # Avoids error
     }
@@ -109,8 +112,12 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
     LAND_DATA   <- NULL;
     gen         <- 1;
     while(gen <= generations){
-        LAND <- toy_set_crops(LAND, crops, crop_rotate);                        
-        LAND <- toy_set_paths(LAND, pathogens, path_rotate);
+        if(gen %% crop_freq == 0){
+            LAND <- toy_set_crops(LAND, crops, crop_rotate);
+        }
+        if(gen %% path_freq == 0){
+            LAND <- toy_set_paths(LAND, pathogens, path_rotate);
+        }
         if(pois_move == TRUE){
             PEST <- toy_pois_move_pest(PEST, LAND, pest_move_dist);
         }else{

@@ -52,6 +52,10 @@ library(rhandsontable)
 <a name="updates">Project updates:</a>
 ================================================================================
 
+<!---
+reps <- replicate_toy_sims(generations = 10, xdim = 100, ydim = 100, pathogens = 3, crops = 3, pest_init = 50000, crop_rotate = "rotate", path_rotate = "rotate", fecundity = 800, cell_K = 100, block_len = 100, rep_num = 1, crop_freq = 5, path_freq = 5);
+--->
+
 > <a name="u-21-SEP-2018">Update: 21 SEP 2018</a>
 
 **Success with the graphical display**
