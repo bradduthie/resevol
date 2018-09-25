@@ -109,10 +109,15 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
     PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
                                 c_al = crop_alleles);
     # Start the generations
-    PEST_DATA   <- NULL;
-    LAND_DATA   <- NULL;
     gen         <- 1;
     while(gen <= generations){
+        if(gen > 1){
+            LAND <- NEW_LAND;
+            PEST <- NEW_PEST;
+            rm(NEW_LAND);
+            rm(NEW_PEST);
+            gc();
+        }
         if(gen %% crop_freq == 0){
             LAND <- toy_set_crops(LAND, crops, crop_rotate);
         }
@@ -149,10 +154,14 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
         write.csv(x = LAND[,,2], file = LAND_file_2);
         write.csv(x = LAND[,,3], file = LAND_file_3);
         write.csv(x = PEST, file = PEST_file);
+        NEW_LAND <- LAND;
+        NEW_PEST <- PEST;
+        rm(LAND);
+        rm(PEST);
         gc();
         gen <- gen + 1;
     }
-    return(list(PEST = PEST, LAND = LAND));
+    return(list(PEST = NEW_PEST, LAND = NEW_LAND));
 }
 
 # This is the workhorse function that actually simulates resistance
