@@ -141,14 +141,15 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
         if(print_gen == TRUE){
             print(paste("Simulating generation ",gen," of ",generations));
         }
-        LAND_file_1 <- paste(print_dir, "LAND_1_", gen, ".csv", sep = "");
-        LAND_file_2 <- paste(print_dir, "LAND_2_", gen, ".csv", sep = "");
-        LAND_file_3 <- paste(print_dir, "LAND_3_", gen, ".csv", sep = "");
+        LAND_file_1 <- paste(print_dir, "LAND_", gen, "_1_", ".csv", sep = "");
+        LAND_file_2 <- paste(print_dir, "LAND_", gen, "_2_", ".csv", sep = "");
+        LAND_file_3 <- paste(print_dir, "LAND_", gen, "_3_", ".csv", sep = "");
         PEST_file   <- paste(print_dir, "PEST_", gen, ".csv", sep = "");
         write.csv(x = LAND[,,1], file = LAND_file_1);
         write.csv(x = LAND[,,2], file = LAND_file_2);
         write.csv(x = LAND[,,3], file = LAND_file_3);
         write.csv(x = PEST, file = PEST_file);
+        gc();
         gen <- gen + 1;
     }
     return(list(PEST = PEST, LAND = LAND));

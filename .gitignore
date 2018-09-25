@@ -12,3 +12,4 @@ assets/node_modules
 assets/npm-debug.log
 
 data/output.json
+data/block*
