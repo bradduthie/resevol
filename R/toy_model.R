@@ -72,6 +72,89 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
 
 
 # This is the workhorse function that actually simulates resistance
+toy_simulate            <- function(generations = 20,       # Generations to sim
+                                    xdim = 2,               # Land dimension 1
+                                    ydim = 2,               # Land dimension 2
+                                    pathogens = 1,          # Pathogen strains
+                                    crops = 1,              # Crop species
+                                    path_alleles = 3,       # Pathogen alleles
+                                    crop_alleles = 3,       # Crop alleles
+                                    pest_init = 2000,       # Initial pests 
+                                    crop_rotate = "static", # Crops rotated
+                                    path_rotate = "static", # Pathogens rotated
+                                    pest_move_pr = 0.1,     # Pest movement
+                                    pest_move_dist = 5,     # Pest move distance
+                                    fecundity = 8,          # Offspring per fem
+                                    cell_K = 2000,          # K per cell
+                                    print_gen = TRUE,       # Option print gen
+                                    pois_move = TRUE,       # Kind of movement
+                                    land_bloc = TRUE,       # Blocked land  
+                                    block_len = 1,          # Length block
+                                    crop_freq = 10,         # Freq crop change
+                                    path_freq = 10,         # Freq path change
+                                    print_dir = "toy"       # Print directory
+                                    ){
+    if(pest_move_dist > xdim & pest_move_dist > ydim){
+        pest_move_dist <- max(c(xdim, ydim)); # Avoids error
+    }
+    # Start initialising the landscape and pests
+    if(land_bloc == TRUE){
+        LAND <- toy_block_land(xdim = xdim, ydim = ydim, 
+                               pathogens = pathogens, crops = crops, 
+                               block_len = block_len);
+    }else{
+        LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
+                                pathogens = pathogens, crops = crops);
+    }
+    PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
+                                c_al = crop_alleles);
+    # Start the generations
+    PEST_DATA   <- NULL;
+    LAND_DATA   <- NULL;
+    gen         <- 1;
+    while(gen <= generations){
+        if(gen %% crop_freq == 0){
+            LAND <- toy_set_crops(LAND, crops, crop_rotate);
+        }
+        if(gen %% path_freq == 0){
+            LAND <- toy_set_paths(LAND, pathogens, path_rotate);
+        }
+        if(pois_move == TRUE){
+            PEST <- toy_pois_move_pest(PEST, LAND, pest_move_dist);
+        }else{
+            PEST <- toy_move_pest(PEST, LAND, pest_move_pr, pest_move_dist);
+        }
+        # ------------- Back to the biology
+        PEST <- toy_feed_pest(PEST, LAND);                                      
+        if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            break;
+        }
+        PEST <- toy_kill_pest(PEST, LAND);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
+                                   fecundity, cell_K);
+        if(toy_check_extinction(PEST, gen) == TRUE){
+            break;
+        }
+        if(print_gen == TRUE){
+            print(paste("Simulating generation ",gen," of ",generations));
+        }
+        LAND_file_1 <- paste(print_dir, "LAND_1_", gen, ".csv", sep = "");
+        LAND_file_2 <- paste(print_dir, "LAND_2_", gen, ".csv", sep = "");
+        LAND_file_3 <- paste(print_dir, "LAND_3_", gen, ".csv", sep = "");
+        PEST_file   <- paste(print_dir, "PEST_", gen, ".csv", sep = "");
+        write.csv(x = LAND[,,1], file = LAND_file_1);
+        write.csv(x = LAND[,,2], file = LAND_file_2);
+        write.csv(x = LAND[,,3], file = LAND_file_3);
+        write.csv(x = PEST, file = PEST_file);
+        gen <- gen + 1;
+    }
+    return(list(PEST = PEST, LAND = LAND));
+}
+
+# This is the workhorse function that actually simulates resistance
 toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     xdim = 2,               # Land dimension 1
                                     ydim = 2,               # Land dimension 2
@@ -92,7 +175,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                     block_len = 1,          # Length block
                                     crop_freq = 10,         # Freq crop change
                                     path_freq = 10          # Freq path change
-                                    ){
+){
     if(pest_move_dist > xdim & pest_move_dist > ydim){
         pest_move_dist <- max(c(xdim, ydim)); # Avoids error
     }
@@ -103,7 +186,7 @@ toy_simulate_resistance <- function(generations = 20,       # Generations to sim
                                block_len = block_len);
     }else{
         LAND <- toy_initialise_land(xdim  = xdim, ydim = ydim, 
-                                pathogens = pathogens, crops = crops);
+                                    pathogens = pathogens, crops = crops);
     }
     PEST <- toy_initialise_pest(LAND, N = pest_init, p_al = path_alleles, 
                                 c_al = crop_alleles);
