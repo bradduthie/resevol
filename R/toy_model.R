@@ -71,7 +71,6 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
 }
 
 
-
 toy_collect_file_output <- function(dir){
     files    <- list.files(path = dir);
     chunks   <- unlist(strsplit(x = files, split = "_"));
@@ -417,12 +416,12 @@ summarise_gens <- function(sim, print_gen = TRUE){
 summarise_sim_gen <- function(pest, land){
     inds   <- dim(pest)[1];
     cells  <- dim(land)[1] * dim(land)[2];
-    #s_size <- cells * 100;
-    #if(inds > s_size){
-    #  keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
-    #  pest <- pest[keep,];
-    #  inds <- s_size;
-    #}
+    s_size <- cells * 100;
+    if(inds > s_size){
+      keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
+      pest <- pest[keep,];
+      inds <- s_size;
+    }
     p_geno <- rep(x = 0, times = inds);
     c_geno <- rep(x = 0, times = inds);
     path   <- rep(x = 0, times = inds);
