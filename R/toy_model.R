@@ -71,6 +71,39 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
 }
 
 
+
+toy_collect_file_output <- function(dir){
+    files    <- list.files(path = dir);
+    chunks   <- unlist(strsplit(x = files, split = "_"));
+    numbers  <- gsub("[^0-9\\]", NA, chunks);
+    only_num <- as.numeric(numbers[!is.na(numbers)]);
+    last_gen <- max(only_num);
+    sim      <- NULL;
+    for(i in 1:last_gen){
+        LAND1_name <- paste(dir, "/", "LAND_", i, "_1_.csv", sep = "");
+        LAND2_name <- paste(dir, "/", "LAND_", i, "_2_.csv", sep = "");
+        LAND3_name <- paste(dir, "/", "LAND_", i, "_3_.csv", sep = "");
+        LAND1      <- read.csv(file = LAND1_name);
+        LAND2      <- read.csv(file = LAND2_name);
+        LAND3      <- read.csv(file = LAND3_name);
+        LAND1      <- LAND1[,-1];
+        LAND2      <- LAND2[,-1];
+        LAND3      <- LAND3[,-1];
+        LAND_D     <- dim(LAND1);
+        LVEC1      <- as.vector(unlist(LAND1));
+        LVEC2      <- as.vector(unlist(LAND2));
+        LVEC3      <- as.vector(unlist(LAND3));
+        LAND       <- array(data = c(LVEC1, LVEC2, LVEC3), dim = c(LAND_D, 3));
+        PEST_name  <- paste(dir, "/", "PEST_", i, ".csv", sep = "");
+        PEST       <- read.csv(file = PEST_name);
+        PEST       <- PEST[,-1];
+        sim$LAND_DATA[[i]] <- LAND;
+        sim$PEST_DATA[[i]] <- PEST;
+        print(paste("Scanned generation", i, "of", last_gen));
+    }
+    return(sim);
+}
+
 # This is the workhorse function that actually simulates resistance
 toy_simulate            <- function(generations = 20,       # Generations to sim
                                     xdim = 2,               # Land dimension 1
@@ -384,12 +417,12 @@ summarise_gens <- function(sim, print_gen = TRUE){
 summarise_sim_gen <- function(pest, land){
     inds   <- dim(pest)[1];
     cells  <- dim(land)[1] * dim(land)[2];
-    s_size <- cells * 100;
-    if(inds > s_size){
-      keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
-      pest <- pest[keep,];
-      inds <- s_size;
-    }
+    #s_size <- cells * 100;
+    #if(inds > s_size){
+    #  keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
+    #  pest <- pest[keep,];
+    #  inds <- s_size;
+    #}
     p_geno <- rep(x = 0, times = inds);
     c_geno <- rep(x = 0, times = inds);
     path   <- rep(x = 0, times = inds);
@@ -431,12 +464,12 @@ summarise_sim_gen <- function(pest, land){
     resr <- rep(x = 0, times = dim(mat)[1]);
     eatr <- rep(x = 0, times = dim(mat)[1]);
     for(i in 1:dim(mat)[1]){
-        yloc      <- mat[i, 1];
-        xloc      <- mat[i, 2];
+        yloc      <- as.numeric(mat[i, 1]);
+        xloc      <- as.numeric(mat[i, 2]);
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
         inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
-        if(length(inds_on) > dim(pest)[2]){
+        if(length(inds_on[[1]]) > dim(pest)[2]){
             pop_size  <- dim(inds_on)[1];
             genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
             getyp_pth <- length(unique(genos_pth));
