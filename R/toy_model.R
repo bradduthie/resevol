@@ -415,7 +415,7 @@ summarise_gens <- function(sim, print_gen = TRUE){
     }
     colnames(land_res) <- c("generation", "pop_size", "resist_genotypes", 
                             "crop_genotypes",  "percentage_resistant", 
-                            "percentage_crop_eaters");
+                            "percentage_crop_eaters", "percentage_survivors");
     return(land_res);
 }
 
