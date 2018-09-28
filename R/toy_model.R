@@ -403,7 +403,7 @@ summarise_gens <- function(sim, print_gen = TRUE){
     PEST_DATA <- sim$PEST_DATA;
     LAND_DATA <- sim$LAND_DATA;
     gens      <- length(PEST_DATA);
-    land_res  <- matrix(data = 0, ncol = 6, nrow = gens);
+    land_res  <- matrix(data = 0, ncol = 7, nrow = gens);
     for(gen in 1:gens){
       res <- summarise_sim_gen(pest = PEST_DATA[[gen]], 
                                land = LAND_DATA[[gen]]);
