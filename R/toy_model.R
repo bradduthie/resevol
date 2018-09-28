@@ -148,7 +148,7 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
             PEST <- NEW_PEST;
             rm(NEW_LAND);
             rm(NEW_PEST);
-            gc();
+            gc(); 
         }
         if(gen %% crop_freq == 0){
             LAND <- toy_set_crops(LAND, crops, crop_rotate);
@@ -164,15 +164,21 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
         # ------------- Back to the biology
         PEST <- toy_feed_pest(PEST, LAND);                                      
         if(toy_check_extinction(PEST, gen) == TRUE){ # Hate these if breaks here
+            NEW_PEST <- PEST;
+            NEW_LAND <- LAND;
             break;
         }
         PEST <- toy_kill_pest(PEST, LAND);
         if(toy_check_extinction(PEST, gen) == TRUE){
+            NEW_PEST <- PEST;
+            NEW_LAND <- LAND;
             break;
         }
         PEST <- toy_reproduce_pest(PEST, LAND, path_alleles, crop_alleles, 
                                    fecundity, cell_K);
         if(toy_check_extinction(PEST, gen) == TRUE){
+            NEW_PEST <- PEST;
+            NEW_LAND <- LAND;
             break;
         }
         if(print_gen == TRUE){
@@ -187,7 +193,7 @@ toy_simulate            <- function(generations = 20,       # Generations to sim
         write.csv(x = LAND[,,3], file = LAND_file_3);
         write.csv(x = PEST, file = PEST_file);
         NEW_LAND <- LAND;
-        NEW_PEST <- PEST;
+        NEW_PEST <- PEST; 
         rm(LAND);
         rm(PEST);
         gc();
@@ -416,7 +422,7 @@ summarise_gens <- function(sim, print_gen = TRUE){
 summarise_sim_gen <- function(pest, land){
     inds   <- dim(pest)[1];
     cells  <- dim(land)[1] * dim(land)[2];
-    s_size <- cells * 100;
+    s_size <- cells * 1;
     if(inds > s_size){
       keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
       pest <- pest[keep,];
@@ -457,18 +463,20 @@ summarise_sim_gen <- function(pest, land){
     ydim <- dim(land)[2];
     rows <- xdim * ydim;
     locs <- as.matrix(expand.grid(1:xdim, 1:ydim));
-    mat  <- cbind(locs, matrix(data = 0, ncol = 7, nrow = dim(locs)[1]));
+    mat  <- cbind(locs, matrix(data = 0, ncol = 8, nrow = dim(locs)[1]));
     path <- rep(x = 0, times = dim(mat)[1]);
     crop <- rep(x = 0, times = dim(mat)[1]);
     resr <- rep(x = 0, times = dim(mat)[1]);
     eatr <- rep(x = 0, times = dim(mat)[1]);
+    srvr <- rep(x = 0, times = dim(mat)[1]);
     for(i in 1:dim(mat)[1]){
         yloc      <- as.numeric(mat[i, 1]);
         xloc      <- as.numeric(mat[i, 2]);
         path[i]   <- land[xloc, yloc, 2];
         crop[i]   <- land[xloc, yloc, 3];
-        inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
-        if(length(inds_on[[1]]) > dim(pest)[2]){
+        tot_indon <- sum(pest[,3] == xloc & pest[,4] == yloc);
+        if(tot_indon > 1){
+            inds_on   <- pest[pest[,3] == xloc & pest[,4] == yloc,];
             pop_size  <- dim(inds_on)[1];
             genos_pth <- as.numeric(paste(inds_on[,5], inds_on[,6], sep = ""));
             getyp_pth <- length(unique(genos_pth));
@@ -476,8 +484,12 @@ summarise_sim_gen <- function(pest, land){
             genos_eat <- as.numeric(paste(inds_on[,7], inds_on[,8], sep = ""));
             getyp_eat <- length(unique(genos_eat));
             raw_eat   <- sum(inds_on[,7] == crop[i] | inds_on[,8] == crop[i]);
+            raw_sur   <- sum(  (inds_on[,5] == path[i] | inds_on[,6] == path[i])
+                             & (inds_on[,7] == crop[i] | inds_on[,8] == crop[i])
+                            );
             pct_res   <- 100 * raw_res / pop_size;
             pct_eat   <- 100 * raw_eat / pop_size;
+            pct_sur   <- 100 * raw_sur / pop_size;
             mat[i, 3] <- crop[i];
             mat[i, 4] <- path[i];
             mat[i, 5] <- pop_size;
@@ -485,8 +497,10 @@ summarise_sim_gen <- function(pest, land){
             mat[i, 7] <- getyp_eat;
             mat[i, 8] <- pct_res;
             mat[i, 9] <- pct_eat;
+            mat[i,10] <- pct_sur;
             resr[i]   <- raw_res;
             eatr[i]   <- raw_eat;
+            srvr[i]   <- raw_sur;
         }        
     }
     population  <- dim(pest)[1];
@@ -496,15 +510,18 @@ summarise_sim_gen <- function(pest, land){
     c_genotypes <- length(unique(c_genos));
     pct_resist  <- 100 * sum(resr) / population;
     pct_eaters  <- 100 * sum(eatr) / population;
+    pct_surviv  <- 100 * sum(srvr) / population;
     landscape   <- c(population, p_genotypes, c_genotypes, pct_resist, 
-                     pct_eaters);
+                     pct_eaters, pct_surviv);
     colnames(data) <- c("ID", "sex", "xloc", "yloc", "path", "crop", 
                         "p_geno", "c_geno", "resist_path", "eat_crop");
     names(landscape) <- c("pop_size", "resist_genotypes", "crop_genotypes", 
-                          "percentage_resistant", "percentage_crop_eaters");
+                          "percentage_resistant", "percentage_crop_eaters",
+                          "percentage_survivors");
     colnames(mat)    <- c("xloc", "yloc", "crop", "pathogen", "pop_size", 
                           "genotypes_resist", "genotypes_crop", 
-                          "percentage_resistant", "percentage_crop_eaters");
+                          "percentage_resistant", "percentage_crop_eaters",
+                          "percentage_survivors");
     sim_results <- list(data = data, landscape = landscape, mat = mat);
     return(sim_results);
 }
