@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 *.docx
+*.docx#
 
 .DS_Store
 **/.DS_Store
@@ -13,3 +14,6 @@ assets/npm-debug.log
 
 data/output.json
 data/block*
+data/high*
+data/laptop*
+data/toy_test*
