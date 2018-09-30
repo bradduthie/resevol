@@ -71,7 +71,7 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
 }
 
 
-toy_collect_file_output <- function(dir){
+toy_collect_file_output <- function(dir, file = FALSE){
     files    <- list.files(path = dir);
     chunks   <- unlist(strsplit(x = files, split = "_"));
     numbers  <- gsub("[^0-9\\]", NA, chunks);
@@ -96,8 +96,15 @@ toy_collect_file_output <- function(dir){
         PEST_name  <- paste(dir, "/", "PEST_", i, ".csv", sep = "");
         PEST       <- read.csv(file = PEST_name);
         PEST       <- PEST[,-1];
-        sim$LAND_DATA[[i]] <- LAND;
-        sim$PEST_DATA[[i]] <- PEST;
+        if(file != FALSE){
+          res            <- summarise_sim_gen(pest = PEST, land = LAND);
+          land_vec       <- c(i, as.vector(res$landscape));
+          write(x = land_vec, file = file, append = TRUE);
+          gc();
+        }else{
+            sim$LAND_DATA[[i]] <- LAND;
+            sim$PEST_DATA[[i]] <- PEST;
+        }
         print(paste("Scanned generation", i, "of", last_gen));
     }
     return(sim);
