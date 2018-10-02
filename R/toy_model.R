@@ -1,3 +1,9 @@
+
+# sim1 <- replicate_toy_sims(generations = 20, xdim = 15, ydim = 15, 
+# pathogens = 3, crops = 3, pest_init = 10000, crop_rotate = "rotate", 
+# path_rotate = "rotate", cell_K = 100, block_len = 15, print_it = FALSE, 
+# fecundity = 10, pest_move_dist = 1)
+
 # ==============================================================================
 # This is just a toy version of the model, for the presentation
 # ==============================================================================
@@ -78,7 +84,7 @@ toy_collect_file_output <- function(dir, file = FALSE){
     only_num <- as.numeric(numbers[!is.na(numbers)]);
     last_gen <- max(only_num);
     sim      <- NULL;
-    for(i in 1:last_gen){
+    for(i in 2:last_gen){
         LAND1_name <- paste(dir, "/", "LAND_", i, "_1_.csv", sep = "");
         LAND2_name <- paste(dir, "/", "LAND_", i, "_2_.csv", sep = "");
         LAND3_name <- paste(dir, "/", "LAND_", i, "_3_.csv", sep = "");
@@ -93,13 +99,13 @@ toy_collect_file_output <- function(dir, file = FALSE){
         LVEC2      <- as.vector(unlist(LAND2));
         LVEC3      <- as.vector(unlist(LAND3));
         LAND       <- array(data = c(LVEC1, LVEC2, LVEC3), dim = c(LAND_D, 3));
-        PEST_name  <- paste(dir, "/", "PEST_", i, ".csv", sep = "");
+        PEST_name  <- paste(dir, "/", "PEST_", i-1, ".csv", sep = "");
         PEST       <- read.csv(file = PEST_name);
         PEST       <- PEST[,-1];
         if(file != FALSE){
           res            <- summarise_sim_gen(pest = PEST, land = LAND);
           land_vec       <- c(i, as.vector(res$landscape));
-          write(x = land_vec, file = file, append = TRUE);
+          write(x = as.vector(land_vec), file = file, append = TRUE);
           gc();
         }else{
             sim$LAND_DATA[[i]] <- LAND;
@@ -429,7 +435,7 @@ summarise_gens <- function(sim, print_gen = TRUE){
 summarise_sim_gen <- function(pest, land){
     inds   <- dim(pest)[1];
     cells  <- dim(land)[1] * dim(land)[2];
-    s_size <- cells * 1;
+    s_size <- cells * 100;
     if(inds > s_size){
       keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
       pest <- pest[keep,];
@@ -508,7 +514,11 @@ summarise_sim_gen <- function(pest, land){
             resr[i]   <- raw_res;
             eatr[i]   <- raw_eat;
             srvr[i]   <- raw_sur;
-        }        
+        }
+        if(i %% 100 == 0){
+            prct_c <- 100 * i / dim(mat)[1];
+            print(paste("Summarisation landscape ",prct_c.,"% complete"));
+        }
     }
     population  <- dim(pest)[1];
     p_genos     <- as.numeric(paste(pest[,5], pest[,6], sep = ""));
@@ -839,6 +849,7 @@ toy_reproduce_pest <- function(PEST, LAND, pa, cr, births = 2, K = 100){
 
 # Need to recombine the genomes correctly in the offspring
 toy_breed_locals <- function(PEST, locals, births, K, last_ID){
+    locals   <- sample(x = locals, size = length(locals));
     loc_PEST <- PEST[locals,]; # Need two of each sex (allee effect)
     if(sum(loc_PEST[,2] == 0) < 2 | sum(loc_PEST[,2] == 1) < 2){
         return(NULL);
