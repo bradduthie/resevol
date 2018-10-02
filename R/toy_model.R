@@ -435,7 +435,7 @@ summarise_gens <- function(sim, print_gen = TRUE){
 summarise_sim_gen <- function(pest, land){
     inds   <- dim(pest)[1];
     cells  <- dim(land)[1] * dim(land)[2];
-    s_size <- cells * 100;
+    s_size <- cells * 10;
     if(inds > s_size){
       keep <- sample(x = 1:inds, size = s_size, replace = FALSE);
       pest <- pest[keep,];
@@ -460,6 +460,9 @@ summarise_sim_gen <- function(pest, land){
         if(pest[i,7] == crop[i] | pest[i,8] == crop[i]){
             r_crop[i] <- 1;
         }
+        if(i %% 100 == 0){
+            print(paste("On ",i," of ",inds));
+        }
     }
     data      <- matrix(data = 0, nrow = inds, ncol = 10);
     data[,1]  <- pest[,1];
@@ -479,9 +482,9 @@ summarise_sim_gen <- function(pest, land){
     mat  <- cbind(locs, matrix(data = 0, ncol = 8, nrow = dim(locs)[1]));
     path <- rep(x = 0, times = dim(mat)[1]);
     crop <- rep(x = 0, times = dim(mat)[1]);
-    resr <- rep(x = 0, times = dim(mat)[1]);
-    eatr <- rep(x = 0, times = dim(mat)[1]);
-    srvr <- rep(x = 0, times = dim(mat)[1]);
+    resr <- rep(x = NA, times = dim(mat)[1]);
+    eatr <- rep(x = NA, times = dim(mat)[1]);
+    srvr <- rep(x = NA, times = dim(mat)[1]);
     for(i in 1:dim(mat)[1]){
         yloc      <- as.numeric(mat[i, 1]);
         xloc      <- as.numeric(mat[i, 2]);
@@ -515,9 +518,9 @@ summarise_sim_gen <- function(pest, land){
             eatr[i]   <- raw_eat;
             srvr[i]   <- raw_sur;
         }
-        if(i %% 100 == 0){
+        if(i %% 1000 == 0){
             prct_c <- 100 * i / dim(mat)[1];
-            print(paste("Summarisation landscape ",prct_c.,"% complete"));
+            print(paste("Summarisation landscape ",prct_c,"% complete"));
         }
     }
     population  <- dim(pest)[1];
@@ -525,6 +528,9 @@ summarise_sim_gen <- function(pest, land){
     p_genotypes <- length(unique(p_genos));
     c_genos     <- as.numeric(paste(pest[,7], pest[,8], sep = ""));
     c_genotypes <- length(unique(c_genos));
+    resr        <- resr[!is.na(resr)];
+    eatr        <- eatr[!is.na(eatr)];
+    srvr        <- srvr[!is.na(srvr)];
     pct_resist  <- 100 * sum(resr) / population;
     pct_eaters  <- 100 * sum(eatr) / population;
     pct_surviv  <- 100 * sum(srvr) / population;
