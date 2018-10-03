@@ -1,9 +1,3 @@
-
-# sim1 <- replicate_toy_sims(generations = 20, xdim = 15, ydim = 15, 
-# pathogens = 3, crops = 3, pest_init = 10000, crop_rotate = "rotate", 
-# path_rotate = "rotate", cell_K = 100, block_len = 15, print_it = FALSE, 
-# fecundity = 10, pest_move_dist = 1)
-
 # ==============================================================================
 # This is just a toy version of the model, for the presentation
 # ==============================================================================
@@ -99,7 +93,7 @@ toy_collect_file_output <- function(dir, file = FALSE){
         LVEC2      <- as.vector(unlist(LAND2));
         LVEC3      <- as.vector(unlist(LAND3));
         LAND       <- array(data = c(LVEC1, LVEC2, LVEC3), dim = c(LAND_D, 3));
-        PEST_name  <- paste(dir, "/", "PEST_", i-1, ".csv", sep = "");
+        PEST_name  <- paste(dir, "/", "PEST_", i, ".csv", sep = "");
         PEST       <- read.csv(file = PEST_name);
         PEST       <- PEST[,-1];
         if(file != FALSE){
