@@ -1,3 +1,5 @@
+# sim1 <- replicate_toy_sims(generations = 20, xdim = 10, ydim = 10,  pathogens = 5, crops = 5, pest_init = 10000, crop_rotate = "rotate", path_rotate = "rotate", cell_K = 100, block_len = 1, print_it = FALSE,  fecundity = 10, pest_move_dist = 1)
+
 # ==============================================================================
 # This is just a toy version of the model, for the presentation
 # ==============================================================================
@@ -30,7 +32,6 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
                                print_it  = TRUE,       # Print to file
                                print_file = "toy.csv"  # Print to file
                               ){
-  results    <- NULL;
   while(rep_num > 0){
       sim <- toy_simulate_resistance(generations = generations,
                                      xdim = xdim,            
@@ -58,16 +59,17 @@ replicate_toy_sims <- function(generations = 20,       # Generations to sim
           rows_tot   <- dim(sim_summ)[1];
           rep_col    <- rep(x = rep_num, times = rows_tot);
           sim_summ   <- cbind(rep_col, sim_summ);
-          results    <- rbind(results, sim_summ);
       }else{
-          results    <- c(rows_tot, sim_summ);
+          sim_summ   <- c(rep_num, sim_summ);
       }
       rep_num    <- rep_num - 1;
+      filename   <- paste(print_file,"_rep_",rep_num,".csv", sep = "");
+      if(print_it == TRUE){
+          write.csv(x = sim_summ, file = filename);
+      }
+      gc();
   }
-  if(print_it == TRUE){
-      write.csv(x = results, file = print_file);
-  }
-  return(results);
+  return(sim_summ);
 }
 
 
