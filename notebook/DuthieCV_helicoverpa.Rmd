@@ -1,0 +1,101 @@
+---
+linestretch: 1
+link-citations: yes
+linkcolor: blue
+output:
+  word_document:
+    reference_docx: docx_template.docx
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+  html_document: default
+---
+
+**Name:** Alexander Bradley Duthie, PhD, FHEA
+
+**1) Education/Training**
+
+
+Year of Completion,  Title or activity, Institution
+2007,               B.S. in Biology,                  Southern Illinois University Edwardsville
+2007,               B.S. in Philosophy,               Southern Illinois University Edwardsville
+2013,               PhD in Ecology & Evolution,       Iowa State University                    
+2016,               Post-doctoral Research Fellow,    University of Aberdeen                
+2017,               Post-doctoral Research Assistant, University of Stirling                
+
+
+**2) Professional History.**
+
+Leverhulme Early Career Research Fellow (Nov. 2017 - Oct. 2020), University of Stirling
+
+Lecturer in Environmental Modelling (Nov. 2020, proleptic), University of Stirling
+
+**3) List of up to 10 of the most relevant scientific results, such as scientific articles, book chapters, patents (either filed or granted), registered software, or any other type of publication considered to be among the 10 most relevant to the researcher´s career.**
+
+**Selected Scientific Articles:**
+
+**Duthie, A. B.**, J. J. Cusack, J. Minderman, I. L. Jones, E. B. Nilsen, R. A. Pozo, O. S. Rakotonarivo, B. Van Moorter, and N. Bunnefeld. GMSE: an R package for generalised management strategy evaluation. *Methods in Ecology and Evolution*. *In press*. DOI: 10.1111/2041-210X.13091
+
+Cusack, J. J., **A. B. Duthie**, O. S. Rakotonarivo, R. A. Pozo, T. H. E. Mason, J. M\r{a}nsson, L. Nilsson, R. McKenzie, I. M. Tombre, E. Eyth\'{o}rsson, J. Madsen, A. Tulloch, G. Churchill, J. Shaw, R. D. Hearn, S. Redpath, and N. Bunnefeld. 2018. Time series analysis reveals synchrony and asynchrony between conflict management effort and increasing large grazing bird populations in northern Europe. *Conservation Letters*. *In press*. DOI: 10.1111/conl.12450 **(1 citation)**
+
+Paine, C. E. T., A. Deasey, and **A. B. Duthie**. 2018. Towards general mechanistic predictions of community dynamics. *Functional Ecology*. 32 (7):1681-1692. DOI: 10.1111/1365-2435.13096 **(2 citations)**
+
+Redpath, S. M., Andren, Z. Baynham-Herd, N. Bunnefeld, **A. B. Duthie**, Frank, C. A. Garcia, A. Keane, J. M\r{a}nsson, L. Nilsson, C. R. J. Pollard, O. S. Rakotonarivo, C. F. Salk, and H. Travers. 2018. Games as tools to address conservation conflicts. *Trends in Ecology and Evolution*. 33 (6):415-426. DOI: 10.1016/j.tree.2018.03.005
+
+**Duthie, A. B.**, G. Bocedi, R. R. Germain, and J. M. Reid. 2018. Evolution of pre-copulatory and post-copulatory strategies of inbreeding avoidance and associated polyandry. *Journal of Evolutionary Biology*. 31:31-45. DOI: 10.1111/jeb.13189 **(1 citation)**
+
+**Duthie, A. B.**, A. M. Lee, and J. M. Reid. 2016. Inbreeding parents should invest more resources in fewer offspring. *Proceedings of the Royal Society B*. 282:20161845. DOI: 10.1098/rspb.2016.1845 **(7 citations)**
+
+**Duthie, A. B.**, and J. M. Reid. 2016. Evolution of inbreeding avoidance and inbreeding preference through mate choice among interacting relatives. *American Naturalist*. 188 (6):651-667. DOI: 10.1086/688919 **(6 citations)**
+
+**Duthie, A. B.**, G. Bocedi, and J. M. Reid. 2016. When does female multiple mating evolve to adjust inbreeding? Effects of inbreeding depression, direct costs, mating constraints, and polyandry as a threshold trait. *Evolution*. 70 (9):1927-1943. DOI: 10.1111/evo.13005 **(10 citations)**
+
+**Duthie, A. B.**, K. C. Abbott, and J. D. Nason. 2014. Trade-offs and coexistence: A lottery model applied to fig wasp communities. *American Naturalist*. 183 (6):826-841. DOI: 10.1086/675897 **(7 citations)**
+
+**Duthie, A. B.**, and M. R. Falcy. 2013. The influence of habitat autocorrelation on plants and their seed-eating pollinators. *Ecological Modelling*. 251:260-270. DOI: 10.1016/j.ecolmodel.2012.12.019 **(3 citations)**
+
+**4) Current research grants awarded by any agency or company to the researcher.**
+
+Leverhulme Early Career Fellowship (ECF-2016-376)
+"Biodiversity and ecosystem function in ephemeral patches: a trait-based approach"
+88,650 GBP
+1 Nov. 2017 - 31 Oct. 2020
+The Leverhulme Trust
+
+**5) List of ongoing supervisions, with students holding fellowships.**
+
+James Bellis (Masters, 2018-2019)
+*Effects of inbreeding depression on ecosystem function*
+
+Adrian Bach (PhD, 2018-2022)
+*Using artificial intelligence to improve decision-making in conservation conflicts*
+Funded by NERC IAPETUS Doctoral Training Partnership
+
+**6) Academic quantitative indicators.**
+
+1) Books: **0**
+2) Publications in journals with selective editorial policy: **20**
+3) Book chapters: **0**
+4) Supervised and concluded Master's dissertations: **0**
+5) Supervised and concluded Doctoral theses: **0**
+6) Number of citations received in the international scientific literature according to ISI, Scopus or Google Scholar: **119** (Google Scholar)
+
+
+**7) Links to the web pages MyResearcherID (ISI) or MyCitations (Google Scholar):**
+
+https://scholar.google.co.uk/citations?user=l_pNM8QAAAAJ&hl=en
+
+**8) Other information.** Other relevant biographical information for assessing your recent academic work (past five years), and documenting your experience and expertise in the field of knowledge of the proposed project. 
+
+**Relevant computer skills**
+
+- Experience in statistical analysis, mathematical & individual-based modelling, genetic algorithms. 
+- Programming ability in C, R, and MATLAB
+- Knowledge of Linux, version control (git), and high performance computing clusters
+- GitHub profile: https://github.com/bradduthie
+
+
+
+
+
+

@@ -38,7 +38,7 @@ mtext("Percentage of pests surviving on landscape cell", outer = TRUE, side = 2,
 
 
 
-x <- c(1, 5, 10, 25, 50, 100);
+x <- c(100, 2500, 10000, 62500, 250000, 1000000);
 y <- c(32.604, 43.496, 54.745, 74.626, 77.373, 88.182);
 
 par(mar = c(5, 5, 1, 1));
@@ -90,14 +90,16 @@ ymin <- c(min(b1), min(b5), min(b10), min(b25), min(b50), min(b100));
 ymax <- c(max(b1), max(b5), max(b10), max(b25), max(b50), max(b100));
 yl95 <- ymin; # (2.576 * ysd) / sqrt(yln);
 yu95 <- ymax; # (2.576 * ysd) / sqrt(yln);
-x    <- c(1, 5, 10, 25, 50, 100);
+options(scipen = 5);
+x    <- c(100, 2500, 10000, 62500, 250000, 1000000);
 
 
+# 100 hectares per km^2
 
-
-par(mar = c(5, 5, 1, 1));
-plot(x = x, y = yy, ylim = c(0, 100), xlab = "Monoculture block size (sq. km)", 
-     ylab = "Percent of pests killed per block", type = "b", cex.lab = 1.5, 
+par(mar = c(5, 5, 1.25, 1.25));
+plot(x = x, y = yy, ylim = c(0, 100), 
+     xlab = "Monoculture field size (hectares)", 
+     ylab = "Percent of pests killed per field", type = "b", cex.lab = 1.5, 
      cex = 1.0, pch = 20, lwd = 2, cex.axis = 1.5, log = "x");
 arrows(x0 = x, x1 = x, y0 = yu95, y1 = yl95, length = 0.1, code = 3, angle = 90,
        lwd = 2);
