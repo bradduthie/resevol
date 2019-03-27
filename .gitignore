@@ -12,4 +12,7 @@ assets/bower_components
 assets/node_modules
 assets/npm-debug.log
 
+admin*
 data*
+
+notebook/feedback*
