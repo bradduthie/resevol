@@ -39,6 +39,14 @@ library(rhandsontable)
 
 [Project updates](#updates)
 
+ - **2020**
+ 
+    - **JAN** [27](#u-27-JAN-2020)
+
+ - **2019**
+
+    - **MAY** [14](#u-14-MAY-2019)
+
  - **2018**
 
      - **SEP** [21](#u-21-SEP-2018)
@@ -52,9 +60,144 @@ library(rhandsontable)
 <a name="updates">Project updates:</a>
 ================================================================================
 
+> <a name="u-27-JAN-2020">Update: 27 JAN 2020</a>
+
+Work Package 1C develops an individual-based model to investigate how landscape diversity affects the maintenance of susceptibility alleles, and will focus especially on the scale at which diversifying biopesticide strain use and crop species production can overcome pest resistance in the long term. In our [prototype model](https://bradduthie.github.io/helicoverpa/notebook/helicoverpa_notes.html#u-21-SEP-2018) written in R, we did this with a very simple genetic architecture that used matching alleles at a single locus to determine pesticide resistance and feeding ability across crops. While this was useful as an initial model to get a general idea of the scale at which different biopesticide application and crop production will need to be applied, the matching alleles model forces a strong negative genetic correlation between biopesticide resistance and feeding ability across crops. This is unrealistic, and a large part of this work package will be to try to understand the scale at which diversity is needed when the genetic architecture of pests is more realistic. A major modelling goal is to develop a method for constructing a more realistic genetic architecture for simulating pest management *in silico*, such that arbitrary and potentially evolving genetic correlations between pest traits (resistance, feeding efficiency) can be constructed. This entry is an initial plan for this genetic architecture; what follows is just the starting point, all subject to further revision.
+
+When modelling the evolution of pest resistance and crop feeding ability, we need to get from pest genome to pest traits. Everything in between is the challenging bit, but these two end points are actually fairly straightfoward.
+
+- **Genome** can be modelled as a vector of real numbers. Each individual pest gets its own genome, which is essentially a very long vector in which each element is a single locus. There are relevant details to fill in later. For example, there are several ways to model how alleles work. One of the simplest ways is an infinite alleles model, in which each locus holds a real number of some arbitrary value. New mutations are then introduced by randomly selecting a new real number from some distribution. A slightly more challenging way (computationally) is to have some fixed number of discrete alleles that are possible for an individual to have (e.g., 100 alleles at each locus), but I do not think that this is the best way to go unless there is some compelling reason for it. Ploidy level can also be determined in advance; the simplest is haploid, but diploid organisms can be created simply by pairing vector elements (loci) and having rules for homozygosity and heterozygosity. In the end, however, we will have a long vector of numbers (1000s to 10000s of elements) with values that affect pest traits in some way, and are expected to change over the course of the simulation (evolution).
+
+- **Traits** can be modelled, again, as some vector of real numbers. Each individual gets their own values for a fixed number of 'traits' (e.g., sex, location, dispersal ability, resistance to a particular biopesticide, ability to feed on a particular crop). Any number of traits are possible, making the model as complex as it needs to be, but the idea is that each pest has its own set of values that make it unique. Some traits will not be directly related to the genome (e.g., location on the landscape). But most trait values, and especially bipesticide resistance and feeding ability, will be some function of the underlying genome values.
+
+**The challenge is to get from genome to traits in a way that allows traits to be quantitative and correlated in some realistic and potentially evolving way. Below is a starting point, though the details are likely to change. Feel free to leave [comments here](#comments)**
+
+A diploid genome will be constructed with $N_{L}$ total loci, so that each pest genome will represented by a vector of length $2L$. Vector elements will be able to take any real number, thereby modelling potentially infinite alleles. Allele values (i.e., the numbers at the loci) will be used in a function that ultimately determines the values of up to $N_{T}$ pest traits. The simplest way to do this is to just have a single locus for a single trait with additive effects of alleles. For example, for a locus $L_{i}$ with alleles $A_{i1}$ and
+$A_{i2}$, the value of $T_{i} = 1/2(A_{i1} + A_{i2})$. More generally, any different rules for making a trait (e.g., complete or partial dominance) could also be modelled by setting a function $T_{i} = f(A_{i1}, A_{i2})$. Similarly, we can also make traits polygenic by having them determined by multiple loci. For example, we might want five traits, each of which take values that are determined by 10 total loci in the genome (20 alleles). So, e.g., $T_{1} = \sum_{i=1}^{10}(A_{i1} + A_{i2})$, $T_{2} = \sum_{i=11}^{20}(A_{i1} + A_{i2})$, etc. This would give us five traits, each of which takes a value that is the sum of 20 individual real numbers within the genome. 
+
+One way to allow for correlated traits would be to have two separate trait values (e.g., $T_{1}$ and $T_{2}$) be determined by some overlapping set of loci. Correlation between traits could be adjusted by adjusting the size of this overlap. For complete correlation, e.g., the two traits would be determined by the exact same loci. Negative correlations could be constructed by inverting the effects of loci such that $L_{i} \to T_{1}$ but $-L_{i} \to T_{2}$. Still, this means that the correlations must be set *a priori*, and sets some restrictions on the kinds of correlations that are possible (e.g., precision as a consequence of the total number of alleles that can be overlapping versus non-overlapping). Hence, I propose a slightly different construction, which will allow us to go from genome to traits in a way that allows us to **set** genetic correlations without needing to **fix** them *a priori* through some pre-specified mechanism. First, here is a simplified version of what I want to try. 
+
+**The basic idea**
+
+Assume a large population of individuals with only two haploid loci $L0$ and $L1$, and two traits $T0$ and $T1$. There are four possible links between $L_{i} \to T_{j}$, which we can call $X_{ij}$ describing the link between $L_{i}$ and $T_{j}$: $X_{00}$, $X_{01}$, $X_{10}$, and $X_{11}$. Assume that $X_{00} = 1$, $X_{01} = 0.3$, $X_{10} = 0$, and $X_{11} = \sqrt{1 - 0.3^{2}}$. That is,
+
+$$T_{0} = X_{00},$$
+
+while,
+
+$$T_{1} = \sqrt{1 - 0.3^{2}} X_{11} + 0.3 X_{01}.$$
+
+If we randomly sample $L0 \sim \mathcal{N}(0, 1)$ and $L1 \sim \mathcal{N}(0, 1)$, then trait variances equal $1$, while $cov(T_{0}, T_{1}) = 0.3$. We can confirm this by simulating a population of $N = 100000$ individuals.
+
+
+```{r}
+N    <- 100000;
+inds <- matrix(data = 0, nrow = N, ncol = 9);
+colnames(inds) <- c("ID", "L0", "L1", "X00", "X01", "X10", "X11", "T0", "T1");
+inds[,1]  <- 1:N;
+inds[,2]  <- rnorm(n = N, mean = 0, sd = 1);
+inds[,3]  <- rnorm(n = N, mean = 0, sd = 1);
+inds[,4]  <- 1;
+inds[,5]  <- 0.3;
+inds[,6]  <- 0;
+inds[,7]  <- sqrt(1 - 0.3^2);
+inds[,8]  <- (inds[,2] * inds[,4]) + (inds[,3] * inds[,6]);
+inds[,9]  <- (inds[,2] * inds[,5]) + (inds[,3] * inds[,7]);
+```
+
+So the individuals are in rows, while their attributes (IDs, genomes, interactions, traits) are in columns.
+
+```{r, echo = FALSE}
+head(inds);
+```
+
+We can look at the covariance between traits $T0$ and $T1$ in columns 8 and 9 (which might then code for 'resistance ability' or 'feeding efficiency', or something like it).
+
+```{r}
+cov(inds[,8:9]);
+```
+
+This is roughly what we want as our variance covariance matrix. One really simple way to acheive this for five traits, for example, could be just to consider five loci (or blocks of some number of loci) $L_{i}$ and all of the interactions between locus $i$ and $j$, $X_{ij}$ to get to each trait. 
+
+
+![](images/loci_to_traits_simple.png)
+
+In the figure above, five loci $L_{i}$ are connected to each trait $T_{j}$ by arrows $X_{ij}$. Arrow values could be represented *within the genome*, as with the individual attributes `"X00"`, `"X01"`, `"X10"`, and `"X11"` in the toy example above. For a given desired covariance matrix of trait values, calculations of $X_{ij}$ become longer as trait number increases, but I should be able to write the code to get this for an arbitrary number of traits. 
+
+This is a simple way of doing things, but I think that it still leaves something to be desired. If we want the genetic covariances themselves to evolve (rather than just the traits via changing allele frequences in $L_{i}$), then we are forced to do it in a simplified way in which genetic covariances will almost inevitably evolve to become positive so that a 'good' value of $T0$ and $T1$ can be assured by a joint change with a change in $L0$ by modifying $X_{01}$ accordingly. In other words, any variation stuck into the genome that modifies $X_{ij}$ values can be done so that there is directional selection increasing the fitness of $T_{j}$ via change in $L_{i}$, I think. What we really want is to tangle things so that changes along the path from alleles to traits is more complex. Below is my initial plan for increasing the complexity in such a way as to make the genetic architecture itself evolve a bit more realistically. 
+
+**Adding some complexity**
+
+I propose the addition of multiple hidden layers beween loci and traits, effectively building something resembling a [neural network](https://en.wikipedia.org/wiki/Artificial_neural_network) ([see here for video]([https://www.youtube.com/watch?v=aircAruvnKk)), but perhaps loosely interpreting these layers as steps along biochemical or developmental pathways from alleles to traits affecting fitness. 
+
+![](images/loci_to_traits_2.png)
+
+These hidden layers (blue) can now make each trait value a linear combination of all of the paths from each locus to each trait. For example, the value of $L0$ can now get to $T0$ in up to 100 different ways. Each link between nodes has its own value to modify the effect of a locus' value on the end value of each trait. For example if the link from $L0 \to H0 = 0.5$, $H0 \to H0 = 0.5$, and $H0 \to T0 = -1$, then this one complete path causes $L0$ to decrease $T0$ by $L0(0.5 \times 0.5 \times -1) = -0.25L0$. This effect would then be **added to the effects** of all 99 other possible paths from $L0$ to $T0$ (I think it would probably make sense in the end to restrict values of edges to $0 \leq e_{i} \leq 1$; we could also fix some edge values to be zero, perhaps giving a more realistic network structure).
+
+This looks like a mess, but that's kind of the point. Having many paths from loci to traits should give us the freedom to allow genetic covariance to evolve *with some restrictions*. As with the example above, we can have values for the 250 edges that form the paths from loci to traits, but the hidden layers give us more flexibility in setting evolutionary constraints. 
+
+![](images/loci_to_traits_3.png)
+
+We could, for example, allow e1 to e250 above to be represented by potentially changing values in an individual's genome (through mutation, selection, and drift). Given this, selection across all L0-L9 and e1-e250 would almost certainly rapidly increase fitness of all traits. But we could also, e.g., block mutation from happening at any of the hidden layers after initialising, e.g., e1-e200 to random values (i.e., alleles would have polygenic effects that potentially lead to fitness tradeoffs, but only parts or proportions of the genetic architecture that we want to evolve actually could). Or we could change the initial genetic variation or mutation rates of edges relative to loci (e.g., make the genetic architecture itself evolve more or less rapidly). We could then ask several potentially interesting questions by controlling the extent to which genetic covariances can evolve and how processes such as drift might affect loci that underly traits versus loci that underly covariance among traits. 
+
+To initialise a desired genetic covariance matrix, an evolutionary algorithm could be used. Basically, this would iteratively tweak the hidden layer edge values and check for a better or worse fit to the desired trait covariance matrix. The advantage of this would be that we could tell a function to build a genetic architecture that confroms to a covariance matrix without forcing it to specify *how*  (i.e., the genetic architecture would be 'found' rather than imposed *a priori*, reducing the number of assumptions that we need to make). 
+
+Alternatively, I think it might be reasonable to introduce selection on traits by modelling a process of sequential invasion. That is, initialise all traits at some random value, but don't immediately impose selection. Hence, the traits and the genetic architecture underlying them could be random and selectively neutral for a burn-in period before introducing some sort of selective pressure (e.g., after 100 generations of burn-in, feeding efficiency gets turned on such that there is selection on feeding efficiency for one crop, $T0$). One by one, new selection pressures could arise. This could avoid having to make the assumption that the genetic architecture evolves as a consequence of early simultaneous selection for multiple traits -- it's more realistic to assume that some traits arise and evolve first (e.g., the ability to feed on one crop), then a new selective pressure arise after an evolved genome and genetic architecture already exists.
+
+
 <!---
-reps <- replicate_toy_sims(generations = 10, xdim = 100, ydim = 100, pathogens = 3, crops = 3, pest_init = 50000, crop_rotate = "rotate", path_rotate = "rotate", fecundity = 800, cell_K = 100, block_len = 100, rep_num = 1, crop_freq = 5, path_freq = 5);
+
+2A) First, we will use simulations (parameterised with real measures of genetic associations from Phase I and estimates of H. armigera dispersal) to model how the spatial scale of heterogeneity in fungal isolate application and crop plant cultivation affects variation in the selection landscape for biopesticide resistance; this will determine the correct deployment scales to achieve long-term, sustainable, evolution-proof pest control. 
+2B) The modelling in 2A will inform experiments addressing the second objective in Phase II: to obtain on-farm estimates of how selection for biopesticide resistance is influenced by crop species and fungal isolate heterogeneity in the field; this will quantify the benefits of our system in a Brazilian context, relative to standard monocultures with homogenous biopesticide application. 
+
+1A) To quantify how combining multiple fungal biopesticide isolates with a landscape of different crop species can make resistance-selection inconsistent, and thereby block resistance evolution. This experiment will demonstrate that genetic associations across habitats degrade with environmental distance, and quantify the magnitude of this decline for the range of habitats in our experiment.
+
+
+To demonstrate how rotating biopesticide strains and crop species at the local scale can ultimately overcome pest resistance in the long-term at the landscape scale, we will simulate the full social-ecological system using an individual-based model (IBM). IBMs allow for interactions among discrete individuals (*H. armigera* pests) on a spatially-explicit landscape where key landscape properties (biopesticide application, crop species) vary locally [@Bocedi2014a; @Duthie2018]. Individuals can have complex genetic architectures that underly relevant quantitative traits such as bipesticide resistance, feeding efficiency, and dispersal behaviour [@Grimm2005; @DeAngelis2005; @Duthie2015]. Landscapes can be equally complex, allowing individual traits to interact with the unique set of landscape properties that occur on an landscape cell [@Duthie2013; @Peer2013; @Aben2014]. By parameterising pest genetic architecture with real estimates of dispersal and measures of genetic associations from Phase I/1a, then simulating different biopesticide application and crop choice regimes on landscape cells, we can use IBMs to model the evolution of bipesticide resistance *in silico* [@Stratonovitch2014].
+
+A prototype model of the evolution of *H. armigera* biopesticide resistance has already been developed using a simplified genetic achitecture and landscape. Simulations from this prototype demonstrate that biopesticide and crop rotatation can overcome biopesticide resistance in principle (see http://r.rosemckeon.co.uk/helicoverpa/), but these results have yet to be demonstrated with a suitably realistic genetic architecture and landscape properties. This work package will include the required realism in an expanded model to simulate the long-term evolution of *H. armigera* resistance. The model will be built as an open-source R package, written in R and C, and made accessible to all on GitHub. The R package will be externally evaluated by the rOpenSci community, which will include review by two independent experts who will comment on code usability and quality.
+
+
+
+A key question concerns the scale at which diversified biopesticide strain and crop species use
+can overcome pest resistance in the long-term. We have already developed a prototype model
+using a simplified genetic architecture and landscape (see progress report), and verified using
+preliminary simulations that biopesticide and crop heterogeneity can in principle overcome
+biopesticide resistance 65 , but these results have yet to be demonstrated with a suitably realistic
+genetic architecture (i.e., involving many genes) and landscape properties. We will implement this
+critical realism in an expanded model to simulate the long-term evolution of H. armigera resistance.
+We will simulate the genetics of real pests on a spatially explicit landscape system using an
+individual-based model (IBM). This IBM will allow for interactions among discrete individuals where key landscape properties (biopesticide application, crop species), and therefore the fitness of
+pesticide and crop specific alleles, vary locally 66 . The in-silico individuals have complex genetic
+architectures that underlie relevant quantitative traits such as biopesticide resistance, feeding
+efficiency, and dispersal behaviour 67–69 . Landscapes are equally complex, allowing individual traits
+to interact with the unique set of landscape properties on each landscape cell 25,70,71 (cells are the
+minimum scale at which land-use is homogenous). We will parameterise this general model with
+real estimates of H. armigera dispersal 4 and measures of genetic associations from Challenge 1a,
+then simulate different biopesticide application and crop choice regimes on landscape cells. We
+will model the evolution of biopesticide resistance as a function of the scale at which heterogeneity
+is applied (i.e., the number of adjacent cells that share identical crop and biopesticide properties) 7
+
 --->
+
+
+> <a name="u-14-MAY-2019">Update: 14 MAY 2019</a>
+
+**Plans for the full helicoverpa R package**
+
+Given successful funding of the ENDORSE project, these notes will now continue in development of work package C1c of the project. The following very rough timeline is suggested.
+
+- [ ] General software planning (language use, file organisation): SEP 2019 
+- [ ] Model planning (data structures, flow chart): AUG 2019 
+- [ ] Discussions with colleagues, revision, final planning: OCT 2019 
+- [ ] Ethical approval for software development: NOV 2019 
+- [ ] Coding and R package development: JAN-JUN 2020 
+- [ ] Code testing and simulations: JUL-SEP 2020 
+- [ ] Submission to rOpenSci: OCT 2020 
+- [ ] Publish R package on CRAN and GitHub: NOV 2020 
+- [ ] Final simulations and write-up: JAN-MAR 2021
+
+This timeline is subject to revision, but the initial steps are more detailed planning for the software and model, with input from colleagues across all work packages.
 
 > <a name="u-21-SEP-2018">Update: 21 SEP 2018</a>
 
