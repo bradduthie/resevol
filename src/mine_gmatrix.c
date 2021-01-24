@@ -37,7 +37,7 @@ SEXP mine_gmatrix(SEXP PARAS){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
-    int    i;
+    int    i, j, k;
     int    row;
     int    col;
     int    vec_pos;
@@ -52,8 +52,8 @@ SEXP mine_gmatrix(SEXP PARAS){
     int layers;
     
     double **loci_layer_one; 
-    double **loci_layer_eg;
-    double **loci_layer_out;
+    double ***net;
+
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -71,7 +71,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* ====================================================================== */
     
     paras   = malloc(len_PARAS * sizeof(double *));
-    vec_pos   = 0;
+    vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
         vec_pos++;
@@ -80,80 +80,49 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
     
-    loci = 2;
-    traits = 5;
-    layers = 2;
+    loci   = 4;
+    traits = 4;
+    layers = 3;
     
     loci_layer_one  = malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
         loci_layer_one[row] = malloc(loci * sizeof(double));   
     } 
     
-    loci_layer_eg  = malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loci_layer_eg[row] = malloc(traits * sizeof(double));   
-    } 
-    
-    i = 1;
-    for(row = 0; row < traits; row++){
-        for(col = 0; col < loci; col++){
-            loci_layer_one[row][col] = i;
-            i = i + 1;
+    net   = malloc(traits * sizeof(double *));
+    for(i = 0; i < traits; i++){
+        net[i] = malloc(traits * sizeof(double *));
+        for(j = 0; j < traits; j++){
+            net[i][j] = malloc(layers * sizeof(double));   
         }
-    }
-    
-    i = 1;
-    for(row = 0; row < loci; row++){
-        for(col = 0; col < traits; col++){
-            loci_layer_eg[row][col] = i; /* rnorm(0, 1); */
-            i = i + 1;
-        }
-    }
-    
-    
-    
-    loci_layer_out  = malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        loci_layer_out[row] = malloc(traits * sizeof(double));   
     } 
-    
 
     
-    matrix_multiply(loci_layer_one, loci_layer_eg, traits, loci,
-                    loci, traits, loci_layer_out);
-
     
-    printf("\n\n\n");
+    
+    
     
     
     for(row = 0; row < traits; row++){
         for(col = 0; col < loci; col++){
-            printf("%f\t", loci_layer_one[row][col]);
+            loci_layer_one[row][col] = rnorm(0, 1); 
         }
-        printf("\n");
     }
     
-    printf("\n\n\n");
     
-    for(row = 0; row < loci; row++){
-        for(col = 0; col < traits; col++){
-            printf("%f\t", loci_layer_eg[row][col]);
+    for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+            for(k = 0; k < layers; k++){
+                net[i][j][k] = rnorm(0, 1); 
+            }
         }
-        printf("\n");
-    }
-    
-    printf("\n\n\n");
+    }    
+
     
     
-    for(row = 0; row < traits; row++){
-        for(col = 0; col < traits; col++){
-            printf("%f\t", loci_layer_out[row][col]);
-        }
-        printf("\n");
-    }
-    
-    printf("\n\n\n");    
-    
+
+
+
 
     /* This code switches from C back to R */
     /* ====================================================================== */        
@@ -178,21 +147,22 @@ SEXP mine_gmatrix(SEXP PARAS){
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
-    free(paras);
+    for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+            free(net[i][j]);   
+        }
+        free(net[i]);        
+    }
+    free(net); 
+    
     for(row = 0; row < traits; row++){
         free(loci_layer_one[row]);
     }
     free(loci_layer_one);
     
-    for(row = 0; row < loci; row++){
-        free(loci_layer_eg[row]);
-    }
-    free(loci_layer_eg);
     
-    for(row = 0; row < traits; row++){
-        free(loci_layer_out[row]);
-    }
-    free(loci_layer_out);
+    free(paras);
+
 
     return(GOUT); 
 }
