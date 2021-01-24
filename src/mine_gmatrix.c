@@ -81,10 +81,12 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
     
+    /** THE PARAMETERS BELOW WILL BE OUTSIDE OF THE C FUNCTION **/
     loci   = 2;
-    traits = 2;
+    traits = 3;
     layers = 3;
     
+    /* Allocate memory for the appropriate loci array, 3D network, & temp net */
     loci_layer_one  = malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
         loci_layer_one[row] = malloc(loci * sizeof(double));   
@@ -102,7 +104,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     for(row = 0; row < traits; row++){
         net_temp[row] = malloc(traits * sizeof(double));   
     } 
-    
+    /* Initialise values of the temporary network at zero */
     for(row = 0; row < traits; row++){
         for(col = 0; col < traits; col++){
             net_temp[row][col] = 0;
@@ -110,7 +112,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     }
     
 
-    
+    /* Now populate the networks with random values to initialise */    
     val = 1;
     for(row = 0; row < traits; row++){
         for(col = 0; col < loci; col++){
@@ -128,23 +130,11 @@ SEXP mine_gmatrix(SEXP PARAS){
             }
         }
     }    
-    
-    
-    
-    
-    for(k = 0; k < layers; k++){
-        printf("\n\n");
-        for(i = 0; i < traits; i++){
-            for(j = 0; j < traits; j++){
-                printf("%f\t", net[k][i][j]);
-            }
-            printf("\n");
-        }
-    }
 
-    printf("\n\n ****************************************** \n\n");
     
-    
+    /* This works, but write a testthat function in R to check it somehow
+     * In fact, make a separate function to just spit out net_temp answer
+     */
     for(k = 1; k < layers; k++){
         matrix_multiply(net[k-1], net[k], traits, traits, traits, traits, 
                         net_temp);
@@ -155,15 +145,6 @@ SEXP mine_gmatrix(SEXP PARAS){
         }
     }
     
-    
-    printf("\n\n");
-    for(i = 0; i < traits; i++){
-        for(j = 0; j < traits; j++){
-            printf("%f\t", net_temp[i][j]);
-        }
-        printf("\n");
-    }
-
      
     /* This code switches from C back to R */
     /* ====================================================================== */        
