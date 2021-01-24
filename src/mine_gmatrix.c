@@ -11,23 +11,7 @@ void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
     /* Add break if non-conformable arrays? */
     int row, col, ele;
     double val; 
-    
-    printf("\n\n ================================ \n\n");
-    for(row = 0; row < m1_rows; row++){
-        for(col = 0; col < m1_cols; col++){
-            printf("%f\t", m1[row][col]);
-        }
-        printf("\n");
-    }
-    printf("\n\n ================================ \n\n");
-    for(row = 0; row < m2_rows; row++){
-        for(col = 0; col < m2_cols; col++){
-            printf("%f\t", m2[row][col]);
-        }
-        printf("\n");
-    }  
-    printf("\n\n ================================ \n\n");    
-    
+
     for(row = 0; row < m1_rows; row++){
         for(col = 0; col < m2_cols; col++){
             val = 0;
@@ -68,7 +52,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     int layers;
     
     double **loci_layer_one;
-    double **net_out_mat;
+    double **net_temp;
     double ***net;
 
 
@@ -97,21 +81,14 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
     
-    loci   = 4;
-    traits = 3;
-    layers = 2;
+    loci   = 2;
+    traits = 2;
+    layers = 3;
     
     loci_layer_one  = malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
         loci_layer_one[row] = malloc(loci * sizeof(double));   
     } 
-    
-    net_out_mat = malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        net_out_mat[row] = malloc(traits * sizeof(double));   
-    } 
-    
-    
     
     net   = malloc(layers * sizeof(double *));
     for(k = 0; k < layers; k++){
@@ -121,14 +98,18 @@ SEXP mine_gmatrix(SEXP PARAS){
         }
     } 
 
-
-    
+    net_temp = malloc(traits * sizeof(double *));
+    for(row = 0; row < traits; row++){
+        net_temp[row] = malloc(traits * sizeof(double));   
+    } 
     
     for(row = 0; row < traits; row++){
         for(col = 0; col < traits; col++){
-            net_out_mat[row][col] = 0; 
+            net_temp[row][col] = 0;
         }
     }
+    
+
     
     val = 1;
     for(row = 0; row < traits; row++){
@@ -138,7 +119,7 @@ SEXP mine_gmatrix(SEXP PARAS){
         }
     }
     
-    val = 1;
+    val = 1; 
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             for(j = 0; j < traits; j++){
@@ -147,14 +128,10 @@ SEXP mine_gmatrix(SEXP PARAS){
             }
         }
     }    
-
     
     
-    matrix_multiply(net[0], net[1], traits, traits, traits, traits,
-                    net_out_mat);
-
     
-     
+    
     for(k = 0; k < layers; k++){
         printf("\n\n");
         for(i = 0; i < traits; i++){
@@ -167,10 +144,22 @@ SEXP mine_gmatrix(SEXP PARAS){
 
     printf("\n\n ****************************************** \n\n");
     
+    
+    for(k = 1; k < layers; k++){
+        matrix_multiply(net[k-1], net[k], traits, traits, traits, traits, 
+                        net_temp);
+        for(i = 0; i < traits; i++){
+            for(j = 0; j < traits; j++){
+                net[k][i][j] = net_temp[i][j];
+            }
+        }
+    }
+    
+    
     printf("\n\n");
     for(i = 0; i < traits; i++){
         for(j = 0; j < traits; j++){
-            printf("%f\t", net_out_mat[i][j]);
+            printf("%f\t", net_temp[i][j]);
         }
         printf("\n");
     }
@@ -213,9 +202,9 @@ SEXP mine_gmatrix(SEXP PARAS){
     free(loci_layer_one);
     
     for(row = 0; row < traits; row++){
-        free(net_out_mat[row]);
+        free(net_temp[row]);
     }
-    free(net_out_mat);
+    free(net_temp);
     
     
     free(paras);
