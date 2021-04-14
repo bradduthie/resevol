@@ -69,12 +69,12 @@ SEXP mine_gmatrix(SEXP PARAS){
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     
-    int loci;
-    int traits;
-    int layers;
+    double loci;
+    double traits;
+    double layers;
     
     double **loci_layer_one;
-    double **net_temp;
+    double **net_sum;
     double ***net;
 
 
@@ -87,13 +87,13 @@ SEXP mine_gmatrix(SEXP PARAS){
     protected_n++;
     paras_ptr = REAL(PARAS);
     
-    len_PARAS = GET_LENGTH(PARAS);
+    len_PARAS = (double) GET_LENGTH(PARAS);
 
 
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = malloc(len_PARAS * sizeof(double *));
+    paras   = (double*) malloc(len_PARAS * sizeof(double *));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -108,35 +108,38 @@ SEXP mine_gmatrix(SEXP PARAS){
     traits = 3;
     layers = 3;
     
-    /* Allocate memory for the appropriate loci array, 3D network, & temp net */
-    loci_layer_one  = malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        loci_layer_one[row] = malloc(loci * sizeof(double));   
+    /* Allocate memory for the appropriate loci array, 3D network, sum net,
+     * and loci_to_trait values
+     */ 
+    loci_layer_one  = (double**) malloc(loci * sizeof(double *));
+    for(row = 0; row < loci; row++){
+        loci_layer_one[row] = (double*) malloc(traits * sizeof(double));   
     } 
     
-    net   = malloc(layers * sizeof(double *));
+    net   = (double***) malloc(layers * sizeof(double *));
     for(k = 0; k < layers; k++){
-        net[k] = malloc(traits * sizeof(double *));
+        net[k] = (double**) malloc(traits * sizeof(double *));
         for(i = 0; i < traits; i++){
-            net[k][i] = malloc(traits * sizeof(double));   
+            net[k][i] = (double*) malloc(traits * sizeof(double));   
         }
     } 
 
-    net_temp = malloc(traits * sizeof(double *));
+    net_sum = (double**) malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
-        net_temp[row] = malloc(traits * sizeof(double));   
+        net_sum[row] = (double*) malloc(traits * sizeof(double));   
     } 
+    
     /* Initialise values of the temporary network at zero */
     for(row = 0; row < traits; row++){
         for(col = 0; col < traits; col++){
-            net_temp[row][col] = 0;
+            net_sum[row][col] = 0;
         }
     }
     
     /* Now populate the networks with random values to initialise */    
     val = 1;
-    for(row = 0; row < traits; row++){
-        for(col = 0; col < loci; col++){
+    for(row = 0; row < loci; row++){
+        for(col = 0; col < traits; col++){
             loci_layer_one[row][col] = val; /* rnorm(0, 1);  */ 
             val++;
         }
@@ -153,11 +156,31 @@ SEXP mine_gmatrix(SEXP PARAS){
     }    
 
     /* Gets the summed effects of network by multiplying matrices */
-    sum_network_layers(traits, layers, net, net_temp);
+    sum_network_layers(traits, layers, net, net_sum);
+    
+    /* Gets the final phenotype from the genotype */
+    /*
+    matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
+                    int m2_rows, int m2_cols, double **m_out)
+    */
+    
     
     /* Determines the sum effect of loci on traits */
+    for(row = 0; row < loci; row++){
+        printf("\n");
+        for(col = 0; col < traits; col++){
+            printf("%f\t", loci_layer_one[row][col]);
+        }
+    }
+    printf("\n");printf("\n");
+    /* Determines the sum effect of loci on traits */
+    for(row = 0; row < traits; row++){
+        printf("\n");
+        for(col = 0; col < traits; col++){
+            printf("%f\t", net_sum[row][col]);
+        }
+    }
     
-
      
     /* This code switches from C back to R */
     /* ====================================================================== */        
@@ -196,9 +219,9 @@ SEXP mine_gmatrix(SEXP PARAS){
     free(loci_layer_one);
     
     for(row = 0; row < traits; row++){
-        free(net_temp[row]);
+        free(net_sum[row]);
     }
-    free(net_temp);
+    free(net_sum);
     
     
     free(paras);
