@@ -171,7 +171,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
-    /* Determines the sum effect of loci on traits */
+    /* Determines the sum effect of loci on network 1 */
     for(row = 0; row < loci; row++){
         printf("\n");
         for(col = 0; col < traits; col++){
@@ -180,13 +180,23 @@ SEXP mine_gmatrix(SEXP PARAS){
     }
     printf("\n");printf("\n");
     
+    /* Determines the sum effect of network on traits */
     for(row = 0; row < traits; row++){
         printf("\n");
         for(col = 0; col < traits; col++){
             printf("%f\t", net_sum[row][col]);
         }
     }
+    printf("\n");printf("\n");
     /* Determines the sum effect of loci on traits */
+    for(row = 0; row < loci; row++){
+        printf("\n");
+        for(col = 0; col < traits; col++){
+            printf("%f\t", loci_to_traits[row][col]);
+        }
+    }
+    
+
     
      
     /* This code switches from C back to R */
