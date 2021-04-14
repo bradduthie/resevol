@@ -4,10 +4,12 @@
 \alias{mine_gmatrix}
 \title{Mine G-matrices}
 \usage{
-mine_gmatrix(paras)
+mine_gmatrix(paras, gmatrix)
 }
 \arguments{
 \item{paras}{Doesn't matter what this is yet, it will run.}
+
+\item{gmatrix}{G-matrix that the evolutionary algorithm will match}
 }
 \value{
 A set of values that will produce a desired G-matrix

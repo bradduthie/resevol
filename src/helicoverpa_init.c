@@ -8,10 +8,10 @@
 */
 
 /* .Call calls */
-extern SEXP mine_gmatrix(SEXP);
+extern SEXP mine_gmatrix(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"mine_gmatrix",            (DL_FUNC) &mine_gmatrix,        1},
+    {"mine_gmatrix",            (DL_FUNC) &mine_gmatrix,        2},
     {NULL, NULL, 0}
 };
 

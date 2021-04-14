@@ -51,9 +51,10 @@ void sum_network_layers(int traits, int layers, double ***net,
 /* =============================================================================
  * This is the outer function for mining the g-matrices
  *  Inputs include:
- *      PARAS: Nothing yet, but will hold the paramters of interest
+ *      PARAS:   Nothing yet, but will hold the paramters of interest
+ *      GMATRIX: Holds the g-matrix that guides evolutionary algorithm fitness
  * ===========================================================================*/
-SEXP mine_gmatrix(SEXP PARAS){
+SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
@@ -63,15 +64,18 @@ SEXP mine_gmatrix(SEXP PARAS){
     int    vec_pos;
     int    protected_n;    /* Number of protected R objects */
     int    len_PARAS;      /* Length of the parameters vector */
+    int    *dim_GMATRIX;   /* Dimensions of the G-matrix */
     double val;            /* Value of matrix elements */
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
+    double *G_ptr;         /* Pointer to GMATRIX (interface R and C) */
     
     int loci;
     int traits;
     int layers;
     
+    double **gmatrix;
     double **loci_layer_one;
     double **net_sum;
     double ***net;
@@ -85,9 +89,13 @@ SEXP mine_gmatrix(SEXP PARAS){
     PROTECT( PARAS = AS_NUMERIC(PARAS) );
     protected_n++;
     paras_ptr = REAL(PARAS);
-    
-    len_PARAS = GET_LENGTH(PARAS);
 
+    PROTECT( GMATRIX = AS_NUMERIC(GMATRIX) );
+    protected_n++;
+    G_ptr = REAL(GMATRIX);
+    
+    len_PARAS   = GET_LENGTH(PARAS);
+    dim_GMATRIX = INTEGER( GET_DIM(GMATRIX)  );
 
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
@@ -99,13 +107,25 @@ SEXP mine_gmatrix(SEXP PARAS){
         vec_pos++;
     } /* The parameters vector is now copied into C */
 
+    /* Code below remakes the GMATRIX matrix for easier use */
+    traits   = dim_GMATRIX[0];
+    gmatrix  = malloc(traits * sizeof(double *));
+    for(row = 0; row < traits; row++){
+        gmatrix[row] = malloc(traits * sizeof(double));   
+    } 
+    vec_pos = 0;
+    for(col = 0; col < traits; col++){
+        for(row = 0; row < traits; row++){
+            gmatrix[row][col] = G_ptr[vec_pos]; 
+            vec_pos++;
+        }
+    }
     
     /* Do the biology here now */
     /* ====================================================================== */
     
     /** THE PARAMETERS BELOW WILL BE OUTSIDE OF THE C FUNCTION **/
     loci   = 2;
-    traits = 3;
     layers = 3;
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
@@ -171,32 +191,12 @@ SEXP mine_gmatrix(SEXP PARAS){
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
-    /* Determines the sum effect of loci on network 1 */
-    for(row = 0; row < loci; row++){
-        printf("\n");
-        for(col = 0; col < traits; col++){
-            printf("%f\t", loci_layer_one[row][col]);
-        }
-    }
-    printf("\n");printf("\n");
-    
-    /* Determines the sum effect of network on traits */
-    for(row = 0; row < traits; row++){
-        printf("\n");
-        for(col = 0; col < traits; col++){
-            printf("%f\t", net_sum[row][col]);
-        }
-    }
-    printf("\n");printf("\n");
-    /* Determines the sum effect of loci on traits */
-    for(row = 0; row < loci; row++){
-        printf("\n");
-        for(col = 0; col < traits; col++){
-            printf("%f\t", loci_to_traits[row][col]);
-        }
-    }
-    
 
+    /* We now need an evolutionary algorithm that takes all the values from 
+     * loci_layer_one and net and goes through the algorithm until we go from
+     * random normal loci values to traits that match the covariance matrix
+     * input into the R function
+     */
     
      
     /* This code switches from C back to R */
@@ -215,13 +215,20 @@ SEXP mine_gmatrix(SEXP PARAS){
     }  
     
     SEXP GOUT;
-    GOUT = PROTECT( allocVector(VECSXP, 1) );
+    GOUT = PROTECT( allocVector(VECSXP, 2) );
     protected_n++;
     SET_VECTOR_ELT(GOUT, 0, PARAMETERS_NEW);
-    
+    SET_VECTOR_ELT(GOUT, 1, GMATRIX);
+
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
+    
+    for(row = 0; row < traits; row++){
+        free(gmatrix[row]);
+    }
+    free(gmatrix);
+    
     for(row = 0; row < loci; row++){
         free(loci_to_traits[row]);
     }
