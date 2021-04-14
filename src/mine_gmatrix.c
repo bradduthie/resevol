@@ -41,7 +41,40 @@ void sum_network_layers(int traits, int layers, double ***net,
     }
 }
 
+void initialise_loci_net(int traits, int loci, double **loci_layer_one){
 
+    int row, col;
+   
+    for(row = 0; row < loci; row++){
+        for(col = 0; col < traits; col++){
+            loci_layer_one[row][col] = rnorm(0, 1); 
+        }
+    }
+}
+
+void initialise_net(int traits, int layers, double ***net){
+    
+    int k, i, j;
+
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            for(j = 0; j < traits; j++){
+                net[k][i][j] = rnorm(0, 1); 
+            }
+        }
+    }   
+}
+
+void matrix_zeros(int rows, int cols, double **mat){
+    
+    int row, col;
+    
+    for(row = 0; row < rows; row++){
+        for(col = 0; col < cols; col++){
+            mat[row][col] = 0;
+        }
+    }
+}
 
 
 /* =============================================================================
@@ -124,9 +157,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* Do the biology here now */
     /* ====================================================================== */
     
-    /** THE PARAMETERS BELOW WILL BE OUTSIDE OF THE C FUNCTION **/
-    loci   = 2;
-    layers = 3;
+    /** Parameter values as defined in R **/
+    loci   = paras[0];
+    layers = paras[1];
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -155,34 +188,14 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         loci_to_traits[row] = malloc(traits * sizeof(double));   
     } 
     
-    
     /* Initialise values of the temporary network at zero */
-    for(row = 0; row < traits; row++){
-        for(col = 0; col < traits; col++){
-            net_sum[row][col] = 0;
-        }
-    }
-    
+    matrix_zeros(traits, traits, net_sum);
+
     /* Now populate the networks with random values to initialise */    
-    val = 1;
-    for(row = 0; row < loci; row++){
-        for(col = 0; col < traits; col++){
-            loci_layer_one[row][col] = val; 
-            val++;
-        }
-    }
+    initialise_loci_net(traits, loci, loci_layer_one);
 
-    val = 1; 
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            for(j = 0; j < traits; j++){
-                net[k][i][j] = val;       
-                val++;
-            }
-        }
-    }    
- 
-
+    initialise_net(traits, layers, net);
+    
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
     
