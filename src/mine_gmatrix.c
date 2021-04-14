@@ -24,6 +24,27 @@ void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
 }
 
 
+void sum_network_layers(int traits, int layers, double ***net, 
+                        double **net_out){
+    
+    int i, j, k;
+    
+    for(k = 1; k < layers; k++){
+        matrix_multiply(net[k-1], net[k], traits, traits, traits, traits, 
+                        net_out);
+        if(k < layers == 1){
+            for(i = 0; i < traits; i++){
+                for(j = 0; j < traits; j++){
+                    net[k][i][j] = net_out[i][j]; 
+                }
+            }
+        }
+    }
+}
+
+
+
+
 /* =============================================================================
  * MAIN RESOURCE FUNCTION:
  * ===========================================================================*/
@@ -37,11 +58,12 @@ SEXP mine_gmatrix(SEXP PARAS){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
-    int    i, j, k, val;
+    int    i, j, k;
     int    row;
     int    col;
     int    vec_pos;
     int    protected_n;    /* Number of protected R objects */
+    double val;            /* Value of matrix elements */
     double len_PARAS;      /* Length of the parameters vector */
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
@@ -111,40 +133,31 @@ SEXP mine_gmatrix(SEXP PARAS){
         }
     }
     
-
     /* Now populate the networks with random values to initialise */    
     val = 1;
     for(row = 0; row < traits; row++){
         for(col = 0; col < loci; col++){
-            loci_layer_one[row][col] = val; /* rnorm(0, 1);  */
+            loci_layer_one[row][col] = val; /* rnorm(0, 1);  */ 
             val++;
         }
     }
-    
+
     val = 1; 
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             for(j = 0; j < traits; j++){
-                net[k][i][j] = val;
+                net[k][i][j] = val;       
                 val++;
             }
         }
     }    
 
+    /* Gets the summed effects of network by multiplying matrices */
+    sum_network_layers(traits, layers, net, net_temp);
     
-    /* This works, but write a testthat function in R to check it somehow
-     * In fact, make a separate function to just spit out net_temp answer
-     */
-    for(k = 1; k < layers; k++){
-        matrix_multiply(net[k-1], net[k], traits, traits, traits, traits, 
-                        net_temp);
-        for(i = 0; i < traits; i++){
-            for(j = 0; j < traits; j++){
-                net[k][i][j] = net_temp[i][j];
-            }
-        }
-    }
+    /* Determines the sum effect of loci on traits */
     
+
      
     /* This code switches from C back to R */
     /* ====================================================================== */        
