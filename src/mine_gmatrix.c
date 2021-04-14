@@ -2,7 +2,7 @@
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include <Rmath.h>
-
+#include <stdlib.h>
 
 void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
                      int m2_rows, int m2_cols, double **m_out){
@@ -98,6 +98,7 @@ SEXP mine_gmatrix(SEXP PARAS){
         paras[i] = paras_ptr[vec_pos];
         vec_pos++;
     } /* The parameters vector is now copied into C */
+
     
     /* Do the biology here now */
     /* ====================================================================== */
@@ -113,8 +114,8 @@ SEXP mine_gmatrix(SEXP PARAS){
     loci_layer_one  = malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
         loci_layer_one[row] = malloc(traits * sizeof(double));   
-    } 
-    
+    }
+
     net   = malloc(layers * sizeof(double *));
     for(k = 0; k < layers; k++){
         net[k] = malloc(traits * sizeof(double *));
@@ -128,11 +129,11 @@ SEXP mine_gmatrix(SEXP PARAS){
         net_sum[row] = malloc(traits * sizeof(double));   
     } 
     
+    
     loci_to_traits  = malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
         loci_to_traits[row] = malloc(traits * sizeof(double));   
     } 
-    
     
     
     /* Initialise values of the temporary network at zero */
@@ -146,7 +147,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     val = 1;
     for(row = 0; row < loci; row++){
         for(col = 0; col < traits; col++){
-            loci_layer_one[row][col] = val; /* rnorm(0, 1);  */ 
+            loci_layer_one[row][col] = val; 
             val++;
         }
     }
@@ -160,14 +161,15 @@ SEXP mine_gmatrix(SEXP PARAS){
             }
         }
     }    
+ 
 
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
     
+    
     /* Matrix that gets the final phenotype from the genotype */
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
-    
     
     /* Determines the sum effect of loci on traits */
     for(row = 0; row < loci; row++){
@@ -177,13 +179,14 @@ SEXP mine_gmatrix(SEXP PARAS){
         }
     }
     printf("\n");printf("\n");
-    /* Determines the sum effect of loci on traits */
+    
     for(row = 0; row < traits; row++){
         printf("\n");
         for(col = 0; col < traits; col++){
             printf("%f\t", net_sum[row][col]);
         }
     }
+    /* Determines the sum effect of loci on traits */
     
      
     /* This code switches from C back to R */
@@ -209,7 +212,6 @@ SEXP mine_gmatrix(SEXP PARAS){
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
-    
     for(row = 0; row < loci; row++){
         free(loci_to_traits[row]);
     }
@@ -223,7 +225,7 @@ SEXP mine_gmatrix(SEXP PARAS){
     }
     free(net); 
     
-    for(row = 0; row < traits; row++){
+    for(row = 0; row < loci; row++){
         free(loci_layer_one[row]);
     }
     free(loci_layer_one);
@@ -232,7 +234,7 @@ SEXP mine_gmatrix(SEXP PARAS){
         free(net_sum[row]);
     }
     free(net_sum);
-    
+
     
     free(paras);
 
