@@ -27,18 +27,43 @@ void sum_network_layers(int traits, int layers, double ***net,
                         double **net_out){
     
     int i, j, k;
+    double ***net_temp;
+    
+    
+    net_temp = malloc(layers * sizeof(double *));
+    for(k = 0; k < layers; k++){
+        net_temp[k] = malloc(traits * sizeof(double *));
+        for(i = 0; i < traits; i++){
+            net_temp[k][i] = malloc(traits * sizeof(double));   
+        }
+    }
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            for(j = 0; j < traits; j++){
+                net_temp[k][i][j] = net[k][i][j];
+            }
+        }
+    }
     
     for(k = 1; k < layers; k++){
-        matrix_multiply(net[k-1], net[k], traits, traits, traits, traits, 
-                        net_out);
+        matrix_multiply(net_temp[k-1], net_temp[k], traits, traits, traits, 
+                        traits, net_out);
         if(k < layers == 1){
             for(i = 0; i < traits; i++){
                 for(j = 0; j < traits; j++){
-                    net[k][i][j] = net_out[i][j]; 
+                    net_temp[k][i][j] = net_out[i][j]; 
                 }
             }
         }
     }
+    
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            free(net_temp[k][i]);
+        }
+        free(net_temp[k]);        
+    }
+    free(net_temp); 
 }
 
 void initialise_loci_net(int traits, int loci, double **loci_layer_one){
@@ -102,6 +127,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
+    double *network_ptr;   /* Pointer to network output (interface R and C) */
+    double *loci_net_ptr;  /* Pointer to the loci to net (interface R and C) */
+    double *loci_eff_ptr;  /* Pointer to the loci effects (interface R and C) */
     double *G_ptr;         /* Pointer to GMATRIX (interface R and C) */
     
     int loci;
@@ -188,8 +216,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         loci_to_traits[row] = malloc(traits * sizeof(double));   
     } 
     
-    /* Initialise values of the temporary network at zero */
+    /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
+    matrix_zeros(loci, traits, loci_to_traits);
 
     /* Now populate the networks with random values to initialise */    
     initialise_loci_net(traits, loci, loci_layer_one);
@@ -199,18 +228,44 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
     
-    
     /* Matrix that gets the final phenotype from the genotype */
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
-
     /* We now need an evolutionary algorithm that takes all the values from 
      * loci_layer_one and net and goes through the algorithm until we go from
      * random normal loci values to traits that match the covariance matrix
      * input into the R function
      */
     
+    
+    for(k = 0; k < layers; k++){
+        printf("\n");printf("\n");
+        for(i = 0; i < traits; i++){
+            printf("\n");
+            for(j = 0; j < traits; j++){
+                printf("%f\t", net[k][i][j]);
+            }
+        }
+    }
+    
+    printf("\n");printf("\n");
+    
+    for(i = 0; i < loci; i++){
+        printf("\n");
+        for(j = 0; j < traits; j++){
+            printf("%f\t", loci_to_traits[i][j]);
+        }
+    }
+    
+    printf("\n");printf("\n");
+    
+    for(i = 0; i < traits; i++){
+        printf("\n");
+        for(j = 0; j < traits; j++){
+            printf("%f\t", net_sum[i][j]);
+        }
+    }
      
     /* This code switches from C back to R */
     /* ====================================================================== */        
@@ -225,14 +280,64 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     for(i = 0; i < len_PARAS; i++){
         paras_ptr_new[vec_pos] = paras[i];
         vec_pos++;
-    }  
+    }
+    
+    
+    SEXP LOCI_TO_NET;
+    PROTECT( LOCI_TO_NET = allocMatrix(REALSXP, loci, traits) );
+    protected_n++;
+    
+    loci_net_ptr = REAL(LOCI_TO_NET);
+    
+    vec_pos = 0;
+    for(j = 0; j < traits; j++){
+        for(i = 0; i < loci; i++){
+            loci_net_ptr[vec_pos] = loci_layer_one[i][j];
+                vec_pos++;
+        }
+    }
+    
+    
+    SEXP NETWORK;
+    PROTECT( NETWORK = alloc3DArray(REALSXP, traits, traits, layers) );
+    protected_n++;
+    
+    network_ptr = REAL(NETWORK);
+    
+    vec_pos = 0;
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            for(j = 0; j < traits; j++){
+                network_ptr[vec_pos] = net[k][j][i];
+                vec_pos++;
+            }
+        }
+    }
+    
+    SEXP LOCI_EFFECTS;
+    PROTECT( LOCI_EFFECTS = allocMatrix(REALSXP, loci, traits) );
+    protected_n++;
+    
+    loci_eff_ptr = REAL(LOCI_EFFECTS);
+    
+    vec_pos = 0;
+    for(j = 0; j < traits; j++){
+        for(i = 0; i < loci; i++){
+            loci_eff_ptr[vec_pos] = loci_to_traits[i][j];
+            vec_pos++;
+        }
+    }
+    
     
     SEXP GOUT;
-    GOUT = PROTECT( allocVector(VECSXP, 2) );
+    GOUT = PROTECT( allocVector(VECSXP, 5) );
     protected_n++;
     SET_VECTOR_ELT(GOUT, 0, PARAMETERS_NEW);
     SET_VECTOR_ELT(GOUT, 1, GMATRIX);
-
+    SET_VECTOR_ELT(GOUT, 2, LOCI_TO_NET);
+    SET_VECTOR_ELT(GOUT, 3, NETWORK);
+    SET_VECTOR_ELT(GOUT, 4, LOCI_EFFECTS);
+    
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
