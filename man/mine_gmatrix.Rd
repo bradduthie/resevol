@@ -4,7 +4,7 @@
 \alias{mine_gmatrix}
 \title{Mine G-matrices}
 \usage{
-mine_gmatrix(paras, gmatrix)
+mine_gmatrix(paras = c(2, 2, 100, 4), gmatrix)
 }
 \arguments{
 \item{paras}{Doesn't matter what this is yet, it will run.}

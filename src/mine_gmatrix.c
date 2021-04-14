@@ -4,6 +4,49 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+
+
+void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
+  
+  int k, l, i, j;
+  
+  for(k = 0; k < npsize; k++){
+    for(l = 0; l < layers; l++){
+      for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+          netpop[k][l][i][j] = rnorm(0, 1);
+        }
+      }
+    }
+  }
+}
+
+
+void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
+  
+  int k, i, j;
+  
+  for(k = 0; k < npsize; k++){
+    for(i = 0; i < loci; i++){
+      for(j = 0; j < traits; j++){
+        ltnpop[k][i][j] = rnorm(0, 1);
+      }
+    }
+  }
+}
+
+void ea_pop_ini(double **inds, int indivs, int loci){
+    
+    int row, col;
+    
+    for(row = 0; row < indivs; row++){
+        for(col = 0; col < loci; col++){
+            inds[row][col] = rnorm(0, 1);
+        }
+    }
+}
+
+
 void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
                      int m2_rows, int m2_cols, double **m_out){
     
@@ -135,12 +178,17 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int loci;
     int traits;
     int layers;
+    int indivs;   /* Seeded individuals in evolutionary algorithm */
+    int npsize;   /* Number of arrays in the evolutionary algorithm */
     
     double **gmatrix;
     double **loci_layer_one;
     double **net_sum;
     double ***net;
     double **loci_to_traits;
+    double **inds;
+    double ***ltnpop;
+    double ****netpop;
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -188,6 +236,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /** Parameter values as defined in R **/
     loci   = paras[0];
     layers = paras[1];
+    indivs = paras[2];
+    npsize = paras[3];
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -210,11 +260,35 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         net_sum[row] = malloc(traits * sizeof(double));   
     } 
     
-    
     loci_to_traits  = malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
         loci_to_traits[row] = malloc(traits * sizeof(double));   
     } 
+    
+    inds = malloc(indivs * sizeof(double *));
+    for(row = 0; row < indivs; row++){
+        inds[row] = malloc(loci * sizeof(double));
+    }
+
+    ltnpop = malloc(npsize * sizeof(double *));
+    for(k = 0; k < npsize; k++){
+        ltnpop[k] = malloc(loci * sizeof(double *));
+        for(i = 0; i < loci; i++){
+            ltnpop[k][i] = malloc(traits * sizeof(double));   
+        }
+    } 
+
+    netpop = malloc(npsize * sizeof(double *));
+    for(k = 0; k < npsize; k++){
+        netpop[k] = malloc(layers * sizeof(double *));
+        for(j = 0; j < layers; j++){
+            netpop[k][j] = malloc(traits * sizeof(double *));
+            for(i = 0; i < traits; i++){
+                netpop[k][j][i] = malloc(traits * sizeof(double *));
+            }
+        }
+    } 
+ 
     
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
@@ -238,35 +312,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
      * input into the R function
      */
     
+    ea_pop_ini(inds, indivs, loci);
+    ea_ltn_ini(ltnpop, npsize, loci, traits);
+    ea_net_ini(netpop, npsize, layers, traits);
     
-    for(k = 0; k < layers; k++){
-        printf("\n");printf("\n");
-        for(i = 0; i < traits; i++){
-            printf("\n");
-            for(j = 0; j < traits; j++){
-                printf("%f\t", net[k][i][j]);
-            }
-        }
-    }
-    
-    printf("\n");printf("\n");
-    
-    for(i = 0; i < loci; i++){
-        printf("\n");
-        for(j = 0; j < traits; j++){
-            printf("%f\t", loci_to_traits[i][j]);
-        }
-    }
-    
-    printf("\n");printf("\n");
-    
-    for(i = 0; i < traits; i++){
-        printf("\n");
-        for(j = 0; j < traits; j++){
-            printf("%f\t", net_sum[i][j]);
-        }
-    }
-     
     /* This code switches from C back to R */
     /* ====================================================================== */        
     
@@ -341,6 +390,30 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
+
+    for(k = 0; k < npsize; k++){
+        for(i = 0; i < layers; i++){
+            for(j = 0; j < traits; j++){
+                free(netpop[k][i][j]);
+            }
+            free(netpop[k][i]);
+        }
+        free(netpop[k]);
+    }
+    free(netpop);
+ 
+    for(k = 0; k < npsize; k++){
+        for(i = 0; i < loci; i++){
+            free(ltnpop[k][i]);
+        }
+        free(ltnpop[k]);        
+    }
+    free(ltnpop); 
+
+    for(row = 0; row < indivs; row++){
+        free(inds[row]);
+    }
+    free(inds);
     
     for(row = 0; row < traits; row++){
         free(gmatrix[row]);
