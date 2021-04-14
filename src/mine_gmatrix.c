@@ -4,7 +4,6 @@
 #include <Rmath.h>
 
 
-
 void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
                      int m2_rows, int m2_cols, double **m_out){
     
@@ -63,20 +62,20 @@ SEXP mine_gmatrix(SEXP PARAS){
     int    col;
     int    vec_pos;
     int    protected_n;    /* Number of protected R objects */
+    int    len_PARAS;      /* Length of the parameters vector */
     double val;            /* Value of matrix elements */
-    double len_PARAS;      /* Length of the parameters vector */
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     
-    double loci;
-    double traits;
-    double layers;
+    int loci;
+    int traits;
+    int layers;
     
     double **loci_layer_one;
     double **net_sum;
     double ***net;
-
+    double **loci_to_traits;
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -87,13 +86,13 @@ SEXP mine_gmatrix(SEXP PARAS){
     protected_n++;
     paras_ptr = REAL(PARAS);
     
-    len_PARAS = (double) GET_LENGTH(PARAS);
+    len_PARAS = GET_LENGTH(PARAS);
 
 
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = (double*) malloc(len_PARAS * sizeof(double *));
+    paras   = malloc(len_PARAS * sizeof(double *));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -111,23 +110,30 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
      */ 
-    loci_layer_one  = (double**) malloc(loci * sizeof(double *));
+    loci_layer_one  = malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
-        loci_layer_one[row] = (double*) malloc(traits * sizeof(double));   
+        loci_layer_one[row] = malloc(traits * sizeof(double));   
     } 
     
-    net   = (double***) malloc(layers * sizeof(double *));
+    net   = malloc(layers * sizeof(double *));
     for(k = 0; k < layers; k++){
-        net[k] = (double**) malloc(traits * sizeof(double *));
+        net[k] = malloc(traits * sizeof(double *));
         for(i = 0; i < traits; i++){
-            net[k][i] = (double*) malloc(traits * sizeof(double));   
+            net[k][i] = malloc(traits * sizeof(double));   
         }
     } 
 
-    net_sum = (double**) malloc(traits * sizeof(double *));
+    net_sum = malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
-        net_sum[row] = (double*) malloc(traits * sizeof(double));   
+        net_sum[row] = malloc(traits * sizeof(double));   
     } 
+    
+    loci_to_traits  = malloc(loci * sizeof(double *));
+    for(row = 0; row < loci; row++){
+        loci_to_traits[row] = malloc(traits * sizeof(double));   
+    } 
+    
+    
     
     /* Initialise values of the temporary network at zero */
     for(row = 0; row < traits; row++){
@@ -158,11 +164,9 @@ SEXP mine_gmatrix(SEXP PARAS){
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
     
-    /* Gets the final phenotype from the genotype */
-    /*
+    /* Matrix that gets the final phenotype from the genotype */
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
-                    int m2_rows, int m2_cols, double **m_out)
-    */
+                    loci_to_traits);
     
     
     /* Determines the sum effect of loci on traits */
@@ -205,6 +209,12 @@ SEXP mine_gmatrix(SEXP PARAS){
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
+    
+    for(row = 0; row < loci; row++){
+        free(loci_to_traits[row]);
+    }
+    free(loci_to_traits);
+    
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             free(net[k][i]);
