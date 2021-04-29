@@ -5,7 +5,17 @@
 #include <stdlib.h>
 
 
-
+/* =============================================================================
+ * This seeds a 4D array with standard random normal values; The array is used
+ * to model an evolving population of 3D networks that move from loci values to
+ * trait values. Each 3D subset of the 4D array is a potential solution to the
+ * problem of how to map loci to traits in a way that is correlated according to
+ * the correlation matrix in the mine_gmatrix function.
+ *     netpop: The full 4D network of evolving 3D arrays
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     layers: The number of layers in an individual loci to trait network
+ *     traits: The number of traits that an individual has
+ * ========================================================================== */
 void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
   
   int k, l, i, j;
@@ -22,6 +32,16 @@ void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
 }
 
 
+/* =============================================================================
+ * This seeds a 3D array with standard random normal values; The array is used
+ * to map loci to traits, and therefore get into the bigger network with many
+ * layers. It also needs to go through the evolutionary algorithm, so we have
+ * a population of 'npsize' loci to network matrices that can potentially evolve
+ *     ltnpop: The 3D array that holds the population of loci to trait matrices
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     loci:   The number of loci in the model (rows in individual matrices)
+ *     traits: The number of traits in the model (cols in individual matrices)
+ * ========================================================================== */
 void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
   
   int k, i, j;
@@ -35,6 +55,14 @@ void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
   }
 }
 
+
+/* =============================================================================
+ * This seeds a 2D array with standard random normal values; array rows include
+ * individuals being modelled and array columns are individual loci
+ *     inds:   A 2D array of individuals
+ *     indivs: The number of individuals (rows of the array)
+ *     loci:   The number of loci for an individual (columns of the array)
+ * ========================================================================== */
 void ea_pop_ini(double **inds, int indivs, int loci){
     
     int row, col;
@@ -46,7 +74,16 @@ void ea_pop_ini(double **inds, int indivs, int loci){
     }
 }
 
-
+/* =============================================================================
+ * This is a generic function to multiply two matrices together
+ *     m1:      The first matrix to be multiplied
+ *     m2:      The second matrix to be multiplied
+ *     m1_rows: Number of rows in matrix m1
+ *     m1_cols: Number of columns in matrix m1
+ *     m2_rows: Number of rows in matrix m2
+ *     m2_cols: Number of columns in matrix m2
+ *     m_out:   The output product matrix
+ * ========================================================================== */
 void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
                      int m2_rows, int m2_cols, double **m_out){
     
@@ -65,7 +102,14 @@ void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
     }
 }
 
-
+/* =============================================================================
+ * This function multiplies the square matrices that make up the layers of an
+ * array (net) to produce a two dimensional matrix (net_out) product.
+ *     traits:  Traits of an individual; also matrix rows and columns
+ *     layers:  Layers of the network (i.e., how many matrices in the array)
+ *     net:     The 3D array in which layers are square matrices
+ *     net_out: The output matrix that is the product of the array layers
+ * ========================================================================== */
 void sum_network_layers(int traits, int layers, double ***net, 
                         double **net_out){
     
@@ -109,6 +153,14 @@ void sum_network_layers(int traits, int layers, double ***net,
     free(net_temp); 
 }
 
+/* =============================================================================
+ * This function seeds a matrix with standard random normal values the matrix
+ * has a number of rows equal to individual's loci, and a number of columns
+ * equal to an individual's traits.
+ *    traits:         Traits an individual has, and columns of the matrix
+ *    loci:           Loci an individual has, and the rows of the matrix
+ *    loci_layer_one: The name of the matrix
+ * ========================================================================== */
 void initialise_loci_net(int traits, int loci, double **loci_layer_one){
 
     int row, col;
@@ -120,6 +172,14 @@ void initialise_loci_net(int traits, int loci, double **loci_layer_one){
     }
 }
 
+/* =============================================================================
+ * This function seeds a 3D network array with standard random normal values.
+ * Note that the array is made up of layers of square matrices, so the first two
+ * dimensions of the array are always the same (traits).
+ *     traits: The number of traits, and hence dimensions of each square matrix
+ *     layers: The number of matrices layered on top of one another
+ *     net:    The actual 3D network of dimension trait*trait*layers
+ * ========================================================================== */
 void initialise_net(int traits, int layers, double ***net){
     
     int k, i, j;
@@ -133,6 +193,13 @@ void initialise_net(int traits, int layers, double ***net){
     }   
 }
 
+
+/* =============================================================================
+ * This function sets all elements in a matrix to a value of zero:
+ *     rows: Rows within the matrix
+ *     cols: Columns within the matrix
+ *     mat:  The matrix itself
+ * ========================================================================== */
 void matrix_zeros(int rows, int cols, double **mat){
     
     int row, col;
@@ -234,10 +301,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* ====================================================================== */
     
     /** Parameter values as defined in R **/
-    loci   = paras[0];
-    layers = paras[1];
-    indivs = paras[2];
-    npsize = paras[3];
+    loci   = paras[0]; /* Number of loci for an individual */
+    layers = paras[1]; /* Layers in the network from loci to trait */
+    indivs = paras[2]; /* Individuals in the population */
+    npsize = paras[3]; /* Size of the strategy population */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
