@@ -4,6 +4,7 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+
 /* =============================================================================
  * Returns a random integer value.
  *     from: The lowest integer to be randomly chosen
@@ -20,18 +21,128 @@ int get_rand_int(int from, int to){
   return rand_value;
 }
 
+/* 
+
+sum_network_layers(traits, layers, net, net_sum);
+
+matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
+                loci_to_traits);
+
+*/
+ 
+/*
+ * This one is going to need to take in the first layer of loci to traits,
+ * then take the trait network layers, and produce random individuals with loci 
+ * of the right number to go from loci to traits for each. Then it will need 
+ * to get the correlation of traits among individuals.
+ */
+void fitness(double ****netpop, int npsize, int layers, int traits, 
+             double *paras, double **loci_layer_one){
+  
+  
+  
+}
+
+
 /* =============================================================================
  * This causes random mutation in the population of networks. A random uniform
  * number is sampled, and if that number is less than the mutation rate, then
  * a random normal with mean 0 and sd of mu_sd is added to the element
+ *     ltnpop: The 3D array that holds the population of loci to trait matrices
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     loci:   The number of loci that individuals have
+ *     traits: The number of traits that an individual has
+ *     paras:  A vector of parameter values that was specified in R
+ * ========================================================================== */
+void crossover_ltn(double ***ltnpop, int npsize, int loci, int traits, 
+                   double *paras){
+  
+  int k, i, j;
+  int partner, x0, x1, y0, y1, xt, yt;
+  double pr_cross, do_cross, foc_val, par_val;
+  
+  pr_cross = paras[7]; /* Pr of crossover between two paired matrices */
+
+  for(k = 0; k < npsize; k++){
+    do_cross = runif(0, 1);
+    if(do_cross < pr_cross){
+      do{ /* If a crossover occurs, need to select a partner */
+          partner = (int) floor( runif(0, npsize) );
+      }while(partner == k || partner == npsize);
+      /* Now need to select a 3D block to be crossed */
+      x0 = get_rand_int(0, loci);
+      x1 = get_rand_int(0, loci);
+      y0 = get_rand_int(0, traits);
+      y1 = get_rand_int(0, traits);
+      if(x0 > x1){
+        xt = x1;
+        x1 = x0;
+        x0 = xt;
+      }
+      if(y0 > y1){
+        yt = y1;
+        y1 = y0;
+        y0 = yt;
+      }
+      for(i = x0; i < x1; i++){
+        for(j = y0; j < y1; j++){
+          foc_val               = ltnpop[k][i][j];
+          par_val               = ltnpop[partner][i][j];
+          ltnpop[k][i][j]       = par_val;
+          ltnpop[partner][i][j] = foc_val;
+        }
+      }
+    }
+  }
+}
+
+
+/* =============================================================================
+ * This causes random mutation in loci to network matrix. A random uniform
+ * number is sampled, and if that number is less than the mutation rate, then
+ * a random normal with mean 0 and sd of mu_sd is added to the element
+ *     ltnpop: The 3D array that holds the population of loci to trait matrices
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     loci:   The number of loci that individuals have
+ *     traits: The number of traits that an individual has
+ *     paras:  A vector of parameter values that was specified in R
+ * ========================================================================== */
+void mutation_ltn(double ***ltnpop, int npsize, int loci, int traits, 
+                  double *paras){
+  
+  int k, l, i, j, mu;
+  double mu_pr, mu_sd;
+  
+  mu_pr = paras[4]; /* Mutation rate in the evolutionary algorithm */
+  mu_sd = paras[5]; /* Standard deviation of mutation effect size  */  
+
+  for(k = 0; k < npsize; k++){
+    for(i = 0; i < loci; i++){
+      for(j = 0; j < traits; j++){
+        mu = runif(0, 1); /* Check if mutation occurs */
+        if(mu < mu_pr){
+          ltnpop[k][i][j] += rnorm(0, mu_sd);
+        } /* Add a random normal value if mutation occurs */
+      }
+    }
+  }
+}
+
+
+
+/* =============================================================================
+ * This causes crossing over in the population of networks. A random uniform
+ * number is sampled, and if that number is less than the crossover rate, then
+ * the strategy finds a non-self partner and swaps a random 3D block with their
+ * partner.
  *     netpop: The full 4D network of evolving 3D arrays
  *     npsize: The size of the population evolving in the evolutionary algorithm
  *     layers: The number of layers in an individual loci to trait network
  *     traits: The number of traits that an individual has
  *     paras:  A vector of parameter values that was specified in R
  * ========================================================================== */
-void crossover(double ****netpop, int npsize, int layers, int traits, 
-               double *paras){
+void crossover_net(double ****netpop, int npsize, int layers, int traits, 
+                   double *paras){
   
   int k, l, i, j;
   int partner, x0, x1, y0, y1, z0, z1, xt, yt, zt;
@@ -73,7 +184,7 @@ void crossover(double ****netpop, int npsize, int layers, int traits,
               foc_val                  = netpop[k][l][i][j];
               par_val                  = netpop[partner][l][i][j];
               netpop[k][l][i][j]       = par_val;
-              netpop[partner][l][i][j] = foc_val;  printf("---------------- CROSSED ---------------\n");
+              netpop[partner][l][i][j] = foc_val;
             }
           }
         }
@@ -92,8 +203,8 @@ void crossover(double ****netpop, int npsize, int layers, int traits,
  *     traits: The number of traits that an individual has
  *     paras:  A vector of parameter values that was specified in R
  * ========================================================================== */
-void mutation(double ****netpop, int npsize, int layers, int traits, 
-              double *paras){
+void mutation_net(double ****netpop, int npsize, int layers, int traits, 
+                  double *paras){
   
   int k, l, i, j, mu;
   double mu_pr, mu_sd;
@@ -356,6 +467,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double *loci_net_ptr;  /* Pointer to the loci to net (interface R and C) */
     double *loci_eff_ptr;  /* Pointer to the loci effects (interface R and C) */
     double *G_ptr;         /* Pointer to GMATRIX (interface R and C) */
+    double *W;             /* Pointer to strategy fitnesses */
     
     int loci;
     int traits;
@@ -475,6 +587,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     } 
  
+    W = malloc(npsize * sizeof(double *));
+    
     
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
@@ -485,12 +599,6 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     initialise_net(traits, layers, net);
     
-    /* Gets the summed effects of network by multiplying matrices */
-    sum_network_layers(traits, layers, net, net_sum);
-    
-    /* Matrix that gets the final phenotype from the genotype */
-    matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
-                    loci_to_traits);
     
     /* We now need an evolutionary algorithm that takes all the values from 
      * loci_layer_one and net and goes through the algorithm until we go from
@@ -510,13 +618,23 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
      */
     gen = 0;
     while(gen < max_gen){
-
-      crossover(netpop, npsize, layers, traits, paras);
-      mutation(netpop, npsize, layers, traits, paras);
+      /* First crossover and mutate the loci to network layer */
+      crossover_ltn(ltnpop, npsize, loci, traits, paras);
+      mutation_ltn(ltnpop, npsize, loci, traits, paras);
+      /* Now crossover and mutate the network layers */
+      crossover_net(netpop, npsize, layers, traits, paras);
+      mutation_net(netpop, npsize, layers, traits, paras);
       
       gen++;
     }
     
+    
+    /* Gets the summed effects of network by multiplying matrices */
+    sum_network_layers(traits, layers, net, net_sum);
+    
+    /* Matrix that gets the final phenotype from the genotype */
+    matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
+                    loci_to_traits);
     
     
     /* This code switches from C back to R */
@@ -648,6 +766,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     
     free(paras);
+    free(W);
 
 
     return(GOUT); 
