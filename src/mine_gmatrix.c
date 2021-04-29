@@ -4,6 +4,117 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+/* =============================================================================
+ * Returns a random integer value.
+ *     from: The lowest integer to be randomly chosen
+ *     to:   The hgihest value to be randomly chosen
+ * ========================================================================== */
+int get_rand_int(int from, int to){
+  
+  int rand_value;
+  
+  do{
+    rand_value = (int) floor( runif(from, to) );
+  }while(rand_value == to);
+  
+  return rand_value;
+}
+
+/* =============================================================================
+ * This causes random mutation in the population of networks. A random uniform
+ * number is sampled, and if that number is less than the mutation rate, then
+ * a random normal with mean 0 and sd of mu_sd is added to the element
+ *     netpop: The full 4D network of evolving 3D arrays
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     layers: The number of layers in an individual loci to trait network
+ *     traits: The number of traits that an individual has
+ *     paras:  A vector of parameter values that was specified in R
+ * ========================================================================== */
+void crossover(double ****netpop, int npsize, int layers, int traits, 
+               double *paras){
+  
+  int k, l, i, j;
+  int partner, x0, x1, y0, y1, z0, z1, xt, yt, zt;
+  double pr_cross, do_cross, foc_val, par_val;
+  
+  pr_cross = paras[7]; /* Pr of crossover between two paired 3D arrays */
+  
+  for(k = 0; k < npsize; k++){
+    do_cross = runif(0, 1);
+    if(do_cross < pr_cross){
+        do{ /* If a crossover occurs, need to select a partner */
+          partner = (int) floor( runif(0, npsize) );
+        }while(partner == k || partner == npsize);
+        /* Now need to select a 3D block to be crossed */
+        x0 = get_rand_int(0, traits);
+        x1 = get_rand_int(0, traits);
+        y0 = get_rand_int(0, traits);
+        y1 = get_rand_int(0, traits);
+        z0 = get_rand_int(0, layers);
+        z1 = get_rand_int(0, layers);
+        if(x0 > x1){
+          xt = x1;
+          x1 = x0;
+          x0 = xt;
+        }
+        if(y0 > y1){
+          yt = y1;
+          y1 = y0;
+          y0 = yt;
+        }
+        if(z0 > z1){
+          zt = z1;
+          z1 = z0;
+          z0 = zt;
+        }
+        for(l = z0; l < z1; l++){
+          for(i = x0; i < x1; i++){
+            for(j = y0; j < y1; j++){
+              foc_val                  = netpop[k][l][i][j];
+              par_val                  = netpop[partner][l][i][j];
+              netpop[k][l][i][j]       = par_val;
+              netpop[partner][l][i][j] = foc_val;  printf("---------------- CROSSED ---------------\n");
+            }
+          }
+        }
+    }
+  }
+}
+
+
+/* =============================================================================
+ * This causes random mutation in the population of networks. A random uniform
+ * number is sampled, and if that number is less than the mutation rate, then
+ * a random normal with mean 0 and sd of mu_sd is added to the element
+ *     netpop: The full 4D network of evolving 3D arrays
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ *     layers: The number of layers in an individual loci to trait network
+ *     traits: The number of traits that an individual has
+ *     paras:  A vector of parameter values that was specified in R
+ * ========================================================================== */
+void mutation(double ****netpop, int npsize, int layers, int traits, 
+              double *paras){
+  
+  int k, l, i, j, mu;
+  double mu_pr, mu_sd;
+  
+  mu_pr = paras[4]; /* Mutation rate in the evolutionary algorithm */
+  mu_sd = paras[5]; /* Standard deviation of mutatino effect size  */  
+  
+  for(k = 0; k < npsize; k++){
+    for(l = 0; l < layers; l++){
+      for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+          mu = runif(0, 1); /* Check if mutation occurs */
+          if(mu < mu_pr){
+              netpop[k][l][i][j] += rnorm(0, mu_sd);
+          } /* Add a random normal value if mutation occurs */
+        }
+      }
+    }
+  }
+}
+
 
 /* =============================================================================
  * This seeds a 4D array with standard random normal values; The array is used
@@ -226,14 +337,18 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
-    int    i, j, k;
+    int    i, j, k, gen;
     int    row;
     int    col;
     int    vec_pos;
     int    protected_n;    /* Number of protected R objects */
     int    len_PARAS;      /* Length of the parameters vector */
+    int    max_gen;        /* Maximum generations in evolutionary algorithm */
     int    *dim_GMATRIX;   /* Dimensions of the G-matrix */
     double val;            /* Value of matrix elements */
+    double mu_pr;          /* Mutation rate of the evolutionary algorithm */
+    double mu_sd;          /* Mutation effect size standard deviation */
+    double pr_cross;       /* Pr of crossover between two paired 3D arrays */
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
@@ -301,10 +416,14 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* ====================================================================== */
     
     /** Parameter values as defined in R **/
-    loci   = paras[0]; /* Number of loci for an individual */
-    layers = paras[1]; /* Layers in the network from loci to trait */
-    indivs = paras[2]; /* Individuals in the population */
-    npsize = paras[3]; /* Size of the strategy population */
+    loci     = paras[0]; /* Number of loci for an individual */
+    layers   = paras[1]; /* Layers in the network from loci to trait */
+    indivs   = paras[2]; /* Individuals in the population */
+    npsize   = paras[3]; /* Size of the strategy population */
+    mu_pr    = paras[4]; /* Mutation rate in the evolutionary algorithm */
+    mu_sd    = paras[5]; /* Standard deviation of mutatino effect size  */
+    max_gen  = paras[6]; /* Maximum generations in evolutionary algorithm */
+    pr_cross = paras[7]; /* Pr of crossover between two paired 3D arrays */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -382,6 +501,23 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     ea_pop_ini(inds, indivs, loci);
     ea_ltn_ini(ltnpop, npsize, loci, traits);
     ea_net_ini(netpop, npsize, layers, traits);
+    
+    
+    /*
+     * We need a while loop to start here; will eventual have criteria to stop
+     * Need the critical steps of crossover, mutation, fitness check, 
+     * tournament, then replace the winners in a new netpop.
+     */
+    gen = 0;
+    while(gen < max_gen){
+
+      crossover(netpop, npsize, layers, traits, paras);
+      mutation(netpop, npsize, layers, traits, paras);
+      
+      gen++;
+    }
+    
+    
     
     /* This code switches from C back to R */
     /* ====================================================================== */        
