@@ -4,6 +4,102 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+/* =============================================================================
+ * This is a generic function to multiply two matrices together
+ *     m1:      The first matrix to be multiplied
+ *     m2:      The second matrix to be multiplied
+ *     m1_rows: Number of rows in matrix m1
+ *     m1_cols: Number of columns in matrix m1
+ *     m2_rows: Number of rows in matrix m2
+ *     m2_cols: Number of columns in matrix m2
+ *     m_out:   The output product matrix
+ * ========================================================================== */
+void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
+                     int m2_rows, int m2_cols, double **m_out){
+  
+  /* Add break if non-conformable arrays? */
+  int row, col, ele;
+  double val; 
+  
+  for(row = 0; row < m1_rows; row++){
+    for(col = 0; col < m2_cols; col++){
+      val = 0;
+      for(ele = 0; ele < m1_cols; ele++){
+        val += (m1[row][ele] * m2[ele][col]);
+      }
+      m_out[row][col] = val;
+    }
+  }
+}
+
+/* =============================================================================
+ * This function multiplies the square matrices that make up the layers of an
+ * array (net) to produce a two dimensional matrix (net_out) product.
+ *     traits:  Traits of an individual; also matrix rows and columns
+ *     layers:  Layers of the network (i.e., how many matrices in the array)
+ *     net:     The 3D array in which layers are square matrices
+ *     net_out: The output matrix that is the product of the array layers
+ * ========================================================================== */
+void sum_network_layers(int traits, int layers, double ***net, 
+                        double **net_out){
+  
+  int i, j, k;
+  double ***net_temp;
+  
+  
+  net_temp = malloc(layers * sizeof(double *));
+  for(k = 0; k < layers; k++){
+    net_temp[k] = malloc(traits * sizeof(double *));
+    for(i = 0; i < traits; i++){
+      net_temp[k][i] = malloc(traits * sizeof(double));   
+    }
+  }
+  for(k = 0; k < layers; k++){
+    for(i = 0; i < traits; i++){
+      for(j = 0; j < traits; j++){
+        net_temp[k][i][j] = net[k][i][j];
+      }
+    }
+  }
+  
+  for(k = 1; k < layers; k++){
+    matrix_multiply(net_temp[k-1], net_temp[k], traits, traits, traits, 
+                    traits, net_out);
+    if(k < layers == 1){
+      for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+          net_temp[k][i][j] = net_out[i][j]; 
+        }
+      }
+    }
+  }
+  
+  for(k = 0; k < layers; k++){
+    for(i = 0; i < traits; i++){
+      free(net_temp[k][i]);
+    }
+    free(net_temp[k]);        
+  }
+  free(net_temp); 
+}
+
+/* =============================================================================
+ * This seeds a 2D array with standard random normal values; array rows include
+ * individuals being modelled and array columns are individual loci
+ *     inds:   A 2D array of individuals
+ *     indivs: The number of individuals (rows of the array)
+ *     loci:   The number of loci for an individual (columns of the array)
+ * ========================================================================== */
+void ea_pop_ini(double **inds, int indivs, int loci){
+  
+  int row, col;
+  
+  for(row = 0; row < indivs; row++){
+    for(col = 0; col < loci; col++){
+      inds[row][col] = rnorm(0, 1);
+    }
+  }
+}
 
 /* =============================================================================
  * Returns a random integer value.
@@ -36,11 +132,77 @@ matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
  * of the right number to go from loci to traits for each. Then it will need 
  * to get the correlation of traits among individuals.
  */
-void fitness(double ****netpop, int npsize, int layers, int traits, 
-             double *paras, double **loci_layer_one){
+void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
+             int npsize, int loci, int layers, int traits, double *paras,
+             int k){
   
+  int indivs, row, col;
+  double **T, **L, **net_sum, **loci_to_traits;
   
+  indivs   = (int) paras[2]; /* Individuals in the population */
   
+  T  = malloc(indivs * sizeof(double *));
+  for(row = 0; row < indivs; row++){
+    T[row] = malloc(traits * sizeof(double));   
+  }
+
+  L  = malloc(indivs * sizeof(double *));
+  for(row = 0; row < indivs; row++){
+    L[row] = malloc(loci * sizeof(double));   
+  }
+  
+  net_sum = malloc(traits * sizeof(double *));
+  for(row = 0; row < traits; row++){
+    net_sum[row] = malloc(traits * sizeof(double));   
+  } 
+  
+  loci_to_traits  = malloc(loci * sizeof(double *));
+  for(row = 0; row < loci; row++){
+    loci_to_traits[row] = malloc(traits * sizeof(double));   
+  } 
+  
+  ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
+  
+  /* Gets the summed effects of network by multiplying matrices */
+  sum_network_layers(traits, layers, netpop[k], net_sum);
+  
+  /* Matrix that gets the final phenotype from the genotype */
+  matrix_multiply(ltnpop[k], net_sum, loci, traits, traits, traits,
+                  loci_to_traits);
+  
+  /* Now matrix multiply loci times loci_to_traits to get the traits */
+  matrix_multiply(L, loci_to_traits, indivs, loci, loci, traits, T);
+  
+  for(row = 0; row < indivs; row++){
+    printf("\n");
+    for(col = 0; col < traits; col++){
+      printf("%f\t", T[row][col]);
+    }
+  }
+  /*
+   * First need to create a large number of individuals; N should be in paras
+   * Then need to run their loci through the ltnpop[k] layers times the netpop
+   * layers to get the end trait values.
+   * Then need to get the VCV matrix of individual traits
+   * 
+   */
+  
+  for(row = 0; row < loci; row++){
+    free(loci_to_traits[row]);
+  }
+  free(loci_to_traits);
+  for(row = 0; row < traits; row++){
+    free(net_sum[row]);
+  }
+  free(net_sum);
+  for(row = 0; row < indivs; row++){
+    free(L[row]);
+  }
+  free(L);
+  for(row = 0; row < indivs; row++){
+    free(T[row]);
+  }
+  free(T);
 }
 
 
@@ -278,102 +440,6 @@ void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
 }
 
 
-/* =============================================================================
- * This seeds a 2D array with standard random normal values; array rows include
- * individuals being modelled and array columns are individual loci
- *     inds:   A 2D array of individuals
- *     indivs: The number of individuals (rows of the array)
- *     loci:   The number of loci for an individual (columns of the array)
- * ========================================================================== */
-void ea_pop_ini(double **inds, int indivs, int loci){
-    
-    int row, col;
-    
-    for(row = 0; row < indivs; row++){
-        for(col = 0; col < loci; col++){
-            inds[row][col] = rnorm(0, 1);
-        }
-    }
-}
-
-/* =============================================================================
- * This is a generic function to multiply two matrices together
- *     m1:      The first matrix to be multiplied
- *     m2:      The second matrix to be multiplied
- *     m1_rows: Number of rows in matrix m1
- *     m1_cols: Number of columns in matrix m1
- *     m2_rows: Number of rows in matrix m2
- *     m2_cols: Number of columns in matrix m2
- *     m_out:   The output product matrix
- * ========================================================================== */
-void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
-                     int m2_rows, int m2_cols, double **m_out){
-    
-    /* Add break if non-conformable arrays? */
-    int row, col, ele;
-    double val; 
-
-    for(row = 0; row < m1_rows; row++){
-        for(col = 0; col < m2_cols; col++){
-            val = 0;
-            for(ele = 0; ele < m1_cols; ele++){
-                val += (m1[row][ele] * m2[ele][col]);
-            }
-            m_out[row][col] = val;
-        }
-    }
-}
-
-/* =============================================================================
- * This function multiplies the square matrices that make up the layers of an
- * array (net) to produce a two dimensional matrix (net_out) product.
- *     traits:  Traits of an individual; also matrix rows and columns
- *     layers:  Layers of the network (i.e., how many matrices in the array)
- *     net:     The 3D array in which layers are square matrices
- *     net_out: The output matrix that is the product of the array layers
- * ========================================================================== */
-void sum_network_layers(int traits, int layers, double ***net, 
-                        double **net_out){
-    
-    int i, j, k;
-    double ***net_temp;
-    
-    
-    net_temp = malloc(layers * sizeof(double *));
-    for(k = 0; k < layers; k++){
-        net_temp[k] = malloc(traits * sizeof(double *));
-        for(i = 0; i < traits; i++){
-            net_temp[k][i] = malloc(traits * sizeof(double));   
-        }
-    }
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            for(j = 0; j < traits; j++){
-                net_temp[k][i][j] = net[k][i][j];
-            }
-        }
-    }
-    
-    for(k = 1; k < layers; k++){
-        matrix_multiply(net_temp[k-1], net_temp[k], traits, traits, traits, 
-                        traits, net_out);
-        if(k < layers == 1){
-            for(i = 0; i < traits; i++){
-                for(j = 0; j < traits; j++){
-                    net_temp[k][i][j] = net_out[i][j]; 
-                }
-            }
-        }
-    }
-    
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            free(net_temp[k][i]);
-        }
-        free(net_temp[k]);        
-    }
-    free(net_temp); 
-}
 
 /* =============================================================================
  * This function seeds a matrix with standard random normal values the matrix
@@ -625,8 +691,17 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       crossover_net(netpop, npsize, layers, traits, paras);
       mutation_net(netpop, npsize, layers, traits, paras);
       
+      
+      fitness(ltnpop, netpop, W, gmatrix, npsize, loci, layers, traits, paras, 
+              0);
+      /*
+       *  fitness(ltnpop, netpop, npsize, loci, layers, traits, paras, W)
+       */
+      
+      
       gen++;
     }
+    
     
     
     /* Gets the summed effects of network by multiplying matrices */
