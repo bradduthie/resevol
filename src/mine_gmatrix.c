@@ -4,6 +4,47 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+
+
+/* =============================================================================
+ * This function calculates the variance covariance matrix of data columns
+ *     mat:     The matrix to be correlated
+ *     rows:    Rows in the data frame
+ *     cols:    Columns in the data frame (and VCV dimensions)
+ *     VCV:     The variance covariance matrix
+ * ========================================================================== */
+void calc_VCV(double **mat, int rows, int cols, double **VCV){
+  
+  int i, j, k;
+  double *means, N;
+  
+  N = (double) rows;
+  
+  means = malloc(cols * sizeof(double *));
+  for(i = 0; i < cols; i++){
+    means[i] = 0;
+    for(j = 0; j < rows; j++){
+      means[i] += mat[j][i];
+    }
+    means[i] = means[i] / N;
+  }
+  
+  for(i = 0; i < cols; i++){
+    for(j = 0; j <= i; j++){
+      VCV[i][j] = 0;
+      VCV[j][i] = 0;
+      for(k = 0; k < rows; k++){
+        VCV[i][j] += (mat[k][i] - means[i]) * (mat[k][j] - means[j]);
+      }
+      VCV[i][j] = VCV[i][j] / (N - 1);
+      VCV[j][i] = VCV[i][j];
+    }
+  }
+
+  free(means);
+}
+
+
 /* =============================================================================
  * This is a generic function to multiply two matrices together
  *     m1:      The first matrix to be multiplied
@@ -137,7 +178,7 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
              int k){
   
   int indivs, row, col;
-  double **T, **L, **net_sum, **loci_to_traits;
+  double **T, **L, **net_sum, **loci_to_traits, **VCV;
   
   indivs   = (int) paras[2]; /* Individuals in the population */
   
@@ -161,6 +202,11 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
     loci_to_traits[row] = malloc(traits * sizeof(double));   
   } 
   
+  VCV = malloc(traits * sizeof(double *));
+  for(row = 0; row < traits; row++){
+    VCV[row] = malloc(traits * sizeof(double));   
+  } 
+  
   ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
   
   /* Gets the summed effects of network by multiplying matrices */
@@ -172,13 +218,10 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
   
   /* Now matrix multiply loci times loci_to_traits to get the traits */
   matrix_multiply(L, loci_to_traits, indivs, loci, loci, traits, T);
+
+  /* Calculate the variance covariance of traits */
+  calc_VCV(T, indivs, traits, VCV);
   
-  for(row = 0; row < indivs; row++){
-    printf("\n");
-    for(col = 0; col < traits; col++){
-      printf("%f\t", T[row][col]);
-    }
-  }
   /*
    * First need to create a large number of individuals; N should be in paras
    * Then need to run their loci through the ltnpop[k] layers times the netpop
@@ -187,6 +230,10 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
    * 
    */
   
+  for(row = 0; row < traits; row++){
+    free(VCV[row]);
+  }
+  free(VCV);
   for(row = 0; row < loci; row++){
     free(loci_to_traits[row]);
   }
