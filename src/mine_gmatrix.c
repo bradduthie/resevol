@@ -5,6 +5,34 @@
 #include <stdlib.h>
 
 
+/* =============================================================================
+ * This function calculates the stress of the VCV matrix (E sq dev from gmatrix)
+ *     gmatrix: The gmatrix that has been set by the user
+ *     traits:  The rows and columns (traits) of the gmatrix
+ *     VCV:     The variance covariance matrix
+ * Note that stress is defined as expected value of deviation of lower triangle
+ * and diagonal elements; this avoids double counting symmetrical values
+ * ========================================================================== */
+double stress_VCV(double **gmatrix, int traits, double **VCV){
+  
+  int i, j;
+  double N, stress;
+  long double val;
+  
+  N = (double) (traits * traits) - (0.5 * (traits) * (traits - 1));
+
+  val = 0.0;
+  for(i = 0; i < traits; i++){
+    for(j = 0; j <= i; j++){
+      val += ((gmatrix[i][j] - VCV[i][j]) * (gmatrix[i][j] - VCV[i][j])) / N;
+    }
+  }
+  
+  stress = (double) log(val); /* Log to avoid massive numbers */
+
+  return stress;
+}
+
 
 /* =============================================================================
  * This function calculates the variance covariance matrix of data columns
@@ -87,7 +115,6 @@ void sum_network_layers(int traits, int layers, double ***net,
   int i, j, k;
   double ***net_temp;
   
-  
   net_temp = malloc(layers * sizeof(double *));
   for(k = 0; k < layers; k++){
     net_temp[k] = malloc(traits * sizeof(double *));
@@ -158,28 +185,26 @@ int get_rand_int(int from, int to){
   return rand_value;
 }
 
-/* 
-
-sum_network_layers(traits, layers, net, net_sum);
-
-matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
-                loci_to_traits);
-
-*/
- 
-/*
- * This one is going to need to take in the first layer of loci to traits,
- * then take the trait network layers, and produce random individuals with loci 
- * of the right number to go from loci to traits for each. Then it will need 
- * to get the correlation of traits among individuals.
- */
-void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
-             int npsize, int loci, int layers, int traits, double *paras,
-             int k){
+/* =============================================================================
+* This function calculates the stress of a given network by using its VCV matrix
+* produced from a random set of individuals to check the stress against the 
+* gmatrix. It returns the expected sum of squared value of the upper triangle
+* and diagonal of the matrix (avoiding the double counting due to symmetry)
+*     ltnpop:  The 3D array that holds the population of loci to trait matrices
+*     netpop:  The full 4D network of evolving 3D arrays
+*     gmatrix: The user specified gmatrix against which the VCV is compared
+*     traits:  The number of traits that an individual has
+*     paras:   A vector of parameter values that was specified in R
+*     k:       The layer that is being assessed for fitness
+* ========================================================================== */
+double fitness(double ***ltnpop, double ****netpop, double **gmatrix, 
+               int traits, double *paras, int k){
   
-  int indivs, row, col;
-  double **T, **L, **net_sum, **loci_to_traits, **VCV;
+  int indivs, loci, layers, row, col;
+  double stress, **T, **L, **net_sum, **loci_to_traits, **VCV;
   
+  loci     = (int) paras[0]; /* Number of loci for an individual */
+  layers   = (int) paras[1]; /* Layers in the network from loci to trait */
   indivs   = (int) paras[2]; /* Individuals in the population */
   
   T  = malloc(indivs * sizeof(double *));
@@ -222,14 +247,9 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
   /* Calculate the variance covariance of traits */
   calc_VCV(T, indivs, traits, VCV);
   
-  /*
-   * First need to create a large number of individuals; N should be in paras
-   * Then need to run their loci through the ltnpop[k] layers times the netpop
-   * layers to get the end trait values.
-   * Then need to get the VCV matrix of individual traits
-   * 
-   */
   
+  stress = stress_VCV(gmatrix, traits, VCV);
+
   for(row = 0; row < traits; row++){
     free(VCV[row]);
   }
@@ -250,7 +270,30 @@ void fitness(double ***ltnpop, double ****netpop, double *W, double **gmatrix,
     free(T[row]);
   }
   free(T);
+  
+  return stress;
 }
+
+
+
+void net_fit(double ***ltnpop, double ****netpop, double **gmatrix, int traits, 
+             double *paras, double *W){
+  
+  int loci, indivs, npsize, k;
+  
+  loci     = (int) paras[0]; /* Number of loci for an individual */
+  indivs   = (int) paras[2]; /* Individuals in the population */
+  npsize   = (int) paras[3]; /* Size of the strategy population */
+  
+  for(k = 0; k < npsize; k++){
+      W[k] = fitness(ltnpop, netpop, gmatrix, traits, paras, k);  
+  }
+  
+}
+
+
+/* fitness(ltnpop, netpop, gmatrix, loci, layers, traits, paras, 0); */
+
 
 
 /* =============================================================================
@@ -738,18 +781,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       crossover_net(netpop, npsize, layers, traits, paras);
       mutation_net(netpop, npsize, layers, traits, paras);
       
-      
-      fitness(ltnpop, netpop, W, gmatrix, npsize, loci, layers, traits, paras, 
-              0);
-      /*
-       *  fitness(ltnpop, netpop, npsize, loci, layers, traits, paras, W)
-       */
-      
-      
+      net_fit(ltnpop, netpop, gmatrix, traits, paras, W);
+
       gen++;
     }
-    
-    
     
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
