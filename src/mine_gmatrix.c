@@ -889,6 +889,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int    max_gen;        /* Maximum generations in evolutionary algorithm */
     int    *dim_GMATRIX;   /* Dimensions of the G-matrix */
     int    *winners;       /* Pointer to the winners of tournaments */
+    double term_cri;       /* Termination criteria (stress) for evol alg */
+    double estress;        /* Mean stress in the evol algorithm */
     double val;            /* Value of matrix elements */
     double mu_pr;          /* Mutation rate of the evolutionary algorithm */
     double mu_sd;          /* Mutation effect size standard deviation */
@@ -975,6 +977,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     pr_cross = (double) paras[7]; /* Pr of crossover between two 3D arrays */
     sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
     chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
+    term_cri = (double) paras[10]; /* Evol Alg stress termination crit */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -1061,8 +1064,12 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
      * Need the critical steps of crossover, mutation, fitness check, 
      * tournament, then replace the winners in a new netpop.
      */
-    gen = 0;
-    while(gen < max_gen){
+    gen     = 0;
+    estress = term_cri + 1000;
+    Rprintf("===============================================\n");
+    Rprintf("Initialising gmatrix mining...                 \n");
+    Rprintf("===============================================\n");
+    while(gen < max_gen & estress > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras);
       mutation_ltn(ltnpop, npsize, loci, traits, paras);
@@ -1075,9 +1082,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
       set_win(&ltnpop, &netpop, winners, paras, traits);
       
-      mean_fitness[gen] = get_mean_fitness(W, npsize);
+      estress           = get_mean_fitness(W, npsize);
+      mean_fitness[gen] = estress;
       
-      printf("%f\n", mean_fitness[gen]);
+      Rprintf("Generation: %d\t Stress: %f\n", gen, estress);
       
       gen++;
     }
@@ -1091,13 +1099,6 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     
      
     get_vcv(ltnpop, netpop, gmatrix, VCV, traits, paras, 0);
-  
-    for(i = 0; i < traits; i++){
-      printf("\n");
-      for(j = 0; j < traits; j++){
-        printf("%f\t", VCV[i][j]);
-      }
-    }
     
     /* This code switches from C back to R */
     /* ====================================================================== */        

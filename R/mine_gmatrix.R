@@ -6,7 +6,8 @@
 #'@param gmatrix G-matrix that the evolutionary algorithm will match
 #'@return A set of values that will produce a desired G-matrix
 #'@export
-mine_gmatrix <- function(paras = c(2, 2, 100, 4, 0.1, 1, 4, 0.1, 4, 2), 
+mine_gmatrix <- function(paras = c(40, 10, 1000, 1000, 0.1, 0.01, 100, 0.1, 40, 
+                                   2, -5.3), 
                          gmatrix){
     if(dim(gmatrix)[1] != dim(gmatrix)[2]){
         stop("ERROR: 'gmatrix' needs to be a square matrix");
