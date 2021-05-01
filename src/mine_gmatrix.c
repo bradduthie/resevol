@@ -4,6 +4,96 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+/* =============================================================================
+ * This returns the elements in by_array in ascending order by by_array values
+ *     order_array: The elements to be ordered
+ *     by_array:    The values to determine the order
+ *     length:      The length of order_array and by_array vectors
+ * ========================================================================== */
+void find_ascending_order(int *order_array, double *by_array, int length){
+  
+  int i, k, min_index, *sarray;
+  double max_val, min_val;
+  
+  sarray  = malloc(length * sizeof(int));
+  for(i = 0; i < length; i++){
+    sarray[i] = order_array[i];
+  }
+  
+  k = 0;
+  max_val = -1;
+  for(i = 0; i < length; i++){
+    if(by_array[i] > max_val){
+      max_val = by_array[i];
+    }
+  }
+
+  while(k < length){
+    min_val   = max_val + 1;
+    min_index = 0;
+    for(i = 0; i < length; i++){
+      if(by_array[i] < min_val){
+        min_index = i;
+        min_val   = by_array[i];
+      }
+    }
+    by_array[min_index] = max_val + 1;
+    order_array[k]      = sarray[min_index];
+    k++;   
+  }
+  
+  free(sarray);
+}
+
+/* =============================================================================
+ * This function runs tournaments of a given size sampleK from which chooseK
+ * winners are selected to be placed into the winners vector
+ *     fitnesses: The fitness of each individual
+ *     winners:   The vector that will hold the winning individuals
+ *     paras:   A vector of parameter values that was specified in R
+ * ========================================================================== */
+void tournament(double *fitnesses, int *winners, double *paras){
+  
+  int samp, placed, pop_size, rand_samp, sampleK, chooseK, i;
+  int *samples;
+  double *samp_fit;
+  
+  pop_size = (int) paras[3]; /* Size of the strategy population */
+  sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
+  chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
+  
+  samples  = malloc(sampleK * sizeof(int));
+  samp_fit = malloc(sampleK * sizeof(double));
+  placed   = 0;
+  
+  if(chooseK > sampleK){
+    chooseK = sampleK;
+  }
+  while(placed < pop_size){ /* Note sampling is done with replacement */
+    for(samp = 0; samp < sampleK; samp++){
+      do{
+        rand_samp      = (int) floor( runif(0, pop_size) );
+        samples[samp]  = rand_samp;
+        samp_fit[samp] = fitnesses[rand_samp];
+      }while(rand_samp == pop_size);
+    }
+    
+    find_ascending_order(samples, samp_fit, sampleK);
+    
+    if( (chooseK + placed) >= pop_size){
+      chooseK = pop_size - placed;    
+    }
+    samp = 0;
+    while(samp < chooseK && placed < pop_size){
+      winners[placed] = samples[samp];
+      placed++;
+      samp++;
+    }
+  }
+
+  free(samp_fit);
+  free(samples);
+}
 
 /* =============================================================================
  * This function calculates the stress of the VCV matrix (E sq dev from gmatrix)
@@ -48,7 +138,7 @@ void calc_VCV(double **mat, int rows, int cols, double **VCV){
   
   N = (double) rows;
   
-  means = malloc(cols * sizeof(double *));
+  means = malloc(cols * sizeof(double));
   for(i = 0; i < cols; i++){
     means[i] = 0;
     for(j = 0; j < rows; j++){
@@ -275,7 +365,15 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
 }
 
 
-
+/* =============================================================================
+ * This finds the fitness of each potential network
+ *     ltnpop:  The 3D array that holds the population of loci to trait matrices
+ *     netpop:  The full 4D network of evolving 3D arrays
+ *     gmatrix: The user specified gmatrix against which the VCV is compared
+ *     traits:  The number of traits that an individual has
+ *     paras:   A vector of parameter values that was specified in R
+ *     W:       The fitness vector
+ * ========================================================================== */
 void net_fit(double ***ltnpop, double ****netpop, double **gmatrix, int traits, 
              double *paras, double *W){
   
@@ -290,11 +388,6 @@ void net_fit(double ***ltnpop, double ****netpop, double **gmatrix, int traits,
   }
   
 }
-
-
-/* fitness(ltnpop, netpop, gmatrix, loci, layers, traits, paras, 0); */
-
-
 
 /* =============================================================================
  * This causes random mutation in the population of networks. A random uniform
@@ -612,6 +705,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int    len_PARAS;      /* Length of the parameters vector */
     int    max_gen;        /* Maximum generations in evolutionary algorithm */
     int    *dim_GMATRIX;   /* Dimensions of the G-matrix */
+    int    *winners;       /* Pointer to the winners of tournaments */
     double val;            /* Value of matrix elements */
     double mu_pr;          /* Mutation rate of the evolutionary algorithm */
     double mu_sd;          /* Mutation effect size standard deviation */
@@ -630,6 +724,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int layers;
     int indivs;   /* Seeded individuals in evolutionary algorithm */
     int npsize;   /* Number of arrays in the evolutionary algorithm */
+    int sampleK;
+    int chooseK;
     
     double **gmatrix;
     double **loci_layer_one;
@@ -659,7 +755,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = malloc(len_PARAS * sizeof(double *));
+    paras   = malloc(len_PARAS * sizeof(double));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -692,6 +788,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     mu_sd    = paras[5]; /* Standard deviation of mutatino effect size  */
     max_gen  = paras[6]; /* Maximum generations in evolutionary algorithm */
     pr_cross = paras[7]; /* Pr of crossover between two paired 3D arrays */
+    sampleK  = paras[8]; /* Number of samples for a tournament in evol alg */
+    chooseK  = paras[9]; /* Number to choose within tournament in evol alg */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -738,14 +836,14 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         for(j = 0; j < layers; j++){
             netpop[k][j] = malloc(traits * sizeof(double *));
             for(i = 0; i < traits; i++){
-                netpop[k][j][i] = malloc(traits * sizeof(double *));
+                netpop[k][j][i] = malloc(traits * sizeof(double));
             }
         }
     } 
  
-    W = malloc(npsize * sizeof(double *));
-    
-    
+    W       = malloc(npsize * sizeof(double));
+    winners = malloc(npsize * sizeof(int));
+
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
     matrix_zeros(loci, traits, loci_to_traits);
@@ -782,6 +880,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       mutation_net(netpop, npsize, layers, traits, paras);
       
       net_fit(ltnpop, netpop, gmatrix, traits, paras, W);
+      tournament(W, winners, paras);
 
       gen++;
     }
@@ -921,11 +1020,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     }
     free(net_sum);
 
-    
     free(paras);
+    free(winners);
     free(W);
-
-
+    
     return(GOUT); 
 }
 /* ===========================================================================*/
