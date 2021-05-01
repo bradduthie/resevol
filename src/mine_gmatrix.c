@@ -4,6 +4,121 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+
+double get_mean_fitness(double *W, int npsize){
+  
+  int i;
+  double val, N, Eval;
+  
+  N = (double) npsize;
+  
+  val = 0.0;
+  for(i = 0; i < npsize; i++){
+    val += W[i];
+  }
+  
+  Eval = val / N;
+  
+  return Eval;
+}
+
+
+/* =============================================================================
+ * Swap pointers to rewrite ARRAY_B into ARRAY_A for a an array of any dimension
+ *     ARRAY_A: First array to swap
+ *     ARRAY_B: Second array to swap
+ * ========================================================================== */
+void swap_arrays(void **ARRAY_A, void **ARRAY_B){
+  
+  void *TEMP_ARRAY;
+  
+  TEMP_ARRAY = *ARRAY_A;
+  *ARRAY_A   = *ARRAY_B;
+  *ARRAY_B   = TEMP_ARRAY;
+}
+
+/* =============================================================================
+ * This function takes winners from the tournament function and replicates them
+ * in a new population array. 
+ *     population: array of the population
+ *     winners: Array of the winners of the tournament
+ *     paras: Vector of global parameters
+ * ========================================================================== */
+void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
+             int traits){
+  
+  int i, j, k, l, row, col, winner, pop_size, ROWS, COLS, loci, layers, npsize;
+  double a_value, ****NEW_NET, ***NEW_LTN;
+
+  /** Parameter values as defined in R **/
+  loci     = (int) paras[0]; /* Number of loci for an individual */
+  layers   = (int) paras[1]; /* Layers in the network from loci to trait */
+  npsize   = (int) paras[3]; /* Size of the strategy population */
+
+  NEW_LTN = malloc(npsize * sizeof(double *));
+  for(k = 0; k < npsize; k++){
+    NEW_LTN[k] = malloc(loci * sizeof(double *));
+    for(i = 0; i < loci; i++){
+      NEW_LTN[k][i] = malloc(traits * sizeof(double));   
+    }
+  } 
+  
+  NEW_NET = malloc(npsize * sizeof(double *));
+  for(k = 0; k < npsize; k++){
+    NEW_NET[k] = malloc(layers * sizeof(double *));
+    for(j = 0; j < layers; j++){
+      NEW_NET[k][j] = malloc(traits * sizeof(double *));
+      for(i = 0; i < traits; i++){
+        NEW_NET[k][j][i] = malloc(traits * sizeof(double));
+      }
+    }
+  } 
+  
+  for(i = 0; i < npsize; i++){
+    winner = winners[i];
+    for(row = 0; row < loci; row++){
+      for(col = 0; col < traits; col++){
+        a_value              = (*ltnpop)[winner][row][col];
+        NEW_LTN[i][row][col] = a_value;
+      }
+    }
+  }
+  
+  for(i = 0; i < npsize; i++){
+    winner = winners[i];
+    for(l = 0; l < layers; l++){
+      for(j = 0; j < traits; j++){
+        for(k = 0; k < traits; k++){
+          a_value             = (*netpop)[winner][l][j][k];
+          NEW_NET[i][l][j][k] = a_value;
+        }
+      }
+    }
+  }
+  
+  swap_arrays((void*)&(*ltnpop), (void*)&NEW_LTN);
+  swap_arrays((void*)&(*netpop), (void*)&NEW_NET);
+  
+  for(k = 0; k < npsize; k++){
+    for(i = 0; i < layers; i++){
+      for(j = 0; j < traits; j++){
+        free(NEW_NET[k][i][j]);
+      }
+      free(NEW_NET[k][i]);
+    }
+    free(NEW_NET[k]);
+  }
+  free(NEW_NET);
+  
+  for(k = 0; k < npsize; k++){
+    for(i = 0; i < loci; i++){
+      free(NEW_LTN[k][i]);
+    }
+    free(NEW_LTN[k]);        
+  }
+  free(NEW_LTN); 
+}
+
 /* =============================================================================
  * This returns the elements in by_array in ascending order by by_array values
  *     order_array: The elements to be ordered
@@ -276,6 +391,78 @@ int get_rand_int(int from, int to){
 }
 
 /* =============================================================================
+ * This function finds the VCV matrix, similar to a fitness function
+ *     ltnpop:  The 3D array that holds the population of loci to trait matrices
+ *     netpop:  The full 4D network of evolving 3D arrays
+ *     gmatrix: The user specified gmatrix against which the VCV is compared
+ *     traits:  The number of traits that an individual has
+ *     paras:   A vector of parameter values that was specified in R
+ *     k:       The layer that is being assessed for fitness
+ * ========================================================================== */
+void get_vcv(double ***ltnpop, double ****netpop, double **gmatrix, 
+             double **VCV, int traits, double *paras, int k){
+  
+  int indivs, loci, layers, row, col;
+  double stress, **T, **L, **net_sum, **loci_to_traits;
+  
+  loci     = (int) paras[0]; /* Number of loci for an individual */
+  layers   = (int) paras[1]; /* Layers in the network from loci to trait */
+  indivs   = (int) paras[2]; /* Individuals in the population */
+
+  T  = malloc(indivs * sizeof(double *));
+  for(row = 0; row < indivs; row++){
+    T[row] = malloc(traits * sizeof(double));   
+  }
+
+  L  = malloc(indivs * sizeof(double *));
+  for(row = 0; row < indivs; row++){
+    L[row] = malloc(loci * sizeof(double));   
+  }
+
+  net_sum = malloc(traits * sizeof(double *));
+  for(row = 0; row < traits; row++){
+    net_sum[row] = malloc(traits * sizeof(double));   
+  } 
+
+  loci_to_traits  = malloc(loci * sizeof(double *));
+  for(row = 0; row < loci; row++){
+    loci_to_traits[row] = malloc(traits * sizeof(double));   
+  } 
+
+  ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
+
+  /* Gets the summed effects of network by multiplying matrices */
+  sum_network_layers(traits, layers, netpop[k], net_sum);
+
+  /* Matrix that gets the final phenotype from the genotype */
+  matrix_multiply(ltnpop[k], net_sum, loci, traits, traits, traits,
+                  loci_to_traits);
+
+  /* Now matrix multiply loci times loci_to_traits to get the traits */
+  matrix_multiply(L, loci_to_traits, indivs, loci, loci, traits, T);
+
+  /* Calculate the variance covariance of traits */
+  calc_VCV(T, indivs, traits, VCV);
+
+  for(row = 0; row < loci; row++){
+    free(loci_to_traits[row]);
+  }
+  free(loci_to_traits);
+  for(row = 0; row < traits; row++){
+    free(net_sum[row]);
+  }
+  free(net_sum);
+  for(row = 0; row < indivs; row++){
+    free(L[row]);
+  }
+  free(L);
+  for(row = 0; row < indivs; row++){
+    free(T[row]);
+  }
+  free(T);
+}
+
+/* =============================================================================
 * This function calculates the stress of a given network by using its VCV matrix
 * produced from a random set of individuals to check the stress against the 
 * gmatrix. It returns the expected sum of squared value of the upper triangle
@@ -337,7 +524,6 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
   /* Calculate the variance covariance of traits */
   calc_VCV(T, indivs, traits, VCV);
   
-  
   stress = stress_VCV(gmatrix, traits, VCV);
 
   for(row = 0; row < traits; row++){
@@ -384,9 +570,8 @@ void net_fit(double ***ltnpop, double ****netpop, double **gmatrix, int traits,
   npsize   = (int) paras[3]; /* Size of the strategy population */
   
   for(k = 0; k < npsize; k++){
-      W[k] = fitness(ltnpop, netpop, gmatrix, traits, paras, k);  
+    W[k] = fitness(ltnpop, netpop, gmatrix, traits, paras, k);
   }
-  
 }
 
 /* =============================================================================
@@ -622,8 +807,6 @@ void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
   }
 }
 
-
-
 /* =============================================================================
  * This function seeds a matrix with standard random normal values the matrix
  * has a number of rows equal to individual's loci, and a number of columns
@@ -718,6 +901,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double *loci_eff_ptr;  /* Pointer to the loci effects (interface R and C) */
     double *G_ptr;         /* Pointer to GMATRIX (interface R and C) */
     double *W;             /* Pointer to strategy fitnesses */
+    double *mean_fitness;  /* Vector to hold the mean fitness values */
     
     int loci;
     int traits;
@@ -727,6 +911,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int sampleK;
     int chooseK;
     
+    double **VCV;
     double **gmatrix;
     double **loci_layer_one;
     double **net_sum;
@@ -780,16 +965,16 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* ====================================================================== */
     
     /** Parameter values as defined in R **/
-    loci     = paras[0]; /* Number of loci for an individual */
-    layers   = paras[1]; /* Layers in the network from loci to trait */
-    indivs   = paras[2]; /* Individuals in the population */
-    npsize   = paras[3]; /* Size of the strategy population */
-    mu_pr    = paras[4]; /* Mutation rate in the evolutionary algorithm */
-    mu_sd    = paras[5]; /* Standard deviation of mutatino effect size  */
-    max_gen  = paras[6]; /* Maximum generations in evolutionary algorithm */
-    pr_cross = paras[7]; /* Pr of crossover between two paired 3D arrays */
-    sampleK  = paras[8]; /* Number of samples for a tournament in evol alg */
-    chooseK  = paras[9]; /* Number to choose within tournament in evol alg */
+    loci     = (int) paras[0]; /* Number of loci for an individual */
+    layers   = (int) paras[1]; /* Layers in the network from loci to trait */
+    indivs   = (int) paras[2]; /* Individuals in the population */
+    npsize   = (int) paras[3]; /* Size of the strategy population */
+    mu_pr    = (double) paras[4]; /* Mutation rate in evolutionary algorithm */
+    mu_sd    = (double) paras[5]; /* Standard dev. of mutation effect size  */
+    max_gen  = (int) paras[6]; /* Max generations in evolutionary algorithm */
+    pr_cross = (double) paras[7]; /* Pr of crossover between two 3D arrays */
+    sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
+    chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -841,8 +1026,14 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     } 
  
-    W       = malloc(npsize * sizeof(double));
-    winners = malloc(npsize * sizeof(int));
+    VCV = malloc(traits * sizeof(double *));
+    for(row = 0; row < traits; row++){
+        VCV[row] = malloc(traits * sizeof(double));   
+    } 
+ 
+    W            = malloc(npsize * sizeof(double));
+    winners      = malloc(npsize * sizeof(int));
+    mean_fitness = malloc(max_gen * sizeof(double));
 
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
@@ -882,6 +1073,12 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       net_fit(ltnpop, netpop, gmatrix, traits, paras, W);
       tournament(W, winners, paras);
 
+      set_win(&ltnpop, &netpop, winners, paras, traits);
+      
+      mean_fitness[gen] = get_mean_fitness(W, npsize);
+      
+      printf("%f\n", mean_fitness[gen]);
+      
       gen++;
     }
     
@@ -892,6 +1089,15 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
+     
+    get_vcv(ltnpop, netpop, gmatrix, VCV, traits, paras, 0);
+  
+    for(i = 0; i < traits; i++){
+      printf("\n");
+      for(j = 0; j < traits; j++){
+        printf("%f\t", VCV[i][j]);
+      }
+    }
     
     /* This code switches from C back to R */
     /* ====================================================================== */        
@@ -954,7 +1160,6 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     }
     
-    
     SEXP GOUT;
     GOUT = PROTECT( allocVector(VECSXP, 5) );
     protected_n++;
@@ -967,7 +1172,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
-
+    for(row = 0; row < traits; row++){
+      free(VCV[row]);
+    }
+    free(VCV);
     for(k = 0; k < npsize; k++){
         for(i = 0; i < layers; i++){
             for(j = 0; j < traits; j++){
