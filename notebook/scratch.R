@@ -1,9 +1,12 @@
 # Initialising a file
 #library(helicoverpa)
 
- mat <- matrix(data = 0, nrow = 8, ncol = 8);
- diag(mat) <- 1;
- mg  <- mine_gmatrix(gmatrix = mat, paras = c(16, 10, 2000, 6000, 0.2, 0.01, 8000, 0.2, 200, 4, -5.3));
+# mat <- matrix(data = 0, nrow = 8, ncol = 8);
+# diag(mat) <- 1;
+
+mat <- read.csv("notebook/gmat.csv");
+gmt <- as.matrix(mat);
+mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 4000, 0.2, 0.002, 20, 0.2, 400, 4, -4.61));
 
 # Scale the variation of the initialised network to the gmatrix input.
  
