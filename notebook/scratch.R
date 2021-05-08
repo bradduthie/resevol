@@ -6,7 +6,7 @@
 
 mat <- read.csv("notebook/gmat.csv");
 gmt <- as.matrix(mat);
-mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 4000, 0.2, 0.002, 20, 0.2, 400, 4, -4.61));
+mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 800, 0.4, 0.02, 10, 0.2, 400, 4, -4.61));
 
 # Scale the variation of the initialised network to the gmatrix input.
  

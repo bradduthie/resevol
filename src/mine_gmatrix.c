@@ -22,7 +22,6 @@ double get_mean_fitness(double *W, int npsize){
   return Eval;
 }
 
-
 /* =============================================================================
  * Swap pointers to rewrite ARRAY_B into ARRAY_A for a an array of any dimension
  *     ARRAY_A: First array to swap
@@ -821,7 +820,7 @@ void initialise_loci_net(int traits, int loci, double **loci_layer_one){
    
     for(row = 0; row < loci; row++){
         for(col = 0; col < traits; col++){
-            loci_layer_one[row][col] = rnorm(0, 1); 
+            loci_layer_one[row][col] = rnorm(0, 2); 
         }
     }
 }
@@ -841,7 +840,7 @@ void initialise_net(int traits, int layers, double ***net){
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             for(j = 0; j < traits; j++){
-                net[k][i][j] = rnorm(0, 1); 
+                net[k][i][j] = rnorm(0, 2); 
             }
         }
     }   
@@ -865,6 +864,49 @@ void matrix_zeros(int rows, int cols, double **mat){
     }
 }
 
+/* =============================================================================
+ * This function retains the highest fitness network from loci to traits
+ *     
+ * ========================================================================== */
+void retain_best(double ****netpop, double ***ltnpop, double ***win_net,
+                 double **win_loci_layer_one, int traits, double *paras,
+                 double *W, double *high_fitness, int gen){
+  
+  int i, j, k;
+  int win_pos, loci, layers, npsize;
+  double win_val;
+  
+  loci     = (int) paras[0]; /* Number of loci for an individual */
+  layers   = (int) paras[1]; /* Layers in the network from loci to trait */
+  npsize   = (int) paras[3]; /* Size of the strategy population */
+
+  win_val = W[0];
+  win_pos = 0;
+  for(i = 0; i < npsize; i++){
+    if(W[i] < win_val){
+      win_val = W[i];
+      win_pos = i;
+    }
+  }
+  
+  if(gen < 1 | win_val < high_fitness[0]){
+    for(i = 0; i < loci; i++){
+      for(j = 0; j < traits; j++){
+        win_loci_layer_one[i][j] = ltnpop[win_pos][i][j];
+      }
+    }
+    for(k = 0; k < layers; k++){
+      for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+          win_net[k][i][j] = netpop[win_pos][k][i][j];
+        }
+      }
+    }
+    high_fitness[0] = win_val;
+  }
+}
+
+
 
 /* =============================================================================
  * MAIN RESOURCE FUNCTION:
@@ -887,6 +929,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int    protected_n;    /* Number of protected R objects */
     int    len_PARAS;      /* Length of the parameters vector */
     int    max_gen;        /* Maximum generations in evolutionary algorithm */
+    int    len_genome;     /* Length of the genome */
     int    *dim_GMATRIX;   /* Dimensions of the G-matrix */
     int    *winners;       /* Pointer to the winners of tournaments */
     double term_cri;       /* Termination criteria (stress) for evol alg */
@@ -895,6 +938,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double mu_pr;          /* Mutation rate of the evolutionary algorithm */
     double mu_sd;          /* Mutation effect size standard deviation */
     double pr_cross;       /* Pr of crossover between two paired 3D arrays */
+    double *high_fitness;  /* Holds the highest fitness strategy found */
     double *paras;         /* parameter values read into R */
     double *paras_ptr;     /* pointer to the parameters read into C */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
@@ -904,6 +948,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double *G_ptr;         /* Pointer to GMATRIX (interface R and C) */
     double *W;             /* Pointer to strategy fitnesses */
     double *mean_fitness;  /* Vector to hold the mean fitness values */
+    double *genome_ptr;    /* Final genome output for individual-based models */
     
     int loci;
     int traits;
@@ -922,6 +967,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double **inds;
     double ***ltnpop;
     double ****netpop;
+    double **win_loci_layer_one;
+    double ***win_net;
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -1033,10 +1080,25 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     for(row = 0; row < traits; row++){
         VCV[row] = malloc(traits * sizeof(double));   
     } 
+    
+    win_loci_layer_one  = malloc(loci * sizeof(double *));
+    for(row = 0; row < loci; row++){
+      win_loci_layer_one[row] = malloc(traits * sizeof(double));   
+    }
+    
+    win_net   = malloc(layers * sizeof(double *));
+    for(k = 0; k < layers; k++){
+      win_net[k] = malloc(traits * sizeof(double *));
+      for(i = 0; i < traits; i++){
+        win_net[k][i] = malloc(traits * sizeof(double));   
+      }
+    }
  
     W            = malloc(npsize * sizeof(double));
     winners      = malloc(npsize * sizeof(int));
     mean_fitness = malloc(max_gen * sizeof(double));
+    high_fitness = malloc(sizeof(double));
+    
 
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
@@ -1047,17 +1109,14 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     initialise_net(traits, layers, net);
     
-    
     /* We now need an evolutionary algorithm that takes all the values from 
      * loci_layer_one and net and goes through the algorithm until we go from
      * random normal loci values to traits that match the covariance matrix
      * input into the R function
      */
-    
-    ea_pop_ini(inds, indivs, loci);
+  
     ea_ltn_ini(ltnpop, npsize, loci, traits);
     ea_net_ini(netpop, npsize, layers, traits);
-    
     
     /*
      * We need a while loop to start here; will eventual have criteria to stop
@@ -1069,7 +1128,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     Rprintf("===============================================\n");
     Rprintf("Initialising gmatrix mining...                 \n");
     Rprintf("===============================================\n");
-    while(gen < max_gen & estress > term_cri){
+    while(gen < max_gen & high_fitness[0] > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras);
       mutation_ltn(ltnpop, npsize, loci, traits, paras);
@@ -1084,17 +1143,22 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       
       estress           = get_mean_fitness(W, npsize);
       mean_fitness[gen] = estress;
+
+      retain_best(netpop, ltnpop, win_net, win_loci_layer_one, traits, paras,
+                  W, high_fitness, gen);
       
-      Rprintf("Generation: %d\t Stress: %f\n", gen, estress);
+      /* Add print of highest fitness found */
+      Rprintf("Gen: %d\t Stress: %f\t Min: %f\n", 
+              gen, estress, high_fitness[0]);
       
       gen++;
     }
     
     /* Gets the summed effects of network by multiplying matrices */
-    sum_network_layers(traits, layers, net, net_sum);
+    sum_network_layers(traits, layers, win_net, net_sum);
     
     /* Matrix that gets the final phenotype from the genotype */
-    matrix_multiply(loci_layer_one, net_sum, loci, traits, traits, traits,
+    matrix_multiply(win_loci_layer_one, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
      
@@ -1125,7 +1189,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     vec_pos = 0;
     for(j = 0; j < traits; j++){
         for(i = 0; i < loci; i++){
-            loci_net_ptr[vec_pos] = loci_layer_one[i][j];
+            loci_net_ptr[vec_pos] = win_loci_layer_one[i][j];
                 vec_pos++;
         }
     }
@@ -1141,7 +1205,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             for(j = 0; j < traits; j++){
-                network_ptr[vec_pos] = net[k][j][i];
+                network_ptr[vec_pos] = win_net[k][j][i];
                 vec_pos++;
             }
         }
@@ -1161,18 +1225,54 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     }
     
+    
+    len_genome = (loci * traits) + (traits * traits * layers);
+    SEXP GENOME;
+    PROTECT( GENOME = allocVector(REALSXP, len_genome) );
+    protected_n++;
+    
+    genome_ptr = REAL(GENOME);
+    
+    vec_pos = 0;
+    for(i = 0; i < loci; i++){
+      for(j = 0; j < traits; j++){
+          genome_ptr[vec_pos] = win_loci_layer_one[i][j];
+          vec_pos++;
+      }
+    }
+    for(k = 0; k < layers; k++){
+      for(i = 0; i < traits; i++){
+        for(j = 0; j < traits; j++){
+          genome_ptr[vec_pos] = win_net[k][i][j];
+        }
+      }
+    }
+  
     SEXP GOUT;
-    GOUT = PROTECT( allocVector(VECSXP, 5) );
+    GOUT = PROTECT( allocVector(VECSXP, 6) );
     protected_n++;
     SET_VECTOR_ELT(GOUT, 0, PARAMETERS_NEW);
     SET_VECTOR_ELT(GOUT, 1, GMATRIX);
     SET_VECTOR_ELT(GOUT, 2, LOCI_TO_NET);
     SET_VECTOR_ELT(GOUT, 3, NETWORK);
     SET_VECTOR_ELT(GOUT, 4, LOCI_EFFECTS);
+    SET_VECTOR_ELT(GOUT, 5, GENOME);
     
     UNPROTECT(protected_n);
     
     /* Free all of the allocated memory used in arrays */
+    free(high_fitness);
+    for(k = 0; k < layers; k++){
+      for(i = 0; i < traits; i++){
+        free(win_net[k][i]);
+      }
+      free(win_net[k]);        
+    }
+    free(win_net); 
+    for(row = 0; row < loci; row++){
+      free(win_loci_layer_one[row]);
+    }
+    free(win_loci_layer_one);
     for(row = 0; row < traits; row++){
       free(VCV[row]);
     }
