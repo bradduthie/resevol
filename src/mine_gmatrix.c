@@ -1249,6 +1249,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       for(i = 0; i < traits; i++){
         for(j = 0; j < traits; j++){
           genome_ptr[vec_pos] = win_net[k][i][j];
+          vec_pos++;
         }
       }
     }
