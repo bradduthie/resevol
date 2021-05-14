@@ -6,15 +6,26 @@
 
 mat <- read.csv("notebook/gmat.csv");
 gmt <- as.matrix(mat);
-mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 3, 1000, 4000, 0.4, 0.02, 40, 0.2, 800, 20, -5.3));
+mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 10000, 0.05, 0.01, 460, 0.05, 2500, 50, -5.3));
 
 
+
+#==============================================================================#
+#   IMPORTANT THINGS TO DO WITH THE mine_gmatrix FUNCTION
+#==============================================================================#
 # Scale the variation of the initialised network to the gmatrix input.
 # Either that, or allow the variation to be set in the R function
 # Maybe set it to the digit just below the highest (e.g., 1 then 0.1, 10 then 1)
+#
+# Have an option for finding the correlation matrix rather that VCV
+# Figure out how to scale the trait values appropriately
+#
+# Have an option for diploid genetic architecture
+#==============================================================================#
 
 
-N      <- 10000;
+
+N      <- 100000;
 loci   <- 18;
 inds   <- matrix(data = rnorm(n = (N*loci), sd = 1), nrow = N, ncol = loci);
 trts   <- inds %*% mg[[5]];
