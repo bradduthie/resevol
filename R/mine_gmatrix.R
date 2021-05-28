@@ -14,6 +14,7 @@
 #'@chooseK The number of winners in tournament selection
 #'@term_cri Stress criteria (logged) for the evolutionary algorithm terminating
 #'@sd_ini StDev of initialised networked values (best if < 0.1*max gmat value)
+#'@use_cor Compare the correlation matrix rather than the covariance matrix
 #'@param gmatrix G-matrix that the evolutionary algorithm will match
 #'@return A set of values that will produce a desired G-matrix
 #'@export
@@ -29,10 +30,11 @@ mine_gmatrix <- function(loci     = 18,
                          chooseK  = 4,
                          term_cri = -5.3,
                          sd_ini   = 0.1,
+                         use_cor  = FALSE,
                          gmatrix){
     
     paras <- c(loci, layers, indivs, npsize, mu_pr, mu_sd, max_gen, pr_cross,
-               sampleK, chooseK, term_cri, sd_ini);
+               sampleK, chooseK, term_cri, sd_ini, use_cor);
     
     if(loci < 2 | loci %% 1 > 0){
         stop("ERROR: 'loci' needs to be an integer value above 1.")

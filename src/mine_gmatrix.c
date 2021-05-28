@@ -244,8 +244,9 @@ double stress_VCV(double **gmatrix, int traits, double **VCV){
  *     rows:    Rows in the data frame
  *     cols:    Columns in the data frame (and VCV dimensions)
  *     VCV:     The variance covariance matrix
+ *     use_cor: Whether (1) or not (0) the correlation matrix should be found
  * ========================================================================== */
-void calc_VCV(double **mat, int rows, int cols, double **VCV){
+void calc_VCV(double **mat, int rows, int cols, double **VCV, int use_cor){
   
   int i, j, k;
   double *means, N;
@@ -270,6 +271,18 @@ void calc_VCV(double **mat, int rows, int cols, double **VCV){
       }
       VCV[i][j] = VCV[i][j] / (N - 1);
       VCV[j][i] = VCV[i][j];
+    }
+  }
+  
+  if(use_cor > 0){
+    for(i = 0; i < cols; i++){
+      for(j = 0; j < i; j++){
+        VCV[i][j] = VCV[i][j] / (sqrt(VCV[i][i]) * sqrt(VCV[j][j]));
+        VCV[j][i] = VCV[i][j];
+      }
+    }
+    for(i = 0; i < cols; i++){
+      VCV[i][i] = 1;
     }
   }
 
@@ -400,12 +413,13 @@ int get_rand_int(int from, int to){
 void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV, 
              int traits, double *paras){
   
-  int indivs, loci, layers, row, col;
+  int indivs, loci, layers, use_cor, row, col;
   double stress, **T, **L, **net_sum, **loci_to_traits;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
   layers   = (int) paras[1]; /* Layers in the network from loci to trait */
   indivs   = (int) paras[2]; /* Individuals in the population */
+  use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
 
   T  = malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
@@ -440,7 +454,7 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
   matrix_multiply(L, loci_to_traits, indivs, loci, loci, traits, T);
 
   /* Calculate the variance covariance of traits */
-  calc_VCV(T, indivs, traits, VCV);
+  calc_VCV(T, indivs, traits, VCV, use_cor);
 
   for(row = 0; row < loci; row++){
     free(loci_to_traits[row]);
@@ -475,12 +489,13 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
 double fitness(double ***ltnpop, double ****netpop, double **gmatrix, 
                int traits, double *paras, int k){
   
-  int indivs, loci, layers, row, col;
+  int indivs, loci, layers, use_cor, row, col;
   double stress, **T, **L, **net_sum, **loci_to_traits, **VCV;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
   layers   = (int) paras[1]; /* Layers in the network from loci to trait */
   indivs   = (int) paras[2]; /* Individuals in the population */
+  use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
   
   T  = malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
@@ -520,7 +535,7 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
   matrix_multiply(L, loci_to_traits, indivs, loci, loci, traits, T);
 
   /* Calculate the variance covariance of traits */
-  calc_VCV(T, indivs, traits, VCV);
+  calc_VCV(T, indivs, traits, VCV, use_cor);
   
   stress = stress_VCV(gmatrix, traits, VCV);
 
@@ -964,6 +979,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int npsize;   /* Number of arrays in the evolutionary algorithm */
     int sampleK;
     int chooseK;
+    int use_cor;
     
     double **VCV;
     double **gmatrix;
@@ -1033,6 +1049,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
     term_cri = (double) paras[10]; /* Evol Alg stress termination crit */
     sd_ini   = (double) paras[11]; /* StDev of initialised network values */
+    use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
