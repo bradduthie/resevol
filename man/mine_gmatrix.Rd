@@ -4,10 +4,49 @@
 \alias{mine_gmatrix}
 \title{Mine G-matrices}
 \usage{
-mine_gmatrix(paras = c(2, 2, 100, 4), gmatrix)
+mine_gmatrix(
+  loci = 18,
+  layers = 6,
+  indivs = 1000,
+  npsize = 2000,
+  mu_pr = 0.05,
+  mu_sd = 0.01,
+  max_gen = 1000,
+  pr_cross = 0.05,
+  sampleK = 40,
+  chooseK = 4,
+  term_cri = -5.3,
+  sd_ini = 0.1,
+  use_cor = FALSE,
+  gmatrix
+)
 }
 \arguments{
-\item{paras}{Doesn't matter what this is yet, it will run.}
+\item{loci}{The number of loci that individuals in the model will have}
+
+\item{layers}{The number of layers in the network from loci to traits}
+
+\item{indivs}{The number of individuals to test the covariance matrix}
+
+\item{npsize}{The size of the network population in the evolutionary algorithm}
+
+\item{mu_pr}{The probability of a network value to mutate}
+
+\item{mu_sd}{The standard deviation of mutation effect size}
+
+\item{max_gen}{The maximum number of generations of the evolutionary algorithm}
+
+\item{pr_cross}{The probability of a crossover occurring for a network}
+
+\item{sampleK}{Number of networks sampled to take part in tournament selection}
+
+\item{chooseK}{Number of winners in tournament selection}
+
+\item{term_cri}{Stress criteria (ln) for evolutionary algorithm terminating}
+
+\item{sd_ini}{StDev of initialised networked values}
+
+\item{use_cor}{Compare correlation matrix rather than the covariance matrix}
 
 \item{gmatrix}{G-matrix that the evolutionary algorithm will match}
 }
