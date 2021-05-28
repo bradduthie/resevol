@@ -168,3 +168,6 @@ round(mg2[[2]], 3);
 - Observe evolution given changing pesticide and crop scenarios
 - Complete R package and publications
 
+```{r}
+mg2[[8]];
+```

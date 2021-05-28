@@ -6,7 +6,7 @@
 
 mat <- read.csv("notebook/gmat.csv");
 gmt <- as.matrix(mat);
-mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 10000, 0.05, 0.01, 460, 0.05, 2500, 50, -5.3));
+mg  <- mine_gmatrix(gmatrix = gmt, paras = c(18, 6, 1000, 20000, 0.05, 0.01, 3200, 0.05, 4000, 50, -8));
 
 
 
