@@ -754,7 +754,6 @@ void mutation_net(double ****netpop, int npsize, int layers, int traits,
   }
 }
 
-
 /* =============================================================================
  * This seeds a 4D array with standard random normal values; The array is used
  * to model an evolving population of 3D networks that move from loci values to
@@ -765,8 +764,10 @@ void mutation_net(double ****netpop, int npsize, int layers, int traits,
  *     npsize: The size of the population evolving in the evolutionary algorithm
  *     layers: The number of layers in an individual loci to trait network
  *     traits: The number of traits that an individual has
+ *     sd_ini: StDev of initialised network values
  * ========================================================================== */
-void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
+void ea_net_ini(double ****netpop, int npsize, int layers, int traits, 
+                double sd_ini){
   
   int k, l, i, j;
   
@@ -774,13 +775,12 @@ void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
     for(l = 0; l < layers; l++){
       for(i = 0; i < traits; i++){
         for(j = 0; j < traits; j++){
-          netpop[k][l][i][j] = rnorm(0, 0.1);
+          netpop[k][l][i][j] = rnorm(0, sd_ini);
         }
       }
     }
   }
 }
-
 
 /* =============================================================================
  * This seeds a 3D array with standard random normal values; The array is used
@@ -791,15 +791,17 @@ void ea_net_ini(double ****netpop, int npsize, int layers, int traits){
  *     npsize: The size of the population evolving in the evolutionary algorithm
  *     loci:   The number of loci in the model (rows in individual matrices)
  *     traits: The number of traits in the model (cols in individual matrices)
+ *     sd_ini: StDev of initialised network values
  * ========================================================================== */
-void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits){
+void ea_ltn_ini(double ***ltnpop, int npsize, int loci, int traits, 
+                double sd_ini){
   
   int k, i, j;
   
   for(k = 0; k < npsize; k++){
     for(i = 0; i < loci; i++){
       for(j = 0; j < traits; j++){
-        ltnpop[k][i][j] = rnorm(0, 0.1);
+        ltnpop[k][i][j] = rnorm(0, sd_ini);
       }
     }
   }
@@ -939,6 +941,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     double mu_pr;          /* Mutation rate of the evolutionary algorithm */
     double mu_sd;          /* Mutation effect size standard deviation */
     double pr_cross;       /* Pr of crossover between two paired 3D arrays */
+    double sd_ini;         /* StDev of initialised network values */
     double final_stress;   /* Final stress of the variance covariance matrix */
     double *high_fitness;  /* Holds the highest fitness strategy found */
     double *paras;         /* parameter values read into R */
@@ -1029,6 +1032,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
     chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
     term_cri = (double) paras[10]; /* Evol Alg stress termination crit */
+    sd_ini   = (double) paras[11]; /* StDev of initialised network values */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -1108,8 +1112,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     matrix_zeros(loci, traits, loci_to_traits);
 
     /* Now populate the networks with random values to initialise */    
-    ea_ltn_ini(ltnpop, npsize, loci, traits);
-    ea_net_ini(netpop, npsize, layers, traits);
+    ea_ltn_ini(ltnpop, npsize, loci, traits, sd_ini);
+    ea_net_ini(netpop, npsize, layers, traits, sd_ini);
   
     gen     = 0;
     estress = term_cri + 1000;
