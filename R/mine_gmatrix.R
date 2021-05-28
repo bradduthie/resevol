@@ -10,11 +10,11 @@
 #'@param mu_sd The standard deviation of mutation effect size
 #'@param max_gen The maximum number of generations of the evolutionary algorithm
 #'@param pr_cross The probability of a crossover occurring for a network
-#'@sampleK The number of networks sampled to take part in tournament selection
-#'@chooseK The number of winners in tournament selection
-#'@term_cri Stress criteria (logged) for the evolutionary algorithm terminating
-#'@sd_ini StDev of initialised networked values (best if < 0.1*max gmat value)
-#'@use_cor Compare the correlation matrix rather than the covariance matrix
+#'@param sampleK Number of networks sampled to take part in tournament selection
+#'@param chooseK Number of winners in tournament selection
+#'@param term_cri Stress criteria (ln) for evolutionary algorithm terminating
+#'@param sd_ini StDev of initialised networked values
+#'@param use_cor Compare correlation matrix rather than the covariance matrix
 #'@param gmatrix G-matrix that the evolutionary algorithm will match
 #'@return A set of values that will produce a desired G-matrix
 #'@export
