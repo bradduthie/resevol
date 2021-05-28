@@ -9,8 +9,10 @@
 
 /* .Call calls */
 extern SEXP mine_gmatrix(SEXP, SEXP);
+extern SEXP build_ownership(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"build_ownership",         (DL_FUNC) &build_ownership,     1},
     {"mine_gmatrix",            (DL_FUNC) &mine_gmatrix,        2},
     {NULL, NULL, 0}
 };

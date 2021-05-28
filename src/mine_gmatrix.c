@@ -1,9 +1,4 @@
-#include <R.h>
-#include <Rdefines.h>
-#include <Rinternals.h>
-#include <Rmath.h>
-#include <stdlib.h>
-
+#include "utilities.h"
 
 double get_mean_fitness(double *W, int npsize){
   
@@ -384,22 +379,6 @@ void ea_pop_ini(double **inds, int indivs, int loci){
       inds[row][col] = rnorm(0, 1);
     }
   }
-}
-
-/* =============================================================================
- * Returns a random integer value.
- *     from: The lowest integer to be randomly chosen
- *     to:   The hgihest value to be randomly chosen
- * ========================================================================== */
-int get_rand_int(int from, int to){
-  
-  int rand_value;
-  
-  do{
-    rand_value = (int) floor( runif(from, to) );
-  }while(rand_value == to);
-  
-  return rand_value;
 }
 
 /* =============================================================================
