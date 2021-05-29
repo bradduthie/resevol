@@ -43,14 +43,9 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100){
     inds[, loci_start_col:(genome_start_col - 1)]   <- ind_loci_mat;
     inds[, genome_start_col:genome_end_col]         <- ind_genome_cols;
     
-    # Going to bind as follows:
-    # 1. 20 columns that are empty (starts at 1)
-    # 2. Whatever number of traits there are (starts at 21)
-    # 3. Whatever number of loci there are (starts at 21 + traits)
-    # 4. Whatever number of layers there are (starts at 21 + traits + loci)
-    # 5. The rest of the genome (starts at 21 + traits + loci + layers)
-    # Genome ends at 21 + traits + loci + layers + length(mine_output[[7]])
+    inds[, 1] <- 1:N;
+    inds[, 2] <- sample(x = 1:xdim, replace = TRUE);
+    inds[, 3] <- sample(x = 1:ydim, replace = TRUE);
     
-    # So traits start in column 
-    
+    return(inds);
 }
