@@ -6,8 +6,8 @@
 
 mat <- read.csv("notebook/gmat.csv");
 gmt <- as.matrix(mat);
-mg  <- mine_gmatrix(gmatrix = gmt, indivs   = 1000, npsize = 12000, 
-                    max_gen = 20, sampleK = 3200, chooseK = 40, term_cri = -7, 
+mg  <- mine_gmatrix(gmatrix = gmt, indivs  = 10000, npsize = 12000, 
+                    max_gen = 2000, sampleK = 3200, chooseK = 40, term_cri = -7, 
                     use_cor = TRUE);
 
 

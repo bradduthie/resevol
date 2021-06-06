@@ -36,6 +36,8 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100){
     ind_genome_cols   <- matrix(data = genome, nrow = N, ncol = length(genome),
                                 byrow = TRUE);
     
+    # ind_nuetral_cols <- matrix with random normals at the end of the genome?
+    
     inds       <- matrix(data = 0, nrow = N, ncol = genome_end_col);
 
     inds[, trait_start_col:(layers_start_col - 1)]  <- ind_traits_mat;

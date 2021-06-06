@@ -912,7 +912,7 @@ void retain_best(double ****netpop, double ***ltnpop, double ***win_net,
 /* =============================================================================
  * This is the outer function for mining the g-matrices
  *  Inputs include:
- *      PARAS:   Nothing yet, but will hold the paramters of interest
+ *      PARAS:   Holds parameters for running the evolutionary algorithm
  *      GMATRIX: Holds the g-matrix that guides evolutionary algorithm fitness
  * ===========================================================================*/
 SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
