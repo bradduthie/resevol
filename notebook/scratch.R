@@ -1,6 +1,27 @@
 # Initialising a file
 #library(helicoverpa)
 
+gmt <- matrix(data = 0, nrow = 4, ncol = 4);
+diag(gmt) <- 1;
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 1000, npsize = 8000, 
+                    max_gen = 100, sampleK = 400, chooseK = 4);
+
+pests <- initialise_inds(mine_output = mg);
+write.csv(pests, "notebook/pests.csv", row.names = FALSE);
+
+
+pests <- read.csv("notebook/pests.csv");
+land  <- make_landscape(rows = 100, cols = 100, depth = 2);
+
+sim_crops(pests, land);
+
+
+
+
+
+
+
+
 # mat <- matrix(data = 0, nrow = 8, ncol = 8);
 # diag(mat) <- 1;
 

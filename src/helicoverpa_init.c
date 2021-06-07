@@ -8,12 +8,14 @@
 */
 
 /* .Call calls */
-extern SEXP mine_gmatrix(SEXP, SEXP);
 extern SEXP build_ownership(SEXP);
+extern SEXP mine_gmatrix(SEXP, SEXP);
+extern SEXP sim_farming(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"build_ownership",         (DL_FUNC) &build_ownership,     1},
     {"mine_gmatrix",            (DL_FUNC) &mine_gmatrix,        2},
+    {"sim_farming",             (DL_FUNC) &sim_farming,         3},
     {NULL, NULL, 0}
 };
 
