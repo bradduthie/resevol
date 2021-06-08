@@ -11,7 +11,7 @@ write.csv(pests, "notebook/pests.csv", row.names = FALSE);
 
 
 pests <- read.csv("notebook/pests.csv");
-land  <- make_landscape(rows = 100, cols = 100, depth = 2);
+land  <- make_landscape(rows = 1000, cols = 1000, depth = 2, farms = 100);
 
 sim_crops(pests, land);
 
@@ -19,6 +19,11 @@ sim_crops(pests, land);
 
 
 
+custcol <- sample(x = 1:100, size = 100, replace = FALSE);
+for(i in 1:100){
+    land[land[,,1] == i] <- custcol[i] + 100; 
+}
+land[,,1] < land[,,1] - 100;
 
 
 
