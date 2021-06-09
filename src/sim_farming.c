@@ -105,13 +105,23 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
    
-    printf("%f\t%f\t%f\n", paras[0], paras[1], paras[2]);
-   
-    printf("%d\t%d\n", dim_IND[0], dim_IND[1]);
-   
-    printf("%d\t%d\t%d\n", land_x, land_y, land_z);
-
-    printf("%f\t%f\t%f\t%f\n", land[0][0][0], land[0][0][1], land[1][1][0], land[1][1][1]);
+    /* START THE YEAR */
+    
+    /* Select a crop to grow and/or a biopesticide to apply */
+    
+    /* Loop through several weeks in which life-stages progress */
+    /* Should expect 5-6 generations within a single year? */
+    /* Better yet, one big loop and a counter to determine the time step */
+    /* When the time step counts down, reset to a new year */
+     
+    /* Survival based on use of traits and biopesticide or crop */
+    /* Explicit competition for plant resources? */ 
+     
+    /* Model short and long distance dispersal, or just short? */
+    /* In other words, is there a need to model migration? */
+     
+    /* END THE YEAR */
+    
     
     /* This code switches from C back to R */
     /* ====================================================================== */        
@@ -169,7 +179,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     free(paras);
     
-    return(PARAMETERS_NEW);
+    return(OUTPUT);
 }
 /* ===========================================================================*/
 
