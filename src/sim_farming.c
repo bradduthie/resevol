@@ -112,12 +112,13 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
       for(j = 0; j < 3; j++){
         printf("%f\t", pests[i][j]);
       }
-      printf("%f\t", pests[i][5]);
+      printf("%f\t", pests[i][4]);
       printf("%f\t", pests[i][10]);
       printf("%f\t", pests[i][27]);
       printf("\n");
     }
    
+    printf("\n\n%f\n\n", paras[36]);
     /* START THE YEAR */
     
     /* Select a crop to grow and/or a biopesticide to apply */

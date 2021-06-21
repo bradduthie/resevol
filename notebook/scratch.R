@@ -17,7 +17,7 @@ sim_crops(pests, land);
 
 
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100, 
-                         xdim = 2, ydim = 2);
+                         xdim = 2, ydim = 2, repro = "asexual");
 
 
 custcol <- sample(x = 1:100, size = 100, replace = FALSE);

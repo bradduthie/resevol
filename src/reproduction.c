@@ -65,29 +65,28 @@ int mate_available(double **pests, double *paras, int row){
   
   mate_found = 0;
   switch(sex){
-  case 0:
-    mate_found = 1;
-    break;  
-  case 1:
-    if(selfing == 1){
-      mate_found = 1;
-    }else{
-      mate_found = mate_in_range(pests, paras, row, 1);
-      if(mate_found == 0){ /* Can also look for just a male */
-        mate_found = mate_in_range(pests, paras, row, 3);
-      }
-    }
-    break;
-  case 2:
-    mate_found = mate_in_range(pests, paras, row, 3);
-    break;
-  case 3:
-    mate_found = mate_in_range(pests, paras, row, 2);
-    break;
-  default:
-    break;
+      case 0:
+          mate_found = 1;
+          break;  
+      case 1:
+          if(selfing == 1){
+              mate_found = 1;
+          }else{
+              mate_found = mate_in_range(pests, paras, row, 1);
+              if(mate_found == 0){ /* Can also look for just a male */
+                  mate_found = mate_in_range(pests, paras, row, 3);
+              }
+          }
+          break;
+      case 2:
+          mate_found = mate_in_range(pests, paras, row, 3);
+          break;
+      case 3:
+          mate_found = mate_in_range(pests, paras, row, 2);
+          break;
+      default:
+          break;
   }
-  
   return mate_found;
 }
 
@@ -108,25 +107,25 @@ void count_offspring(double **pests, double *paras, int row){
   off_col         = (int) paras[10];
   
   switch(repr_type){
-  case 0:  /* Reproduction is just based off of lambda value */
-    mate_access = mate_available(pests, paras, row);
-    if(mate_access > 0){
-      offspring        = rpois(repr_param);
-    }
-    break;
-  case 1: /* Offspring will be based off of food consumed */
-    offspring        = 1;
-    break;
-  default:
-    mate_access = mate_available(pests, paras, row);
-  if(mate_access > 0){
-    offspring        = rpois(repr_param);
-  }
-  break;
+      case 0:  /* Reproduction is just based off of lambda value */
+          mate_access = mate_available(pests, paras, row);
+          if(mate_access > 0){
+              offspring = rpois(repr_param);
+          }
+          break;
+      case 1: /* Offspring will be based off of food consumed */
+          offspring        = 1;
+          break;
+      default:
+          mate_access = mate_available(pests, paras, row);
+          if(mate_access > 0){
+              offspring = rpois(repr_param);
+          }
+          break;
   }
   
   pests[row][mate_access_col] = mate_access;
-  if(sex == 1 || sex == 2){
+  if(sex < 3){
     pests[row][off_col] = offspring;
   }
   paras[36] += (double) offspring;
