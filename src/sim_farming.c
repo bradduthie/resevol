@@ -1,4 +1,5 @@
 #include "utilities.h"
+#include "reproduction.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -61,7 +62,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
-        vec_pos++; printf("%d\n", i);
+        vec_pos++; 
     } /* The parameters vector is now copied into C */
 
     /* Code below remakes the IND matrix for easier use */
@@ -104,6 +105,18 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
+  
+    calculate_offspring(pests, paras);
+    
+    for(i = 0; i < ind_number; i++){
+      for(j = 0; j < 3; j++){
+        printf("%f\t", pests[i][j]);
+      }
+      printf("%f\t", pests[i][5]);
+      printf("%f\t", pests[i][10]);
+      printf("%f\t", pests[i][27]);
+      printf("\n");
+    }
    
     /* START THE YEAR */
     

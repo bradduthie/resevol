@@ -18,9 +18,9 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
       stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
     }
     if(repro == "sexual" | repro == "biparental"){
-      inds      <- build_sexual(mine_output);
+      inds      <- build_sexual(mine_output, N, neutral_loci);
     }else{
-      inds <- build_asexual(mine_output);
+      inds <- build_asexual(mine_output, N, neutral_loci);
     }
     
     inds[, 1] <- 1:N; # Sample ID
@@ -28,26 +28,33 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
     inds[, 3] <- sample(x = 1:ydim, size = N, replace = TRUE); # yloc
     inds[, 4] <- 0; # Age
     if(repro == "asexual"){
-      inds[,5] <- 0;
+      inds[, 5]  <- 0;
+      inds[, 29] <- 1; # Ploidy
     }
     if(repro == "sexual"){
-      inds[,5] <- 1;
+      inds[,5]   <- 1;
+      inds[, 29] <- 2;
     }
     if(repro == "biparental"){
-      inds[,5] <- sample(x = 2:3, size = N, replace = TRUE);
+      inds[,5]   <- sample(x = 2:3, size = N, replace = TRUE);
+      inds[, 29] <- 2;
     }
-    inds[, 6]  <-  0; # Mate distance
-    inds[, 7]  <-  1; # Movement distance
-    inds[, 8]  <- -1; # Mother ID
-    inds[, 9]  <- -1; # Father ID
-    inds[, 10] <- -1; # Mother row
-    inds[, 11] <- -1; # Father row
-    inds[, 12] <-  0; # Offspring produced
+    inds[, 6]  <-  1; # Movement distance
+    inds[, 7]  <- -1; # Mother ID
+    inds[, 8]  <- -1; # Father ID
+    inds[, 9]  <- -1; # Mother row
+    inds[, 10] <- -1; # Father row
+    inds[, 11] <-  0; # Offspring produced
+    inds[, 12] <-  mine_output[[1]][1]; # loci;
+    inds[, 13] <-  mine_output[[1]][2]; # traits;
+    inds[, 14] <-  dim(mine_output[[2]])[1]; # layers;
+    inds[, 25] <-  0; # Mate distance requirement
+    inds[, 26] <-  1; # Reproduction parameter
     return(inds);
 }
 
 
-build_asexual <- function(mine_output){
+build_asexual <- function(mine_output, N, neutral_loci){
   
   loci       <- mine_output[[1]][1];
   layers     <- mine_output[[1]][2];
@@ -57,7 +64,7 @@ build_asexual <- function(mine_output){
   ind_loci_mat    <- matrix(data = ind_loci_vals, nrow = N, ncol = loci);
   ind_traits_mat  <- ind_loci_mat %*% mine_output[[5]];
   genome          <- mine_output[[7]];
-  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 20);
+  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 50);
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;
@@ -90,7 +97,7 @@ build_asexual <- function(mine_output){
 }
 
 
-build_sexual <- function(mine_output){
+build_sexual <- function(mine_output, N, neutral_loci){
   
   loci       <- mine_output[[1]][1];
   layers     <- mine_output[[1]][2];
@@ -104,7 +111,7 @@ build_sexual <- function(mine_output){
   ind_traits_mat  <- ind_loci_addi %*% mine_output[[5]];
   
   genome          <- 0.5 * mine_output[[7]];
-  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 20);
+  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 50);
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;
