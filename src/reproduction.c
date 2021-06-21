@@ -94,7 +94,7 @@ int mate_available(double **pests, double *paras, int row){
 void count_offspring(double **pests, double *paras, int row){
   
   int N, repr_param_col, repr_param, offspring, repr_type_col, repr_type;
-  int mate_access, mate_access_col, sex_col, sex;
+  int mate_access, mate_access_col, sex_col, sex, off_col;
   
   N               = (int) paras[31];
   sex_col         = (int) paras[4];
@@ -105,6 +105,7 @@ void count_offspring(double **pests, double *paras, int row){
   repr_param      = pests[row][repr_param_col];
   mate_access_col = (int) paras[27];
   mate_access     = 0;
+  off_col         = (int) paras[10];
   
   switch(repr_type){
   case 0:  /* Reproduction is just based off of lambda value */
@@ -126,7 +127,7 @@ void count_offspring(double **pests, double *paras, int row){
   
   pests[row][mate_access_col] = mate_access;
   if(sex == 1 || sex == 2){
-    pests[row][sex_col] = offspring;
+    pests[row][off_col] = offspring;
   }
   paras[36] += (double) offspring;
 }
@@ -134,15 +135,7 @@ void count_offspring(double **pests, double *paras, int row){
 void calculate_offspring(double **pests, double *paras){
   
   int ind, N;
-  int off_col, repr_type_col, mate_dist_col, repr_param_col, xcol, ycol;
-  int repr_type;
-  double repr_param;
-  
-  xcol              = (int) paras[1];
-  ycol              = (int) paras[2];
-  off_col           = (int) paras[10];
-  repr_type_col     = (int) paras[23];
-  mate_dist_col     = (int) paras[24];
+
   N                 = (int) paras[31];
   
   paras[36] = 0.0; /* Start with no offspring */
