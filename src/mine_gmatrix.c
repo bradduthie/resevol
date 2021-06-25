@@ -18,20 +18,6 @@ double get_mean_fitness(double *W, int npsize){
 }
 
 /* =============================================================================
- * Swap pointers to rewrite ARRAY_B into ARRAY_A for a an array of any dimension
- *     ARRAY_A: First array to swap
- *     ARRAY_B: Second array to swap
- * ========================================================================== */
-void swap_arrays(void **ARRAY_A, void **ARRAY_B){
-  
-  void *TEMP_ARRAY;
-  
-  TEMP_ARRAY = *ARRAY_A;
-  *ARRAY_A   = *ARRAY_B;
-  *ARRAY_B   = TEMP_ARRAY;
-}
-
-/* =============================================================================
  * This function takes winners from the tournament function and replicates them
  * in a new population array. 
  *     population: array of the population

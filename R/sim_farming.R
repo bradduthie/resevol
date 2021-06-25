@@ -10,6 +10,7 @@
 sim_crops <- function(pests, land){
   
   N <- dim(pests)[1];
+  W <- dim(pests)[2];
   X <- dim(land)[1];
   Y <- dim(land)[2];
   Z <- dim(land)[3];
@@ -71,7 +72,9 @@ sim_crops <- function(pests, land){
               X,      # 53) x dimension of the landscape
               Y,      # 54) y dimension of the landscape
               Z,      # 55) z dimension (depth) of the landscape
-              0       # 56) Dynamic count of total offspring
+              0,      # 56) Dynamic count of total offspring
+              W,      # 57) Number of cols in the pest array
+              N       # 58) Highest ID of an individual
               );
   
   if(is.array(pests) == FALSE){

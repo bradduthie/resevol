@@ -4,7 +4,7 @@
 gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 1000, npsize = 8000, 
-                    max_gen = 100, sampleK = 400, chooseK = 4);
+                    max_gen = 10, sampleK = 400, chooseK = 4);
 
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100);
 write.csv(pests, "notebook/pests.csv", row.names = FALSE);
@@ -20,7 +20,7 @@ sim_crops(pests, land);
 
 
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100, 
-                         xdim = 2, ydim = 2, repro = "biparental");
+                         xdim = 2, ydim = 2, repro = "asexual");
 tt <- sim_crops(pests, land);
 
 

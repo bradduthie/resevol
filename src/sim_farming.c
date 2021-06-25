@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include "reproduction.h"
+#include "parents.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -19,16 +20,18 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     int    vec_pos;
     int    ind_number;
     int    ind_traits;
-    int    protected_n;    /* Number of protected R objects */
-    int    len_PARAS;      /* Length of the parameters vector */
-    int    *dim_IND;       /* Dimensions of the individual array */
-    int    *dim_LAND;      /* Dimensions of the landscape */
+    int    offspring_number; /* New number of individuals post reproduction */
+    int    protected_n;      /* Number of protected R objects */
+    int    len_PARAS;        /* Length of the parameters vector */
+    int    *dim_IND;        /* Dimensions of the individual array */
+    int    *dim_LAND;        /* Dimensions of the landscape */
   
     double *paras_ptr;
     double *IND_ptr;
     double *LAND_ptr;
     double *paras;
     double **pests;        /* The pests array */
+    double **offspring;    /* The pest array at the end of a time step */
     double ***land;        /* The landscape array */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
@@ -107,20 +110,22 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* ====================================================================== */
   
     /* Need the move and eat function here first */
-  
+
     calculate_offspring(pests, paras);
     
-    for(i = 0; i < ind_number; i++){
-      for(j = 0; j < 3; j++){
-        printf("%f\t", pests[i][j]);
-      }
-      printf("%f\t", pests[i][4]);
-      printf("%f\t", pests[i][10]);
-      printf("%f\t", pests[i][27]);
-      printf("\n");
+    offspring_number = (int) paras[56]; /* Create the offspring array */
+    offspring        = malloc(offspring_number * sizeof(double *));
+    for(row = 0; row < offspring_number; row++){
+      offspring[row] = malloc(ind_traits * sizeof(double));   
+    } 
+  
+    make_offspring(pests, offspring, paras);
+    
+    for(row = 0; row < offspring_number; row++){
+      free(offspring[row]);
     }
-   
-    printf("\n\n%f\n\n", paras[56]);
+    free(offspring);
+    
     
     /* The calculate_offspring function should be followed by function
      * for allocating which offspring go to which parents.
