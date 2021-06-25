@@ -106,6 +106,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
   
+    /* Need the move and eat function here first */
+  
     calculate_offspring(pests, paras);
     
     for(i = 0; i < ind_number; i++){
@@ -118,7 +120,13 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
       printf("\n");
     }
    
-    printf("\n\n%f\n\n", paras[36]);
+    printf("\n\n%f\n\n", paras[56]);
+    
+    /* The calculate_offspring function should be followed by function
+     * for allocating which offspring go to which parents.
+     */
+    
+    
     /* START THE YEAR */
     
     /* Select a crop to grow and/or a biopesticide to apply */

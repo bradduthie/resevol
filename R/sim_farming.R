@@ -46,12 +46,32 @@ sim_crops <- function(pests, land){
               28.0,   # 28) pests column for ploidy
               29.0,   # 29)
               30.0,   # 30)
-              N,      # 31) Number of rows in the pest array
-              0,      # 32) Torus landscape
-              X,      # 33) x dimension of the landscape
-              Y,      # 34) y dimension of the landscape
-              Z,      # 35) z dimension (depth) of the landscape
-              0       # 36) Dynamic count of total offspring
+              31.0,   # 31)
+              32.0,   # 32)
+              33.0,   # 33)
+              34.0,   # 34)
+              35.0,   # 35)
+              36.0,   # 36)
+              37.0,   # 37)
+              38.0,   # 38)
+              39.0,   # 39)
+              40.0,   # 40)
+              41.0,   # 41)
+              42.0,   # 42)
+              43.0,   # 43)
+              44.0,   # 44)
+              45.0,   # 45)
+              46.0,   # 46)
+              47.0,   # 47)
+              48.0,   # 48)
+              49.0,   # 49)
+              50.0,   # 50)
+              N,      # 51) Number of rows in the pest array
+              0,      # 52) Torus landscape
+              X,      # 53) x dimension of the landscape
+              Y,      # 54) y dimension of the landscape
+              Z,      # 55) z dimension (depth) of the landscape
+              0       # 56) Dynamic count of total offspring
               );
   
   if(is.array(pests) == FALSE){

@@ -9,12 +9,12 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   xcol      = (int) paras[1];
   ycol      = (int) paras[2];
   sex_col   = (int) paras[4];
-  N         = (int) paras[31];
+  N         = (int) paras[51];
   range_col = (int) paras[24];
   range     = pests[row][range_col];
-  land_type = (int) paras[32];
-  xdim      = (int) paras[33];
-  ydim      = (int) paras[34];
+  land_type = (int) paras[52];
+  xdim      = (int) paras[53];
+  ydim      = (int) paras[54];
   
   focal_x   = pests[row][xcol];
   focal_y   = pests[row][ycol];
@@ -57,7 +57,7 @@ int mate_available(double **pests, double *paras, int row){
   
   int N, ind, sex, sex_col, mate_found,selfing_col, selfing;
   
-  N            = (int) paras[31];
+  N            = (int) paras[51];
   sex_col      = (int) paras[4];
   sex          = (int) pests[row][sex_col];
   selfing_col  = (int) paras[26];
@@ -95,7 +95,7 @@ void count_offspring(double **pests, double *paras, int row){
   int N, repr_param_col, repr_param, offspring, repr_type_col, repr_type;
   int mate_access, mate_access_col, sex_col, sex, off_col;
   
-  N               = (int) paras[31];
+  N               = (int) paras[51];
   sex_col         = (int) paras[4];
   sex             = (int) pests[row][sex_col];
   repr_type_col   = (int) paras[23];
@@ -128,16 +128,16 @@ void count_offspring(double **pests, double *paras, int row){
   if(sex < 3){
     pests[row][off_col] = offspring;
   }
-  paras[36] += (double) offspring;
+  paras[56] += (double) offspring;
 }
 
 void calculate_offspring(double **pests, double *paras){
   
   int ind, N;
 
-  N                 = (int) paras[31];
+  N = (int) paras[51];
   
-  paras[36] = 0.0; /* Start with no offspring */
+  paras[56] = 0.0; /* Start with no offspring */
   
   for(ind = 0; ind < N; ind++){
     count_offspring(pests, paras, ind);

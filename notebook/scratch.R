@@ -11,13 +11,17 @@ write.csv(pests, "notebook/pests.csv", row.names = FALSE);
 
 
 pests <- read.csv("notebook/pests.csv");
+
+
+
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
 
 sim_crops(pests, land);
 
 
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100, 
-                         xdim = 2, ydim = 2, repro = "asexual");
+                         xdim = 2, ydim = 2, repro = "biparental");
+tt <- sim_crops(pests, land);
 
 
 custcol <- sample(x = 1:100, size = 100, replace = FALSE);
