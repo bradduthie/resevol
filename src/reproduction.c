@@ -2,55 +2,28 @@
 
 int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   
-  int ind, N, range_col, range, xcol, ycol, sex_col, land_type, xdim, ydim;
-  int focal_x, focal_y, other_x, other_y, other_sex;
-  int xdist, ydist, xdist_2, ydist_2, xdist_3, ydist_3, in_range;
+  int ind, N, range_col, range, sex_col;
+  int range_count, opp_sex, in_range, selfing, focal_sex;
   
-  xcol      = (int) paras[1];
-  ycol      = (int) paras[2];
   sex_col   = (int) paras[4];
   N         = (int) paras[51];
   range_col = (int) paras[24];
   range     = pests[row][range_col];
-  land_type = (int) paras[52];
-  xdim      = (int) paras[53];
-  ydim      = (int) paras[54];
   
-  focal_x   = pests[row][xcol];
-  focal_y   = pests[row][ycol];
+  focal_sex = (int) pests[ind][sex_col];
   
-  in_range  = 0;
+  range_count = 0;
   for(ind = 0; ind < N; ind++){
-    other_x   = pests[ind][xcol];
-    other_y   = pests[ind][ycol];
-    other_sex = pests[ind][sex_col];
-    xdist     = abs(focal_x - other_x);
-    ydist     = abs(focal_y - other_y);
-    if(land_type == 0){ /* What follows finds the distance given the torus */
-      xdist_2 = abs((focal_x + xdim) - other_x);
-      ydist_2 = abs((focal_y + ydim) - other_y);
-      xdist_3 = abs(focal_x - (other_x + xdim));
-      ydist_3 = abs(focal_y - (other_y + ydim));
-      if(xdist_2 < xdist){
-        xdist = xdist_2;
+    in_range = is_in_range(pests, row, ind, paras, range);
+    opp_sex  = pests[ind][sex_col];
+    if(in_range > 0 && opp_sex == mate_sex){
+      if(row != ind || selfing > 0){
+        range_count++;
       }
-      if(xdist_3 < xdist){
-        xdist = xdist_3;
-      }
-      if(ydist_2 < ydist){
-        ydist = ydist_2;
-      }
-      if(ydist_3 < ydist){
-        ydist = ydist_3;
-      }
-    }
-    if(other_sex == mate_sex && xdist <= range && ydist <= range){
-      in_range = 1;
-      break;
     }
   }
   
-  return in_range;
+  return range_count;
 }
 
 int mate_available(double **pests, double *paras, int row){
@@ -69,13 +42,9 @@ int mate_available(double **pests, double *paras, int row){
           mate_found = 1;
           break;  
       case 1:
-          if(selfing == 1){
-              mate_found = 1;
-          }else{
-              mate_found = mate_in_range(pests, paras, row, 1);
-              if(mate_found == 0){ /* Can also look for just a male */
-                  mate_found = mate_in_range(pests, paras, row, 3);
-              }
+          mate_found = mate_in_range(pests, paras, row, 1);
+          if(mate_found == 0){ /* Can also look for just a male */
+              mate_found = mate_in_range(pests, paras, row, 3);
           }
           break;
       case 2:
