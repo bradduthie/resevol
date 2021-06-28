@@ -5,6 +5,19 @@ gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 1000, npsize = 8000, 
                     max_gen = 10, sampleK = 400, chooseK = 4);
+land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
+pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100, 
+                         xdim = 2, ydim = 2, repro = "asexual");
+tt <- sim_crops(pests, land);
+
+
+
+
+
+
+
+
+
 
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100);
 write.csv(pests, "notebook/pests.csv", row.names = FALSE);
@@ -13,7 +26,8 @@ write.csv(pests, "notebook/pests.csv", row.names = FALSE);
 pests <- read.csv("notebook/pests.csv");
 
 
-
+pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100,
+                         repro = "asexual");
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
 
 sim_crops(pests, land);

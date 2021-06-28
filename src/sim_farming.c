@@ -35,6 +35,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     double ***land;        /* The landscape array */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
+    
+    FILE *ind_output;
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -121,6 +123,22 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
   
     make_offspring(pests, offspring, paras);
     
+    ind_output = fopen("individuals.csv","w");
+    for(i = 0; i < ind_number; i++){
+      for(j = 0; j < ind_traits; j++){
+          fprintf(ind_output, "%f,", pests[i][j]);
+      }
+      fprintf(ind_output, "\n");
+    }
+    for(i = 0; i < offspring_number; i++){
+      for(j = 0; j < ind_traits; j++){
+        fprintf(ind_output, "%f,", offspring[i][j]);
+      }
+      fprintf(ind_output, "\n");
+    }
+    fclose(ind_output);
+    
+
     for(row = 0; row < offspring_number; row++){
       free(offspring[row]);
     }
@@ -187,8 +205,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     SET_VECTOR_ELT(OUTPUT, 0, PARAMETERS_NEW);
     SET_VECTOR_ELT(OUTPUT, 1, LAND_NEW);
 
-  
     UNPROTECT(protected_n);
+  
+    
      
     /* Free all of the allocated memory used in arrays */
     for(xloc = 0; xloc < land_x; xloc++){
