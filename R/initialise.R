@@ -13,44 +13,48 @@
 #'@export
 initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100, 
                             repro = "sexual", neutral_loci = 0){
-    
-    if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
-      stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
-    }
-    if(repro == "sexual" | repro == "biparental"){
-      inds      <- build_sexual(mine_output, N, neutral_loci);
-    }else{
-      inds <- build_asexual(mine_output, N, neutral_loci);
-    }
-    
-    inds[, 1] <- 1:N; # Sample ID
-    inds[, 2] <- sample(x = 1:xdim, size = N, replace = TRUE); # xloc
-    inds[, 3] <- sample(x = 1:ydim, size = N, replace = TRUE); # yloc
-    inds[, 4] <- 0; # Age
-    if(repro == "asexual"){
-      inds[, 5]  <- 0;
-      inds[, 29] <- 1; # Ploidy
-    }
-    if(repro == "sexual"){
-      inds[,5]   <- 1;
-      inds[, 29] <- 2;
-    }
-    if(repro == "biparental"){
-      inds[,5]   <- sample(x = 2:3, size = N, replace = TRUE);
-      inds[, 29] <- 2;
-    }
-    inds[, 6]  <-  1; # Movement distance
-    inds[, 7]  <- -1; # Mother ID
-    inds[, 8]  <- -1; # Father ID
-    inds[, 9]  <- -1; # Mother row
-    inds[, 10] <- -1; # Father row
-    inds[, 11] <-  0; # Offspring produced
-    inds[, 12] <-  mine_output[[1]][1]; # loci;
-    inds[, 13] <-  mine_output[[1]][2]; # traits;
-    inds[, 14] <-  dim(mine_output[[2]])[1]; # layers;
-    inds[, 25] <-  0; # Mate distance requirement
-    inds[, 26] <-  1; # Reproduction parameter
-    return(inds);
+  
+  if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
+    stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
+  }
+  if(repro == "sexual" | repro == "biparental"){
+    inds      <- build_sexual(mine_output, N, neutral_loci);
+  }else{
+    inds <- build_asexual(mine_output, N, neutral_loci);
+  }
+  
+  inds[, 1] <- 1:N; # Sample ID
+  inds[, 2] <- sample(x = 1:xdim, size = N, replace = TRUE); # xloc
+  inds[, 3] <- sample(x = 1:ydim, size = N, replace = TRUE); # yloc
+  inds[, 4] <- 0; # Age
+  if(repro == "asexual"){
+    inds[, 5]  <- 0;
+    inds[, 29] <- 1; # Ploidy
+    inds[, 30] <- neutral_loci;
+  }
+  if(repro == "sexual"){
+    inds[,5]   <- 1;
+    inds[, 29] <- 2;
+    inds[, 30] <- 2 * neutral_loci;
+  }
+  if(repro == "biparental"){
+    inds[,5]   <- sample(x = 2:3, size = N, replace = TRUE);
+    inds[, 29] <- 2;
+    inds[, 30] <- 2 * neutral_loci;
+  }
+  inds[, 6]  <-  1; # Movement distance
+  inds[, 7]  <- -1; # Mother ID
+  inds[, 8]  <- -1; # Father ID
+  inds[, 9]  <- -1; # Mother row
+  inds[, 10] <- -1; # Father row
+  inds[, 11] <-  0; # Offspring produced
+  inds[, 12] <-  mine_output[[1]][1]; # loci;
+  inds[, 13] <-  mine_output[[1]][2]; # traits;
+  inds[, 14] <-  dim(mine_output[[2]])[1]; # layers;
+  inds[, 25] <-  0; # Mate distance requirement
+  inds[, 26] <-  1; # Reproduction parameter
+
+  return(inds);
 }
 
 
@@ -115,13 +119,13 @@ build_sexual <- function(mine_output, N, neutral_loci){
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;
-  loci_start_col    <- layers_start_col + layers + 1;
+  loci_start_col    <- layers_start_col + layers + 3;
   genome_start_col  <- loci_start_col + (2 * loci);
   genome_end_col    <- genome_start_col + length(genome);
   dip_geno_end_col  <- genome_start_col + (2 * length(genome)) - 1;
-  ind_end_col       <- dip_geno_end_col + neutral_loci;
+  ind_end_col       <- dip_geno_end_col + (2 * neutral_loci);
   
-  net_start_col     <- genome_start_col + ((2 * loci) * traits);
+  net_start_col     <- genome_start_col + (loci * traits);
   net_layer_sep     <- seq(from = net_start_col, to = genome_end_col, 
                            by = (traits * traits));
   net_separators    <- c(genome_start_col, net_layer_sep, dip_geno_end_col);
@@ -131,16 +135,15 @@ build_sexual <- function(mine_output, N, neutral_loci){
   ind_genome_cols   <- matrix(data = genome, nrow = N, 
                               ncol = 2 * length(genome), byrow = TRUE);
   
-  ind_neutral_cols  <- rnorm(n = (N * neutral_loci), mean = 0, sd = 1);
+  ind_neutral_cols  <- rnorm(n = (N * 2 * neutral_loci), mean = 0, sd = 1);
   
   inds       <- matrix(data = 0, nrow = N, ncol = ind_end_col);
   
   inds[, trait_start_col:(layers_start_col - 1)]  <- ind_traits_mat;
-  inds[, layers_start_col:(loci_start_col - 1)]   <- net_layer_cols;
+  inds[, layers_start_col:(loci_start_col -1)]    <- net_layer_cols;
   inds[, loci_start_col:(genome_start_col - 1)]   <- ind_loci_mat;
   inds[, genome_start_col:dip_geno_end_col]       <- ind_genome_cols;
   inds[, (dip_geno_end_col + 1):ind_end_col]      <- ind_neutral_cols;
   
   return(inds);
 }
-

@@ -1,6 +1,106 @@
 #include "utilities.h"
 
 /* =============================================================================
+ * Adds sexual individuals into the population given parent info
+ *     pests:           The array holding the parent's information
+ *     offspring:       The array that will hold the offspring's information
+ *     paras:           The paras vector that holds global information
+ *     ind:             The row of the mother of the individual
+ *     offspr:          The row of the offspring that is being added
+ * ========================================================================== */
+void sire_genes(double **pests, double *paras, double **offspring, int offspr){
+    
+    int i, j, sire_row, sire_ID, mID, dame_row, traits, layers, loci, neut_loci;
+    int mID_col, mrow_col, srow_col, sID_col, trait_col, layer_col, loci_col;
+    int neut_col, neutrals, loci1_st, loci2_st, sire_chrome, tot_cols;
+    int trait_st, net_st, net1_st, net2_st, neut1_st, neut2_st, sire_loc;
+    int crossed, net_geno, dame_loc, from_sire, from_dame;
+    double crossover, cr, temp_cross, crossit;
+    
+    mID_col   = (int) paras[6];   /* Column where mum's ID is held           */
+    mrow_col  = (int) paras[8];   /* Column where mum's row is held          */
+    srow_col  = (int) paras[9];   /* Column where the sire's row is held     */ 
+    sID_col   = (int) paras[7];   /* Column where the sire's ID is held      */
+    loci_col  = (int) paras[11];  /* Column where the number of loci is held */
+    trait_col = (int) paras[12];  /* Column where the number of traits held  */
+    layer_col = (int) paras[13];  /* Column where network layer number held  */
+    neut_col  = (int) paras[29];  /* Column where N neutral alleles held     */
+    tot_cols  = (int) paras[57];  /* Total number of columns in pests array  */
+    crossover = paras[60];        /* Probability that crossover occurs       */
+ 
+    sire_row = (int) offspring[offspr][srow_col];
+    sire_ID  = (int) offspring[offspr][sID_col];
+    mID      = (int) offspring[offspr][mID_col];
+    dame_row = (int) offspring[offspr][mrow_col];
+    loci     = (int) offspring[offspr][loci_col];
+    traits   = (int) offspring[offspr][trait_col];
+    layers   = (int) offspring[offspr][layer_col];
+    neutrals = (int) offspring[offspr][neut_col];
+    
+    trait_st  = (int) paras[59];        /* Col where the trait columns start  */
+    net_st    = trait_st + traits;      /* Col where net locations start      */
+    loci1_st  = net_st + layers + 3;    /* Col where first loci values start  */
+    loci2_st  = loci1_st + loci;        /* Col where second loci values start */
+    net1_st   = loci1_st + (2 * loci);  /* Col where first network starts     */
+    net2_st   = net_st + layers;        /* Col where second network starts    */
+    neut1_st  = offspring[offspr][net2_st + 1]; /* Where first neutrals   */
+    neut2_st  = neut1_st + neutrals;    /* Col where second neutrals start    */
+    net_geno  = net2_st - net1_st;      /* Number of elements in 1 network    */
+
+    sire_chrome = get_rand_int(0, 1);
+    from_sire   = get_rand_int(0, 1);
+    from_dame   = get_rand_int(0, 1);
+    for(i = loci1_st; i < loci2_st; i++){
+        crossed  = sire_chrome;
+        crossit  = runif(0, 1);
+        if(crossit < crossover){
+            crossed = (sire_chrome - 1) * (sire_chrome - 1);
+        }
+        sire_loc = loci * from_sire;
+        dame_loc = loci * from_dame;
+        if(crossed < 1){
+            offspring[offspr][i]        = pests[sire_row][i + sire_loc];
+            offspring[offspr][i + loci] = pests[dame_row][i + dame_loc];
+        }else{
+            offspring[offspr][i + loci] = pests[sire_row][i + sire_loc];
+            offspring[offspr][i]        = pests[dame_row][i + dame_loc];
+        }
+    }
+    for(i = net1_st; i < net2_st; i++){
+        crossed  = sire_chrome;
+        crossit  = runif(0, 1);
+        if(crossit < crossover){
+            crossed = (sire_chrome - 1) * (sire_chrome - 1);
+        }
+        sire_loc = net_geno * from_sire;
+        dame_loc = net_geno * from_dame;
+        if(crossed < 1){
+            offspring[offspr][i]            = pests[sire_row][i + sire_loc];
+            offspring[offspr][i + net_geno] = pests[dame_row][i + dame_loc];
+        }else{
+            offspring[offspr][i + net_geno] = pests[sire_row][i + sire_loc];
+            offspring[offspr][i]            = pests[dame_row][i + dame_loc];
+        }
+    }
+    for(i = neut1_st; i < neut2_st; i++){
+        crossed  = sire_chrome;
+        crossit  = runif(0, 1);
+        if(crossit < crossover){
+            crossed = (sire_chrome - 1) * (sire_chrome - 1);
+        }
+        sire_loc = neutrals * from_sire;
+        dame_loc = neutrals * from_dame;
+        if(crossed < 1){
+            offspring[offspr][i]            = pests[sire_row][i + sire_loc];
+            offspring[offspr][i + neutrals] = pests[dame_row][i + dame_loc];
+        }else{
+            offspring[offspr][i + neutrals] = pests[sire_row][i + sire_loc];
+            offspring[offspr][i]            = pests[dame_row][i + dame_loc];
+        }
+    }
+}
+
+/* =============================================================================
  * Assigns the offspring to a sire based
  *     pests:           The array holding the parent's information
  *     paras:           The paras vector that holds global information
@@ -45,7 +145,6 @@ int assign_sire(double **pests, double *paras, int ind){
         
     }
     
-    
     return N; /* The while loop above finds the row of the mate */
 }
 
@@ -55,7 +154,7 @@ int assign_sire(double **pests, double *paras, int ind){
  *     offspring:       The array that will hold the offspring's information
  *     paras:           The paras vector that holds global information
  *     ind:             The row of the mother of the individual
- *     offspring_count: The number of individuals in the offspring array (rows)
+ *     offspring_count: The row of the offspring that is being added
  * ========================================================================== */
 void add_sexual(double **pests, double **offspring, double *paras, int ind,
                 int offspring_count){
@@ -106,6 +205,8 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     offspring[offspring_count][srow_col] = sire_row;
     offspring[offspring_count][sID_col]  = sire_ID;
     
+    sire_genes(pests, paras, offspring, offspring_count);
+    
     paras[58]++; /* Increase the maximum ID by 1 */
 }
 
@@ -116,7 +217,7 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
  *     offspring:       The array that will hold the offspring's information
  *     paras:           The paras vector that holds global information
  *     ind:             The row of the mother of the individual
- *     offspring_count: The number of individuals in the offspring array (rows)
+ *     offspring_count: The row of the offspring that is being added
  * ========================================================================== */
 void add_asexual(double **pests, double **offspring, double *paras, int ind,
                  int offspring_count){
@@ -194,7 +295,9 @@ void make_offspring(double **pests, double **offspring, double *paras){
                     break;
                 case 2: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
-                break;
+                    break;
+                case 3:
+                    break;
                 default:
                     break;
             }

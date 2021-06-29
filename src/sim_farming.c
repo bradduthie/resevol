@@ -138,6 +138,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     }
     fclose(ind_output);
     
+    printf("\n%d\n", offspring_number);    
 
     for(row = 0; row < offspring_number; row++){
       free(offspring[row]);

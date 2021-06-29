@@ -45,7 +45,7 @@ sim_crops <- function(pests, land){
               26.0,   # 26) pests column for whether selfing is allowed
               27.0,   # 27) pests column for mate accessed
               28.0,   # 28) pests column for ploidy
-              29.0,   # 29)
+              29.0,   # 29) pests column for neutral alleles number
               30.0,   # 30)
               31.0,   # 31)
               32.0,   # 32)
@@ -74,7 +74,9 @@ sim_crops <- function(pests, land){
               Z,      # 55) z dimension (depth) of the landscape
               0,      # 56) Dynamic count of total offspring
               W,      # 57) Number of cols in the pest array
-              N       # 58) Highest ID of an individual
+              N,      # 58) Highest ID of an individual
+              50,     # 59) Column where the traits start
+              0.0     # 60) Crossover probability for sexual reproduction
               );
   
   if(is.array(pests) == FALSE){
