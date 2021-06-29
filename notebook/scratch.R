@@ -7,13 +7,17 @@ mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 1000, npsize = 8000,
                     max_gen = 10, sampleK = 400, chooseK = 4);
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 100, 
-                         xdim = 4, ydim = 4, repro = "asexual");
+                         xdim = 4, ydim = 4, repro = "sexual");
 tt <- sim_crops(pests, land);
 
 
 
 
-
+# NEXT STEPS:
+# 1. Make sure parentage works correctly for selfing and biparental reproduction
+# 2. Get the exchange of chromosomes working as they should (sexual repr)
+# 3. Get crossing over working as it should (sexual repr)
+# 4. Get mutation working as it should
 
 
 

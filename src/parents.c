@@ -44,9 +44,9 @@ int assign_sire(double **pests, double *paras, int ind){
         }
         
     }
-    printf("%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n", pests[ind][0], pests[N][0], pests[ind][1], pests[ind][2], pests[N][1], pests[N][2], N, ind);
     
-    return 0; /* The while loop above finds the row of the mate */
+    
+    return N; /* The while loop above finds the row of the mate */
 }
 
 /* =============================================================================
@@ -60,7 +60,7 @@ int assign_sire(double **pests, double *paras, int ind){
 void add_sexual(double **pests, double **offspring, double *paras, int ind,
                 int offspring_count){
     
-    int trait, cols, ID, sire_row, sire_ID, srow_col, sID_col;
+    int trait, cols, ID, sire_row, sire_ID, srow_col, sID_col, sex_col;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
     int tag1_col, tag2_col, tag3_col, mate_col;
     
@@ -78,6 +78,7 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     mate_col = (int) paras[27];  /* Column where mate accessed is held    */
     srow_col = (int) paras[9];   /* Column where the sire's row is held   */ 
     sID_col  = (int) paras[7];   /* Column where the sire's ID is held    */
+    sex_col  = (int) paras[4];   /* Column where the sex is located       */
     
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
@@ -94,6 +95,10 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     offspring[offspring_count][tag2_col]  = 0; 
     offspring[offspring_count][tag3_col]  = 0; 
     offspring[offspring_count][mate_col]  = 0;
+    offspring[offspring_count][sex_col]   = pests[ind][sex_col];
+    if(pests[ind][sex_col] > 1){
+        offspring[offspring_count][sex_col] = get_rand_int(2, 3);
+    }
     
     sire_row = assign_sire(pests, paras, ind);
     sire_ID  = pests[sire_row][ID_col];
@@ -187,6 +192,9 @@ void make_offspring(double **pests, double **offspring, double *paras){
                 case 1: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     break;
+                case 2: 
+                    add_sexual(pests, offspring, paras, ind, offspring_count);
+                break;
                 default:
                     break;
             }
