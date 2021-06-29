@@ -97,7 +97,7 @@ void count_offspring(double **pests, double *paras, int row){
   if(sex < 3){
     pests[row][off_col] = offspring;
   }
-  paras[56] += (double) offspring;
+  paras[56] += pests[row][off_col];
 }
 
 void calculate_offspring(double **pests, double *paras){
