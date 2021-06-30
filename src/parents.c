@@ -1,5 +1,51 @@
 #include "utilities.h"
 
+
+/* =============================================================================
+ * Mutates allele values in the genome with a specific probability
+ *     offspring:       The array that will hold the offspring's information
+ *     paras:           The paras vector that holds global information
+ *     offspr:          The row of the offspring that is being added
+ * ========================================================================== */
+void mutation(double **offspring, double *paras, int offspr){
+    
+    int i, j, sex_col, sex, ploidy, loci, traits, layers, neutrals;
+    int loci_col, trait_col, layer_col, neut_col, ploidy_col;
+    int mutation_type, mutation_layers, trait_st, net_st;
+    double mu, mu_effect, mu_sd;
+    
+    sex_col = (int) paras[4];
+    sex     = (int) offspring[offspr][sex_col];
+    
+    loci_col   = (int) paras[11];  /* Column where the number of loci is held */
+    trait_col  = (int) paras[12];  /* Column where the number of traits held  */
+    layer_col  = (int) paras[13];  /* Column where network layer number held  */
+    ploidy_col = (int) paras[28];  /* Column where ploidy is held             */
+    neut_col   = (int) paras[29];  /* Column where N neutral alleles held     */
+    
+    mutation_type   = (int) paras[61];
+    mutation_layers = (int) paras[63];
+    mu              = paras[62];
+    mu_effect       = paras[64];
+    mu_sd           = paras[65];
+    if(sex > 0){
+        mu_sd = paras[66];
+    }
+    
+    loci     = (int) offspring[offspr][loci_col];
+    traits   = (int) offspring[offspr][trait_col];
+    layers   = (int) offspring[offspr][layer_col];
+    neutrals = (int) offspring[offspr][neut_col];
+    ploidy   = (int) offspring[offspr][ploidy_col];
+    
+    trait_st  = (int) paras[59];    /* Column where the trait columns start  */
+    net_st    = trait_st + traits;  /* Column where net locations start      */
+    
+}
+
+
+
+
 /* =============================================================================
  * Adds sexual individuals into the population given parent info
  *     pests:           The array holding the parent's information
@@ -10,27 +56,22 @@
  * ========================================================================== */
 void sire_genes(double **pests, double *paras, double **offspring, int offspr){
     
-    int i, j, sire_row, sire_ID, mID, dame_row, traits, layers, loci, neut_loci;
-    int mID_col, mrow_col, srow_col, sID_col, trait_col, layer_col, loci_col;
-    int neut_col, neutrals, loci1_st, loci2_st, sire_chrome, tot_cols;
+    int i, j, sire_row, dame_row, traits, layers, loci;
+    int mrow_col, srow_col, trait_col, layer_col, loci_col;
+    int neut_col, neutrals, loci1_st, loci2_st, sire_chrome;
     int trait_st, net_st, net1_st, net2_st, neut1_st, neut2_st, sire_loc;
     int crossed, net_geno, dame_loc, from_sire, from_dame;
-    double crossover, cr, temp_cross, crossit;
+    double crossover, crossit;
     
-    mID_col   = (int) paras[6];   /* Column where mum's ID is held           */
     mrow_col  = (int) paras[8];   /* Column where mum's row is held          */
     srow_col  = (int) paras[9];   /* Column where the sire's row is held     */ 
-    sID_col   = (int) paras[7];   /* Column where the sire's ID is held      */
     loci_col  = (int) paras[11];  /* Column where the number of loci is held */
     trait_col = (int) paras[12];  /* Column where the number of traits held  */
     layer_col = (int) paras[13];  /* Column where network layer number held  */
     neut_col  = (int) paras[29];  /* Column where N neutral alleles held     */
-    tot_cols  = (int) paras[57];  /* Total number of columns in pests array  */
     crossover = paras[60];        /* Probability that crossover occurs       */
  
     sire_row = (int) offspring[offspr][srow_col];
-    sire_ID  = (int) offspring[offspr][sID_col];
-    mID      = (int) offspring[offspr][mID_col];
     dame_row = (int) offspring[offspr][mrow_col];
     loci     = (int) offspring[offspr][loci_col];
     traits   = (int) offspring[offspr][trait_col];
@@ -43,7 +84,7 @@ void sire_genes(double **pests, double *paras, double **offspring, int offspr){
     loci2_st  = loci1_st + loci;        /* Col where second loci values start */
     net1_st   = loci1_st + (2 * loci);  /* Col where first network starts     */
     net2_st   = net_st + layers;        /* Col where second network starts    */
-    neut1_st  = offspring[offspr][net2_st + 1]; /* Where first neutrals   */
+    neut1_st  = offspring[offspr][loci1_st - 1]; /* Where first neutrals   */
     neut2_st  = neut1_st + neutrals;    /* Col where second neutrals start    */
     net_geno  = net2_st - net1_st;      /* Number of elements in 1 network    */
 

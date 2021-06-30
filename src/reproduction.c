@@ -78,16 +78,16 @@ void count_offspring(double **pests, double *paras, int row){
   switch(repr_type){
       case 0:  /* Reproduction is just based off of lambda value */
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0){
+          if(mate_access > 0 && sex < 3){ 
               offspring = rpois(repr_param);
           }
           break;
       case 1: /* Offspring will be based off of food consumed */
-          offspring        = 1;
+          offspring = 1;
           break;
       default:
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0){
+          if(mate_access > 0 && sex < 3){
               offspring = rpois(repr_param);
           }
           break;

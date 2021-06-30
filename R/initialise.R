@@ -35,12 +35,12 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   if(repro == "sexual"){
     inds[,5]   <- 1;
     inds[, 29] <- 2;
-    inds[, 30] <- 2 * neutral_loci;
+    inds[, 30] <- neutral_loci;
   }
   if(repro == "biparental"){
     inds[,5]   <- sample(x = 2:3, size = N, replace = TRUE);
     inds[, 29] <- 2;
-    inds[, 30] <- 2 * neutral_loci;
+    inds[, 30] <- neutral_loci;
   }
   inds[, 6]  <-  1; # Movement distance
   inds[, 7]  <- -1; # Mother ID

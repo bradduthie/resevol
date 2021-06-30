@@ -9,11 +9,13 @@
 #'@export
 sim_crops <- function(pests, land){
   
-  N <- dim(pests)[1];
-  W <- dim(pests)[2];
-  X <- dim(land)[1];
-  Y <- dim(land)[2];
-  Z <- dim(land)[3];
+  N   <- dim(pests)[1];
+  W   <- dim(pests)[2];
+  X   <- dim(land)[1];
+  Y   <- dim(land)[2];
+  Z   <- dim(land)[3];
+  smu <- 1/sqrt(2); # SD of mutated loci values for sexual individuals
+  amu <- 1;         # SD of mutated loci values for asexual individuals
   
   # Currently have up to 50 columns available
   paras  <- c( 0.0,   # 00) pests column for ID
@@ -76,7 +78,13 @@ sim_crops <- function(pests, land){
               W,      # 57) Number of cols in the pest array
               N,      # 58) Highest ID of an individual
               50,     # 59) Column where the traits start
-              0.0     # 60) Crossover probability for sexual reproduction
+              0.0,    # 60) Crossover probability for sexual reproduction
+              0,      # 61) Mutation type (0 = new allele; 1 = vary existing)
+              0.01,   # 62) Mutation rate
+              0,      # 63) Network layers that can mutate 
+              0,      # 64) Mutation direction
+              amu,    # 65) Mutation SD (asexual)
+              smu     # 66) Mutation SD (sexual)
               );
   
   if(is.array(pests) == FALSE){

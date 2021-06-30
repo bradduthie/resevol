@@ -1,20 +1,20 @@
 # Initialising a file
 #library(helicoverpa)
 
-gmt <- matrix(data = 0, nrow = 6, ncol = 6);
+gmt <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 10, indivs = 1000, npsize = 8000, 
-                    max_gen = 4, sampleK = 400, chooseK = 4, layers = 6);
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 4, indivs = 1000, npsize = 8000, 
+                    max_gen = 4, sampleK = 400, chooseK = 4, layers = 2);
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
-pests <- initialise_inds(mine_output = mg, N = 100, neutral_loci = 100, 
-                         xdim = 4, ydim = 4, repro = "biparental");
+pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 10, 
+                         xdim = 4, ydim = 4, repro = "sexual");
 tt <- sim_crops(pests, land);
 
 
 
 
 # NEXT STEPS:
-# 1. There is a bug with biparental -- offspring nonsense after ca 160 rows
+# 1. Add if sex < 3 to the reproduction.c code
 # 2. Get mutation working as it should
 
 inds <- read.csv("individuals.csv", header = FALSE);
