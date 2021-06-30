@@ -14,8 +14,7 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Add if sex < 3 to the reproduction.c code
-# 2. Get mutation working as it should
+# 1. Now we need to add a trait_build function to make offspring traits
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

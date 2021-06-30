@@ -1,18 +1,19 @@
 #include "utilities.h"
 
-
 /* =============================================================================
- * Mutates allele values in the genome with a specific probability
+ * Mutates allele values in the haploid genome with a specific probability
  *     offspring:       The array that will hold the offspring's information
  *     paras:           The paras vector that holds global information
  *     offspr:          The row of the offspring that is being added
  * ========================================================================== */
-void mutation(double **offspring, double *paras, int offspr){
+void mutation_haploid(double **offspring, double *paras, int offspr){
     
     int i, j, sex_col, sex, ploidy, loci, traits, layers, neutrals;
-    int loci_col, trait_col, layer_col, neut_col, ploidy_col;
-    int mutation_type, mutation_layers, trait_st, net_st;
-    double mu, mu_effect, mu_sd;
+    int loci_col, trait_col, layer_col, neut_col, ploidy_col, cols;
+    int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
+    int net1_st, net_st_mu, net_ed_mu, base_start;
+    int network_st, network_end, network_len, off_col;
+    double mu, mu_effect, mu_sd, mutate;
     
     sex_col = (int) paras[4];
     sex     = (int) offspring[offspr][sex_col];
@@ -22,15 +23,113 @@ void mutation(double **offspring, double *paras, int offspr){
     layer_col  = (int) paras[13];  /* Column where network layer number held  */
     ploidy_col = (int) paras[28];  /* Column where ploidy is held             */
     neut_col   = (int) paras[29];  /* Column where N neutral alleles held     */
-    
+    cols       = (int) paras[57];  /* Number of cols in the offspring array   */
+
     mutation_type   = (int) paras[61];
     mutation_layers = (int) paras[63];
     mu              = paras[62];
     mu_effect       = paras[64];
     mu_sd           = paras[65];
-    if(sex > 0){
-        mu_sd = paras[66];
+
+    loci     = (int) offspring[offspr][loci_col];
+    traits   = (int) offspring[offspr][trait_col];
+    layers   = (int) offspring[offspr][layer_col];
+    neutrals = (int) offspring[offspr][neut_col];
+    ploidy   = (int) offspring[offspr][ploidy_col];
+
+    trait_st  = (int) paras[59];      /* Column where the trait columns start */
+    net_st    = trait_st + traits;    /* Column where net locations start     */
+    loci_st   = net_st + layers + 2;  /* Col where first loci values start    */
+    net1_st   = offspring[offspr][net_st] - 1; /* Minus 1 switches R to C     */
+    neut_st   = offspring[offspr][loci_st - 1];
+
+    if(mutation_layers > (layers + 1) ){
+        mutation_layers = layers + 1;
     }
+
+    /* Mutate the actual loci */
+    for(i = loci_st; i < net1_st; i++){
+        mutate = runif(0, 1);
+        if(mutate < mu){
+            if(mutation_type == 0){
+                offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+            }
+            if(mutation_type == 1){
+                offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+            }
+        }
+    }
+
+    /* Mutate the neutral loci */
+    for(i = neut_st; i < cols; i++){
+        mutate = runif(0, 1);
+        if(mutate < mu){
+            if(mutation_type == 0){
+                offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+            }
+            if(mutation_type == 1){
+                offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+            }
+        }
+    }
+
+    /* Mutate the network layers of interest */
+    if(mutation_layers > 0){
+        base_start  = (int) paras[67];
+        network_st  = offspring[offspr][net_st] - 1;
+        network_end = offspring[offspr][net_st + layers + 1] - 1;
+        network_len = network_end - network_st;
+        if(base_start > 0){
+            net_st_mu = network_st;
+            net_ed_mu = offspring[offspr][net_st + mutation_layers] - 1;
+        }else{
+            off_col   = net_st + (layers + 1 - mutation_layers);
+            net_st_mu = offspring[offspr][off_col] - 1;
+            net_ed_mu = network_end;
+        }
+        for(i = net_st_mu; i < net_ed_mu; i++){
+            mutate = runif(0, 1);
+            if(mutate < mu){
+                if(mutation_type == 0){
+                    offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+                }
+                if(mutation_type == 1){
+                    offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+                }
+            }
+        }
+    }
+    
+}
+
+
+/* =============================================================================
+ * Mutates allele values in the diploid genome with a specific probability
+ *     offspring:       The array that will hold the offspring's information
+ *     paras:           The paras vector that holds global information
+ *     offspr:          The row of the offspring that is being added
+ * ========================================================================== */
+void mutation_diploid(double **offspring, double *paras, int offspr){
+    
+    int i, j, ploidy, loci, traits, layers, neutrals;
+    int loci_col, trait_col, layer_col, neut_col, ploidy_col, cols;
+    int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
+    int net1_st, net1_ed, net_st_mu, net_ed_mu, base_start;
+    int network_st, network_end, network_len, off_col;
+    double mu, mu_effect, mu_sd, mutate;
+    
+    loci_col   = (int) paras[11];  /* Column where the number of loci is held */
+    trait_col  = (int) paras[12];  /* Column where the number of traits held  */
+    layer_col  = (int) paras[13];  /* Column where network layer number held  */
+    ploidy_col = (int) paras[28];  /* Column where ploidy is held             */
+    neut_col   = (int) paras[29];  /* Column where N neutral alleles held     */
+    cols       = (int) paras[57];  /* Number of cols in the offspring array   */
+    
+    mutation_type   = (int) paras[61];
+    mutation_layers = (int) paras[63];
+    mu              = paras[62];
+    mu_effect       = paras[64];
+    mu_sd           = paras[66];
     
     loci     = (int) offspring[offspr][loci_col];
     traits   = (int) offspring[offspr][trait_col];
@@ -38,13 +137,81 @@ void mutation(double **offspring, double *paras, int offspr){
     neutrals = (int) offspring[offspr][neut_col];
     ploidy   = (int) offspring[offspr][ploidy_col];
     
-    trait_st  = (int) paras[59];    /* Column where the trait columns start  */
-    net_st    = trait_st + traits;  /* Column where net locations start      */
+    trait_st  = (int) paras[59];      /* Column where the trait columns start */
+    net_st    = trait_st + traits;    /* Column where net locations start     */
+    loci_st   = net_st + layers + 3;  /* Col where first loci values start    */
+    net1_st   = offspring[offspr][net_st] - 1; /* Minus 1 switches R to C     */
+    net1_ed   = offspring[offspr][net_st + layers + 1] - 1; /* Minus 1 too    */
+    neut_st   = offspring[offspr][loci_st - 1];
     
+    if(mutation_layers > (layers + 1) ){
+        mutation_layers = layers + 1;
+    }
+    
+    /* Mutate the actual loci */
+    for(i = loci_st; i < net1_st; i++){
+        mutate = runif(0, 1);
+        if(mutate < mu){
+            if(mutation_type == 0){
+                offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+            }
+            if(mutation_type == 1){
+                offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+            }
+        }
+    }
+    
+    /* Mutate the neutral loci */
+    for(i = neut_st; i < cols; i++){
+        mutate = runif(0, 1);
+        if(mutate < mu){
+            if(mutation_type == 0){
+                offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+            }
+            if(mutation_type == 1){
+                offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+            }
+        }
+    }
+    
+    /* Mutate the network layers of interest */
+    if(mutation_layers > 0){
+        base_start  = (int) paras[67];
+        network_st  = offspring[offspr][net_st] - 1;
+        network_end = offspring[offspr][net_st + layers + 1] - 1;
+        network_len = network_end - network_st;
+        if(base_start > 0){
+            net_st_mu = network_st;
+            net_ed_mu = offspring[offspr][net_st + mutation_layers] - 1;
+        }else{
+            off_col   = net_st + (layers + 1 - mutation_layers);
+            net_st_mu = offspring[offspr][off_col] - 1;
+            net_ed_mu = network_end;
+        }
+        for(i = net_st_mu; i < net_ed_mu; i++){
+            mutate = runif(0, 1);
+            if(mutate < mu){
+                if(mutation_type == 0){
+                    offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+                }
+                if(mutation_type == 1){
+                    offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+                }
+            }
+        }
+        for(i = (net_st_mu + network_len); i < (net_ed_mu + network_len); i++){
+            mutate = runif(0, 1);
+            if(mutate < mu){
+                if(mutation_type == 0){
+                    offspring[offspr][i]  = rnorm(mu_effect, mu_sd);
+                }
+                if(mutation_type == 1){
+                    offspring[offspr][i] += rnorm(mu_effect, mu_sd);
+                }
+            }
+        }
+    }
 }
-
-
-
 
 /* =============================================================================
  * Adds sexual individuals into the population given parent info
@@ -84,7 +251,7 @@ void sire_genes(double **pests, double *paras, double **offspring, int offspr){
     loci2_st  = loci1_st + loci;        /* Col where second loci values start */
     net1_st   = loci1_st + (2 * loci);  /* Col where first network starts     */
     net2_st   = net_st + layers;        /* Col where second network starts    */
-    neut1_st  = offspring[offspr][loci1_st - 1]; /* Where first neutrals   */
+    neut1_st  = offspring[offspr][loci1_st - 1]; /* Where first neutrals      */
     neut2_st  = neut1_st + neutrals;    /* Col where second neutrals start    */
     net_geno  = net2_st - net1_st;      /* Number of elements in 1 network    */
 
@@ -330,12 +497,15 @@ void make_offspring(double **pests, double **offspring, double *paras){
             switch(sex){
                 case 0: 
                     add_asexual(pests, offspring, paras, ind, offspring_count);
+                    mutation_haploid(offspring, paras, offspring_count);
                     break;
                 case 1: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
+                    mutation_diploid(offspring, paras, offspring_count);
                     break;
                 case 2: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
+                    mutation_diploid(offspring, paras, offspring_count);
                     break;
                 case 3:
                     break;

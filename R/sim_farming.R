@@ -80,11 +80,12 @@ sim_crops <- function(pests, land){
               50,     # 59) Column where the traits start
               0.0,    # 60) Crossover probability for sexual reproduction
               0,      # 61) Mutation type (0 = new allele; 1 = vary existing)
-              0.01,   # 62) Mutation rate
-              0,      # 63) Network layers that can mutate 
+              0.1,    # 62) Mutation rate
+              1,      # 63) Network layers that can mutate 
               0,      # 64) Mutation direction
               amu,    # 65) Mutation SD (asexual)
-              smu     # 66) Mutation SD (sexual)
+              smu,    # 66) Mutation SD (sexual)
+              0       # 67) Layers mutate from loci to (1) or traits back (0)
               );
   
   if(is.array(pests) == FALSE){
