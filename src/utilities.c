@@ -4,6 +4,101 @@
 #include <Rmath.h>
 
 /* =============================================================================
+ * This is a generic function to multiply two matrices together
+ *     m1:      The first matrix to be multiplied
+ *     m2:      The second matrix to be multiplied
+ *     m1_rows: Number of rows in matrix m1
+ *     m1_cols: Number of columns in matrix m1
+ *     m2_rows: Number of rows in matrix m2
+ *     m2_cols: Number of columns in matrix m2
+ *     m_out:   The output product matrix
+ * ========================================================================== */
+void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
+                     int m2_rows, int m2_cols, double **m_out){
+    
+    /* Add break if non-conformable arrays? */
+    int row, col, ele;
+    double val; 
+    
+    for(row = 0; row < m1_rows; row++){
+        for(col = 0; col < m2_cols; col++){
+            val = 0;
+            for(ele = 0; ele < m1_cols; ele++){
+                val += (m1[row][ele] * m2[ele][col]);
+            }
+            m_out[row][col] = val;
+        }
+    }
+}
+
+/* =============================================================================
+ * This function multiplies the square matrices that make up the layers of an
+ * array (net) to produce a two dimensional matrix (net_out) product.
+ *     traits:  Traits of an individual; also matrix rows and columns
+ *     layers:  Layers of the network (i.e., how many matrices in the array)
+ *     net:     The 3D array in which layers are square matrices
+ *     net_out: The output matrix that is the product of the array layers
+ * ========================================================================== */
+void sum_network_layers(int traits, int layers, double ***net, 
+                        double **net_out){
+    
+    int i, j, k;
+    double ***net_temp;
+    
+    net_temp = malloc(layers * sizeof(double *));
+    for(k = 0; k < layers; k++){
+        net_temp[k] = malloc(traits * sizeof(double *));
+        for(i = 0; i < traits; i++){
+            net_temp[k][i] = malloc(traits * sizeof(double));   
+        }
+    }
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            for(j = 0; j < traits; j++){
+                net_temp[k][i][j] = net[k][i][j];
+            }
+        }
+    }
+    
+    for(k = 1; k < layers; k++){
+        matrix_multiply(net_temp[k-1], net_temp[k], traits, traits, traits, 
+                        traits, net_out);
+        if(k < layers == 1){
+            for(i = 0; i < traits; i++){
+                for(j = 0; j < traits; j++){
+                    net_temp[k][i][j] = net_out[i][j]; 
+                }
+            }
+        }
+    }
+    
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            free(net_temp[k][i]);
+        }
+        free(net_temp[k]);        
+    }
+    free(net_temp); 
+}
+
+/* =============================================================================
+ * This function sets all elements in a matrix to a value of zero:
+ *     rows: Rows within the matrix
+ *     cols: Columns within the matrix
+ *     mat:  The matrix itself
+ * ========================================================================== */
+void matrix_zeros(int rows, int cols, double **mat){
+    
+    int row, col;
+    
+    for(row = 0; row < rows; row++){
+        for(col = 0; col < cols; col++){
+            mat[row][col] = 0;
+        }
+    }
+}
+
+/* =============================================================================
  * Checks to see if another individual is within a range of the focal individual
  *     from: The lowest integer to be randomly chosen
  *     to:   The highest value to be randomly chosen

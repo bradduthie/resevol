@@ -1,16 +1,24 @@
 # Initialising a file
 #library(helicoverpa)
 
-gmt <- matrix(data = 0, nrow = 2, ncol = 2);
+gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 4, indivs = 1000, npsize = 8000, 
-                    max_gen = 4, sampleK = 400, chooseK = 4, layers = 2);
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 1000, npsize = 8000, 
+                    max_gen = 4, sampleK = 400, chooseK = 4, layers = 3);
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 10, 
-                         xdim = 4, ydim = 4, repro = "sexual");
+                         xdim = 4, ydim = 4, repro = "asexual");
 tt <- sim_crops(pests, land);
 
 
+# 2D Loci to network array
+#  for each row
+#   for each column
+
+# 3D network
+#  for each layer
+#   for each row
+#    for each column
 
 
 # NEXT STEPS:
