@@ -1,5 +1,12 @@
 #include "utilities.h"
 
+/* =============================================================================
+ * Counts the number of offspring that a single individual should produce
+ *     pests:           The array holding the parent's information
+ *     paras:           The paras vector that holds global information
+ *     row:             The row of the individual making the offspring
+ *     mate_sex:        The identity of the opposite sex that can be a mate
+ * ========================================================================== */
 int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   
   int ind, N, range_col, range, sex_col;
@@ -26,6 +33,12 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   return range_count;
 }
 
+/* =============================================================================
+ * Counts the number of offspring that a single individual should produce
+ *     pests:           The array holding the parent's information
+ *     paras:           The paras vector that holds global information
+ *     row:             The row of the individual making the offspring
+ * ========================================================================== */
 int mate_available(double **pests, double *paras, int row){
   
   int N, ind, sex, sex_col, mate_found,selfing_col, selfing;
@@ -59,6 +72,12 @@ int mate_available(double **pests, double *paras, int row){
   return mate_found;
 }
 
+/* =============================================================================
+ * Counts the number of offspring that a single individual should produce
+ *     pests:           The array holding the parent's information
+ *     paras:           The paras vector that holds global information
+ *     row:             The row of the individual making the offspring
+ * ========================================================================== */
 void count_offspring(double **pests, double *paras, int row){
   
   int N, repr_param_col, repr_param, offspring, repr_type_col, repr_type;
@@ -100,6 +119,11 @@ void count_offspring(double **pests, double *paras, int row){
   paras[56] += pests[row][off_col];
 }
 
+/* =============================================================================
+ * Calculates the number of offspring that each individual should produce
+ *     pests:           The array holding the parent's information
+ *     paras:           The paras vector that holds global information
+ * ========================================================================== */
 void calculate_offspring(double **pests, double *paras){
   
   int ind, N;
