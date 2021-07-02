@@ -48,13 +48,13 @@ sim_crops <- function(pests, land){
               27.0,   # 27) pests column for mate accessed
               28.0,   # 28) pests column for ploidy
               29.0,   # 29) pests column for neutral alleles number
-              30.0,   # 30)
-              31.0,   # 31)
-              32.0,   # 32)
-              33.0,   # 33)
-              34.0,   # 34)
-              35.0,   # 35)
-              36.0,   # 36)
+              30.0,   # 30) pests column for movement bouts in a time step
+              31.0,   # 31) pests column for min age of movement
+              32.0,   # 32) pests column for max age of movement
+              33.0,   # 33) pests column for min age of feeding
+              34.0,   # 34) pests column for max age of feeding
+              35.0,   # 35) pests column for min age of mating
+              36.0,   # 36) pests column for max age of mating
               37.0,   # 37)
               38.0,   # 38)
               39.0,   # 39)
