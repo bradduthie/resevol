@@ -1,7 +1,147 @@
 #include "utilities.h"
 
 /* =============================================================================
- * Inserts the new traits into the offspring matrix
+ * Inserts the new traits into the offspring matrix for diploids
+ *     offspring:       The array that will hold the offspring's information
+ *     paras:           The paras vector that holds global information
+ *     offspr:          The row of the offspring that is being added
+ * ========================================================================== */
+void insert_diploid_traits(double **offspring, double *paras, int offspr){
+    
+    int i, j, k, vec_pos, row, col, layer, loci, traits, layers, net_vals;
+    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, net1_st;
+    double L1, L2, **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
+    
+    loci_col   = (int) paras[11];  /* Column where the number of loci is held */
+    trait_col  = (int) paras[12];  /* Column where the number of traits held  */
+    layer_col  = (int) paras[13];  /* Column where network layer number held  */
+
+    loci     = (int) offspring[offspr][loci_col];
+    traits   = (int) offspring[offspr][trait_col];
+    layers   = (int) offspring[offspr][layer_col];
+
+    trait_st  = (int) paras[59];      /* Column where the trait columns start */
+    net_st    = trait_st + traits;    /* Column where net locations start     */
+    loci_st   = net_st + layers + 3;  /* Col where first loci values start    */
+    net_vals  = (loci * traits) + (layers * traits * traits);
+    
+    T  = malloc(1 * sizeof(double *));
+    for(row = 0; row < 1; row++){
+        T[row] = malloc(traits * sizeof(double));   
+    }
+
+    L  = malloc(1 * sizeof(double *));
+    for(row = 0; row < 1; row++){
+        L[row] = malloc(loci * sizeof(double));   
+    }
+
+    loc_layer  = malloc(loci * sizeof(double *));
+    for(row = 0; row < loci; row++){
+        loc_layer[row] = malloc(traits * sizeof(double));   
+    }
+
+    net   = malloc(layers * sizeof(double *));
+    for(k = 0; k < layers; k++){
+        net[k] = malloc(traits * sizeof(double *));
+        for(i = 0; i < traits; i++){
+            net[k][i] = malloc(traits * sizeof(double));   
+        }
+    }
+
+    net_sum = malloc(traits * sizeof(double *));
+    for(row = 0; row < traits; row++){
+        net_sum[row] = malloc(traits * sizeof(double));   
+    } 
+
+    loci_to_traits  = malloc(loci * sizeof(double *));
+    for(row = 0; row < loci; row++){
+        loci_to_traits[row] = malloc(traits * sizeof(double));   
+    } 
+    
+    vec_pos = loci_st;
+    for(i = 0; i < loci; i++){
+        L1      = offspring[offspr][vec_pos];
+        L2      = offspring[offspr][vec_pos + loci];
+        L[0][i] = L1 + L2;  
+        vec_pos++;
+    }
+
+    vec_pos = loci_st + (2 * loci);
+    for(row = 0; row < loci; row++){
+        for(col = 0; col < traits; col++){
+            L1                  = offspring[offspr][vec_pos];
+            L2                  = offspring[offspr][vec_pos + net_vals];
+            loc_layer[row][col] = L1 + L2;
+            vec_pos++;
+        }
+    }
+
+    for(layer = 0; layer < layers; layer++){
+        for(row = 0; row < traits; row++){
+            for(col = 0; col < traits; col++){
+                L1                   = offspring[offspr][vec_pos];
+                L2                   = offspring[offspr][vec_pos + net_vals];
+                net[layer][row][col] = L1 + L2;
+                vec_pos++;
+            }
+        }
+    }
+    
+    matrix_zeros(traits, traits, net_sum);
+    matrix_zeros(loci, traits, loci_to_traits);
+
+    /* Gets the summed effects of network by multiplying matrices */
+    sum_network_layers(traits, layers, net, net_sum);
+
+    /* Matrix that gets the final phenotype from the genotype */
+    matrix_multiply(loc_layer, net_sum, loci, traits, traits, traits,
+                    loci_to_traits);
+
+    /* Multiply the loci vector by the loci_to_traits matrix to get traits */
+    matrix_multiply(L, loci_to_traits, 1, loci, loci, traits, T);
+
+    vec_pos = trait_st; /* Now put the traits back to offspring row */
+    for(i = 0; i < traits; i++){
+        offspring[offspr][vec_pos] = T[0][i];
+        vec_pos++;
+    }
+
+    for(row = 0; row < loci; row++){
+        free(loci_to_traits[row]);
+    }
+    free(loci_to_traits);
+
+    for(row = 0; row < traits; row++){
+        free(net_sum[row]);
+    }
+    free(net_sum);
+
+    for(row = 0; row < loci; row++){
+        free(loc_layer[row]);
+    }
+    free(loc_layer);
+
+    for(k = 0; k < layers; k++){
+        for(i = 0; i < traits; i++){
+            free(net[k][i]);
+        }
+        free(net[k]);        
+    }
+    free(net); 
+
+    for(row = 0; row < 1; row++){
+        free(L[row]);
+    }
+    free(L);
+
+    for(row = 0; row < 1; row++){
+        free(T[row]);
+    }
+    free(T);
+}
+
+/* =============================================================================
+ * Inserts the new traits into the offspring matrix for haploids
  *     offspring:       The array that will hold the offspring's information
  *     paras:           The paras vector that holds global information
  *     offspr:          The row of the offspring that is being added
@@ -10,7 +150,6 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     
     int i, j, k, vec_pos, row, col, layer, loci, traits, layers;
     int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, net1_st;
-    int neut_st;
     double **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
 
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
@@ -58,37 +197,26 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
         loci_to_traits[row] = malloc(traits * sizeof(double));   
     } 
     
-    printf("%d\t%d\t%d\t%d\n", trait_st, net_st, loci_st, net1_st);
-    
     vec_pos = loci_st;
     for(i = 0; i < loci; i++){
         L[0][i] = offspring[offspr][vec_pos];  
         vec_pos++;
-        printf("%f\t", L[0][i]);
     }
-    printf("\n\n");
     
     for(row = 0; row < loci; row++){
         for(col = 0; col < traits; col++){
             loc_layer[row][col] = offspring[offspr][vec_pos];
             vec_pos++;
-            printf("%f\t", loc_layer[row][col]);
         }
-        printf("\n");
     }
-    
-    printf("\n\n");
     
     for(layer = 0; layer < layers; layer++){
         for(row = 0; row < traits; row++){
             for(col = 0; col < traits; col++){
                 net[layer][row][col] = offspring[offspr][vec_pos];
                 vec_pos++;
-                printf("%f\t", net[layer][row][col]);
             }
-            printf("\n");
         }
-        printf("\n");
     }
     
     matrix_zeros(traits, traits, net_sum);
@@ -96,38 +224,15 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     
     /* Gets the summed effects of network by multiplying matrices */
     sum_network_layers(traits, layers, net, net_sum);
-    
-    printf("\n\n");
-    for(row = 0; row < traits; row++){
-        for(col = 0; col < traits; col++){
-            printf("%f\t", net_sum[row][col]);
-        }
-        printf("\n");
-    }
-    
-    
+
     /* Matrix that gets the final phenotype from the genotype */
     matrix_multiply(loc_layer, net_sum, loci, traits, traits, traits,
                     loci_to_traits);
     
-    printf("\n\n");
-    for(row = 0; row < loci; row++){
-        for(col = 0; col < traits; col++){
-            printf("%f\t", loci_to_traits[row][col]);
-        }
-        printf("\n");
-    }
-    
+    /* Multiply the loci vector by the loci_to_traits matrix to get traits */
     matrix_multiply(L, loci_to_traits, 1, loci, loci, traits, T);
-    
-    printf("\n\n");
-    for(i = 0; i < traits; i++){
-        printf("%f\n", T[0][i]);
-    }
-    
-    printf("\n\n Traits: %d\n", traits);
-    
-    vec_pos = trait_st;
+
+    vec_pos = trait_st; /* Now put the traits back to offspring row */
     for(i = 0; i < traits; i++){
         offspring[offspr][vec_pos] = T[0][i];
         vec_pos++;
@@ -661,17 +766,17 @@ void make_offspring(double **pests, double **offspring, double *paras){
                 case 0: 
                     add_asexual(pests, offspring, paras, ind, offspring_count);
                     mutation_haploid(offspring, paras, offspring_count);
-                    if(offspring_count == 1){
-                        insert_haploid_traits(offspring, paras, offspring_count);
-                    }
+                    insert_haploid_traits(offspring, paras, offspring_count);
                     break;
                 case 1: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
+                    insert_diploid_traits(offspring, paras, offspring_count);
                     break;
                 case 2: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
+                    insert_diploid_traits(offspring, paras, offspring_count);
                     break;
                 case 3:
                     break;
