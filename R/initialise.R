@@ -49,8 +49,8 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 10] <- -1; # Father row
   inds[, 11] <-  0; # Offspring produced
   inds[, 12] <-  mine_output[[1]][1]; # loci;
-  inds[, 13] <-  mine_output[[1]][2]; # traits;
-  inds[, 14] <-  dim(mine_output[[2]])[1]; # layers;
+  inds[, 13] <-  dim(mine_output[[2]])[1]; # traits;
+  inds[, 14] <-  mine_output[[1]][2]; # layers;
   inds[, 25] <-  0; # Mate distance requirement
   inds[, 26] <-  1; # Reproduction parameter
 
