@@ -594,15 +594,15 @@ int assign_sire(double **pests, double *paras, int ind){
     range_col   = (int) paras[24];
     self_col    = (int) paras[26];
     age_col     = (int) paras[3];
-    min_age_col = (int) paras[36];
-    max_age_col = (int) paras[37];
+    min_age_col = (int) paras[35];
+    max_age_col = (int) paras[36];
     
     N            = (int) paras[51];
     nearby_mates = (int) pests[ind][mate_col];
     focal_sex    = (int) pests[ind][sex_col];
     
-    range        = pests[ind][range_col];
-    selfing      = pests[ind][self_col];
+    range        = (int) pests[ind][range_col];
+    selfing      = (int) pests[ind][self_col];
     
     mate_sex     = 1;
     if(focal_sex == 2){
@@ -616,10 +616,10 @@ int assign_sire(double **pests, double *paras, int ind){
     while(N > 0 && mate_pos > 0){
         N--;
         in_range = is_in_range(pests, ind, N, paras, range);
-        opp_sex  = pests[N][sex_col];
-        age      = pests[N][age_col];
-        min_age  = pests[N][min_age_col];
-        max_age  = pests[N][max_age_col];
+        opp_sex  = (int) pests[N][sex_col];
+        age      = (int) pests[N][age_col];
+        min_age  = (int) pests[N][min_age_col];
+        max_age  = (int) pests[N][max_age_col];
         if(in_range > 0 && opp_sex == mate_sex && age >= min_age && 
            age <= max_age){
             if(N != ind || selfing > 0){

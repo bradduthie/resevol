@@ -123,7 +123,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     for(row = 0; row < offspring_number; row++){
       offspring[row] = malloc(ind_traits * sizeof(double));   
     } 
-  
+
     make_offspring(pests, offspring, paras);
     
     ind_output = fopen("individuals.csv","w");

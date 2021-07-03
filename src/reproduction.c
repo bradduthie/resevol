@@ -19,18 +19,18 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   range     = pests[row][range_col];
   
   age_col         = (int) paras[3];
-  min_age_col     = (int) paras[36];
-  max_age_col     = (int) paras[37];
+  min_age_col     = (int) paras[35];
+  max_age_col     = (int) paras[36];
   
   focal_sex = (int) pests[ind][sex_col];
   
   range_count = 0;
   for(ind = 0; ind < N; ind++){
     in_range = is_in_range(pests, row, ind, paras, range);
-    opp_sex  = pests[ind][sex_col];
-    age      = pests[ind][age_col];
-    min_age  = pests[ind][min_age_col];
-    max_age  = pests[ind][max_age_col];
+    opp_sex  = (int) pests[ind][sex_col];
+    age      = (int) pests[ind][age_col];
+    min_age  = (int) pests[ind][min_age_col];
+    max_age  = (int) pests[ind][max_age_col];
     if(in_range > 0 && opp_sex == mate_sex && age >= min_age && age <= max_age){
       if(row != ind || selfing > 0){
         range_count++;
@@ -103,13 +103,14 @@ void count_offspring(double **pests, double *paras, int row){
   mate_access     = 0;
   off_col         = (int) paras[10];
   age_col         = (int) paras[3];
-  min_age_col     = (int) paras[36];
-  max_age_col     = (int) paras[37];
+  min_age_col     = (int) paras[35];
+  max_age_col     = (int) paras[36];
   
-  age     = pests[row][age_col];
-  min_age = pests[row][min_age_col];
-  max_age = pests[row][max_age_col];
+  age     = (int) pests[row][age_col];
+  min_age = (int) pests[row][min_age_col];
+  max_age = (int) pests[row][max_age_col];
   
+  offspring = 0;
   switch(repr_type){
       case 0:  /* Reproduction is just based off of lambda value */
           mate_access = mate_available(pests, paras, row);
@@ -127,11 +128,12 @@ void count_offspring(double **pests, double *paras, int row){
           }
           break;
   }
-  
-  pests[row][mate_access_col] = mate_access;
+
+  pests[row][mate_access_col] = (double) mate_access;
   if(sex < 3){
-    pests[row][off_col] = offspring;
+    pests[row][off_col] = (double) offspring;
   }
+
   paras[56] += pests[row][off_col];
 }
 
