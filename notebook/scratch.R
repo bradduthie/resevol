@@ -6,9 +6,12 @@ diag(gmt) <- 1;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 3, indivs = 1000, npsize = 8000, 
                     max_gen = 4, sampleK = 400, chooseK = 4, layers = 2);
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
+land[,,2] <- 1;
 pests <- initialise_inds(mine_output = mg, N = 100, neutral_loci = 10, 
                          xdim = 4, ydim = 4, repro = "biparental");
 tt <- sim_crops(pests, land);
+
+
 
 
 pests[1:50, 4] <- -3;
@@ -16,10 +19,8 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. First initialse the min and max feed, move, reproduce ages in issue 22
-# 2. The make sure that individuals are within that range for reproduction
-# 3. Make a feeding function that runs outside of movement
-# 4. Make a movement function allowing feeding (hook for mating)
+# 1. Make a feeding function that runs outside of movement
+# 2. Make a movement function allowing feeding (hook for mating)
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

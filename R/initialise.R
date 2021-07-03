@@ -12,7 +12,11 @@
 #'@return A set of values that will produce a desired G-matrix
 #'@export
 initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100, 
-                            repro = "sexual", neutral_loci = 0, max_age = 9){
+                            repro = "sexual", neutral_loci = 0, 
+                            min_age_move = 0, max_age_move = 9,
+                            min_age_reproduce = 0, max_age_reproduce = 9, 
+                            min_age_feed = 0, max_age_feed = 9,
+                            food1_consume = 0.25){
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
@@ -24,8 +28,8 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   }
   
   inds[, 1] <- 1:N; # Sample ID
-  inds[, 2] <- sample(x = 1:xdim, size = N, replace = TRUE); # xloc
-  inds[, 3] <- sample(x = 1:ydim, size = N, replace = TRUE); # yloc
+  inds[, 2] <- sample(x = 0:(xdim - 1), size = N, replace = TRUE); # xloc
+  inds[, 3] <- sample(x = 0:(ydim - 1), size = N, replace = TRUE); # yloc
   inds[, 4] <- 0; # Age
   if(repro == "asexual"){
     inds[, 5]  <- 0;
@@ -53,12 +57,13 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 14] <-  mine_output[[1]][2]; # layers;
   inds[, 25] <-  0; # Mate distance requirement
   inds[, 26] <-  1; # Reproduction parameter
-  inds[, 32] <-  0;       # Min age of movement
-  inds[, 33] <-  max_age; # Max age of movement
-  inds[, 34] <-  0;       # Min age of feeding
-  inds[, 35] <-  max_age; # Max age of feeding
-  inds[, 36] <-  0;       # Min age of mating and reproduction
-  inds[, 37] <-  max_age; # Max age of mating and reproduction
+  inds[, 32] <-  min_age_move;      # Min age of movement
+  inds[, 33] <-  max_age_move;      # Max age of movement
+  inds[, 34] <-  min_age_feed;      # Min age of feeding
+  inds[, 35] <-  max_age_feed;      # Max age of feeding
+  inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
+  inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
+  inds[, 38] <-  food1_consume;
 
   return(inds);
 }

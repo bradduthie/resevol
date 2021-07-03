@@ -33,7 +33,7 @@ sim_crops <- function(pests, land){
               12.0,   # 12) pests column for trait number
               13.0,   # 13) pests column for network layers
               14.0,   # 14) pests column for food consumed
-              15.0,   # 15) pests column for pesticide consumption
+              15.0,   # 15) pests column for pesticide consumed
               16.0,   # 16) pests column for food needed survival
               17.0,   # 17) pests column for pesticide tolerated survival
               18.0,   # 18) pests column for food needed reproduction
@@ -55,16 +55,16 @@ sim_crops <- function(pests, land){
               34.0,   # 34) pests column for max age of feeding
               35.0,   # 35) pests column for min age of mating and reproduction
               36.0,   # 36) pests column for max age of mating and reproduction
-              37.0,   # 37)
-              38.0,   # 38)
-              39.0,   # 39)
-              40.0,   # 40)
-              41.0,   # 41)
-              42.0,   # 42)
-              43.0,   # 43)
-              44.0,   # 44)
-              45.0,   # 45)
-              46.0,   # 46)
+              37.0,   # 37) pests column for food 1 consumption
+              38.0,   # 38) pests column for food 2 consumption
+              39.0,   # 39) pests column for food 3 consumption
+              40.0,   # 40) pests column for food 4 consumption 
+              41.0,   # 41) pests column for food 5 consumption
+              42.0,   # 42) pests column for biopesticide 1 consumption
+              43.0,   # 43) pests column for biopesticide 2 consumption
+              44.0,   # 44) pests column for biopesticide 3 consumption
+              45.0,   # 45) pests column for biopesticide 4 consumption
+              46.0,   # 46) pests column for biopesticide 5 consumption
               47.0,   # 47)
               48.0,   # 48)
               49.0,   # 49)
@@ -85,7 +85,17 @@ sim_crops <- function(pests, land){
               0,      # 64) Mutation direction
               amu,    # 65) Mutation SD (asexual)
               smu,    # 66) Mutation SD (sexual)
-              0       # 67) Layers mutate from loci to (1) or traits back (0)
+              0,      # 67) Layers mutate from loci to (1) or traits back (0)
+              1,      # 68) Land layer where the food 1 is located
+              0,      # 69) Land layer where the food 2 is located
+              0,      # 70) Land layer where the food 3 is located
+              0,      # 71) Land layer where the food 4 is located
+              0,      # 72) Land layer where the food 5 is located
+              0,      # 78) Land layer where the biopesticide 1 is located
+              0,      # 79) Land layer where the biopesticide 2 is located
+              0,      # 80) Land layer where the biopesticide 3 is located
+              0,      # 81) Land layer where the biopesticide 4 is located
+              0       # 82) Land layer where the biopesticide 5 is located
               );
   
   if(is.array(pests) == FALSE){
