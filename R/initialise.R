@@ -57,8 +57,8 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 33] <-  max_age; # Max age of movement
   inds[, 34] <-  0;       # Min age of feeding
   inds[, 35] <-  max_age; # Max age of feeding
-  inds[, 36] <-  0;       # Min age of mating
-  inds[, 37] <-  max_age; # Max age of mating
+  inds[, 36] <-  0;       # Min age of mating and reproduction
+  inds[, 37] <-  max_age; # Max age of mating and reproduction
 
   return(inds);
 }

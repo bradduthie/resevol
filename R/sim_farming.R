@@ -53,8 +53,8 @@ sim_crops <- function(pests, land){
               32.0,   # 32) pests column for max age of movement
               33.0,   # 33) pests column for min age of feeding
               34.0,   # 34) pests column for max age of feeding
-              35.0,   # 35) pests column for min age of mating
-              36.0,   # 36) pests column for max age of mating
+              35.0,   # 35) pests column for min age of mating and reproduction
+              36.0,   # 36) pests column for max age of mating and reproduction
               37.0,   # 37)
               38.0,   # 38)
               39.0,   # 39)
