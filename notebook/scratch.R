@@ -13,7 +13,10 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Now we need to add a trait_build function to make offspring traits
+# 1. First initialse the min and max feed, move, reproduce ages in issue 22
+# 2. The make sure that individuals are within that range for reproduction
+# 3. Make a feeding function that runs outside of movement
+# 4. Make a movement function allowing feeding (hook for mating)
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

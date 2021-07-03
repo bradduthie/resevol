@@ -12,7 +12,7 @@
 #'@return A set of values that will produce a desired G-matrix
 #'@export
 initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100, 
-                            repro = "sexual", neutral_loci = 0){
+                            repro = "sexual", neutral_loci = 0, max_age = 9){
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
@@ -53,6 +53,12 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 14] <-  mine_output[[1]][2]; # layers;
   inds[, 25] <-  0; # Mate distance requirement
   inds[, 26] <-  1; # Reproduction parameter
+  inds[, 32] <-  0;       # Min age of movement
+  inds[, 33] <-  max_age; # Max age of movement
+  inds[, 34] <-  0;       # Min age of feeding
+  inds[, 35] <-  max_age; # Max age of feeding
+  inds[, 36] <-  0;       # Min age of mating
+  inds[, 37] <-  max_age; # Max age of mating
 
   return(inds);
 }
