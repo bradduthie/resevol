@@ -7,7 +7,7 @@ mg  <- mine_gmatrix(gmatrix = gmt, loci = 3, indivs = 1000, npsize = 8000,
                     max_gen = 4, sampleK = 400, chooseK = 4, layers = 2);
 land  <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 100);
 land[,,2] <- 1;
-pests <- initialise_inds(mine_output = mg, N = 100, neutral_loci = 10, 
+pests <- initialise_inds(mine_output = mg, N = 20, neutral_loci = 10, 
                          xdim = 4, ydim = 4, repro = "biparental");
 tt <- sim_crops(pests, land);
 
@@ -19,7 +19,10 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Make a movement function allowing feeding (hook for mating)
+# 1. Make a function for biopesticide (will match the consumption function) 
+# 2. Make a function for death (consumption based, biopesticide based, pr)
+# 3. Wrap the function in a while loop (get living back into pests array)
+# 4. Rotate the landscape given ts %% X == 0, food and biopesticide
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

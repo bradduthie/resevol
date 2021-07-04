@@ -691,7 +691,7 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     
     sire_genes(pests, paras, offspring, offspring_count);
     
-    paras[108]++; /* Increase the maximum ID by 1 */
+    paras[108]++; /* Increase the maximum ID by 1 */ 
 }
 
 
@@ -795,7 +795,6 @@ void make_offspring(double **pests, double **offspring, double *paras){
             ind_offspring[ind]--;
         }
     }
-    
     free(ind_offspring);
 }
 

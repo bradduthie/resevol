@@ -57,6 +57,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 14] <-  mine_output[[1]][2]; # layers;
   inds[, 25] <-  0; # Mate distance requirement
   inds[, 26] <-  1; # Reproduction parameter
+  inds[, 31] <-  1; # Movement bouts
   inds[, 32] <-  min_age_move;      # Min age of movement
   inds[, 33] <-  max_age_move;      # Max age of movement
   inds[, 34] <-  min_age_feed;      # Min age of feeding
@@ -64,6 +65,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
   inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
   inds[, 38] <-  food1_consume;
+  inds[, 57] <-  0; # Do not eat on a bout
 
   return(inds);
 }
@@ -79,7 +81,7 @@ build_asexual <- function(mine_output, N, neutral_loci){
   ind_loci_mat    <- matrix(data = ind_loci_vals, nrow = N, ncol = loci);
   ind_traits_mat  <- ind_loci_mat %*% mine_output[[5]];
   genome          <- mine_output[[7]];
-  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 50);
+  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 100);
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;
@@ -126,7 +128,7 @@ build_sexual <- function(mine_output, N, neutral_loci){
   ind_traits_mat  <- ind_loci_addi %*% mine_output[[5]];
   
   genome          <- 0.5 * mine_output[[7]];
-  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 50);
+  ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 100);
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;

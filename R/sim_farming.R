@@ -75,7 +75,7 @@ sim_crops <- function(pests, land){
               54.0,   # 54) pests column for biopesticide 8 consumption
               55.0,   # 55) pests column for biopesticide 9 consumption
               56.0,   # 56) pests column for biopesticide 10 consumption
-              57.0,   # 57)
+              57.0,   # 57) pests column for eating during bout
               58.0,   # 58)
               59.0,   # 59)
               60.0,   # 60)
@@ -88,7 +88,7 @@ sim_crops <- function(pests, land){
               67.0,   # 67)
               68.0,   # 68)
               69.0,   # 69)
-              70.0,   # 60)
+              70.0,   # 70)
               71.0,   # 71)
               72.0,   # 72)
               73.0,   # 73)
@@ -98,7 +98,7 @@ sim_crops <- function(pests, land){
               77.0,   # 77)
               78.0,   # 78)
               79.0,   # 79)
-              80.0,   # 60)
+              80.0,   # 80)
               81.0,   # 81)
               82.0,   # 82)
               83.0,   # 83)
@@ -108,7 +108,7 @@ sim_crops <- function(pests, land){
               87.0,   # 87)
               88.0,   # 88)
               89.0,   # 89)
-              90.0,   # 80)
+              90.0,   # 90)
               91.0,   # 91)
               92.0,   # 92)
               93.0,   # 93)
@@ -127,7 +127,7 @@ sim_crops <- function(pests, land){
               0,      # 106) Dynamic count of total offspring
               W,      # 107) Number of cols in the pest array
               N,      # 108) Highest ID of an individual
-              50,     # 109) Column where the traits start
+              100,    # 109) Column where the traits start
               0.0,    # 110) Crossover probability for sexual reproduction
               0,      # 111) Mutation type (0 = new allele; 1 = vary existing)
               0.0,    # 112) Mutation rate
