@@ -19,8 +19,7 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Make a feeding function that runs outside of movement
-# 2. Make a movement function allowing feeding (hook for mating)
+# 1. Make a movement function allowing feeding (hook for mating)
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

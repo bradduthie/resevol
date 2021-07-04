@@ -10,7 +10,7 @@ void age_pests(double **pests, double *paras){
   int ind, N, age_col;
   
   age_col = (int) paras[3];
-  N       = (int) paras[51];
+  N       = (int) paras[101];
 
   for(ind = 0; ind < N; ind++){
     pests[ind][age_col]++;

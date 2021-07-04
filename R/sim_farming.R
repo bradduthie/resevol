@@ -60,42 +60,92 @@ sim_crops <- function(pests, land){
               39.0,   # 39) pests column for food 3 consumption
               40.0,   # 40) pests column for food 4 consumption 
               41.0,   # 41) pests column for food 5 consumption
-              42.0,   # 42) pests column for biopesticide 1 consumption
-              43.0,   # 43) pests column for biopesticide 2 consumption
-              44.0,   # 44) pests column for biopesticide 3 consumption
-              45.0,   # 45) pests column for biopesticide 4 consumption
-              46.0,   # 46) pests column for biopesticide 5 consumption
-              47.0,   # 47)
-              48.0,   # 48)
-              49.0,   # 49)
-              50.0,   # 50)
-              N,      # 51) Number of rows in the pest array
-              0,      # 52) Torus landscape
-              X,      # 53) x dimension of the landscape
-              Y,      # 54) y dimension of the landscape
-              Z,      # 55) z dimension (depth) of the landscape
-              0,      # 56) Dynamic count of total offspring
-              W,      # 57) Number of cols in the pest array
-              N,      # 58) Highest ID of an individual
-              50,     # 59) Column where the traits start
-              0.0,    # 60) Crossover probability for sexual reproduction
-              0,      # 61) Mutation type (0 = new allele; 1 = vary existing)
-              0.0,    # 62) Mutation rate
-              0,      # 63) Network layers that can mutate 
-              0,      # 64) Mutation direction
-              amu,    # 65) Mutation SD (asexual)
-              smu,    # 66) Mutation SD (sexual)
-              0,      # 67) Layers mutate from loci to (1) or traits back (0)
-              1,      # 68) Land layer where the food 1 is located
-              0,      # 69) Land layer where the food 2 is located
-              0,      # 70) Land layer where the food 3 is located
-              0,      # 71) Land layer where the food 4 is located
-              0,      # 72) Land layer where the food 5 is located
-              0,      # 78) Land layer where the biopesticide 1 is located
-              0,      # 79) Land layer where the biopesticide 2 is located
-              0,      # 80) Land layer where the biopesticide 3 is located
-              0,      # 81) Land layer where the biopesticide 4 is located
-              0       # 82) Land layer where the biopesticide 5 is located
+              42.0,   # 42) pests column for food 6 consumption
+              43.0,   # 43) pests column for food 7 consumption
+              44.0,   # 44) pests column for food 8 consumption
+              45.0,   # 45) pests column for food 9 consumption
+              46.0,   # 46) pests column for food 10 consumption
+              47.0,   # 47) pests column for biopesticide 1 consumption
+              48.0,   # 48) pests column for biopesticide 2 consumption
+              49.0,   # 49) pests column for biopesticide 3 consumption
+              50.0,   # 50) pests column for biopesticide 4 consumption
+              51.0,   # 51) pests column for biopesticide 5 consumption
+              52.0,   # 52) pests column for biopesticide 6 consumption
+              53.0,   # 53) pests column for biopesticide 7 consumption
+              54.0,   # 54) pests column for biopesticide 8 consumption
+              55.0,   # 55) pests column for biopesticide 9 consumption
+              56.0,   # 56) pests column for biopesticide 10 consumption
+              57.0,   # 57)
+              58.0,   # 58)
+              59.0,   # 59)
+              60.0,   # 60)
+              61.0,   # 61)
+              62.0,   # 62)
+              63.0,   # 63)
+              64.0,   # 64)
+              65.0,   # 65)
+              66.0,   # 66)
+              67.0,   # 67)
+              68.0,   # 68)
+              69.0,   # 69)
+              70.0,   # 60)
+              71.0,   # 71)
+              72.0,   # 72)
+              73.0,   # 73)
+              74.0,   # 74)
+              75.0,   # 75)
+              76.0,   # 76)
+              77.0,   # 77)
+              78.0,   # 78)
+              79.0,   # 79)
+              80.0,   # 60)
+              81.0,   # 81)
+              82.0,   # 82)
+              83.0,   # 83)
+              84.0,   # 84)
+              85.0,   # 85)
+              86.0,   # 86)
+              87.0,   # 87)
+              88.0,   # 88)
+              89.0,   # 89)
+              90.0,   # 80)
+              91.0,   # 91)
+              92.0,   # 92)
+              93.0,   # 93)
+              94.0,   # 94)
+              95.0,   # 95)
+              96.0,   # 96)
+              97.0,   # 97)
+              98.0,   # 98)
+              99.0,   # 99)
+              100.0,  # 100)
+              N,      # 101) Number of rows in the pest array
+              0,      # 102) Torus landscape
+              X,      # 103) x dimension of the landscape
+              Y,      # 104) y dimension of the landscape
+              Z,      # 105) z dimension (depth) of the landscape
+              0,      # 106) Dynamic count of total offspring
+              W,      # 107) Number of cols in the pest array
+              N,      # 108) Highest ID of an individual
+              50,     # 109) Column where the traits start
+              0.0,    # 110) Crossover probability for sexual reproduction
+              0,      # 111) Mutation type (0 = new allele; 1 = vary existing)
+              0.0,    # 112) Mutation rate
+              0,      # 113) Network layers that can mutate 
+              0,      # 114) Mutation direction
+              amu,    # 115) Mutation SD (asexual)
+              smu,    # 116) Mutation SD (sexual)
+              0,      # 117) Layers mutate from loci to (1) or traits back (0)
+              1,      # 118) Land layer where the food 1 is located
+              0,      # 119) Land layer where the food 2 is located
+              0,      # 120) Land layer where the food 3 is located
+              0,      # 121) Land layer where the food 4 is located
+              0,      # 122) Land layer where the food 5 is located
+              0,      # 123) Land layer where the food 6 is located
+              0,      # 124) Land layer where the food 7 is located
+              0,      # 125) Land layer where the food 8 is located
+              0,      # 126) Land layer where the food 9 is located
+              0       # 127) Land layer where the food 10 is located
               );
   
   if(is.array(pests) == FALSE){

@@ -14,7 +14,7 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   int age_col, min_age_col, max_age_col, age, min_age, max_age;
   
   sex_col   = (int) paras[4];
-  N         = (int) paras[51];
+  N         = (int) paras[101];
   range_col = (int) paras[24];
   range     = pests[row][range_col];
   
@@ -51,7 +51,7 @@ int mate_available(double **pests, double *paras, int row){
   
   int N, ind, sex, sex_col, mate_found,selfing_col, selfing;
   
-  N            = (int) paras[51];
+  N            = (int) paras[101];
   sex_col      = (int) paras[4];
   sex          = (int) pests[row][sex_col];
   selfing_col  = (int) paras[26];
@@ -92,7 +92,7 @@ void count_offspring(double **pests, double *paras, int row){
   int mate_access, mate_access_col, sex_col, sex, off_col;
   int min_age_col, max_age_col, min_age, max_age, age_col, age;
   
-  N               = (int) paras[51];
+  N               = (int) paras[101];
   sex_col         = (int) paras[4];
   sex             = (int) pests[row][sex_col];
   repr_type_col   = (int) paras[23];
@@ -134,7 +134,7 @@ void count_offspring(double **pests, double *paras, int row){
     pests[row][off_col] = (double) offspring;
   }
 
-  paras[56] += pests[row][off_col];
+  paras[106] += pests[row][off_col];
 }
 
 /* =============================================================================
@@ -146,9 +146,9 @@ void calculate_offspring(double **pests, double *paras){
   
   int ind, N;
 
-  N = (int) paras[51];
+  N = (int) paras[101];
   
-  paras[56] = 0.0; /* Start with no offspring */
+  paras[106] = 0.0; /* Start with no offspring */
   
   for(ind = 0; ind < N; ind++){
     count_offspring(pests, paras, ind);

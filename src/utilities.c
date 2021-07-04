@@ -112,9 +112,9 @@ int is_in_range(double **pests, int focal, int other, double *paras, int range){
     xcol      = (int) paras[1];
     ycol      = (int) paras[2];
     range_col = (int) paras[24];
-    land_type = (int) paras[52];
-    xdim      = (int) paras[53];
-    ydim      = (int) paras[54];
+    land_type = (int) paras[102];
+    xdim      = (int) paras[103];
+    ydim      = (int) paras[104];
     
     range     = pests[focal][range_col];
     focal_x   = pests[focal][xcol];

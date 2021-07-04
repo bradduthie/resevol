@@ -121,7 +121,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     calculate_offspring(pests, paras);
     
-    offspring_number = (int) paras[56]; /* Create the offspring array */
+    offspring_number = (int) paras[106]; /* Create the offspring array */
     offspring        = malloc(offspring_number * sizeof(double *));
     for(row = 0; row < offspring_number; row++){
       offspring[row] = malloc(ind_traits * sizeof(double));   
