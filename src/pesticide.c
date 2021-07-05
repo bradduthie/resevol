@@ -82,11 +82,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           pesticide_land1 = land[xloc][yloc][land_layer1];
           if(pesticide_land1 < consume1){
               consumed                      += pesticide_land1;
-              land[xloc][yloc][land_layer1]  = 0;
               pests[ind][consumed_col1]     += pesticide_land1;
           }else{
               consumed                      += consume1;
-              land[xloc][yloc][land_layer1] -= consume1;
               pests[ind][consumed_col1]     += consume1;
           }
       }
@@ -94,11 +92,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           pesticide_land2 = land[xloc][yloc][land_layer1];
           if(pesticide_land2 < consume1){
               consumed                      += pesticide_land2;
-              land[xloc][yloc][land_layer2]  = 0;
               pests[ind][consumed_col2]     += pesticide_land2;
           }else{
               consumed                      += consume2;
-              land[xloc][yloc][land_layer2] -= consume2;
               pests[ind][consumed_col2]     += consume2;
           }
       }
@@ -106,11 +102,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           pesticide_land1 = land[xloc][yloc][land_layer3];
           if(pesticide_land3 < consume3){
               consumed                      += pesticide_land3;
-              land[xloc][yloc][land_layer3]  = 0;
               pests[ind][consumed_col3]     += pesticide_land3;
           }else{
               consumed                      += consume3;
-              land[xloc][yloc][land_layer3] -= consume3;
               pests[ind][consumed_col3]     += consume3;
           }
       }
@@ -118,11 +112,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           pesticide_land4 = land[xloc][yloc][land_layer4];
           if(pesticide_land4 < consume4){
               consumed                      += pesticide_land4;
-              land[xloc][yloc][land_layer4]  = 0;
               pests[ind][consumed_col4]     += pesticide_land4;
           }else{
               consumed                      += consume4;
-              land[xloc][yloc][land_layer4] -= consume4;
               pests[ind][consumed_col4]     += consume4;
           }
       }
@@ -130,11 +122,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           pesticide_land5 = land[xloc][yloc][land_layer5];
           if(pesticide_land5 < consume5){
                consumed                      += pesticide_land5;
-               land[xloc][yloc][land_layer5]  = 0;
                pests[ind][consumed_col5]     += pesticide_land5;
           }else{
                consumed                      += consume5;
-               land[xloc][yloc][land_layer5] -= consume5;
                pests[ind][consumed_col5]     += consume5;
           }
       }
@@ -142,11 +132,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
         pesticide_land6 = land[xloc][yloc][land_layer6];
         if(pesticide_land6 < consume6){
           consumed                      += pesticide_land6;
-          land[xloc][yloc][land_layer6]  = 0;
           pests[ind][consumed_col6]     += pesticide_land6;
         }else{
           consumed                      += consume6;
-          land[xloc][yloc][land_layer6] -= consume6;
           pests[ind][consumed_col6]     += consume6;
         }
       }
@@ -154,11 +142,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
         pesticide_land7 = land[xloc][yloc][land_layer7];
         if(pesticide_land7 < consume1){
           consumed                      += pesticide_land7;
-          land[xloc][yloc][land_layer7]  = 0;
           pests[ind][consumed_col7]     += pesticide_land7;
         }else{
           consumed                      += consume7;
-          land[xloc][yloc][land_layer7] -= consume7;
           pests[ind][consumed_col7]     += consume7;
         }
       }
@@ -166,11 +152,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
         pesticide_land8 = land[xloc][yloc][land_layer8];
         if(pesticide_land8 < consume8){
           consumed                      += pesticide_land8;
-          land[xloc][yloc][land_layer8]  = 0;
           pests[ind][consumed_col8]     += pesticide_land8;
         }else{
           consumed                      += consume8;
-          land[xloc][yloc][land_layer8] -= consume8;
           pests[ind][consumed_col8]     += consume8;
         }
       }
@@ -178,11 +162,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
         pesticide_land9 = land[xloc][yloc][land_layer9];
         if(pesticide_land9 < consume1){
           consumed                      += pesticide_land9;
-          land[xloc][yloc][land_layer9]  = 0;
           pests[ind][consumed_col9]     += pesticide_land9;
         }else{
           consumed                      += consume9;
-          land[xloc][yloc][land_layer9] -= consume9;
           pests[ind][consumed_col9]     += consume9;
         }
       }
@@ -190,11 +172,9 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
         pesticide_land10 = land[xloc][yloc][land_layer10];
         if(pesticide_land10 < consume10){
           consumed                       += pesticide_land10;
-          land[xloc][yloc][land_layer10]  = 0;
           pests[ind][consumed_col10]     += pesticide_land10;
         }else{
           consumed                       += consume10;
-          land[xloc][yloc][land_layer10] -= consume10;
           pests[ind][consumed_col10]     += consume10;
         }
       }
