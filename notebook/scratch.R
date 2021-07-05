@@ -20,9 +20,8 @@ tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Make a function for death (consumption based, biopesticide based, pr)
-# 2. Wrap the function in a while loop (get living back into pests array)
-# 3. Rotate the landscape given ts %% X == 0, food and biopesticide
+# 1. Wrap the function in a while loop (get living back into pests array)
+# 2. Rotate the landscape given ts %% X == 0, food and biopesticide
 
 inds <- read.csv("individuals.csv", header = FALSE);
 

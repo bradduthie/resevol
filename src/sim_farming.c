@@ -6,6 +6,7 @@
 #include "movement.h"
 #include "pesticide.h"
 #include "mortality.h"
+#include "fill_new_pests.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -26,9 +27,11 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     int    ind_number;
     int    ind_traits;
     int    offspring_number; /* New number of individuals post reproduction */
+    int    new_total_N;      /* Total number of individuals after a time step */
+    int    surviving_N;      /* Surviving individuals after a time step */
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
-    int    *dim_IND;        /* Dimensions of the individual array */
+    int    *dim_IND;         /* Dimensions of the individual array */
     int    *dim_LAND;        /* Dimensions of the landscape */
   
     double *paras_ptr;
@@ -36,7 +39,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     double *LAND_ptr;
     double *paras;
     double **pests;        /* The pests array */
-    double **offspring;    /* The pest array at the end of a time step */
+    double **offspring;    /* The offspring of pests within a time step */
+    double **new_pests;    /* The pest array at the end of a time step */
     double ***land;        /* The landscape array */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
@@ -136,6 +140,32 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     apply_mortality(pests, paras);
     
+    surviving_N = (int) paras[138];
+    new_total_N = offspring_number + surviving_N;
+    paras[139]  = (double) new_total_N;
+    new_pests   = malloc(new_total_N * sizeof(double *));
+    for(row = 0; row < new_total_N; row++){
+      new_pests[row] = malloc(ind_traits * sizeof(double));   
+    } 
+    
+    fill_new_pests(pests, offspring, new_pests, paras);
+    
+    /* 
+     * 
+     * Now need to free the pests array and the offspring array, then
+     * immediately create a new pests array and transfer new_pests to pests,
+     * then free the new_pests array.
+     * 
+     */
+    
+    
+    
+    
+    
+    
+    
+    
+    
     ind_output = fopen("individuals.csv","w");
     for(i = 0; i < ind_number; i++){
       for(j = 0; j < ind_traits; j++){
@@ -151,6 +181,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     }
     fclose(ind_output);
 
+    
+    
     for(row = 0; row < offspring_number; row++){
       free(offspring[row]);
     }

@@ -155,7 +155,9 @@ sim_crops <- function(pests, land){
               17,     # 134) Land layer where the pesticide 7 is located
               18,     # 135) Land layer where the pesticide 8 is located
               19,     # 136) Land layer where the pesticide 9 is located
-              20      # 137) Land layer where the pesticide 10 is located
+              20,     # 137) Land layer where the pesticide 10 is located
+              N,      # 138) Number of individuals following mortality
+              N       # 139) Number of individuals in the next time step
               );
   
   if(is.array(pests) == FALSE){

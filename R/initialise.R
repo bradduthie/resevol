@@ -67,7 +67,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 38] <-  food1_consume;
   inds[, 48] <-  pesticide1_consume;
   inds[, 57] <-  0; # Do not eat on a bout
-  inds[, 81] <-  0;
+  inds[, 81] <-  max_age;
   
   return(inds);
 }
