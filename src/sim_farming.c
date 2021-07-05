@@ -5,6 +5,7 @@
 #include "feeding.h"
 #include "movement.h"
 #include "pesticide.h"
+#include "mortality.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -133,6 +134,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
 
     make_offspring(pests, offspring, paras);
     
+    apply_mortality(pests, paras);
+    
     ind_output = fopen("individuals.csv","w");
     for(i = 0; i < ind_number; i++){
       for(j = 0; j < ind_traits; j++){
@@ -152,6 +155,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
       free(offspring[row]);
     }
     free(offspring);
+    
     
     
     /* The calculate_offspring function should be followed by function

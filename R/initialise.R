@@ -12,7 +12,7 @@
 #'@return A set of values that will produce a desired G-matrix
 #'@export
 initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100, 
-                            repro = "sexual", neutral_loci = 0, 
+                            repro = "sexual", neutral_loci = 0, max_age = 9,
                             min_age_move = 0, max_age_move = 9,
                             min_age_reproduce = 0, max_age_reproduce = 9, 
                             min_age_feed = 0, max_age_feed = 9,
@@ -67,7 +67,8 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 38] <-  food1_consume;
   inds[, 48] <-  pesticide1_consume;
   inds[, 57] <-  0; # Do not eat on a bout
-
+  inds[, 81] <-  0;
+  
   return(inds);
 }
 

@@ -97,11 +97,11 @@ sim_crops <- function(pests, land){
               76.0,   # 76) pests column for biopesticide 9 consumed
               77.0,   # 77) pests column for biopesticide 10 consumed
               78.0,   # 78) pests column for pesticide consumption during bout
-              79.0,   # 79)
-              80.0,   # 80)
-              81.0,   # 81)
-              82.0,   # 82)
-              83.0,   # 83)
+              79.0,   # 79) pests column for mortality type
+              80.0,   # 80) pests column for maximum age
+              81.0,   # 81) pests column for mortality has occurred
+              82.0,   # 82) pests column for age of food threshold enacted
+              83.0,   # 83) pests column for age of pesticide threshold enacted
               84.0,   # 84)
               85.0,   # 85)
               86.0,   # 86)
