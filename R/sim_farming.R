@@ -37,7 +37,7 @@ sim_crops <- function(pests, land){
               16.0,   # 16) pests column for food needed survival
               17.0,   # 17) pests column for pesticide tolerated survival
               18.0,   # 18) pests column for food needed reproduction
-              19.0,   # 19) pests column for pesticide tolerated survival
+              19.0,   # 19) pests column for pesticide tolerated reproduction
               20.0,   # 20) pests column tagging 1
               21.0,   # 21) pests column tagging 2
               22.0,   # 22) pests column tagging 3
@@ -137,15 +137,25 @@ sim_crops <- function(pests, land){
               smu,    # 116) Mutation SD (sexual)
               0,      # 117) Layers mutate from loci to (1) or traits back (0)
               1,      # 118) Land layer where the food 1 is located
-              0,      # 119) Land layer where the food 2 is located
-              0,      # 120) Land layer where the food 3 is located
-              0,      # 121) Land layer where the food 4 is located
-              0,      # 122) Land layer where the food 5 is located
-              0,      # 123) Land layer where the food 6 is located
-              0,      # 124) Land layer where the food 7 is located
-              0,      # 125) Land layer where the food 8 is located
-              0,      # 126) Land layer where the food 9 is located
-              0       # 127) Land layer where the food 10 is located
+              2,      # 119) Land layer where the food 2 is located
+              3,      # 120) Land layer where the food 3 is located
+              4,      # 121) Land layer where the food 4 is located
+              5,      # 122) Land layer where the food 5 is located
+              6,      # 123) Land layer where the food 6 is located
+              7,      # 124) Land layer where the food 7 is located
+              8,      # 125) Land layer where the food 8 is located
+              9,      # 126) Land layer where the food 9 is located
+              10,     # 127) Land layer where the food 10 is located
+              11,     # 128) Land layer where the pesticide 1 is located
+              12,     # 129) Land layer where the pesticide 2 is located
+              13,     # 130) Land layer where the pesticide 3 is located
+              14,     # 131) Land layer where the pesticide 4 is located
+              15,     # 132) Land layer where the pesticide 5 is located
+              16,     # 133) Land layer where the pesticide 6 is located
+              17,     # 134) Land layer where the pesticide 7 is located
+              18,     # 135) Land layer where the pesticide 8 is located
+              19,     # 136) Land layer where the pesticide 9 is located
+              20      # 137) Land layer where the pesticide 10 is located
               );
   
   if(is.array(pests) == FALSE){

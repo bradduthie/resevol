@@ -16,7 +16,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
                             min_age_move = 0, max_age_move = 9,
                             min_age_reproduce = 0, max_age_reproduce = 9, 
                             min_age_feed = 0, max_age_feed = 9,
-                            food1_consume = 0.25){
+                            food1_consume = 0.25, pesticide1_consume = 0.1){
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
@@ -65,6 +65,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
   inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
   inds[, 38] <-  food1_consume;
+  inds[, 48] <-  pesticide1_consume;
   inds[, 57] <-  0; # Do not eat on a bout
 
   return(inds);

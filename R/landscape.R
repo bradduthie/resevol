@@ -12,7 +12,7 @@
 #'@examples
 #'land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
 #'@export
-make_landscape <- function(rows, cols, depth = 2, farms = 4,  public_land = 0, 
+make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0, 
                            farm_var = 0){
     
     the_land  <- NULL;

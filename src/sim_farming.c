@@ -4,6 +4,7 @@
 #include "age.h"
 #include "feeding.h"
 #include "movement.h"
+#include "pesticide.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -114,12 +115,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
   
-    /* Need the move and eat function here first */
-
     age_pests(pests, paras);
 
     feeding(pests, paras, land);
 
+    pesticide_consumed(pests, paras, land);
+    
     movement(pests, paras, land);
     
     calculate_offspring(pests, paras);
