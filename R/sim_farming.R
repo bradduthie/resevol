@@ -96,7 +96,7 @@ sim_crops <- function(pests, land){
               75.0,   # 75) pests column for biopesticide 8 consumed
               76.0,   # 76) pests column for biopesticide 9 consumed
               77.0,   # 77) pests column for biopesticide 10 consumed
-              78.0,   # 78)
+              78.0,   # 78) pests column for pesticide consumption during bout
               79.0,   # 79)
               80.0,   # 80)
               81.0,   # 81)

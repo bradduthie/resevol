@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include "feeding.h"
+#include "pesticide.h"
 
 /* =============================================================================
  * This function applies the edge effect during movement
@@ -82,14 +83,15 @@ void movement(double **pests, double *paras, double ***land){
   
   int ind, N, age_col, min_age_col, max_age_col, bout_col, eat_on_bout_col;
   int age, bout, min_age, max_age, max_bout, ind_bout, tot_bouts, *bout_vec;
-  int eat_on_bout;
+  int eat_on_bout, pesticide_on_bout, cide_on_bout_col;
   
-  N               = (int) paras[101];
-  age_col         = (int) paras[3];
-  bout_col        = (int) paras[30];
-  min_age_col     = (int) paras[31];
-  max_age_col     = (int) paras[32];
-  eat_on_bout_col = (int) paras[57];
+  N                = (int) paras[101];
+  age_col          = (int) paras[3];
+  bout_col         = (int) paras[30];
+  min_age_col      = (int) paras[31];
+  max_age_col      = (int) paras[32];
+  eat_on_bout_col  = (int) paras[57];
+  cide_on_bout_col = (int) paras[78];
   
   max_bout = 0;
   for(ind = 0; ind < N; ind++){
@@ -109,9 +111,10 @@ void movement(double **pests, double *paras, double ***land){
   }
   
   if(max_bout > 1){
-      eat_on_bout = pests[ind][eat_on_bout_col];
-      bout_vec    = malloc(N * sizeof(int));
-      tot_bouts   = 0;
+      eat_on_bout       = pests[ind][eat_on_bout_col];
+      pesticide_on_bout = pests[ind][cide_on_bout_col]; 
+      bout_vec          = malloc(N * sizeof(int));
+      tot_bouts         = 0;
       for(ind = 0; ind < N; ind++){
         bout_vec[ind]  = (int) pests[ind][bout_col];
         tot_bouts     += bout_vec[ind];
@@ -123,6 +126,9 @@ void movement(double **pests, double *paras, double ***land){
         move(pests, paras, ind);
         if(eat_on_bout > 0){
             feed(pests, paras, land, ind);
+        }
+        if(pesticide_on_bout > 0){
+            pesticide(pests, paras, land, ind);
         }
         bout_vec[ind]--;
         tot_bouts--;
