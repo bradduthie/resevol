@@ -119,7 +119,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
-  
+    
     age_pests(pests, paras);
 
     feeding(pests, paras, land);
@@ -158,35 +158,41 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
      * 
      */
     
+    for(row = 0; row < offspring_number; row++){
+      free(offspring[row]);
+    }
+    free(offspring);
+   
+    ind_number = (int) paras[101];
+    for(row = 0; row < ind_number; row++){
+      free(pests[row]);
+    }
+    free(pests);
     
+    paras[101] = (double) new_total_N;
+    pests      = malloc(new_total_N * sizeof(double *));
+    for(row = 0; row < new_total_N; row++){
+      pests[row] = malloc(ind_traits * sizeof(double));   
+    } 
     
-    
-    
-    
+    for(row = 0; row < new_total_N; row++){
+      free(new_pests[row]);
+    }
+    free(new_pests);
     
     
     
     ind_output = fopen("individuals.csv","w");
-    for(i = 0; i < ind_number; i++){
+    for(i = 0; i < new_total_N; i++){
       for(j = 0; j < ind_traits; j++){
           fprintf(ind_output, "%f,", pests[i][j]);
       }
       fprintf(ind_output, "\n");
     }
-    for(i = 0; i < offspring_number; i++){
-      for(j = 0; j < ind_traits; j++){
-        fprintf(ind_output, "%f,", offspring[i][j]);
-      }
-      fprintf(ind_output, "\n");
-    }
     fclose(ind_output);
-
     
     
-    for(row = 0; row < offspring_number; row++){
-      free(offspring[row]);
-    }
-    free(offspring);
+    
     
     
     
@@ -263,6 +269,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     }
     free(land); 
   
+    ind_number = (int) paras[101];
     for(row = 0; row < ind_number; row++){
       free(pests[row]);
     }
