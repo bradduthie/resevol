@@ -76,26 +76,26 @@ sim_crops <- function(pests, land){
               55.0,   # 55) pests column for biopesticide 9 consumption
               56.0,   # 56) pests column for biopesticide 10 consumption
               57.0,   # 57) pests column for eating during bout
-              58.0,   # 58)
-              59.0,   # 59)
-              60.0,   # 60)
-              61.0,   # 61)
-              62.0,   # 62)
-              63.0,   # 63)
-              64.0,   # 64)
-              65.0,   # 65)
-              66.0,   # 66)
-              67.0,   # 67)
-              68.0,   # 68)
-              69.0,   # 69)
-              70.0,   # 70)
-              71.0,   # 71)
-              72.0,   # 72)
-              73.0,   # 73)
-              74.0,   # 74)
-              75.0,   # 75)
-              76.0,   # 76)
-              77.0,   # 77)
+              58.0,   # 58) pests column for food 1 consumed
+              59.0,   # 59) pests column for food 2 consumed
+              60.0,   # 60) pests column for food 3 consumed
+              61.0,   # 61) pests column for food 4 consumed
+              62.0,   # 62) pests column for food 5 consumed
+              63.0,   # 63) pests column for food 6 consumed
+              64.0,   # 64) pests column for food 7 consumed
+              65.0,   # 65) pests column for food 8 consumed
+              66.0,   # 66) pests column for food 9 consumed
+              67.0,   # 67) pests column for food 10 consumed
+              68.0,   # 68) pests column for biopesticide 1 consumed
+              69.0,   # 69) pests column for biopesticide 2 consumed
+              70.0,   # 70) pests column for biopesticide 3 consumed
+              71.0,   # 71) pests column for biopesticide 4 consumed
+              72.0,   # 72) pests column for biopesticide 5 consumed
+              73.0,   # 73) pests column for biopesticide 6 consumed
+              74.0,   # 74) pests column for biopesticide 7 consumed
+              75.0,   # 75) pests column for biopesticide 8 consumed
+              76.0,   # 76) pests column for biopesticide 9 consumed
+              77.0,   # 77) pests column for biopesticide 10 consumed
               78.0,   # 78)
               79.0,   # 79)
               80.0,   # 80)
