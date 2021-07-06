@@ -13,7 +13,7 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
     if(pos >= edge_2 || pos < edge_1){ /* If off the edge */
         switch(edge_type){
             case 0: /* Torus landscape */
-                while(pos > edge_2){
+                while(pos >= edge_2){
                     pos = pos - edge_2;   
                 }
                 while(pos < edge_1){
@@ -21,7 +21,7 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
                 }
                 break;
             default:
-                while(pos > edge_2){
+                while(pos >= edge_2){
                     pos = pos - edge_2;   
                 }
                 while(pos < edge_1){

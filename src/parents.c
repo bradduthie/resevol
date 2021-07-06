@@ -708,7 +708,7 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     
     int trait, cols, ID;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
-    int tag1_col, tag2_col, tag3_col, mate_col;
+    int tag1_col, tag2_col, tag3_col, mate_col, mort_col;
     
     cols     = (int) paras[107]; /* Columns in the pest array             */
     ID_col   = (int) paras[0];   /* Column where the ID is held           */
@@ -722,6 +722,7 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     tag2_col = (int) paras[21];  /* Column where tag 2 is held            */
     tag3_col = (int) paras[22];  /* Column where tag 3 is held            */
     mate_col = (int) paras[27];  /* Column where mate accessed is held    */
+    mort_col = (int) paras[81];  /* Column where mortality is held        */
     
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
@@ -738,6 +739,7 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     offspring[offspring_count][tag2_col]  = 0; 
     offspring[offspring_count][tag3_col]  = 0; 
     offspring[offspring_count][mate_col]  = 0;
+    offspring[offspring_count][mort_col]  = 0;
     
     paras[108]++; /* Increase the maximum ID by 1 */
 }

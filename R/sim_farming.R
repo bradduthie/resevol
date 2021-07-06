@@ -7,15 +7,16 @@
 #'@param land  Landscape array
 #'@return A two dimensional array of cells with ownership values
 #'@export
-sim_crops <- function(pests, land){
+sim_crops <- function(pests, land, time_steps = 100){
   
   N   <- dim(pests)[1];
   W   <- dim(pests)[2];
-  X   <- dim(land)[1];
-  Y   <- dim(land)[2];
+  X   <- dim(land)[2];
+  Y   <- dim(land)[1];
   Z   <- dim(land)[3];
   smu <- 1/sqrt(2); # SD of mutated loci values for sexual individuals
   amu <- 1;         # SD of mutated loci values for asexual individuals
+  ts  <- time_steps;
   
   # Currently have up to 50 columns available
   paras  <- c( 0.0,   # 00) pests column for ID
@@ -157,7 +158,9 @@ sim_crops <- function(pests, land){
               19,     # 136) Land layer where the pesticide 9 is located
               20,     # 137) Land layer where the pesticide 10 is located
               N,      # 138) Number of individuals following mortality
-              N       # 139) Number of individuals in the next time step
+              N,      # 139) Number of individuals in the next time step
+              ts,     # 140) Total number of time steps to run
+              0       # 141) Extinction has occurred
               );
   
   if(is.array(pests) == FALSE){

@@ -19,11 +19,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
-    int    i, j, k, gen;
+    int    i, j, k, ts;
     int    row, col;
     int    xloc, yloc, zloc;
     int    land_z, land_y, land_x;
     int    vec_pos;
+    int    time_steps;
     int    ind_number;
     int    ind_traits;
     int    offspring_number; /* New number of individuals post reproduction */
@@ -119,82 +120,95 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
-    
-    age_pests(pests, paras);
 
-    feeding(pests, paras, land);
+    time_steps = (int) paras[140];
+    ts         = 0;
+    
+    while(ts < time_steps){
+ 
+        age_pests(pests, paras);
 
-    pesticide_consumed(pests, paras, land);
-    
-    movement(pests, paras, land);
-    
-    calculate_offspring(pests, paras);
-    
-    offspring_number = (int) paras[106]; /* Create the offspring array */
-    offspring        = malloc(offspring_number * sizeof(double *));
-    for(row = 0; row < offspring_number; row++){
-      offspring[row] = malloc(ind_traits * sizeof(double));   
-    } 
+        feeding(pests, paras, land);
 
-    make_offspring(pests, offspring, paras);
+        pesticide_consumed(pests, paras, land);
     
-    apply_mortality(pests, paras);
+        movement(pests, paras, land);
     
-    surviving_N = (int) paras[138];
-    new_total_N = offspring_number + surviving_N;
-    paras[139]  = (double) new_total_N;
-    new_pests   = malloc(new_total_N * sizeof(double *));
-    for(row = 0; row < new_total_N; row++){
-      new_pests[row] = malloc(ind_traits * sizeof(double));   
-    } 
+        calculate_offspring(pests, paras); 
     
-    fill_new_pests(pests, offspring, new_pests, paras);
+        offspring_number = (int) paras[106]; /* Create the offspring array */
+        offspring        = malloc(offspring_number * sizeof(double *));
+        for(row = 0; row < offspring_number; row++){
+            offspring[row] = malloc(ind_traits * sizeof(double));   
+        } 
+
+        make_offspring(pests, offspring, paras);
     
-    /* 
-     * 
-     * Now need to free the pests array and the offspring array, then
-     * immediately create a new pests array and transfer new_pests to pests,
-     * then free the new_pests array.
-     * 
-     */
+        apply_mortality(pests, paras);
     
-    for(row = 0; row < offspring_number; row++){
-      free(offspring[row]);
+        surviving_N = (int) paras[138];
+        new_total_N = offspring_number + surviving_N;
+        paras[139]  = (double) new_total_N; 
+
+        if(new_total_N < 6){
+            for(row = 0; row < offspring_number; row++){
+                free(offspring[row]);
+            }
+            free(offspring);
+            paras[141] = 1;
+            printf("Extinction\n");
+            break;
+        }
+        
+        new_pests   = malloc(new_total_N * sizeof(double *));
+        for(row = 0; row < new_total_N; row++){
+            new_pests[row] = malloc(ind_traits * sizeof(double));   
+        } 
+        
+        fill_new_pests(pests, offspring, new_pests, paras);
+        
+        for(row = 0; row < offspring_number; row++){
+            free(offspring[row]);
+        }
+        free(offspring);
+        
+        ind_number = (int) paras[101];
+        for(row = 0; row < ind_number; row++){
+            free(pests[row]);
+        }
+        free(pests);
+        
+        paras[101] = (double) new_total_N;
+        pests      = malloc(new_total_N * sizeof(double *));
+        for(row = 0; row < new_total_N; row++){
+            pests[row] = malloc(ind_traits * sizeof(double));   
+        } 
+
+        for(row = 0; row < new_total_N; row++){
+            for(col = 0; col < ind_traits; col++){
+                pests[row][col] = new_pests[row][col];
+            }
+        }
+    
+        for(row = 0; row < new_total_N; row++){
+            free(new_pests[row]);
+        }
+        free(new_pests);
+
+        ts++;
     }
-    free(offspring);
-   
-    ind_number = (int) paras[101];
-    for(row = 0; row < ind_number; row++){
-      free(pests[row]);
+    
+    if(paras[141] == 0){
+        ind_output = fopen("individuals.csv","w");
+        for(i = 0; i < new_total_N; i++){
+            fprintf(ind_output, "%d,", ts);
+            for(j = 0; j < ind_traits; j++){
+                fprintf(ind_output, "%f,", pests[i][j]);
+            }
+            fprintf(ind_output, "\n");
+        }
+        fclose(ind_output);    
     }
-    free(pests);
-    
-    paras[101] = (double) new_total_N;
-    pests      = malloc(new_total_N * sizeof(double *));
-    for(row = 0; row < new_total_N; row++){
-      pests[row] = malloc(ind_traits * sizeof(double));   
-    } 
-    
-    for(row = 0; row < new_total_N; row++){
-      free(new_pests[row]);
-    }
-    free(new_pests);
-    
-    
-    
-    ind_output = fopen("individuals.csv","w");
-    for(i = 0; i < new_total_N; i++){
-      for(j = 0; j < ind_traits; j++){
-          fprintf(ind_output, "%f,", pests[i][j]);
-      }
-      fprintf(ind_output, "\n");
-    }
-    fclose(ind_output);
-    
-    
-    
-    
-    
     
     /* The calculate_offspring function should be followed by function
      * for allocating which offspring go to which parents.
@@ -268,7 +282,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
       free(land[xloc]);        
     }
     free(land); 
-  
+
     ind_number = (int) paras[101];
     for(row = 0; row < ind_number; row++){
       free(pests[row]);

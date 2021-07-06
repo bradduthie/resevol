@@ -8,20 +8,16 @@ mg  <- mine_gmatrix(gmatrix = gmt, loci = 3, indivs = 1000, npsize = 8000,
 land  <- make_landscape(rows = 10, cols = 10, depth = 21, farms = 100);
 land[,,2]  <- 1;
 land[,,12] <- 1;
-pests <- initialise_inds(mine_output = mg, N = 20, neutral_loci = 10, 
-                         xdim = 4, ydim = 4, repro = "biparental");
-tt <- sim_crops(pests, land);
+pests <- initialise_inds(mine_output = mg, N = 2000, neutral_loci = 10, 
+                         xdim = 4, ydim = 4, repro = "asexual");
+tt <- sim_crops(pests, land, time_steps = 2);
 
 
-
-
-pests[1:50, 4] <- -3;
-tt <- sim_crops(pests, land);
 
 
 # NEXT STEPS:
-# 1. Wrap the function in a while loop (get living back into pests array)
-# 2. Rotate the landscape given ts %% X == 0, food and biopesticide
+# 1. Rotate the landscape given ts %% X == 0, food and biopesticide
+# 2. Collect information within the main loop and print to a file
 
 inds <- read.csv("individuals.csv", header = FALSE);
 
