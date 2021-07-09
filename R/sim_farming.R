@@ -18,7 +18,6 @@ sim_crops <- function(pests, land, time_steps = 100){
   amu <- 1;         # SD of mutated loci values for asexual individuals
   ts  <- time_steps;
   
-  # Currently have up to 50 columns available
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
                2.0,   # 02) pests column for yloc
@@ -167,16 +166,16 @@ sim_crops <- function(pests, land, time_steps = 100){
               1,      # 145) Type of crop production
               0,      # 146) Minimum crop production per landscape cell
               10,     # 147) Maximum crop production per landscape cell
-              1,      # 148) Type of biopesticide rotation
+              2,      # 148) Type of biopesticide rotation
               10,     # 149) Time steps between biopesticide rotation
               1,      # 150) Biopesticide amount per landscape cell
-              1,      # 151) Type of biopesticide application
-              0,      # 152) Variation in biopesticide per landscape cell
+              0,      # 151) Type of biopesticide application
+              0,      # 152) StDev in biopesticide per landscape cell
               0,      # 153) Minimum biopesticide per landscape cell
               10,     # 154) Maximum biopesticide per landscape cell
               0,      # 155) Landscape layer where land owner is located
               1,      # 156) Number of crops produced
-              1,      # 157) Number of biopesticides used
+              2,      # 157) Number of biopesticides used
               10,     # 158) Maximum possible crop types
               10,     # 159) Maximum possible biopesticide types
               0,      # 160) Proportion land left fallow
