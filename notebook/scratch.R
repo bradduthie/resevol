@@ -9,7 +9,7 @@ land  <- make_landscape(rows = 10, cols = 10, depth = 21, farms = 4);
 pests <- initialise_inds(mine_output = mg, N = 10, neutral_loci = 10, 
                          xdim = 4, ydim = 4, repro = "asexual", 
                          food1_consume = 0.01);
-tt <- sim_crops(pests, land, time_steps = 1);
+tt <- sim_crops(pests, land, time_steps = 10);
 
 
 

@@ -8,6 +8,7 @@
 #include "mortality.h"
 #include "fill_new_pests.h"
 #include "land_change.h"
+#include "statistics.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -46,8 +47,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     double ***land;        /* The landscape array */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
-    
-    FILE *ind_output;
 
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
@@ -149,6 +148,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
         apply_mortality(pests, paras);
     
+        print_all_pests(pests, paras, ts);
+    
         surviving_N = (int) paras[138];
         new_total_N = offspring_number + surviving_N;
         paras[139]  = (double) new_total_N; 
@@ -159,7 +160,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
             }
             free(offspring);
             paras[141] = 1;
-            printf("Extinction\n");
             break;
         }
         
@@ -201,17 +201,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         ts++;
     }
     
-    if(paras[141] == 0){
-        ind_output = fopen("individuals.csv","w");
-        for(i = 0; i < new_total_N; i++){
-            fprintf(ind_output, "%d,", ts);
-            for(j = 0; j < ind_traits; j++){
-                fprintf(ind_output, "%f,", pests[i][j]);
-            }
-            fprintf(ind_output, "\n");
-        }
-        fclose(ind_output);    
-    }
     
     /* The calculate_offspring function should be followed by function
      * for allocating which offspring go to which parents.
