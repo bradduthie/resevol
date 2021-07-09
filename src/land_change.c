@@ -4,7 +4,7 @@
  * Gets an actual value for the crop being inserted into the landscape
  *     paras:  The paras vector that holds global information
  * ========================================================================== */
-int get_crop_val(double *paras){
+double get_crop_val(double *paras){
 
     double crop_production, crop_prod_sd, crop_prod_min, crop_prod_max, val;
   
@@ -29,6 +29,7 @@ int get_crop_val(double *paras){
     return val;
 }
 
+
 /* =============================================================================
  * Does not rotate the crop in any way -- just refereshes crop on the layer
  *     land:        The landscape array to be adjusted
@@ -44,11 +45,11 @@ void no_rotation(double ***land, double *paras, int *owner_choice, int max_own){
     xdim         = (int) paras[103];
     ydim         = (int) paras[104];
     food_layer_1 = (int) paras[118];
-    crop_number  = (int) paras[156];
     own_layer    = (int) paras[155];
+    crop_number  = (int) paras[156];
     
     crop = 0;
-    for(i = 0; i < max_own; i++){
+    for(i = 0; i <= max_own; i++){
         owner_choice[i] = crop;
         crop++;
         if(crop >= crop_number){
@@ -64,8 +65,40 @@ void no_rotation(double ***land, double *paras, int *owner_choice, int max_own){
             land[i][j][layer] = get_crop_val(paras);
         }
     }
-    
 }
+
+/* =============================================================================
+ * Each owner randomly selects a crop to put down
+ *     land:        The landscape array to be adjusted
+ *     paras:       The paras vector that holds global information
+ *     owner_count: Vector of the number
+ *     max_own:     The highest ID of a land owner
+ * ========================================================================== */
+void rand_select(double ***land, double *paras, int *owner_choice, int max_own){
+  
+    int i, j, xdim, ydim, owner, own_layer, choice, layer;
+    int crop_number, food_layer_1;
+  
+    xdim         = (int) paras[103];
+    ydim         = (int) paras[104];
+    food_layer_1 = (int) paras[118];
+    crop_number  = (int) paras[156];
+    own_layer    = (int) paras[155];
+  
+    for(i = 0; i <= max_own; i++){
+        owner_choice[i] = get_rand_int(0, crop_number - 1);
+    }
+  
+    for(i = 0; i < xdim; i++){
+        for(j = 0; j < ydim; j++){
+            owner             = (int) land[i][j][own_layer];
+            choice            = (int) owner_choice[owner];
+            layer             = choice + food_layer_1;
+            land[i][j][layer] = get_crop_val(paras);
+        }
+    }
+}
+
 
 /* =============================================================================
  * Changes the crop in a specific way for a given layer
@@ -86,10 +119,13 @@ void change_crop(double ***land, double *paras, int max_own){
   }
   
   switch(crop_rotate_type){
-      case 0:
+      case 0: /* Nothing happens */
           break;
-      case 1:
+      case 1: /* Heterogeneous pattern but no rotation */
           no_rotation(land, paras, owner_choice, max_own);
+          break;
+      case 2: /* Random selection independent for each owner */
+          rand_select(land, paras, owner_choice, max_own);
           break;
       default:
           break;
@@ -121,7 +157,7 @@ void land_change(double ***land, double *paras){
   min_own = land[0][0][own_layer];
   for(i = 0; i < xdim; i++){
       for(j = 0; j < ydim; j++){
-          own_val = (int) land[j][i][own_layer];
+          own_val = (int) land[i][j][own_layer];
           if(own_val < min_own){
               min_own = own_val;
           }

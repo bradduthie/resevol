@@ -161,7 +161,7 @@ sim_crops <- function(pests, land, time_steps = 100){
               N,      # 139) Number of individuals in the next time step
               ts,     # 140) Total number of time steps to run
               0,      # 141) Extinction has occurred
-              1,      # 142) Type of crop rotation
+              2,      # 142) Type of crop rotation
               10,     # 143) Time steps between crop rotation
               1,      # 144) Crop production per landscape cell
               1,      # 145) Type of crop production
