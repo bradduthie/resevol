@@ -763,7 +763,7 @@ void make_offspring(double **pests, double **offspring, double *paras){
     sex_col       = (int) paras[4];
     selfing_col   = (int) paras[26];
     
-    ind_offspring = malloc(N * sizeof(int *));
+    ind_offspring = malloc(N * sizeof(int));
     for(ind = 0; ind < N; ind++){
         ind_offspring[ind] = (int) pests[ind][offspring_col];
     }

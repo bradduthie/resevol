@@ -160,7 +160,28 @@ sim_crops <- function(pests, land, time_steps = 100){
               N,      # 138) Number of individuals following mortality
               N,      # 139) Number of individuals in the next time step
               ts,     # 140) Total number of time steps to run
-              0       # 141) Extinction has occurred
+              0,      # 141) Extinction has occurred
+              1,      # 142) Type of crop rotation
+              10,     # 143) Time steps between crop rotation
+              1,      # 144) Crop production per landscape cell
+              1,      # 145) Type of crop production
+              0,      # 146) Minimum crop production per landscape cell
+              10,     # 147) Maximum crop production per landscape cell
+              1,      # 148) Type of biopesticide rotation
+              10,     # 149) Time steps between biopesticide rotation
+              1,      # 150) Biopesticide amount per landscape cell
+              1,      # 151) Type of biopesticide application
+              0,      # 152) Variation in biopesticide per landscape cell
+              0,      # 153) Minimum biopesticide per landscape cell
+              10,     # 154) Maximum biopesticide per landscape cell
+              0,      # 155) Landscape layer where land owner is located
+              1,      # 156) Number of crops produced
+              1,      # 157) Number of biopesticides used
+              10,     # 158) Maximum possible crop types
+              10,     # 159) Maximum possible biopesticide types
+              0,      # 160) Proportion land left fallow
+              0,      # 161) Proportion land with no biopesticide
+              0       # 162) StDev in crop production per landscape cell
               );
   
   if(is.array(pests) == FALSE){

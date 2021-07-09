@@ -7,6 +7,7 @@
 #include "pesticide.h"
 #include "mortality.h"
 #include "fill_new_pests.h"
+#include "land_change.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -125,6 +126,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     ts         = 0;
     
     while(ts < time_steps){
+ 
+        land_change(land, paras);
  
         age_pests(pests, paras);
 
