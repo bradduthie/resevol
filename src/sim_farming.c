@@ -149,6 +149,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         apply_mortality(pests, paras);
     
         print_all_pests(pests, paras, ts);
+        population_statistics(pests, paras, ts);
     
         surviving_N = (int) paras[138];
         new_total_N = offspring_number + surviving_N;
