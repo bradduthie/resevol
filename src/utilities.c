@@ -161,9 +161,13 @@ int get_rand_int(int from, int to){
     
     int rand_value;
     
-    do{
-        rand_value = (int) floor( runif(from, (to + 1)) );
-    }while( rand_value == (to + 1) );
+    if(from == to){
+        rand_value = (int) from;
+    }else{
+        do{
+            rand_value = (int) floor( runif(from, (to + 1) ) );
+        }while( rand_value == (to + 1) );
+    }
     
     return rand_value;
 }

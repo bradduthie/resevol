@@ -1,3 +1,4 @@
+#include <time.h>
 #include "utilities.h"
 
 /* =============================================================================
@@ -211,17 +212,17 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
   
     int i, j, xdim, ydim, owner, own_layer, choice, layer;
     int crop_number, food_layer_1;
-  
+
     xdim         = (int) paras[103];
     ydim         = (int) paras[104];
     food_layer_1 = (int) paras[118];
     crop_number  = (int) paras[156];
     own_layer    = (int) paras[155];
-  
+    
     for(i = 0; i <= max_own; i++){
         owner_choice[i] = get_rand_int(0, crop_number - 1);
     }
-  
+
     for(i = 0; i < xdim; i++){
         for(j = 0; j < ydim; j++){
             owner             = (int) land[i][j][own_layer];
@@ -302,7 +303,7 @@ void land_change(double ***land, double *paras){
   
   int i, j, k, layer, min_own, max_own, own_layer, xdim, ydim, own_val;
   int crops_produced, pesticides_used, possible_crops, possible_pesti;
-  
+
   xdim            = (int) paras[103];
   ydim            = (int) paras[104];
   own_layer       = (int) paras[155];
@@ -312,6 +313,7 @@ void land_change(double ***land, double *paras){
   possible_pesti  = (int) paras[159];
   
   min_own = land[0][0][own_layer];
+  max_own = land[0][0][own_layer];
   for(i = 0; i < xdim; i++){
       for(j = 0; j < ydim; j++){
           own_val = (int) land[i][j][own_layer];
@@ -323,7 +325,6 @@ void land_change(double ***land, double *paras){
           }
       }
   }
-  
 
   change_crop(land, paras, max_own);
   change_pesticide(land, paras, max_own);

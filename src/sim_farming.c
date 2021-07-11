@@ -1,3 +1,4 @@
+#include <time.h>
 #include "utilities.h"
 #include "reproduction.h"
 #include "parents.h"
@@ -47,7 +48,13 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     double ***land;        /* The landscape array */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
+    double time_spent;
+    
+    clock_t begin;
+    clock_t end;
 
+    begin = clock();
+    
     /* First take care of all the reading in of code from R to C */
     /* ====================================================================== */
 
@@ -125,18 +132,18 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     ts         = 0;
     
     while(ts < time_steps){
- 
+        
         land_change(land, paras);
  
-        age_pests(pests, paras);
+        age_pests(pests, paras); 
+        
+        feeding(pests, paras, land); 
 
-        feeding(pests, paras, land);
-
-        pesticide_consumed(pests, paras, land);
+        pesticide_consumed(pests, paras, land); 
     
-        movement(pests, paras, land);
+        movement(pests, paras, land); 
     
-        calculate_offspring(pests, paras); 
+        calculate_offspring(pests, paras);
     
         offspring_number = (int) paras[106]; /* Create the offspring array */
         offspring        = malloc(offspring_number * sizeof(double *));
@@ -182,18 +189,18 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         }
         free(pests);
         
-        paras[101] = (double) new_total_N;
+        paras[101] = (double) new_total_N; 
         pests      = malloc(new_total_N * sizeof(double *));
         for(row = 0; row < new_total_N; row++){
             pests[row] = malloc(ind_traits * sizeof(double));   
         } 
-
+        
         for(row = 0; row < new_total_N; row++){
             for(col = 0; col < ind_traits; col++){
                 pests[row][col] = new_pests[row][col];
             }
         }
-    
+        
         for(row = 0; row < new_total_N; row++){
             free(new_pests[row]);
         }
@@ -202,29 +209,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         ts++;
     }
     
-    
-    /* The calculate_offspring function should be followed by function
-     * for allocating which offspring go to which parents.
-     */
-    
-    
-    /* START THE YEAR */
-    
-    /* Select a crop to grow and/or a biopesticide to apply */
-    
-    /* Loop through several weeks in which life-stages progress */
-    /* Should expect 5-6 generations within a single year? */
-    /* Better yet, one big loop and a counter to determine the time step */
-    /* When the time step counts down, reset to a new year */
-     
-    /* Survival based on use of traits and biopesticide or crop */
-    /* Explicit competition for plant resources? */ 
-     
-    /* Model short and long distance dispersal, or just short? */
-    /* In other words, is there a need to model migration? */
-     
-    /* END THE YEAR */
-    
+    end        = clock();
+    time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+    paras[163] = time_spent;
     
     /* This code switches from C back to R */
     /* ====================================================================== */        

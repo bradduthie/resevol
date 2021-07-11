@@ -7,14 +7,16 @@
  * ========================================================================== */
 void print_all_pests(double **pests, double *paras, int ts){
   
-  int i, j, N, cols;
+  int i, j, N, cols, extinct, print_inds;
   
   FILE *ind_output;
   
-  N    = (int) paras[101];
-  cols = (int) paras[107];
-
-  if(paras[141] == 0){
+  N          = (int) paras[101];
+  cols       = (int) paras[107];
+  extinct    = (int) paras[141];
+  print_inds = (int) paras[164];
+  
+  if(extinct == 0 && print_inds > 0){
     if(ts == 0){
         ind_output = fopen("individuals.csv","w");
     }else{
