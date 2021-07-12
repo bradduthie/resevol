@@ -190,12 +190,29 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
  * ========================================================================== */
 void pesticide_consumed(double **pests, double *paras, double ***land){
   
-  int ind, N;
+  int ind, N, *not_fed, N_count;
   
-  N = (int) paras[101];
-  
+  N       = (int) paras[101];
+  not_fed = malloc(N * sizeof(int));
   for(ind = 0; ind < N; ind++){
-    pesticide(pests, paras, land, ind);
+        not_fed[ind] = 1;
   }
+  
+  N_count = N;
+  while(N_count > 0){
+      do{
+          ind = get_rand_int(0, N - 1);
+      } while (not_fed[ind] == 0);
+      pesticide(pests, paras, land, ind);
+      not_fed[ind] = 0;
+      N_count--;
+  }
+  
+  free(not_fed);
 }
+
+
+
+
+
 

@@ -6,15 +6,16 @@ diag(gmt) <- 1;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 1000, npsize = 8000, 
                     max_gen = 4, sampleK = 400, chooseK = 4, layers = 6);
 land  <- make_landscape(rows = 10, cols = 10, depth = 21, farms = 4);
-pests <- initialise_inds(mine_output = mg, N = 100, neutral_loci = 1000, 
-                         xdim = 4, ydim = 4, repro = "sexual", 
-                         selfing = FALSE, food_consume = 0.25, 
-                         pesticide_consume = 0.1);
-tt    <- sim_crops(pests, land, time_steps = 4, mutation_pr = 0.01,
+pests <- initialise_inds(mine_output = mg, N = 1000, neutral_loci = 1000, 
+                         xdim = 4, ydim = 4, repro = "asexual", max_age = 4, 
+                         selfing = FALSE, food_consume = 0.1, 
+                         pesticide_consume = 0.0, food_needed_surv = 0.1,
+                         min_age_reproduce = 2, lambda_value = 1.3);
+tt    <- sim_crops(pests, land, time_steps = 10, mutation_pr = 0.01,
                    crossover_pr = 0.01, net_mu_layers = 0, 
                    crop_rotation_time = 1, pesticide_rotation_time = 1,
                    crop_per_cell = 1, pesticide_per_cell = 1,
-                   crop_number = 2, pesticide_number = 1, print_inds = FALSE);
+                   crop_number = 1, pesticide_number = 1, print_inds = FALSE);
 
 
 
@@ -132,5 +133,58 @@ for(i in 1:dim(mat)[2]){
 }
 
 
+
+###############
+### Getting the T1 trait notation to work:
+assign_traits <- function(paras, move_distance, food_needed_surv,
+                          pesticide_tol_surv, food_needed_repr, 
+                          pesticide_tol_repr, mating_distance, lambda_value){
+    
+    trait_start_c  <- paras[109];
+    move_distance_T <- check_is_trait(move_distance);
+    if(move_distance_T == TRUE){
+        move_distance_col <- get_trait_number(move_distance) + trait_start_c;
+        paras[5]          <- move_distance_col;
+    }
+    
+    food_needed_T <- check_is_trait(food_needed_surv);
+    if(food_needed_surv_T == TRUE){
+        food_needed_col <- get_trait_number(food_needed_surv) + trait_start_c;
+        paras[16]       <- food_needed_col;
+    }
+    
+    pesticide_tol_surv_T <- check_is_trait(pesticide_tol_surv);
+    if(pesticide_tol_surv_T == TRUE){
+        pest_tol_col <- get_trait_number(pesticide_tol_surv) + trait_start_c;
+        paras[17]    <- pest_tol_col;
+    }
+    
+    food_needed_rpr_T <- check_is_trait(food_needed_repr);
+    if(food_needed_rpr_T == TRUE){
+        food_repr_col  <- get_trait_number(food_needed_repr) + trait_start_c;
+        paras[18]      <- food_repr_col;
+    }
+    
+    pest_tol_rpr_T <- check_is_trait(pesticide_tol_repr);
+    if(pest_tol_rpr_T == TRUE){
+        pest_repr_col  <- get_trait_number(pesticide_tol_repr) + trait_start_c;
+        paras[19]      <- pest_repr_col;
+    }
+    
+    mating_dist_T <- check_is_trait(mating_distance);
+    if(mating_dist_T == TRUE){
+        mate_dist_col  <- get_trait_number(mating_distance) + trait_start_c;
+        paras[24]      <- mate_dist_col;
+    }
+    
+    lambda_T <- check_is_trait(lambda_value);
+    if(lambda_T == TRUE){
+        lambda_col    <- get_trait_number(lambda_value) + trait_start_c;
+        paras[25]     <- lambda_col;
+    }
+    
+    
+    return(paras);
+}
 
 

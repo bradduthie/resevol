@@ -64,8 +64,8 @@ void population_statistics(double **pests, double *paras, int ts){
   off_col                = (int) paras[10];
   loci_col               = (int) paras[11];
   traits_col             = (int) paras[12];
-  food_consumed_col      = (int) paras[13];
-  pesticide_consumed_col = (int) paras[14];
+  food_consumed_col      = (int) paras[14];
+  pesticide_consumed_col = (int) paras[15];
   mated_col              = (int) paras[27];
   food1_col              = (int) paras[58];
   food2_col              = (int) paras[59];

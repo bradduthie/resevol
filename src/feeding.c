@@ -102,7 +102,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
           }
       }
       if(land_layer3 > 0){
-          food_land1 = land[xloc][yloc][land_layer3];
+          food_land3 = land[xloc][yloc][land_layer3];
           if(food_land3 < consume3){
               consumed                      += food_land3;
               land[xloc][yloc][land_layer3]  = 0;
@@ -138,67 +138,67 @@ void feed(double **pests, double *paras, double ***land, int ind){
           }
       }
       if(land_layer6 > 0){
-        food_land6 = land[xloc][yloc][land_layer6];
-        if(food_land6 < consume6){
-          consumed                      += food_land6;
-          land[xloc][yloc][land_layer6]  = 0;
-          pests[ind][consumed_col6]     += food_land6;
-        }else{
-          consumed                      += consume6;
-          land[xloc][yloc][land_layer6] -= consume6;
-          pests[ind][consumed_col6]     += consume6;
-        }
+          food_land6 = land[xloc][yloc][land_layer6];
+          if(food_land6 < consume6){
+              consumed                      += food_land6;
+              land[xloc][yloc][land_layer6]  = 0;
+              pests[ind][consumed_col6]     += food_land6;
+          }else{
+              consumed                      += consume6;
+              land[xloc][yloc][land_layer6] -= consume6;
+              pests[ind][consumed_col6]     += consume6;
+          }
       }
       if(land_layer7 > 0){
-        food_land7 = land[xloc][yloc][land_layer7];
-        if(food_land7 < consume1){
-          consumed                      += food_land7;
-          land[xloc][yloc][land_layer7]  = 0;
-          pests[ind][consumed_col7]     += food_land7;
-        }else{
-          consumed                      += consume7;
-          land[xloc][yloc][land_layer7] -= consume7;
-          pests[ind][consumed_col7]     += consume7;
+          food_land7 = land[xloc][yloc][land_layer7];
+          if(food_land7 < consume1){
+              consumed                      += food_land7;
+              land[xloc][yloc][land_layer7]  = 0;
+              pests[ind][consumed_col7]     += food_land7;
+          }else{
+              consumed                      += consume7;
+              land[xloc][yloc][land_layer7] -= consume7;
+              pests[ind][consumed_col7]     += consume7;
         }
       }
       if(land_layer8 > 0){
-        food_land8 = land[xloc][yloc][land_layer8];
-        if(food_land8 < consume8){
-          consumed                      += food_land8;
-          land[xloc][yloc][land_layer8]  = 0;
-          pests[ind][consumed_col8]     += food_land8;
-        }else{
-          consumed                      += consume8;
-          land[xloc][yloc][land_layer8] -= consume8;
-          pests[ind][consumed_col8]     += consume8;
-        }
+          food_land8 = land[xloc][yloc][land_layer8];
+          if(food_land8 < consume8){
+              consumed                      += food_land8;
+              land[xloc][yloc][land_layer8]  = 0;
+              pests[ind][consumed_col8]     += food_land8;
+          }else{
+              consumed                      += consume8;
+              land[xloc][yloc][land_layer8] -= consume8;
+              pests[ind][consumed_col8]     += consume8;
+          }
       }
       if(land_layer9 > 0){
-        food_land9 = land[xloc][yloc][land_layer9];
-        if(food_land9 < consume1){
-          consumed                      += food_land9;
-          land[xloc][yloc][land_layer9]  = 0;
-          pests[ind][consumed_col9]     += food_land9;
-        }else{
-          consumed                      += consume9;
-          land[xloc][yloc][land_layer9] -= consume9;
-          pests[ind][consumed_col9]     += consume9;
-        }
+          food_land9 = land[xloc][yloc][land_layer9];
+          if(food_land9 < consume1){
+              consumed                      += food_land9;
+              land[xloc][yloc][land_layer9]  = 0;
+              pests[ind][consumed_col9]     += food_land9;
+          }else{
+              consumed                      += consume9;
+              land[xloc][yloc][land_layer9] -= consume9;
+              pests[ind][consumed_col9]     += consume9;
+          }
       }
       if(land_layer10 > 0){
-        food_land10 = land[xloc][yloc][land_layer10];
-        if(food_land10 < consume10){
-          consumed                       += food_land10;
-          land[xloc][yloc][land_layer10]  = 0;
-          pests[ind][consumed_col10]     += food_land10;
-        }else{
-          consumed                       += consume10;
-          land[xloc][yloc][land_layer10] -= consume10;
-          pests[ind][consumed_col10]     += consume10;
-        }
+          food_land10 = land[xloc][yloc][land_layer10];
+          if(food_land10 < consume10){
+              consumed                       += food_land10;
+              land[xloc][yloc][land_layer10]  = 0;
+              pests[ind][consumed_col10]     += food_land10;
+          }else{
+              consumed                       += consume10;
+              land[xloc][yloc][land_layer10] -= consume10;
+              pests[ind][consumed_col10]     += consume10;
+          }
       }
+      pests[ind][consumed_col] += consumed;
   }
-  pests[ind][consumed_col] += consumed;
 }
 
 /* =============================================================================
@@ -209,12 +209,24 @@ void feed(double **pests, double *paras, double ***land, int ind){
  * ========================================================================== */
 void feeding(double **pests, double *paras, double ***land){
   
-  int ind, N;
+  int ind, N, *not_fed, N_count;
   
-  N = (int) paras[101];
-  
+  N       = (int) paras[101];
+  not_fed = malloc(N * sizeof(int));
   for(ind = 0; ind < N; ind++){
-    feed(pests, paras, land, ind);
+      not_fed[ind] = 1;
   }
+  
+  N_count = N;
+  while(N_count > 0){
+      do{
+           ind = get_rand_int(0, N - 1);
+      } while (not_fed[ind] == 0);
+      feed(pests, paras, land, ind);
+      not_fed[ind] = 0;
+      N_count--;
+  }
+  
+  free(not_fed);
 }
 

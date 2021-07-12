@@ -645,23 +645,48 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     
     int trait, cols, ID, sire_row, sire_ID, srow_col, sID_col, sex_col;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
-    int tag1_col, tag2_col, tag3_col, mate_col;
+    int tag1_col, tag2_col, tag3_col, mate_col, mort_col;
+    int cons_col1, cons_col2, cons_col3, cons_col4, cons_col5, cons_col6; 
+    int cons_col7, cons_col8, cons_col9, cons_col10;
+    int cide_col1, cide_col2, cide_col3, cide_col4, cide_col5, cide_col6; 
+    int cide_col7, cide_col8, cide_col9, cide_col10;
     
-    cols     = (int) paras[107]; /* Columns in the pest array             */
-    ID_col   = (int) paras[0];   /* Column where the ID is held           */
-    age_col  = (int) paras[3];   /* Column where Age is held              */
-    mID_col  = (int) paras[6];   /* Column where mum's ID is held         */
-    mrow_col = (int) paras[8];   /* Column where mum's row is held        */
-    off_col  = (int) paras[10];  /* Column where offspring number is held */
-    food_col = (int) paras[14];  /* Column where food intake is held      */
-    pest_col = (int) paras[15];  /* Column where pesticide intake is held */
-    tag1_col = (int) paras[20];  /* Column where tag 1 is held            */
-    tag2_col = (int) paras[21];  /* Column where tag 2 is held            */
-    tag3_col = (int) paras[22];  /* Column where tag 3 is held            */
-    mate_col = (int) paras[27];  /* Column where mate accessed is held    */
-    srow_col = (int) paras[9];   /* Column where the sire's row is held   */ 
-    sID_col  = (int) paras[7];   /* Column where the sire's ID is held    */
-    sex_col  = (int) paras[4];   /* Column where the sex is located       */
+    cols       = (int) paras[107]; /* Columns in the pest array             */
+    ID_col     = (int) paras[0];   /* Column where the ID is held           */
+    age_col    = (int) paras[3];   /* Column where Age is held              */
+    mID_col    = (int) paras[6];   /* Column where mum's ID is held         */
+    mrow_col   = (int) paras[8];   /* Column where mum's row is held        */
+    off_col    = (int) paras[10];  /* Column where offspring number is held */
+    food_col   = (int) paras[14];  /* Column where food intake is held      */
+    pest_col   = (int) paras[15];  /* Column where pesticide intake is held */
+    tag1_col   = (int) paras[20];  /* Column where tag 1 is held            */
+    tag2_col   = (int) paras[21];  /* Column where tag 2 is held            */
+    tag3_col   = (int) paras[22];  /* Column where tag 3 is held            */
+    mate_col   = (int) paras[27];  /* Column where mate accessed is held    */
+    srow_col   = (int) paras[9];   /* Column where the sire's row is held   */ 
+    sID_col    = (int) paras[7];   /* Column where the sire's ID is held    */
+    sex_col    = (int) paras[4];   /* Column where the sex is located       */
+    mort_col   = (int) paras[81];  /* Column where mortality is held        */
+    cons_col1  = (int) paras[58];
+    cons_col2  = (int) paras[59];
+    cons_col3  = (int) paras[60];
+    cons_col4  = (int) paras[61];
+    cons_col5  = (int) paras[62];
+    cons_col6  = (int) paras[63];
+    cons_col7  = (int) paras[64];
+    cons_col8  = (int) paras[65];
+    cons_col9  = (int) paras[66];
+    cons_col10 = (int) paras[67];
+    cide_col1  = (int) paras[68];
+    cide_col2  = (int) paras[69];
+    cide_col3  = (int) paras[70];
+    cide_col4  = (int) paras[71];
+    cide_col5  = (int) paras[72];
+    cide_col6  = (int) paras[73];
+    cide_col7  = (int) paras[74];
+    cide_col8  = (int) paras[75];
+    cide_col9  = (int) paras[76];
+    cide_col10 = (int) paras[77];
     
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
@@ -682,6 +707,27 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
     if(pests[ind][sex_col] > 1){
         offspring[offspring_count][sex_col] = get_rand_int(2, 3);
     }
+    offspring[offspring_count][mort_col]   = 0.0;
+    offspring[offspring_count][cons_col1]  = 0.0;
+    offspring[offspring_count][cons_col2]  = 0.0;
+    offspring[offspring_count][cons_col3]  = 0.0;
+    offspring[offspring_count][cons_col4]  = 0.0;
+    offspring[offspring_count][cons_col5]  = 0.0;
+    offspring[offspring_count][cons_col6]  = 0.0;
+    offspring[offspring_count][cons_col7]  = 0.0;
+    offspring[offspring_count][cons_col8]  = 0.0;
+    offspring[offspring_count][cons_col9]  = 0.0;
+    offspring[offspring_count][cons_col10] = 0.0;
+    offspring[offspring_count][cide_col1]  = 0.0;
+    offspring[offspring_count][cide_col2]  = 0.0;
+    offspring[offspring_count][cide_col3]  = 0.0;
+    offspring[offspring_count][cide_col4]  = 0.0;
+    offspring[offspring_count][cide_col5]  = 0.0;
+    offspring[offspring_count][cide_col6]  = 0.0;
+    offspring[offspring_count][cide_col7]  = 0.0;
+    offspring[offspring_count][cide_col8]  = 0.0;
+    offspring[offspring_count][cide_col9]  = 0.0;
+    offspring[offspring_count][cide_col10] = 0.0;
     
     sire_row = assign_sire(pests, paras, ind);
     sire_ID  = pests[sire_row][ID_col];
@@ -709,37 +755,82 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     int trait, cols, ID;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
     int tag1_col, tag2_col, tag3_col, mate_col, mort_col;
+    int cons_col1, cons_col2, cons_col3, cons_col4, cons_col5, cons_col6; 
+    int cons_col7, cons_col8, cons_col9, cons_col10;
+    int cide_col1, cide_col2, cide_col3, cide_col4, cide_col5, cide_col6; 
+    int cide_col7, cide_col8, cide_col9, cide_col10;
     
-    cols     = (int) paras[107]; /* Columns in the pest array             */
-    ID_col   = (int) paras[0];   /* Column where the ID is held           */
-    age_col  = (int) paras[3];   /* Column where Age is held              */
-    mID_col  = (int) paras[6];   /* Column where mum's ID is held         */
-    mrow_col = (int) paras[8];   /* Column where mum's row is held        */
-    off_col  = (int) paras[10];  /* Column where offspring number is held */
-    food_col = (int) paras[14];  /* Column where food intake is held      */
-    pest_col = (int) paras[15];  /* Column where pesticide intake is held */
-    tag1_col = (int) paras[20];  /* Column where tag 1 is held            */
-    tag2_col = (int) paras[21];  /* Column where tag 2 is held            */
-    tag3_col = (int) paras[22];  /* Column where tag 3 is held            */
-    mate_col = (int) paras[27];  /* Column where mate accessed is held    */
-    mort_col = (int) paras[81];  /* Column where mortality is held        */
+    cols       = (int) paras[107]; /* Columns in the pest array             */
+    ID_col     = (int) paras[0];   /* Column where the ID is held           */
+    age_col    = (int) paras[3];   /* Column where Age is held              */
+    mID_col    = (int) paras[6];   /* Column where mum's ID is held         */
+    mrow_col   = (int) paras[8];   /* Column where mum's row is held        */
+    off_col    = (int) paras[10];  /* Column where offspring number is held */
+    food_col   = (int) paras[14];  /* Column where food intake is held      */
+    pest_col   = (int) paras[15];  /* Column where pesticide intake is held */
+    tag1_col   = (int) paras[20];  /* Column where tag 1 is held            */
+    tag2_col   = (int) paras[21];  /* Column where tag 2 is held            */
+    tag3_col   = (int) paras[22];  /* Column where tag 3 is held            */
+    mate_col   = (int) paras[27];  /* Column where mate accessed is held    */
+    mort_col   = (int) paras[81];  /* Column where mortality is held        */
+    cons_col1  = (int) paras[58];
+    cons_col2  = (int) paras[59];
+    cons_col3  = (int) paras[60];
+    cons_col4  = (int) paras[61];
+    cons_col5  = (int) paras[62];
+    cons_col6  = (int) paras[63];
+    cons_col7  = (int) paras[64];
+    cons_col8  = (int) paras[65];
+    cons_col9  = (int) paras[66];
+    cons_col10 = (int) paras[67];
+    cide_col1  = (int) paras[68];
+    cide_col2  = (int) paras[69];
+    cide_col3  = (int) paras[70];
+    cide_col4  = (int) paras[71];
+    cide_col5  = (int) paras[72];
+    cide_col6  = (int) paras[73];
+    cide_col7  = (int) paras[74];
+    cide_col8  = (int) paras[75];
+    cide_col9  = (int) paras[76];
+    cide_col10 = (int) paras[77];
+    
     
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
     }
     
-    offspring[offspring_count][ID_col]    = paras[108] + 1.0; 
-    offspring[offspring_count][age_col]   = 0;              
-    offspring[offspring_count][mID_col]   = pests[ind][0]; 
-    offspring[offspring_count][mrow_col]  = ind;            
-    offspring[offspring_count][off_col]   = 0;              
-    offspring[offspring_count][food_col]  = 0;            
-    offspring[offspring_count][pest_col]  = 0; 
-    offspring[offspring_count][tag1_col]  = 0; 
-    offspring[offspring_count][tag2_col]  = 0; 
-    offspring[offspring_count][tag3_col]  = 0; 
-    offspring[offspring_count][mate_col]  = 0;
-    offspring[offspring_count][mort_col]  = 0;
+    offspring[offspring_count][ID_col]     = paras[108] + 1.0; 
+    offspring[offspring_count][age_col]    = 0.0;              
+    offspring[offspring_count][mID_col]    = pests[ind][0]; 
+    offspring[offspring_count][mrow_col]   = ind;            
+    offspring[offspring_count][off_col]    = 0.0;              
+    offspring[offspring_count][food_col]   = 0.0;            
+    offspring[offspring_count][pest_col]   = 0.0; 
+    offspring[offspring_count][tag1_col]   = 0.0; 
+    offspring[offspring_count][tag2_col]   = 0.0; 
+    offspring[offspring_count][tag3_col]   = 0.0; 
+    offspring[offspring_count][mate_col]   = 0.0;
+    offspring[offspring_count][mort_col]   = 0.0;
+    offspring[offspring_count][cons_col1]  = 0.0;
+    offspring[offspring_count][cons_col2]  = 0.0;
+    offspring[offspring_count][cons_col3]  = 0.0;
+    offspring[offspring_count][cons_col4]  = 0.0;
+    offspring[offspring_count][cons_col5]  = 0.0;
+    offspring[offspring_count][cons_col6]  = 0.0;
+    offspring[offspring_count][cons_col7]  = 0.0;
+    offspring[offspring_count][cons_col8]  = 0.0;
+    offspring[offspring_count][cons_col9]  = 0.0;
+    offspring[offspring_count][cons_col10] = 0.0;
+    offspring[offspring_count][cide_col1]  = 0.0;
+    offspring[offspring_count][cide_col2]  = 0.0;
+    offspring[offspring_count][cide_col3]  = 0.0;
+    offspring[offspring_count][cide_col4]  = 0.0;
+    offspring[offspring_count][cide_col5]  = 0.0;
+    offspring[offspring_count][cide_col6]  = 0.0;
+    offspring[offspring_count][cide_col7]  = 0.0;
+    offspring[offspring_count][cide_col8]  = 0.0;
+    offspring[offspring_count][cide_col9]  = 0.0;
+    offspring[offspring_count][cide_col10] = 0.0;
     
     paras[108]++; /* Increase the maximum ID by 1 */
 }

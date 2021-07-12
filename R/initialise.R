@@ -75,11 +75,11 @@ initialise_inds <- function(mine_output,
   pesticide[1:sp_pesti] <- pesticide_consume;
   
   if(is.na(age_food_threshold) == TRUE){
-      age_food_threshold <- max_age;
+      age_food_threshold <- 0;
   }
   
   if(is.na(age_pesticide_threshold) == TRUE){
-    age_pesticide_threshold <- max_age;
+    age_pesticide_threshold <- 0;
   }
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){

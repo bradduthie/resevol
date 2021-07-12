@@ -59,7 +59,7 @@ void move(double **pests, double *paras, int ind){
   age       = (int) pests[ind][age_col];
   Xpos      = (int) pests[ind][Xpos_col];
   Ypos      = (int) pests[ind][Ypos_col];
-  move_dist = (int) pests[ind][move_dist_col];
+  move_dist = (int) floor(pests[ind][move_dist_col]);
   min_age   = (int) pests[ind][min_age_col];
   max_age   = (int) pests[ind][max_age_col];
   

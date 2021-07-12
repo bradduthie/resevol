@@ -88,11 +88,11 @@ int mate_available(double **pests, double *paras, int row){
  * ========================================================================== */
 void count_offspring(double **pests, double *paras, int row){
   
-  int N, repr_param_col, repr_param, offspring, repr_type_col, repr_type;
+  int N, repr_param_col, offspring, repr_type_col, repr_type;
   int mate_access, mate_access_col, sex_col, sex, off_col;
   int min_age_col, max_age_col, min_age, max_age, age_col, age;
-  int food_consumed_col, food_needed_col;
-  double food_consumed, food_needed;
+  int food_consumed_col, food_needed_col, repr_incr_col;
+  double food_consumed, food_needed, repr_incr, repr_param;
   
   N                  = (int) paras[101];
   sex_col            = (int) paras[4];
@@ -100,7 +100,9 @@ void count_offspring(double **pests, double *paras, int row){
   repr_type_col      = (int) paras[23];
   repr_type          = (int) pests[row][repr_type_col];
   repr_param_col     = (int) paras[25];
+  repr_incr_col      = (int) paras[85];
   repr_param         = pests[row][repr_param_col];
+  repr_incr          = pests[row][repr_incr_col];
   mate_access_col    = (int) paras[27];
   mate_access        = 0;
   off_col            = (int) paras[10];
@@ -119,7 +121,7 @@ void count_offspring(double **pests, double *paras, int row){
       case 0:  /* Reproduction is just based off of lambda value */
           mate_access = mate_available(pests, paras, row);
           if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){ 
-              offspring = rpois(repr_param);
+              offspring = rpois(repr_param + repr_incr);
           }
           break;
       case 1: /* Offspring will be based off of food consumed */
@@ -133,7 +135,7 @@ void count_offspring(double **pests, double *paras, int row){
       default:
           mate_access = mate_available(pests, paras, row);
           if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){
-              offspring = rpois(repr_param);
+              offspring = rpois(repr_param + repr_incr);
           }
           break;
   }

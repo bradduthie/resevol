@@ -31,7 +31,8 @@ sim_crops <- function(pests,
                       crop_number = 2,
                       pesticide_number = 1,
                       print_inds = FALSE, 
-                      print_gens = TRUE){
+                      print_gens = TRUE
+                      ){
   
   N    <- dim(pests)[1];
   W    <- dim(pests)[2];
@@ -149,7 +150,7 @@ sim_crops <- function(pests,
               82.0,   # 82) pests column for age of food threshold enacted
               83.0,   # 83) pests column for age of pesticide threshold enacted
               84.0,   # 84) pests column for inbreeding coefficient
-              85.0,   # 85)
+              85.0,   # 85) pests column for lamba adjustment
               86.0,   # 86)
               87.0,   # 87)
               88.0,   # 88)
@@ -229,8 +230,10 @@ sim_crops <- function(pests,
               crsd,   # 162) StDev in crop production per landscape cell
               0,      # 163) Time taken for simulation (in seconds)
               prin,   # 164) Print individual level data
-              prgn    # 165) Print time step and N in the console 
+              prgn    # 165) Print time step and N in the console
               );
+  
+  # paras[85] <- 100;
   
   if(is.array(pests) == FALSE){
     stop("ERROR: pests must be a 2D array.");
@@ -246,4 +249,32 @@ sim_crops <- function(pests,
 
 run_farming_sim <- function(IND, LAND, PARAS){
   .Call("sim_farming", IND, LAND, PARAS);
+}
+
+# Checks to see if something has been assigned as a trait
+check_is_trait <- function(val){
+  is_trait <- FALSE;
+  val_char <- is.character(val);
+  if(val_char == TRUE){
+    val_splt <- strsplit(val, split = "")[[1]][1];
+    if(val_splt == "T"){
+      is_trait <- TRUE;
+    }
+  }
+  return(is_trait);
+}
+
+# Get the number portion of trait (e.g., 20 for "T20")
+get_trait_number <- function(trait){
+  trait_n  <- 1;
+  val_splt <- strsplit(trait, split = "")[[1]];
+  val_numb <- val_splt[-1];
+  val_char <- collapse_vals(val_numb);
+  trait_n  <- as.numeric(val_char);
+  return(trait_n);
+}
+
+# Function to combine character elements
+collapse_vals <- function(...) {
+  paste(..., sep = "", collapse = "");
 }
