@@ -298,36 +298,46 @@ void clean_landscape(double ***land, double *paras){
  * Increases the age of each pest by a single time step
  *     land:   The landscape array to be adjusted
  *     paras:  The paras vector that holds global information
+ *     ts:     The time step of the simulation
  * ========================================================================== */
-void land_change(double ***land, double *paras){
+void land_change(double ***land, double *paras, int ts){
   
   int i, j, k, layer, min_own, max_own, own_layer, xdim, ydim, own_val;
   int crops_produced, pesticides_used, possible_crops, possible_pesti;
-
-  xdim            = (int) paras[103];
-  ydim            = (int) paras[104];
-  own_layer       = (int) paras[155];
-  crops_produced  = (int) paras[156];
-  pesticides_used = (int) paras[157];
-  possible_crops  = (int) paras[158];
-  possible_pesti  = (int) paras[159];
+  int rotate_crops, rotate_pesticide;
   
-  min_own = land[0][0][own_layer];
-  max_own = land[0][0][own_layer];
-  for(i = 0; i < xdim; i++){
-      for(j = 0; j < ydim; j++){
-          own_val = (int) land[i][j][own_layer];
-          if(own_val < min_own){
-              min_own = own_val;
-          }
-          if(own_val > max_own){
-              max_own = own_val;
+  xdim              = (int) paras[103];
+  ydim              = (int) paras[104];
+  own_layer         = (int) paras[155];
+  crops_produced    = (int) paras[156];
+  pesticides_used   = (int) paras[157];
+  possible_crops    = (int) paras[158];
+  possible_pesti    = (int) paras[159];
+  rotate_crops      = (int) paras[143];
+  rotate_pesticide  = (int) paras[149];
+  
+  if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0){
+      min_own = land[0][0][own_layer];
+      max_own = land[0][0][own_layer];
+      for(i = 0; i < xdim; i++){
+          for(j = 0; j < ydim; j++){
+              own_val = (int) land[i][j][own_layer];
+              if(own_val < min_own){
+                  min_own = own_val;
+              }
+              if(own_val > max_own){
+                  max_own = own_val;
+              }
           }
       }
   }
 
-  change_crop(land, paras, max_own);
-  change_pesticide(land, paras, max_own);
+  if(ts % rotate_crops == 0){
+      change_crop(land, paras, max_own);
+  }
+  if(ts % rotate_pesticide == 0){
+      change_pesticide(land, paras, max_own);
+  }
 }
 
 

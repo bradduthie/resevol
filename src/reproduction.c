@@ -91,20 +91,24 @@ void count_offspring(double **pests, double *paras, int row){
   int N, repr_param_col, repr_param, offspring, repr_type_col, repr_type;
   int mate_access, mate_access_col, sex_col, sex, off_col;
   int min_age_col, max_age_col, min_age, max_age, age_col, age;
+  int food_consumed_col, food_needed_col;
+  double food_consumed, food_needed;
   
-  N               = (int) paras[101];
-  sex_col         = (int) paras[4];
-  sex             = (int) pests[row][sex_col];
-  repr_type_col   = (int) paras[23];
-  repr_type       = (int) pests[row][repr_type_col];
-  repr_param_col  = (int) paras[25];
-  repr_param      = pests[row][repr_param_col];
-  mate_access_col = (int) paras[27];
-  mate_access     = 0;
-  off_col         = (int) paras[10];
-  age_col         = (int) paras[3];
-  min_age_col     = (int) paras[35];
-  max_age_col     = (int) paras[36];
+  N                  = (int) paras[101];
+  sex_col            = (int) paras[4];
+  sex                = (int) pests[row][sex_col];
+  repr_type_col      = (int) paras[23];
+  repr_type          = (int) pests[row][repr_type_col];
+  repr_param_col     = (int) paras[25];
+  repr_param         = pests[row][repr_param_col];
+  mate_access_col    = (int) paras[27];
+  mate_access        = 0;
+  off_col            = (int) paras[10];
+  age_col            = (int) paras[3];
+  min_age_col        = (int) paras[35];
+  max_age_col        = (int) paras[36];
+  food_consumed_col  = (int) paras[14];
+  food_needed_col    = (int) paras[18];
   
   age     = (int) pests[row][age_col];
   min_age = (int) pests[row][min_age_col];
@@ -119,7 +123,9 @@ void count_offspring(double **pests, double *paras, int row){
           }
           break;
       case 1: /* Offspring will be based off of food consumed */
-          offspring = 1;
+          food_consumed = pests[row][food_consumed_col];
+          food_needed   = pests[row][food_needed_col];
+          offspring     = (int) floor(food_consumed / food_needed);
           break;
       default:
           mate_access = mate_available(pests, paras, row);

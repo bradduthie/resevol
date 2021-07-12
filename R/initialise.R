@@ -11,12 +11,37 @@
 #'@param neutral_loci The number of neutral loci individuals have
 #'@return A set of values that will produce a desired G-matrix
 #'@export
-initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100, 
-                            repro = "sexual", neutral_loci = 0, max_age = 9,
-                            min_age_move = 0, max_age_move = 9,
-                            min_age_reproduce = 0, max_age_reproduce = 9, 
-                            min_age_feed = 0, max_age_feed = 9,
-                            food1_consume = 0.25, pesticide1_consume = 0.1){
+initialise_inds <- function(mine_output, 
+                            N = 1000, 
+                            xdim = 100, 
+                            ydim = 100, 
+                            repro = "sexual", 
+                            neutral_loci = 0, 
+                            max_age = 9,
+                            min_age_move = 0, 
+                            max_age_move = 9,
+                            min_age_reproduce = 0, 
+                            max_age_reproduce = 9, 
+                            min_age_feed = 0, 
+                            max_age_feed = 9,
+                            food_consume = 0.25, 
+                            pesticide_consume = 0.1,
+                            rand_age = FALSE, 
+                            move_distance = 1, 
+                            food_needed_surv = 0.25, 
+                            pesticide_tolerated_surv = 0.1,
+                            food_needed_repr = 0,
+                            pesticide_tolerated_repr = 0,
+                            reproduction_type = "lambda"){
+  
+  food      <- rep(x = 0, times = 10);
+  pesticide <- rep(x = 0, times = 10);
+  
+  sp_food   <- length(food_consume);
+  sp_pesti  <- length(pesticide_consume);
+  
+  food[1:sp_food]       <- food_consume;
+  pesticide[1:sp_pesti] <- pesticide_consume;
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
@@ -30,7 +55,11 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 1] <- 1:N; # Sample ID
   inds[, 2] <- sample(x = 0:(xdim - 1), size = N, replace = TRUE); # xloc
   inds[, 3] <- sample(x = 0:(ydim - 1), size = N, replace = TRUE); # yloc
-  inds[, 4] <- 0; # Age
+  if(rand_age == FALSE){
+      inds[, 4] <- 0; # Age
+  }else{
+      inds[, 4] <- sample(x = 0:max_age, size = N, replace = TRUE);
+  }
   if(repro == "asexual"){
     inds[, 5]  <- 0;
     inds[, 29] <- 1; # Ploidy
@@ -46,7 +75,7 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
     inds[, 29] <- 2;
     inds[, 30] <- neutral_loci;
   }
-  inds[, 6]  <-  1; # Movement distance
+  inds[, 6]  <-  move_distance; # Movement distance
   inds[, 7]  <- -1; # Mother ID
   inds[, 8]  <- -1; # Father ID
   inds[, 9]  <- -1; # Mother row
@@ -55,6 +84,16 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 12] <-  mine_output[[1]][1]; # loci;
   inds[, 13] <-  dim(mine_output[[2]])[1]; # traits;
   inds[, 14] <-  mine_output[[1]][2]; # layers;
+  inds[, 17] <-  food_needed_surv;
+  inds[, 18] <-  pesticide_tolerated_surv;
+  inds[, 19] <-  food_needed_repr;
+  inds[, 20] <-  pesticide_tolerated_repr;
+  if(reproduction_type == "lambda"){
+    inds[, 24] <- 0;
+  }
+  if(reproduction_type == "food_based"){
+    inds[, 24] <- 1;
+  }
   inds[, 25] <-  0; # Mate distance requirement
   inds[, 26] <-  1; # Reproduction parameter
   inds[, 31] <-  1; # Movement bouts
@@ -64,9 +103,27 @@ initialise_inds <- function(mine_output, N = 1000, xdim = 100, ydim = 100,
   inds[, 35] <-  max_age_feed;      # Max age of feeding
   inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
   inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
-  inds[, 38] <-  food1_consume;
-  inds[, 48] <-  pesticide1_consume;
-  inds[, 57] <-  0; # Do not eat on a bout
+  inds[, 38] <-  food[1];
+  inds[, 39] <-  food[2];
+  inds[, 40] <-  food[3];
+  inds[, 41] <-  food[4];
+  inds[, 42] <-  food[5];
+  inds[, 43] <-  food[6];
+  inds[, 44] <-  food[7];
+  inds[, 45] <-  food[8];
+  inds[, 46] <-  food[9];
+  inds[, 47] <-  food[10];
+  inds[, 48] <-  pesticide[1];
+  inds[, 49] <-  pesticide[2];
+  inds[, 50] <-  pesticide[3];
+  inds[, 51] <-  pesticide[4];
+  inds[, 52] <-  pesticide[5];
+  inds[, 53] <-  pesticide[6];
+  inds[, 54] <-  pesticide[7];
+  inds[, 55] <-  pesticide[8];
+  inds[, 56] <-  pesticide[9];
+  inds[, 57] <-  pesticide[10];
+  inds[, 58] <-  0; # Do not eat on a bout
   inds[, 81] <-  max_age;
   
   return(inds);

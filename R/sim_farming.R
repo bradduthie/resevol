@@ -182,7 +182,7 @@ sim_crops <- function(pests, land, time_steps = 100){
               0,      # 161) Proportion land with no biopesticide
               0,      # 162) StDev in crop production per landscape cell
               0,      # 163) Time taken for simulation (in seconds)
-              0       # 164) Print individual level data
+              1       # 164) Print individual level data
               );
   
   if(is.array(pests) == FALSE){

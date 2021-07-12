@@ -133,7 +133,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     while(ts < time_steps){
         
-        land_change(land, paras);
+        land_change(land, paras, ts);
  
         age_pests(pests, paras); 
         
@@ -207,6 +207,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         free(new_pests);
 
         ts++;
+        
+        Rprintf("%d\t%d\n", ts, new_total_N);
     }
     
     end        = clock();
