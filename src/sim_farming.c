@@ -35,6 +35,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     int    surviving_N;      /* Surviving individuals after a time step */
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
+    int    print_gen;        /* Should the generations be printed */
     int    *dim_IND;         /* Dimensions of the individual array */
     int    *dim_LAND;        /* Dimensions of the landscape */
   
@@ -128,6 +129,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
 
+    print_gen  = (int) paras[165];
     time_steps = (int) paras[140];
     ts         = 0;
     
@@ -208,7 +210,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
 
         ts++;
         
-        Rprintf("%d\t%d\n", ts, new_total_N);
+        if(print_gen > 0){
+            Rprintf("%d\t%d\n", ts, new_total_N);
+        }
     }
     
     end        = clock();

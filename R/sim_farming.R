@@ -7,16 +7,62 @@
 #'@param land  Landscape array
 #'@return A two dimensional array of cells with ownership values
 #'@export
-sim_crops <- function(pests, land, time_steps = 100){
+sim_crops <- function(pests, 
+                      land, 
+                      time_steps = 100, 
+                      mutation_pr = 0,
+                      crossover_pr = 0, 
+                      mutation_type = 0, 
+                      net_mu_layers = 0,
+                      net_mu_dir = 0, 
+                      mutation_direction = 0,
+                      crop_rotation_type = 2,
+                      crop_rotation_time = 1,
+                      pesticide_rotation_type = 2,
+                      pesticide_rotation_time = 1,
+                      crop_per_cell = 1,
+                      pesticide_per_cell = 1,
+                      crop_sd = 0,
+                      pesticide_sd = 0,
+                      crop_min = 0,
+                      crop_max = 1000,
+                      pesticide_min = 0,
+                      pesticide_max = 1000,
+                      crop_number = 2,
+                      pesticide_number = 1,
+                      print_inds = FALSE, 
+                      print_gens = TRUE){
   
-  N   <- dim(pests)[1];
-  W   <- dim(pests)[2];
-  X   <- dim(land)[2];
-  Y   <- dim(land)[1];
-  Z   <- dim(land)[3];
-  smu <- 1/sqrt(2); # SD of mutated loci values for sexual individuals
-  amu <- 1;         # SD of mutated loci values for asexual individuals
-  ts  <- time_steps;
+  N    <- dim(pests)[1];
+  W    <- dim(pests)[2];
+  X    <- dim(land)[2];
+  Y    <- dim(land)[1];
+  Z    <- dim(land)[3];
+  smu  <- 1/sqrt(2); # SD of mutated loci values for sexual individuals
+  amu  <- 1;         # SD of mutated loci values for asexual individuals
+  ts   <- time_steps;
+  mupr <- mutation_pr;
+  crpr <- crossover_pr;
+  mutp <- mutation_type;
+  netm <- net_mu_layers;
+  mudr <- mutation_direction;
+  netd <- net_mu_dir;
+  crty <- crop_rotation_type;
+  crti <- crop_rotation_time;
+  prty <- pesticide_rotation_type;
+  prti <- pesticide_rotation_time;
+  crpc <- crop_per_cell;
+  pepc <- pesticide_per_cell;
+  crsd <- crop_sd;
+  pssd <- pesticide_sd;
+  crmn <- crop_min;
+  crmx <- crop_max;
+  pemn <- pesticide_min;
+  pemx <- pesticide_max;
+  crpN <- crop_number;
+  pesN <- pesticide_number;
+  prin <- as.numeric(print_inds);
+  prgn <- as.numeric(print_gens);
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -128,14 +174,14 @@ sim_crops <- function(pests, land, time_steps = 100){
               W,      # 107) Number of cols in the pest array
               N,      # 108) Highest ID of an individual
               100,    # 109) Column where the traits start
-              0.01,   # 110) Crossover probability for sexual reproduction
-              0,      # 111) Mutation type (0 = new allele; 1 = vary existing)
-              0.01,   # 112) Mutation rate
-              0,      # 113) Network layers that can mutate 
-              0,      # 114) Mutation direction
+              crpr,   # 110) Crossover probability for sexual reproduction
+              mutp,   # 111) Mutation type (0 = new allele; 1 = vary existing)
+              mupr,   # 112) Mutation rate
+              netm,   # 113) Network layers that can mutate 
+              mudr,   # 114) Mutation direction
               amu,    # 115) Mutation SD (asexual)
               smu,    # 116) Mutation SD (sexual)
-              0,      # 117) Layers mutate from loci to (1) or traits back (0)
+              netd,   # 117) Layers mutate from loci to (1) or traits back (0)
               1,      # 118) Land layer where the food 1 is located
               2,      # 119) Land layer where the food 2 is located
               3,      # 120) Land layer where the food 3 is located
@@ -160,29 +206,30 @@ sim_crops <- function(pests, land, time_steps = 100){
               N,      # 139) Number of individuals in the next time step
               ts,     # 140) Total number of time steps to run
               0,      # 141) Extinction has occurred
-              2,      # 142) Type of crop rotation
-              10,     # 143) Time steps between crop rotation
-              1,      # 144) Crop production per landscape cell
-              1,      # 145) Type of crop production
-              0,      # 146) Minimum crop production per landscape cell
-              10,     # 147) Maximum crop production per landscape cell
-              2,      # 148) Type of biopesticide rotation
-              10,     # 149) Time steps between biopesticide rotation
-              1,      # 150) Biopesticide amount per landscape cell
-              0,      # 151) Type of biopesticide application
-              0,      # 152) StDev in biopesticide per landscape cell
-              0,      # 153) Minimum biopesticide per landscape cell
-              10,     # 154) Maximum biopesticide per landscape cell
+              crty,   # 142) Type of crop rotation
+              crti,   # 143) Time steps between crop rotation
+              crpc,   # 144) Crop production per landscape cell
+              0,      # 145) Type of crop production (UNUSED)
+              crmn,   # 146) Minimum crop production per landscape cell
+              crmx,   # 147) Maximum crop production per landscape cell
+              prty,   # 148) Type of biopesticide rotation
+              crti,   # 149) Time steps between biopesticide rotation
+              pepc,   # 150) Biopesticide amount per landscape cell
+              0,      # 151) Type of biopesticide application (UNUSED)
+              pssd,   # 152) StDev in biopesticide per landscape cell
+              pemn,   # 153) Minimum biopesticide per landscape cell
+              pemx,   # 154) Maximum biopesticide per landscape cell
               0,      # 155) Landscape layer where land owner is located
-              1,      # 156) Number of crops produced
-              2,      # 157) Number of biopesticides used
+              crpN,   # 156) Number of crops produced
+              pesN,   # 157) Number of biopesticides used
               10,     # 158) Maximum possible crop types
               10,     # 159) Maximum possible biopesticide types
-              0,      # 160) Proportion land left fallow
-              0,      # 161) Proportion land with no biopesticide
-              0,      # 162) StDev in crop production per landscape cell
+              0,      # 160) Proportion land left fallow (UNUSED)
+              0,      # 161) Proportion land with no biopesticide (UNUSED)
+              crsd,   # 162) StDev in crop production per landscape cell
               0,      # 163) Time taken for simulation (in seconds)
-              1       # 164) Print individual level data
+              prin,   # 164) Print individual level data
+              prgn    # 165) Print time step and N in the console 
               );
   
   if(is.array(pests) == FALSE){

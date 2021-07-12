@@ -7,10 +7,14 @@ mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 1000, npsize = 8000,
                     max_gen = 4, sampleK = 400, chooseK = 4, layers = 6);
 land  <- make_landscape(rows = 10, cols = 10, depth = 21, farms = 4);
 pests <- initialise_inds(mine_output = mg, N = 100, neutral_loci = 1000, 
-                         xdim = 4, ydim = 4, repro = "biparental", 
+                         xdim = 4, ydim = 4, repro = "sexual", 
                          selfing = FALSE, food_consume = 0.25, 
                          pesticide_consume = 0.1);
-tt <- sim_crops(pests, land, time_steps = 4);
+tt    <- sim_crops(pests, land, time_steps = 4, mutation_pr = 0.01,
+                   crossover_pr = 0.01, net_mu_layers = 0, 
+                   crop_rotation_time = 1, pesticide_rotation_time = 1,
+                   crop_per_cell = 1, pesticide_per_cell = 1,
+                   crop_number = 2, pesticide_number = 1, print_inds = FALSE);
 
 
 

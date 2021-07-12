@@ -777,7 +777,6 @@ void inbreeding_coefficient(double **offspring, double *paras, int offspr){
     }
     
     fval = (double) IBDs / tot_neutrals;
-    printf("%f\t%f\t%f\n", fval, IBDs, tot_neutrals);
     
     offspring[offspr][inbreeding_coef_col] = fval;
 }
