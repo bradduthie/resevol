@@ -102,7 +102,7 @@ sim_crops <- function(pests, land, time_steps = 100){
               81.0,   # 81) pests column for mortality has occurred
               82.0,   # 82) pests column for age of food threshold enacted
               83.0,   # 83) pests column for age of pesticide threshold enacted
-              84.0,   # 84)
+              84.0,   # 84) pests column for inbreeding coefficient
               85.0,   # 85)
               86.0,   # 86)
               87.0,   # 87)
@@ -128,9 +128,9 @@ sim_crops <- function(pests, land, time_steps = 100){
               W,      # 107) Number of cols in the pest array
               N,      # 108) Highest ID of an individual
               100,    # 109) Column where the traits start
-              0.0,    # 110) Crossover probability for sexual reproduction
+              0.01,   # 110) Crossover probability for sexual reproduction
               0,      # 111) Mutation type (0 = new allele; 1 = vary existing)
-              0.0,    # 112) Mutation rate
+              0.01,   # 112) Mutation rate
               0,      # 113) Network layers that can mutate 
               0,      # 114) Mutation direction
               amu,    # 115) Mutation SD (asexual)

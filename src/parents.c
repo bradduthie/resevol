@@ -745,6 +745,43 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
 }
 
 
+void inbreeding_coefficient(double **offspring, double *paras, int offspr){
+    
+    int locus, neut_col, inbreeding_coef_col, neutrals, trait_st, net_st;
+    int loci1_st, neut1_st, traits, layers, trait_col, layer_col;
+    double locus_1, locus_2, fval, IBDs, tot_neutrals;
+    
+    trait_col           = (int) paras[12];  /* Number of traits held  */
+    layer_col           = (int) paras[13];  /* Network layer number held  */    
+    neut_col            = (int) paras[29];  /* N neutral alleles held   */
+    inbreeding_coef_col = (int) paras[84];
+    
+    traits   = (int) offspring[offspr][trait_col];
+    layers   = (int) offspring[offspr][layer_col];
+    neutrals = (int) offspring[offspr][neut_col];
+
+    trait_st  = (int) paras[109];       /* Col where the trait columns start  */
+    net_st    = trait_st + traits;      /* Col where net locations start      */
+    loci1_st  = net_st + layers + 3;    /* Col where first loci values start  */
+    neut1_st  = offspring[offspr][loci1_st - 1]; /* Where first neutrals      */
+
+    IBDs         = 0.0;
+    tot_neutrals = (double) neutrals;
+    
+    for(locus = 0; locus < neutrals; locus++){
+        locus_1 = offspring[offspr][neut1_st + locus];
+        locus_2 = offspring[offspr][neut1_st + locus + neutrals];
+        if(locus_1 == locus_2){
+            IBDs++;
+        }
+    }
+    
+    fval = (double) IBDs / tot_neutrals;
+    printf("%f\t%f\t%f\n", fval, IBDs, tot_neutrals);
+    
+    offspring[offspr][inbreeding_coef_col] = fval;
+}
+
 /* =============================================================================
  * Places the offspring in the offspring array depending on reproduction type
  *     pests:     The array holding the parent's information
@@ -782,11 +819,13 @@ void make_offspring(double **pests, double **offspring, double *paras){
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
                     insert_diploid_traits(offspring, paras, offspring_count);
+                    inbreeding_coefficient(offspring, paras, offspring_count);
                     break;
                 case 2: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
                     insert_diploid_traits(offspring, paras, offspring_count);
+                    inbreeding_coefficient(offspring, paras, offspring_count);
                     break;
                 case 3:
                     break;

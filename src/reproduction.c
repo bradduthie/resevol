@@ -123,9 +123,12 @@ void count_offspring(double **pests, double *paras, int row){
           }
           break;
       case 1: /* Offspring will be based off of food consumed */
-          food_consumed = pests[row][food_consumed_col];
-          food_needed   = pests[row][food_needed_col];
-          offspring     = (int) floor(food_consumed / food_needed);
+          mate_access = mate_available(pests, paras, row);
+          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){ 
+              food_consumed = pests[row][food_consumed_col];
+              food_needed   = pests[row][food_needed_col];
+              offspring     = (int) floor(food_consumed / food_needed);
+          }
           break;
       default:
           mate_access = mate_available(pests, paras, row);

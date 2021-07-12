@@ -9,6 +9,29 @@
 #'@param repro Type of reproduction allowed: "asexual", "sexual", and
 #'  "biparental". Note that if repro > 0, this causes a diploid genome.
 #'@param neutral_loci The number of neutral loci individuals have
+#'@param max_age The maximum age of an individual
+#'@param min_age_move The minimum age at which an individual can move
+#'@param max_age_move The maximum age at which an individual can move
+#'@param min_age_reproduce The minimum age which an individual can reproduce
+#'@param max_age_reproduce The maximum age which an individual can reproduce
+#'@param min_age_feed The minimum age at which an individual feeds
+#'@param max_age_feed The maximum age at which an individual feeds
+#'@param food_consume The amount of food consumed during feeding
+#'@param rand_age Initialise individuals with a random age
+#'@param move_distance Maximum cells moved in one bout of movement
+#'@param food_needed_surv Food needed to survive (if over min_age_feed)
+#'@param pesticide_tolerated_surv Pesticide tolerated by individual
+#'@param food_needed_repr Food needed to reproduce 1 offspring
+#'@param pesticide_tolerated_repr Pesticide tolerated to allow reproduction
+#'@param reproduction_type Poisson reproduction ("lambda") vs "food_based"
+#'@param mating_distance Distance in cells within which mate is available
+#'@param lambda_value individual value for poisson reproduction
+#'@param movement_bouts Number of bouts of movement per time step
+#'@param selfing If sexual reproduction, is selfing allowed?
+#'@param feed_while_moving Do individuals feed after each movement bout?
+#'@param mortality_type Type of mortality (currently only one option)
+#'@param age_food_threshold Age at which food threshold is enacted
+#'@param age_pesticide_threshold Age at which pesticide threshold is enacted
 #'@return A set of values that will produce a desired G-matrix
 #'@export
 initialise_inds <- function(mine_output, 
@@ -32,7 +55,15 @@ initialise_inds <- function(mine_output,
                             pesticide_tolerated_surv = 0.1,
                             food_needed_repr = 0,
                             pesticide_tolerated_repr = 0,
-                            reproduction_type = "lambda"){
+                            reproduction_type = "lambda",
+                            mating_distance = 1,
+                            lambda_value = 1,
+                            movement_bouts = 1,
+                            selfing = TRUE,
+                            feed_while_moving = FALSE,
+                            mortality_type = 0,
+                            age_food_threshold = NA,
+                            age_pesticide_threshold = NA){
   
   food      <- rep(x = 0, times = 10);
   pesticide <- rep(x = 0, times = 10);
@@ -42,6 +73,14 @@ initialise_inds <- function(mine_output,
   
   food[1:sp_food]       <- food_consume;
   pesticide[1:sp_pesti] <- pesticide_consume;
+  
+  if(is.na(age_food_threshold) == TRUE){
+      age_food_threshold <- max_age;
+  }
+  
+  if(is.na(age_pesticide_threshold) == TRUE){
+    age_pesticide_threshold <- max_age;
+  }
   
   if(repro != "asexual" & repro != "sexual" & repro != "biparental"){
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.")
@@ -94,9 +133,10 @@ initialise_inds <- function(mine_output,
   if(reproduction_type == "food_based"){
     inds[, 24] <- 1;
   }
-  inds[, 25] <-  0; # Mate distance requirement
-  inds[, 26] <-  1; # Reproduction parameter
-  inds[, 31] <-  1; # Movement bouts
+  inds[, 25] <-  mating_distance; # Mate distance requirement
+  inds[, 26] <-  lambda_value; # Reproduction parameter
+  inds[, 27] <-  selfing;
+  inds[, 31] <-  movement_bouts; # Movement bouts
   inds[, 32] <-  min_age_move;      # Min age of movement
   inds[, 33] <-  max_age_move;      # Max age of movement
   inds[, 34] <-  min_age_feed;      # Min age of feeding
@@ -123,8 +163,11 @@ initialise_inds <- function(mine_output,
   inds[, 55] <-  pesticide[8];
   inds[, 56] <-  pesticide[9];
   inds[, 57] <-  pesticide[10];
-  inds[, 58] <-  0; # Do not eat on a bout
+  inds[, 58] <-  feed_while_moving; # Do not eat on a bout
+  inds[, 80] <-  mortality_type;
   inds[, 81] <-  max_age;
+  inds[, 83] <-  age_food_threshold;
+  inds[, 84] <-  age_pesticide_threshold;
   
   return(inds);
 }
