@@ -134,7 +134,7 @@ initialise_inds <- function(mine_output,
     inds[, 24] <- 1;
   }
   inds[, 25] <-  mating_distance; # Mate distance requirement
-  inds[, 26] <-  lambda_value; # Reproduction parameter
+  inds[, 26] <-  lambda_value;    # Reproduction parameter
   inds[, 27] <-  selfing;
   inds[, 31] <-  movement_bouts; # Movement bouts
   inds[, 32] <-  min_age_move;      # Min age of movement

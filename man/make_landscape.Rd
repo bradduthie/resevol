@@ -4,7 +4,14 @@
 \alias{make_landscape}
 \title{Landscape initialisation}
 \usage{
-make_landscape(rows, cols, depth = 2, farms = 4, public_land = 0, farm_var = 0)
+make_landscape(
+  rows,
+  cols,
+  depth = 21,
+  farms = 4,
+  public_land = 0,
+  farm_var = 0
+)
 }
 \arguments{
 \item{rows}{The dimension of the other side of the landscape (e.g., Longitude)}

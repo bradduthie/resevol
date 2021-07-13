@@ -1,10 +1,54 @@
+
+gmt <- matrix(data = 0, nrow = 2, ncol = 2);
+diag(gmt) <- 1;
+gmt[1, 2] <- -0.5;
+gmt[2, 1] <- -0.5;
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 1000, npsize = 8000, 
+                    max_gen = 6, sampleK = 400, chooseK = 4, layers = 2);
+
+sim <- run_farm_sim(mine_output             = mg,
+                    N                       = 1000,
+                    neutral_loci            = 1000,
+                    xdim                    = 10,
+                    ydim                    = 10,
+                    repro                   = "asexual",
+                    max_age                 = 4,
+                    selfing                 = FALSE,
+                    food_consume            = 0.25,
+                    pesticide_consume       = 0.1,
+                    food_needed_surv        = 0.025,
+                    min_age_reproduce       = 2,
+                    lambda_value            = 1.3,
+                    farms                   = 4,
+                    time_steps              = 20,
+                    mutation_pr             = 0.01,
+                    crossover_pr            = 0.01,
+                    net_mu_layers           = 0,
+                    crop_rotation_time      = 4,
+                    pesticide_rotation_time = 4,
+                    crop_per_cell           = 1,
+                    pesticide_per_cell      = 0.2,
+                    crop_number             = 1,
+                    pesticide_number        = 2,
+                    print_inds              = FALSE, # Careful with this one
+                    K_on_birth              = 1000000,
+                    print_last              = FALSE
+                    );
+
+
+
+
+
+
 # Initialising a file
 #library(helicoverpa)
 
 gmt <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
+gmt[1, 2] <- -0.5;
+gmt[2, 1] <- -0.5;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 1000, npsize = 8000, 
-                    max_gen = 600, sampleK = 400, chooseK = 4, layers = 2);
+                    max_gen = 6, sampleK = 400, chooseK = 4, layers = 2);
 land  <- make_landscape(rows = 10, cols = 10, depth = 21, farms = 4);
 pests <- initialise_inds(mine_output = mg, N = 1000, neutral_loci = 1000, 
                          xdim = 4, ydim = 4, repro = "biparental", max_age = 4, 
@@ -22,8 +66,7 @@ tt    <- sim_crops(pests, land, time_steps = 20, mutation_pr = 0.01,
 
 
 # NEXT STEPS:
-# 1. Rotate the landscape given ts %% X == 0, food and biopesticide
-# 2. Collect information within the main loop and print to a file
+
 
 inds <- read.csv("last_time_step.csv", header = FALSE);
 

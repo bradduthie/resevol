@@ -1,10 +1,303 @@
+#' Initialise individuals and simulate farming
+#' 
+#' Initialises a new set of individuals and then simulates farming over time
+#'@param mine_output The output from mine_gmatrix
+#'@param N Number of individuals to be initialised
+#'@param xdim Horizontal dimensions of the landscape
+#'@param ydim Vertical dimensions of the landscape
+#'@param repro Type of reproduction allowed: "asexual", "sexual", and
+#'  "biparental". Note that if repro > 0, this causes a diploid genome.
+#'@param neutral_loci The number of neutral loci individuals have
+#'@param max_age The maximum age of an individual
+#'@param min_age_move The minimum age at which an individual can move
+#'@param max_age_move The maximum age at which an individual can move
+#'@param min_age_reproduce The minimum age which an individual can reproduce
+#'@param max_age_reproduce The maximum age which an individual can reproduce
+#'@param min_age_feed The minimum age at which an individual feeds
+#'@param max_age_feed The maximum age at which an individual feeds
+#'@param food_consume The amount of food consumed during feeding
+#'@param rand_age Initialise individuals with a random age
+#'@param move_distance Maximum cells moved in one bout of movement
+#'@param food_needed_surv Food needed to survive (if over min_age_feed)
+#'@param pesticide_tolerated_surv Pesticide tolerated by individual
+#'@param food_needed_repr Food needed to reproduce 1 offspring
+#'@param pesticide_tolerated_repr Pesticide tolerated to allow reproduction
+#'@param reproduction_type Poisson reproduction ("lambda") vs "food_based"
+#'@param mating_distance Distance in cells within which mate is available
+#'@param lambda_value individual value for poisson reproduction
+#'@param movement_bouts Number of bouts of movement per time step
+#'@param selfing If sexual reproduction, is selfing allowed?
+#'@param feed_while_moving Do individuals feed after each movement bout?
+#'@param mortality_type Type of mortality (currently only one option)
+#'@param age_food_threshold Age at which food threshold is enacted
+#'@param age_pesticide_threshold Age at which pesticide threshold is enacted
+#'@param farms How many farms should there be on the landscape?
+#'@param time_steps Time steps in the simulation
+#'@param mutation_pr Probability of a loci mutating
+#'@param crossover_pr Probability of crossover at homologous loci
+#'@param mutation_type Type of mutation used
+#'@param net_mu_layers Layers of the network allowed to mutate
+#'@param net_mu_dir  Layers mutate from loci to (1) or traits back (0)
+#'@param mutation_direction Is mutation directional (unlikely to need)
+#'@param crop_rotation_type None (0) or random (1) rotation of crop type
+#'@param crop_rotation_time How frequently are the crops rotated?
+#'@param crop_per_cell How much crop is put on a single cell?
+#'@param pesticide_per_cell How much pesticide is put on a single cell?
+#'@param crop_sd What is the standard deviation of crop on a cell?
+#'@param pesticide_sd What is the standard deviation of pesticide on a cell?
+#'@param crop_min What is the minimum crop amount allowed per cell?
+#'@param crop_max What is the maximum crop amount allowed per cell?
+#'@param pesticide_min What is the minimum pesticide amount allowed per cell?
+#'@param pesticide_max What is the maximum pesticide amount allowed per cell?
+#'@param crop_number How many crops exist on the landscape?
+#'@param pesticide_number How many pesticides are applied on the landscape?
+#'@param print_inds Should the full list of individuals be printed? (CAREFUL)
+#'@param print_gens Should a summary of each time step be printed?
+#'@param print_last Should the last time step of individuals be printed?
+#'@param K_on_birth Is there a carrying capacity applied on newborns?
+#'@return prints a simulation file and output
+#'@export
+run_farm_sim <- function(mine_output,
+                         N = 1000, 
+                         xdim = 100, 
+                         ydim = 100, 
+                         repro = "sexual", 
+                         neutral_loci = 1000, 
+                         max_age = 9,
+                         min_age_move = 0, 
+                         max_age_move = 9,
+                         min_age_reproduce = 0, 
+                         max_age_reproduce = 9, 
+                         min_age_feed = 0, 
+                         max_age_feed = 9,
+                         food_consume = 0.25, 
+                         pesticide_consume = 0.1,
+                         rand_age = FALSE, 
+                         move_distance = 1, 
+                         food_needed_surv = 0.25, 
+                         pesticide_tolerated_surv = 0.1,
+                         food_needed_repr = 0,
+                         pesticide_tolerated_repr = 0,
+                         reproduction_type = "lambda",
+                         mating_distance = 1,
+                         lambda_value = 1,
+                         movement_bouts = 1,
+                         selfing = TRUE,
+                         feed_while_moving = FALSE,
+                         mortality_type = 0,
+                         age_food_threshold = 0,
+                         age_pesticide_threshold = 0,
+                         farms = 4,
+                         time_steps = 100, 
+                         mutation_pr = 0,
+                         crossover_pr = 0, 
+                         mutation_type = 0, 
+                         net_mu_layers = 0,
+                         net_mu_dir = 0, 
+                         mutation_direction = 0,
+                         crop_rotation_type = 2,
+                         crop_rotation_time = 1,
+                         pesticide_rotation_type = 2,
+                         pesticide_rotation_time = 1,
+                         crop_per_cell = 1,
+                         pesticide_per_cell = 1,
+                         crop_sd = 0,
+                         pesticide_sd = 0,
+                         crop_min = 0,
+                         crop_max = 1000,
+                         pesticide_min = 0,
+                         pesticide_max = 1000,
+                         crop_number = 2,
+                         pesticide_number = 1,
+                         print_inds = FALSE, 
+                         print_gens = TRUE,
+                         print_last = TRUE,
+                         K_on_birth = 1000000){
+  
+    land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = 4);
+  
+    move_distance_T             <- check_is_trait(move_distance);
+    food_needed_surv_T          <- check_is_trait(food_needed_surv);
+    pesticide_tolerated_surv_T  <- check_is_trait(pesticide_tolerated_surv);
+    food_needed_repr_T          <- check_is_trait(food_needed_repr);
+    pesticide_tolerated_repr_T  <- check_is_trait(pesticide_tolerated_repr);
+    mating_distance_T           <- check_is_trait(mating_distance);
+    lambda_value_T              <- check_is_trait(lambda_value);
+    movement_bouts_T            <- check_is_trait(movement_bouts);
+    
+    food_consume_T <- rep(x = 0, times = length(food_consume));
+    for(i in 1:length(food_consume)){
+          food_consume_T[i] <- check_is_trait(food_consume[i]);
+    }
+    
+    pesticide_consume_T <- rep(x = 0, times = length(pesticide_consume));
+    for(i in 1:length(pesticide_consume)){
+          pesticide_consume_T[i] <- check_is_trait(pesticide_consume[i]);
+    }
+    
+    move_dist <- move_distance;
+    if(move_distance_T == TRUE){
+        move_dist <- 0;
+    }
+    
+    food_n_surv <- food_needed_surv;
+    if(food_needed_surv_T == TRUE){
+        food_n_surv <- 0;
+    }
+    
+    pest_t_surv <- pesticide_tolerated_surv;
+    if(pesticide_tolerated_surv_T == TRUE){
+        pest_t_surv <- 0;
+    }
+    
+    food_n_repr <- food_needed_repr;
+    if(food_needed_repr_T == TRUE){
+        food_n_repr <- 0;
+    }
+    
+    pest_t_repr <- pesticide_tolerated_repr;
+    if(pesticide_tolerated_repr_T == TRUE){
+        pest_t_repr <- 0;
+    }
+    
+    mate_dist <- mating_distance;
+    if(mating_distance_T == TRUE){
+        mate_dist <- 0;
+    }
+    
+    lamb_val <- lambda_value;
+    if(lambda_value_T == TRUE){
+        lamb_val <- 0;
+    }
+    
+    move_bout <- movement_bouts;
+    if(movement_bouts_T == TRUE){
+        move_bout <- 0;
+    }
+    
+    food_consume <- as.list(food_consume);
+    food_cons    <- NULL;
+    for(i in 1:length(food_consume)){
+        if(food_consume_T[i] == TRUE){
+            food_cons[[i]]    <- as.numeric(0);
+        }else{
+            food_cons[[i]]    <- as.numeric(food_consume[[i]]);
+            food_consume[[i]] <- as.numeric(food_consume[[i]]);
+        }
+    }
+    
+    pesticide_consume <- as.list(pesticide_consume);
+    pest_cons         <- NULL;
+    for(i in 1:length(pesticide_consume)){
+        if(pesticide_consume_T[i] == TRUE){
+            pest_cons[[i]] <- as.numeric(0);
+        }else{
+            pest_cons[[i]]         <- as.numeric(pesticide_consume[[i]]);
+            pesticide_consume[[i]] <- as.numeric(pesticide_consume[[i]]);
+        }
+    }
+    
+    pest <- initialise_inds(mine_output              = mine_output, 
+                            N                        = N, 
+                            xdim                     = xdim, 
+                            ydim                     = ydim, 
+                            repro                    = repro, 
+                            neutral_loci             = neutral_loci, 
+                            max_age                  = max_age,
+                            min_age_move             = min_age_move, 
+                            max_age_move             = max_age_move,
+                            min_age_reproduce        = min_age_reproduce, 
+                            max_age_reproduce        = max_age_reproduce, 
+                            min_age_feed             = min_age_feed, 
+                            max_age_feed             = max_age_feed,
+                            food_consume             = food_cons, 
+                            pesticide_consume        = pest_cons,
+                            rand_age                 = rand_age, 
+                            move_distance            = move_dist, 
+                            food_needed_surv         = food_n_surv, 
+                            pesticide_tolerated_surv = pest_t_surv,
+                            food_needed_repr         = food_n_repr,
+                            pesticide_tolerated_repr = pest_t_repr,
+                            reproduction_type        = reproduction_type,
+                            mating_distance          = mate_dist,
+                            lambda_value             = lamb_val,
+                            movement_bouts           = move_bout,
+                            selfing                  = selfing,
+                            feed_while_moving        = feed_while_moving,
+                            mortality_type           = mortality_type,
+                            age_food_threshold       = age_food_threshold,
+                            age_pesticide_threshold  = age_pesticide_threshold);
+    
+    sim_results <- sim_crops(pests                    = pest, 
+                             land                     = land,
+                             time_steps               = time_steps, 
+                             mutation_pr              = mutation_pr,
+                             crossover_pr             = crossover_pr, 
+                             mutation_type            = mutation_type,
+                             net_mu_layers            = net_mu_layers, 
+                             net_mu_dir               = net_mu_dir,
+                             mutation_direction       = mutation_direction,
+                             crop_rotation_type       = crop_rotation_type,
+                             crop_rotation_time       = crop_rotation_time,
+                             pesticide_rotation_type  = pesticide_rotation_type,
+                             pesticide_rotation_time  = pesticide_rotation_time,
+                             crop_per_cell            = crop_per_cell,
+                             pesticide_per_cell       = pesticide_per_cell,
+                             crop_sd                  = crop_sd,
+                             pesticide_sd             = pesticide_sd,
+                             crop_min                 = crop_min,
+                             crop_max                 = crop_max,
+                             pesticide_min            = pesticide_min,
+                             pesticide_max            = pesticide_max,
+                             crop_number              = crop_number,
+                             pesticide_number         = pesticide_number,
+                             print_inds               = print_inds, 
+                             print_gens               = print_gens,
+                             print_last               = print_last,
+                             K_on_birth               = K_on_birth,
+                             move_distance            = move_distance,
+                             food_needed_surv         = food_needed_surv,
+                             pesticide_tolerated_surv = pest_t_surv,
+                             food_needed_repr         = food_needed_repr,
+                             pesticide_tolerated_repr = pest_t_repr,
+                             mating_distance          = mating_distance,
+                             food_consume             = food_consume,
+                             pesticide_consume        = pesticide_consume,
+                             lambda_value             = lambda_value,
+                             movement_bouts           = movement_bouts);
+  
+    return(sim_results);
+}
+
 #' simulate farming
 #'
-#' Builds a layer of the landscape with a shortest-splitline algorithm to assign
-#' landscape cells among farms
+#' Simulates farming over time
 #'
 #'@param pests Pest array
 #'@param land  Landscape array
+#'@param time_steps Time steps in the simulation
+#'@param mutation_pr Probability of a loci mutating
+#'@param crossover_pr Probability of crossover at homologous loci
+#'@param mutation_type Type of mutation used
+#'@param net_mu_layers Layers of the network allowed to mutate
+#'@param net_mu_dir  Layers mutate from loci to (1) or traits back (0)
+#'@param mutation_direction Is mutation directional (unlikely to need)
+#'@param crop_rotation_type None (0) or random (1) rotation of crop type
+#'@param crop_rotation_time How frequently are the crops rotated?
+#'@param crop_per_cell How much crop is put on a single cell?
+#'@param pesticide_per_cell How much pesticide is put on a single cell?
+#'@param crop_sd What is the standard deviation of crop on a cell?
+#'@param pesticide_sd What is the standard deviation of pesticide on a cell?
+#'@param crop_min What is the minimum crop amount allowed per cell?
+#'@param crop_max What is the maximum crop amount allowed per cell?
+#'@param pesticide_min What is the minimum pesticide amount allowed per cell?
+#'@param pesticide_max What is the maximum pesticide amount allowed per cell?
+#'@param crop_number How many crops exist on the landscape?
+#'@param pesticide_number How many pesticides are applied on the landscape?
+#'@param print_inds Should the full list of individuals be printed? (CAREFUL)
+#'@param print_gens Should a summary of each time step be printed?
+#'@param print_last Should the last time step of individuals be printed?
+#'@param K_on_birth Is there a carrying capacity applied on newborns?
 #'@return A two dimensional array of cells with ownership values
 #'@export
 sim_crops <- function(pests, 
@@ -33,7 +326,17 @@ sim_crops <- function(pests,
                       print_inds = FALSE, 
                       print_gens = TRUE,
                       print_last = TRUE,
-                      K_on_birth = 0
+                      K_on_birth = 0,
+                      move_distance = 1,
+                      food_needed_surv = 0.25,
+                      pesticide_tolerated_surv = 0.1,
+                      food_needed_repr = 0,
+                      pesticide_tolerated_repr = 0,
+                      mating_distance = 0,
+                      food_consume = 0.25,
+                      pesticide_consume = 0.1,
+                      lambda_value = 1,
+                      movement_bouts = 1
                       ){
   
   N    <- dim(pests)[1];
@@ -238,8 +541,12 @@ sim_crops <- function(pests,
               plst,   # 166) Print last individuals in simulation
               konb    # 167) Maximum number of births allowed in time step
               );
-  
-  paras[26] <- 100;
+
+  paras <- substitute_traits(paras, move_distance, food_needed_surv,
+                             pesticide_tolerated_surv, food_needed_repr,
+                             pesticide_tolerated_repr, mating_distance,
+                             food_consume, pesticide_consume, lambda_value,
+                             movement_bouts);
   
   if(is.array(pests) == FALSE){
     stop("ERROR: pests must be a 2D array.");
@@ -257,15 +564,100 @@ run_farming_sim <- function(IND, LAND, PARAS){
   .Call("sim_farming", IND, LAND, PARAS);
 }
 
+
+substitute_traits <- function(paras, move_distance, food_needed_surv,
+                              pesticide_tolerated_surv, food_needed_repr,
+                              pesticide_tolerated_repr, mating_distance,
+                              food_consume, pesticide_consume, lambda_value,
+                              movement_bouts){
+  
+    Tst <- paras[110] - 1;
+  
+    move_distance_T             <- check_is_trait(move_distance);
+    food_needed_surv_T          <- check_is_trait(food_needed_surv);
+    pesticide_tolerated_surv_T  <- check_is_trait(pesticide_tolerated_surv);
+    food_needed_repr_T          <- check_is_trait(food_needed_repr);
+    pesticide_tolerated_repr_T  <- check_is_trait(pesticide_tolerated_repr);
+    mating_distance_T           <- check_is_trait(mating_distance);
+    lambda_value_T              <- check_is_trait(lambda_value);
+    movement_bouts_T            <- check_is_trait(movement_bouts);
+    
+    food_consume_T <- rep(x = 0, times = length(food_consume));
+    for(i in 1:length(food_consume)){
+        food_consume_T[i] <- check_is_trait(food_consume[[i]]);
+    }
+    pesticide_consume_T <- rep(x = 0, times = length(pesticide_consume));
+    for(i in 1:length(pesticide_consume)){
+        pesticide_consume_T[i] <- check_is_trait(pesticide_consume[[i]]);
+    }
+    
+    # This series of ifs inserts the trait columns into the paras vector
+    if(move_distance_T == TRUE){
+        move_distance_N <- get_trait_number(move_distance) + Tst;
+        paras[6]        <- move_distance_N;
+    }
+    
+    if(food_needed_surv_T == TRUE){
+        food_needed_surv_N <- get_trait_number(food_needed_surv) + Tst;
+        paras[17]          <- food_needed_surv_N;
+    }
+    
+    if(pesticide_tolerated_surv_T == TRUE){
+        pesti_tol_surv_N <- get_trait_number(pesticide_tolerated_surv) + Tst;
+        paras[18]          <- pesti_tol_surv_N;
+    }
+    
+    if(food_needed_repr_T == TRUE){
+        food_needed_repr_N <- get_trait_number(food_needed_repr) + Tst;
+        paras[19]          <- food_needed_repr_N;
+    }
+    
+    if(pesticide_tolerated_repr_T == TRUE){
+        pesti_tol_repr_N <- get_trait_number(pesticide_tolerated_repr) + Tst;
+        paras[20]        <- pesti_tol_repr_N;
+    }
+    
+    if(mating_distance_T == TRUE){
+        mating_distance_N <- get_trait_number(mating_distance) + Tst;
+        paras[25]         <- mating_distance_N;
+    }
+    
+    if(lambda_value_T == TRUE){
+        lambda_value_N <- get_trait_number(lambda_value) + Tst;
+        paras[26]      <- lambda_value_N;
+    }
+    
+    if(movement_bouts_T == TRUE){
+        movement_bouts_N <- get_trait_number(movement_bouts) + Tst;
+        paras[31]        <- movement_bouts_N;
+    }
+    
+    for(i in 1:length(food_consume)){
+        if(food_consume_T[i] == TRUE){
+            food_consume_N <- get_trait_number(food_consume[[i]]) + Tst;
+            paras[37 + i]  <- food_consume_N;
+        }
+    }
+    
+    for(i in 1:length(pesticide_consume)){
+        if(pesticide_consume_T[i] == TRUE){
+            pesticide_cons_T <- get_trait_number(pesticide_consume[[i]]) + Tst;
+            paras[47 + i]    <- pesticide_cons_T;
+        }
+    }
+    
+    return(paras);
+}
+
 # Checks to see if something has been assigned as a trait
 check_is_trait <- function(val){
   is_trait <- FALSE;
   val_char <- is.character(val);
   if(val_char == TRUE){
-    val_splt <- strsplit(val, split = "")[[1]][1];
-    if(val_splt == "T"){
-      is_trait <- TRUE;
-    }
+      val_splt <- strsplit(val, split = "")[[1]][1];
+      if(val_splt == "T"){
+          is_trait <- TRUE;
+      }
   }
   return(is_trait);
 }
