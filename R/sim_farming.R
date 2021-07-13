@@ -31,7 +31,9 @@ sim_crops <- function(pests,
                       crop_number = 2,
                       pesticide_number = 1,
                       print_inds = FALSE, 
-                      print_gens = TRUE
+                      print_gens = TRUE,
+                      print_last = TRUE,
+                      K_on_birth = 0
                       ){
   
   N    <- dim(pests)[1];
@@ -64,6 +66,8 @@ sim_crops <- function(pests,
   pesN <- pesticide_number;
   prin <- as.numeric(print_inds);
   prgn <- as.numeric(print_gens);
+  plst <- as.numeric(print_last);
+  konb <- K_on_birth;
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -230,10 +234,12 @@ sim_crops <- function(pests,
               crsd,   # 162) StDev in crop production per landscape cell
               0,      # 163) Time taken for simulation (in seconds)
               prin,   # 164) Print individual level data
-              prgn    # 165) Print time step and N in the console
+              prgn,   # 165) Print time step and N in the console
+              plst,   # 166) Print last individuals in simulation
+              konb    # 167) Maximum number of births allowed in time step
               );
   
-  # paras[85] <- 100;
+  paras[26] <- 100;
   
   if(is.array(pests) == FALSE){
     stop("ERROR: pests must be a 2D array.");

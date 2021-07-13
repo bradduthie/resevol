@@ -120,8 +120,11 @@ void count_offspring(double **pests, double *paras, int row){
   switch(repr_type){
       case 0:  /* Reproduction is just based off of lambda value */
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){ 
-              offspring = rpois(repr_param + repr_incr);
+          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){
+              offspring = 0;
+              if( (repr_param + repr_incr) > 0 ){
+                  offspring = rpois(repr_param + repr_incr);
+              }
           }
           break;
       case 1: /* Offspring will be based off of food consumed */
@@ -135,14 +138,17 @@ void count_offspring(double **pests, double *paras, int row){
       default:
           mate_access = mate_available(pests, paras, row);
           if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){
-              offspring = rpois(repr_param + repr_incr);
+              offspring = 0;
+              if( (repr_param + repr_incr) > 0 ){
+                  offspring = rpois(repr_param + repr_incr);
+              }
           }
           break;
   }
 
   pests[row][mate_access_col] = (double) mate_access;
   if(sex < 3){
-    pests[row][off_col] = (double) offspring;
+      pests[row][off_col] = (double) offspring;
   }
 
   paras[106] += pests[row][off_col];
@@ -155,14 +161,28 @@ void count_offspring(double **pests, double *paras, int row){
  * ========================================================================== */
 void calculate_offspring(double **pests, double *paras){
   
-  int ind, N;
+  int ind, N, tot_offspring, birth_K, off_col;
 
-  N = (int) paras[101];
+  off_col = (int) paras[10];
+  N       = (int) paras[101];
+  birth_K = (int) paras[167];
   
   paras[106] = 0.0; /* Start with no offspring */
   
   for(ind = 0; ind < N; ind++){
-    count_offspring(pests, paras, ind);
+      count_offspring(pests, paras, ind);
+  }
+  
+  tot_offspring = (int) paras[106];
+  if(birth_K > 0){
+      while(tot_offspring > birth_K){
+          ind = get_rand_int(0, N - 1);
+          if(pests[ind][off_col] > 0){
+              pests[ind][off_col]--;
+              tot_offspring--;
+          }
+      }
+      paras[106] = (double) tot_offspring;
   }
 }
 

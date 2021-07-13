@@ -7,14 +7,16 @@
  * ========================================================================== */
 void print_all_pests(double **pests, double *paras, int ts){
   
-  int i, j, N, cols, extinct, print_inds;
+  int i, j, N, cols, extinct, print_inds, print_last, last_time;
   
   FILE *ind_output;
   
   N          = (int) paras[101];
   cols       = (int) paras[107];
+  last_time  = (int) paras[140];
   extinct    = (int) paras[141];
   print_inds = (int) paras[164];
+  print_last = (int) paras[166];
   
   if(extinct == 0 && print_inds > 0){
     if(ts == 0){
@@ -22,6 +24,18 @@ void print_all_pests(double **pests, double *paras, int ts){
     }else{
         ind_output = fopen("individuals.csv","a");
     }
+    for(i = 0; i < N; i++){
+      fprintf(ind_output, "%d,", ts);
+      for(j = 0; j < cols; j++){
+        fprintf(ind_output, "%f,", pests[i][j]);
+      }
+      fprintf(ind_output, "\n");
+    }
+    fclose(ind_output);    
+  }
+  
+  if(print_last > 0 && ts == last_time - 1){
+    ind_output = fopen("last_time_step.csv","w");
     for(i = 0; i < N; i++){
       fprintf(ind_output, "%d,", ts);
       for(j = 0; j < cols; j++){
@@ -48,9 +62,9 @@ void population_statistics(double **pests, double *paras, int ts){
   int pesticide1_col, pesticide2_col, pesticide3_col, pesticide4_col;
   int pesticide5_col, pesticide6_col, pesticide7_col, pesticide8_col;
   int pesticide9_col, pesticide10_col, mortality_col, total_offspring;
-  int food_types_used, pesticide_types_used;
+  int food_types_used, pesticide_types_used, f_col;
   double NN, m_age, m_sex, m_food_consumed, m_pesticide_consumed, m_mated;
-  double m_mortality, *m_traits, *m_food_vals, *m_pesticide_vals;
+  double m_mortality, *m_traits, *m_food_vals, *m_pesticide_vals, m_fval;
   
   FILE *pop_output;
   
@@ -88,6 +102,7 @@ void population_statistics(double **pests, double *paras, int ts){
   pesticide9_col         = (int) paras[76];
   pesticide10_col        = (int) paras[77];
   mortality_col          = (int) paras[81];
+  f_col                  = (int) paras[84];
   total_offspring        = (int) paras[106];
   trait_start_col        = (int) paras[109];
   
@@ -110,6 +125,7 @@ void population_statistics(double **pests, double *paras, int ts){
       m_food_vals[j]      = 0.0;
       m_pesticide_vals[j] = 0.0;
   }
+  m_fval = 0.0;
   
   for(i = 0; i < N; i++){
       m_age                 += pests[i][age_col];
@@ -141,6 +157,7 @@ void population_statistics(double **pests, double *paras, int ts){
       for(j = 0; j < traits; j++){
           m_traits[j] += pests[i][trait_start_col + j];
       }
+      m_fval += pests[i][f_col];
   }
   
   m_age                 *= 1/NN;
@@ -157,6 +174,7 @@ void population_statistics(double **pests, double *paras, int ts){
   for(j = 0; j < traits; j++){
       m_traits[j] *= 1/NN;
   }
+  m_fval *= 1/NN;
   
   if(ts == 0){
       pop_output = fopen("population_data.csv","w");
@@ -176,6 +194,7 @@ void population_statistics(double **pests, double *paras, int ts){
       for(i = 0; i < traits; i++){
           fprintf(pop_output, "trait%d_mean_value,", i + 1);
       }
+      fprintf(pop_output, "mean_f");
       fprintf(pop_output, "\n");
       fclose(pop_output);
   }
@@ -192,6 +211,7 @@ void population_statistics(double **pests, double *paras, int ts){
   for(i = 0; i < traits; i++){
       fprintf(pop_output, "%f,", m_traits[i]);
   }
+  fprintf(pop_output, "%f", m_fval);
   fprintf(pop_output, "\n");
   fclose(pop_output);
   
