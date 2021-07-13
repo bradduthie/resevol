@@ -79,7 +79,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
   if(age >= min_age && age <= max_age){
       if(land_layer1 > 0){
           food_land1 = land[xloc][yloc][land_layer1];
-          if(food_land1 < consume1){
+          if(food_land1 < consume1 && consume1 > 0){
               consumed                      += food_land1;
               land[xloc][yloc][land_layer1]  = 0;
               pests[ind][consumed_col1]     += food_land1;
@@ -91,7 +91,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer2 > 0){
           food_land2 = land[xloc][yloc][land_layer1];
-          if(food_land2 < consume1){
+          if(food_land2 < consume2 && consume2 > 0){
               consumed                      += food_land2;
               land[xloc][yloc][land_layer2]  = 0;
               pests[ind][consumed_col2]     += food_land2;
@@ -103,7 +103,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer3 > 0){
           food_land3 = land[xloc][yloc][land_layer3];
-          if(food_land3 < consume3){
+          if(food_land3 < consume3 && consume3 > 0){
               consumed                      += food_land3;
               land[xloc][yloc][land_layer3]  = 0;
               pests[ind][consumed_col3]     += food_land3;
@@ -115,7 +115,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer4 > 0){
           food_land4 = land[xloc][yloc][land_layer4];
-          if(food_land4 < consume4){
+          if(food_land4 < consume4 && consume4 > 0){
               consumed                      += food_land4;
               land[xloc][yloc][land_layer4]  = 0;
               pests[ind][consumed_col4]     += food_land4;
@@ -127,7 +127,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer5 > 0){
           food_land5 = land[xloc][yloc][land_layer5];
-          if(food_land5 < consume5){
+          if(food_land5 < consume5 && consume5 > 0){
                consumed                      += food_land5;
                land[xloc][yloc][land_layer5]  = 0;
                pests[ind][consumed_col5]     += food_land5;
@@ -139,7 +139,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer6 > 0){
           food_land6 = land[xloc][yloc][land_layer6];
-          if(food_land6 < consume6){
+          if(food_land6 < consume6 && consume6 > 0){
               consumed                      += food_land6;
               land[xloc][yloc][land_layer6]  = 0;
               pests[ind][consumed_col6]     += food_land6;
@@ -151,7 +151,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer7 > 0){
           food_land7 = land[xloc][yloc][land_layer7];
-          if(food_land7 < consume1){
+          if(food_land7 < consume7 && consume7 > 0){
               consumed                      += food_land7;
               land[xloc][yloc][land_layer7]  = 0;
               pests[ind][consumed_col7]     += food_land7;
@@ -163,7 +163,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer8 > 0){
           food_land8 = land[xloc][yloc][land_layer8];
-          if(food_land8 < consume8){
+          if(food_land8 < consume8 && consume8 > 0){
               consumed                      += food_land8;
               land[xloc][yloc][land_layer8]  = 0;
               pests[ind][consumed_col8]     += food_land8;
@@ -175,7 +175,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer9 > 0){
           food_land9 = land[xloc][yloc][land_layer9];
-          if(food_land9 < consume1){
+          if(food_land9 < consume9 && consume9 > 0){
               consumed                      += food_land9;
               land[xloc][yloc][land_layer9]  = 0;
               pests[ind][consumed_col9]     += food_land9;
@@ -187,7 +187,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer10 > 0){
           food_land10 = land[xloc][yloc][land_layer10];
-          if(food_land10 < consume10){
+          if(food_land10 < consume10 && consume10 > 0){
               consumed                       += food_land10;
               land[xloc][yloc][land_layer10]  = 0;
               pests[ind][consumed_col10]     += food_land10;

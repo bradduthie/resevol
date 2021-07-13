@@ -1,44 +1,55 @@
-
+################################################################################
+# Example with two traits
+################################################################################
 gmt <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
-gmt[1, 2] <- -0.5;
-gmt[2, 1] <- -0.5;
+gmt[1, 2] <- 0.8;
+gmt[2, 1] <- 0.8;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 1000, npsize = 8000, 
-                    max_gen = 6, sampleK = 400, chooseK = 4, layers = 2);
+                    max_gen = 600, sampleK = 400, chooseK = 4, layers = 2);
 
-sim <- run_farm_sim(mine_output             = mg,
-                    N                       = 1000,
-                    neutral_loci            = 1000,
-                    xdim                    = 10,
-                    ydim                    = 10,
-                    repro                   = "asexual",
-                    max_age                 = 4,
-                    selfing                 = FALSE,
-                    food_consume            = 0.25,
-                    pesticide_consume       = 0.1,
-                    food_needed_surv        = 0.025,
-                    min_age_reproduce       = 2,
-                    lambda_value            = 1.3,
-                    farms                   = 4,
-                    time_steps              = 20,
-                    mutation_pr             = 0.01,
-                    crossover_pr            = 0.01,
-                    net_mu_layers           = 0,
-                    crop_rotation_time      = 4,
-                    pesticide_rotation_time = 4,
-                    crop_per_cell           = 1,
-                    pesticide_per_cell      = 0.2,
-                    crop_number             = 1,
-                    pesticide_number        = 2,
-                    print_inds              = FALSE, # Careful with this one
-                    K_on_birth              = 1000000,
-                    print_last              = FALSE
+sim <- run_farm_sim(mine_output              = mg,
+                    N                        = 1000,
+                    neutral_loci             = 1000,
+                    xdim                     = 100,
+                    ydim                     = 100,
+                    repro                    = "sexual",
+                    max_age                  = 4,
+                    selfing                  = FALSE,
+                    food_consume             = "T1",
+                    pesticide_consume        = c("T2", 0),
+                    food_needed_surv         = 1,
+                    food_needed_repr         = 1,
+                    reproduction_type        = "food_based",
+                    pesticide_tolerated_surv = 2,
+                    pesticide_rotation_type  = 2,
+                    min_age_reproduce        = 2,
+                    max_age_feed             = 2,
+                    lambda_value             = 1.5,
+                    farms                    = 4,
+                    time_steps               = 400,
+                    mutation_pr              = 0.01,
+                    crossover_pr             = 0.01,
+                    net_mu_layers            = 2,
+                    crop_rotation_time       = 4,
+                    pesticide_rotation_time  = 4,
+                    crop_per_cell            = 2,
+                    pesticide_per_cell       = 1,
+                    crop_number              = 1,
+                    pesticide_number         = 2,
+                    print_inds               = FALSE, # Careful with this one
+                    K_on_birth               = 1000000,
+                    print_last               = TRUE
                     );
 
 
 
-
-
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
 
 # Initialising a file
 #library(helicoverpa)

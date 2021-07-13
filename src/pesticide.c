@@ -80,7 +80,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
   if(age >= min_age && age <= max_age){
       if(land_layer1 > 0){
           pesticide_land1 = land[xloc][yloc][land_layer1];
-          if(pesticide_land1 < consume1){
+          if(pesticide_land1 < consume1 && consume1 > 0){
               consumed                      += pesticide_land1;
               pests[ind][consumed_col1]     += pesticide_land1;
           }else{
@@ -90,7 +90,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer2 > 0){
           pesticide_land2 = land[xloc][yloc][land_layer1];
-          if(pesticide_land2 < consume1){
+          if(pesticide_land2 < consume2 && consume2 > 0){
               consumed                      += pesticide_land2;
               pests[ind][consumed_col2]     += pesticide_land2;
           }else{
@@ -100,7 +100,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer3 > 0){
           pesticide_land1 = land[xloc][yloc][land_layer3];
-          if(pesticide_land3 < consume3){
+          if(pesticide_land3 < consume3 && consume3 > 0){
               consumed                      += pesticide_land3;
               pests[ind][consumed_col3]     += pesticide_land3;
           }else{
@@ -110,7 +110,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer4 > 0){
           pesticide_land4 = land[xloc][yloc][land_layer4];
-          if(pesticide_land4 < consume4){
+          if(pesticide_land4 < consume4 && consume4 > 0){
               consumed                      += pesticide_land4;
               pests[ind][consumed_col4]     += pesticide_land4;
           }else{
@@ -120,7 +120,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer5 > 0){
           pesticide_land5 = land[xloc][yloc][land_layer5];
-          if(pesticide_land5 < consume5){
+          if(pesticide_land5 < consume5 && consume5 > 0){
                consumed                      += pesticide_land5;
                pests[ind][consumed_col5]     += pesticide_land5;
           }else{
@@ -130,7 +130,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer6 > 0){
         pesticide_land6 = land[xloc][yloc][land_layer6];
-        if(pesticide_land6 < consume6){
+        if(pesticide_land6 < consume6 && consume6 > 0){
           consumed                      += pesticide_land6;
           pests[ind][consumed_col6]     += pesticide_land6;
         }else{
@@ -140,7 +140,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer7 > 0){
         pesticide_land7 = land[xloc][yloc][land_layer7];
-        if(pesticide_land7 < consume1){
+        if(pesticide_land7 < consume7 && consume7 > 0){
           consumed                      += pesticide_land7;
           pests[ind][consumed_col7]     += pesticide_land7;
         }else{
@@ -150,7 +150,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer8 > 0){
         pesticide_land8 = land[xloc][yloc][land_layer8];
-        if(pesticide_land8 < consume8){
+        if(pesticide_land8 < consume8 && consume8 > 0){
           consumed                      += pesticide_land8;
           pests[ind][consumed_col8]     += pesticide_land8;
         }else{
@@ -160,7 +160,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer9 > 0){
         pesticide_land9 = land[xloc][yloc][land_layer9];
-        if(pesticide_land9 < consume1){
+        if(pesticide_land9 < consume9 && consume9 > 0){
           consumed                      += pesticide_land9;
           pests[ind][consumed_col9]     += pesticide_land9;
         }else{
@@ -170,7 +170,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
       }
       if(land_layer10 > 0){
         pesticide_land10 = land[xloc][yloc][land_layer10];
-        if(pesticide_land10 < consume10){
+        if(pesticide_land10 < consume10 && consume10 > 0){
           consumed                       += pesticide_land10;
           pests[ind][consumed_col10]     += pesticide_land10;
         }else{
