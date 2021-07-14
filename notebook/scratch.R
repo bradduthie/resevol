@@ -1,12 +1,13 @@
 ################################################################################
 # Example with two traits
 ################################################################################
+library(helicoverpa);
 gmt <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
-gmt[1, 2] <- 0.8;
-gmt[2, 1] <- 0.8;
+gmt[1, 2] <- 0.5;
+gmt[2, 1] <- 0.5;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 1000, npsize = 8000, 
-                    max_gen = 600, sampleK = 400, chooseK = 4, layers = 2);
+                    max_gen = 2, sampleK = 400, chooseK = 4, layers = 6);
 
 sim <- run_farm_sim(mine_output              = mg,
                     N                        = 1000,
@@ -27,10 +28,10 @@ sim <- run_farm_sim(mine_output              = mg,
                     max_age_feed             = 2,
                     lambda_value             = 1.5,
                     farms                    = 4,
-                    time_steps               = 400,
+                    time_steps               = 200,
                     mutation_pr              = 0.01,
                     crossover_pr             = 0.01,
-                    net_mu_layers            = 2,
+                    net_mu_layers            = 6,
                     crop_rotation_time       = 4,
                     pesticide_rotation_time  = 4,
                     crop_per_cell            = 2,

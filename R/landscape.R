@@ -11,6 +11,8 @@
 #'@return the_land A cols by rows landscape with randomly distributed cell types
 #'@examples
 #'land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
+#'@useDynLib helicoverpa
+#'@importFrom stats rnorm rpois runif
 #'@export
 make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0, 
                            farm_var = 0){
@@ -44,6 +46,8 @@ make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0,
 #'@param farms Number of farms among which landscape cells will be divided
 #'@param public_land The amount of land that will not be owned
 #'@param land_var Does distribution of land vary among users? >=0, <1
+#'@useDynLib helicoverpa
+#'@importFrom stats rnorm rpois runif
 #'@return A two dimensional array of cells with ownership values
 #'@export
 land_ssa <- function(dim_x, dim_y, farms, public_land, land_var){

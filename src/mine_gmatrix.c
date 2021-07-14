@@ -496,7 +496,7 @@ void crossover_ltn(double ***ltnpop, int npsize, int loci, int traits,
     do_cross = runif(0, 1);
     if(do_cross < pr_cross){
       do{ /* If a crossover occurs, need to select a partner */
-          partner = (int) floor( runif(0, npsize) );
+          partner = floor( runif(0, npsize) );
       }while(partner == k || partner == npsize);
       /* Now need to select a 3D block to be crossed */
       x0 = get_rand_int(0, loci);
@@ -1008,10 +1008,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     Rprintf("===============================================\n");
     while(gen < max_gen & high_fitness[0] > term_cri){
       /* First crossover and mutate the loci to network layer */
-      crossover_ltn(ltnpop, npsize, loci, traits, paras);
-      mutation_ltn(ltnpop, npsize, loci, traits, paras);
+      crossover_ltn(ltnpop, npsize, loci, traits, paras); 
+      mutation_ltn(ltnpop, npsize, loci, traits, paras); 
       /* Now crossover and mutate the network layers */
-      crossover_net(netpop, npsize, layers, traits, paras);
+      crossover_net(netpop, npsize, layers, traits, paras); 
       mutation_net(netpop, npsize, layers, traits, paras);
       
       net_fit(ltnpop, netpop, gmatrix, traits, paras, W);
@@ -1020,10 +1020,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       set_win(&ltnpop, &netpop, winners, paras, traits);
       
       estress           = get_mean_fitness(W, npsize);
-      mean_fitness[gen] = estress;
+      mean_fitness[gen] = estress; 
 
       retain_best(netpop, ltnpop, win_net, win_loci_layer_one, traits, paras,
-                  W, high_fitness, gen);
+                  W, high_fitness, gen); 
       
       /* Add print of highest fitness found */
       Rprintf("Gen: %d\t Stress: %f\t Min: %f\n", 

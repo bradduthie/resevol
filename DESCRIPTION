@@ -2,7 +2,8 @@ Package: helicoverpa
 Type: Package
 Title: Helicoverpa
 Version: 0.1.0
-Imports: grDevices (>= 3.4.0), graphics (>= 3.4.0), stats(>= 3.4.0)
+Imports: grDevices (>= 3.6.0), graphics (>= 3.6.0), stats(>= 3.6.0),
+         utils (>= 3.6.0)
 Authors@R: c(person("A. Bradley", "Duthie", email = "brad.duthie@gmail.com",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-8343-4995"))

@@ -16,6 +16,9 @@
 #'@param sd_ini StDev of initialised networked values
 #'@param use_cor Compare correlation matrix rather than the covariance matrix
 #'@param gmatrix G-matrix that the evolutionary algorithm will match
+#'@useDynLib helicoverpa
+#'@importFrom stats rnorm rpois runif rbinom
+#'@importFrom utils read.csv write.csv
 #'@return A set of values that will produce a desired G-matrix
 #'@export
 mine_gmatrix <- function(loci     = 18, 

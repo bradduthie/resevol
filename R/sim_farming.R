@@ -56,6 +56,8 @@
 #'@param print_last Should the last time step of individuals be printed?
 #'@param K_on_birth Is there a carrying capacity applied on newborns?
 #'@return prints a simulation file and output
+#'@useDynLib helicoverpa
+#'@importFrom stats rnorm rpois runif
 #'@export
 run_farm_sim <- function(mine_output,
                          N = 1000, 

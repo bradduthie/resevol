@@ -10,7 +10,7 @@ run_farm_sim(
   xdim = 100,
   ydim = 100,
   repro = "sexual",
-  neutral_loci = 0,
+  neutral_loci = 1000,
   max_age = 9,
   min_age_move = 0,
   max_age_move = 9,
@@ -33,8 +33,8 @@ run_farm_sim(
   selfing = TRUE,
   feed_while_moving = FALSE,
   mortality_type = 0,
-  age_food_threshold = NA,
-  age_pesticide_threshold = NA,
+  age_food_threshold = 0,
+  age_pesticide_threshold = 0,
   farms = 4,
   time_steps = 100,
   mutation_pr = 0,
@@ -60,7 +60,7 @@ run_farm_sim(
   print_inds = FALSE,
   print_gens = TRUE,
   print_last = TRUE,
-  K_on_birth = 0
+  K_on_birth = 1e+06
 )
 }
 \arguments{
