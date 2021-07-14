@@ -496,7 +496,7 @@ void crossover_ltn(double ***ltnpop, int npsize, int loci, int traits,
     do_cross = runif(0, 1);
     if(do_cross < pr_cross){
       do{ /* If a crossover occurs, need to select a partner */
-          partner = floor( runif(0, npsize) );
+          partner = (int) floor( runif(0, npsize) );
       }while(partner == k || partner == npsize);
       /* Now need to select a 3D block to be crossed */
       x0 = get_rand_int(0, loci);
