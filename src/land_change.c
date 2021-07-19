@@ -304,7 +304,7 @@ void land_change(double ***land, double *paras, int ts){
   
   int i, j, k, layer, min_own, max_own, own_layer, xdim, ydim, own_val;
   int crops_produced, pesticides_used, possible_crops, possible_pesti;
-  int rotate_crops, rotate_pesticide;
+  int rotate_crops, rotate_pesticide, start_pesticide;
   
   xdim              = (int) paras[103];
   ydim              = (int) paras[104];
@@ -315,6 +315,7 @@ void land_change(double ***land, double *paras, int ts){
   possible_pesti    = (int) paras[159];
   rotate_crops      = (int) paras[143];
   rotate_pesticide  = (int) paras[149];
+  start_pesticide   = (int) paras[168];
   
   if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0){
       min_own = land[0][0][own_layer];
@@ -335,7 +336,7 @@ void land_change(double ***land, double *paras, int ts){
   if(ts % rotate_crops == 0){
       change_crop(land, paras, max_own);
   }
-  if(ts % rotate_pesticide == 0){
+  if(ts % rotate_pesticide == 0 && ts > start_pesticide){
       change_pesticide(land, paras, max_own);
   }
 }

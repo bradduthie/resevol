@@ -114,9 +114,10 @@ run_farm_sim <- function(mine_output,
                          print_inds = FALSE, 
                          print_gens = TRUE,
                          print_last = TRUE,
-                         K_on_birth = 1000000){
+                         K_on_birth = 1000000,
+                         pesticide_start = 0){
   
-    land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = 4);
+    land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
     move_distance_T             <- check_is_trait(move_distance);
     food_needed_surv_T          <- check_is_trait(food_needed_surv);
@@ -266,7 +267,8 @@ run_farm_sim <- function(mine_output,
                              food_consume             = food_consume,
                              pesticide_consume        = pesticide_consume,
                              lambda_value             = lambda_value,
-                             movement_bouts           = movement_bouts);
+                             movement_bouts           = movement_bouts,
+                             pesticide_start          = pesticide_start);
   
     return(sim_results);
 }
@@ -338,7 +340,8 @@ sim_crops <- function(pests,
                       food_consume = 0.25,
                       pesticide_consume = 0.1,
                       lambda_value = 1,
-                      movement_bouts = 1
+                      movement_bouts = 1,
+                      pesticide_start = 0
                       ){
   
   N    <- dim(pests)[1];
@@ -373,6 +376,7 @@ sim_crops <- function(pests,
   prgn <- as.numeric(print_gens);
   plst <- as.numeric(print_last);
   konb <- K_on_birth;
+  pdst <- pesticide_start;
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -541,7 +545,8 @@ sim_crops <- function(pests,
               prin,   # 164) Print individual level data
               prgn,   # 165) Print time step and N in the console
               plst,   # 166) Print last individuals in simulation
-              konb    # 167) Maximum number of births allowed in time step
+              konb,   # 167) Maximum number of births allowed in time step
+              pdst    # 168) When does the pesticide use start?
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,

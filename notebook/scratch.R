@@ -2,12 +2,25 @@
 # Example with two traits
 ################################################################################
 library(helicoverpa);
-gmt <- matrix(data = 0, nrow = 2, ncol = 2);
+gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
-gmt[1, 2] <- 0.5;
-gmt[2, 1] <- 0.5;
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 1000, npsize = 8000, 
-                    max_gen = 2, sampleK = 400, chooseK = 4, layers = 6);
+gmt[1, 2] <-  -0.5;
+gmt[2, 1] <-  -0.5;
+gmt[1, 3] <-  0.8;
+gmt[1, 4] <-  0.8;
+gmt[3, 1] <-  0.8;
+gmt[4, 1] <-  0.8;
+gmt[2, 3] <-  0.8;
+gmt[2, 4] <-  0.8;
+gmt[3, 2] <-  0.8;
+gmt[4, 2] <-  0.8;
+gmt[3, 4] <- -0.2;
+gmt[4, 3] <- -0.2;
+gmt[3, 3] <-  0.4;
+gmt[4, 4] <-  0.4;
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 8, indivs = 2000, npsize = 12000, 
+                    max_gen = 800, sampleK = 1200, chooseK = 6, layers = 4,
+                    mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, term_cri = -12);
 
 sim <- run_farm_sim(mine_output              = mg,
                     N                        = 1000,
