@@ -143,26 +143,26 @@ initialise_inds <- function(mine_output,
   inds[, 35] <-  max_age_feed;      # Max age of feeding
   inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
   inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
-  inds[, 38] <-  food[1];
-  inds[, 39] <-  food[2];
-  inds[, 40] <-  food[3];
-  inds[, 41] <-  food[4];
-  inds[, 42] <-  food[5];
-  inds[, 43] <-  food[6];
-  inds[, 44] <-  food[7];
-  inds[, 45] <-  food[8];
-  inds[, 46] <-  food[9];
-  inds[, 47] <-  food[10];
-  inds[, 48] <-  pesticide[1];
-  inds[, 49] <-  pesticide[2];
-  inds[, 50] <-  pesticide[3];
-  inds[, 51] <-  pesticide[4];
-  inds[, 52] <-  pesticide[5];
-  inds[, 53] <-  pesticide[6];
-  inds[, 54] <-  pesticide[7];
-  inds[, 55] <-  pesticide[8];
-  inds[, 56] <-  pesticide[9];
-  inds[, 57] <-  pesticide[10];
+  inds[, 38] <-  food[[1]];
+  inds[, 39] <-  food[[2]];
+  inds[, 40] <-  food[[3]];
+  inds[, 41] <-  food[[4]];
+  inds[, 42] <-  food[[5]];
+  inds[, 43] <-  food[[6]];
+  inds[, 44] <-  food[[7]];
+  inds[, 45] <-  food[[8]];
+  inds[, 46] <-  food[[9]];
+  inds[, 47] <-  food[[10]];
+  inds[, 48] <-  pesticide[[1]];
+  inds[, 49] <-  pesticide[[2]];
+  inds[, 50] <-  pesticide[[3]];
+  inds[, 51] <-  pesticide[[4]];
+  inds[, 52] <-  pesticide[[5]];
+  inds[, 53] <-  pesticide[[6]];
+  inds[, 54] <-  pesticide[[7]];
+  inds[, 55] <-  pesticide[[8]];
+  inds[, 56] <-  pesticide[[9]];
+  inds[, 57] <-  pesticide[[10]];
   inds[, 58] <-  feed_while_moving; # Do not eat on a bout
   inds[, 80] <-  mortality_type;
   inds[, 81] <-  max_age;

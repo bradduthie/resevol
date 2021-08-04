@@ -55,6 +55,8 @@
 #'@param print_gens Should a summary of each time step be printed?
 #'@param print_last Should the last time step of individuals be printed?
 #'@param K_on_birth Is there a carrying capacity applied on newborns?
+#'@param pesticide_start What time step should pesticide start being applied?
+#'@param immigration_rate Mean number of immigrants per time step
 #'@return prints a simulation file and output
 #'@useDynLib helicoverpa
 #'@importFrom stats rnorm rpois runif
@@ -115,7 +117,8 @@ run_farm_sim <- function(mine_output,
                          print_gens = TRUE,
                          print_last = TRUE,
                          K_on_birth = 1000000,
-                         pesticide_start = 0){
+                         pesticide_start = 0,
+                         immigration_rate = 0){
   
     land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
@@ -268,42 +271,12 @@ run_farm_sim <- function(mine_output,
                              pesticide_consume        = pesticide_consume,
                              lambda_value             = lambda_value,
                              movement_bouts           = movement_bouts,
-                             pesticide_start          = pesticide_start);
+                             pesticide_start          = pesticide_start,
+                             immigration_rate         = immigration_rate);
   
     return(sim_results);
 }
 
-#' simulate farming
-#'
-#' Simulates farming over time
-#'
-#'@param pests Pest array
-#'@param land  Landscape array
-#'@param time_steps Time steps in the simulation
-#'@param mutation_pr Probability of a loci mutating
-#'@param crossover_pr Probability of crossover at homologous loci
-#'@param mutation_type Type of mutation used
-#'@param net_mu_layers Layers of the network allowed to mutate
-#'@param net_mu_dir  Layers mutate from loci to (1) or traits back (0)
-#'@param mutation_direction Is mutation directional (unlikely to need)
-#'@param crop_rotation_type None (0) or random (1) rotation of crop type
-#'@param crop_rotation_time How frequently are the crops rotated?
-#'@param crop_per_cell How much crop is put on a single cell?
-#'@param pesticide_per_cell How much pesticide is put on a single cell?
-#'@param crop_sd What is the standard deviation of crop on a cell?
-#'@param pesticide_sd What is the standard deviation of pesticide on a cell?
-#'@param crop_min What is the minimum crop amount allowed per cell?
-#'@param crop_max What is the maximum crop amount allowed per cell?
-#'@param pesticide_min What is the minimum pesticide amount allowed per cell?
-#'@param pesticide_max What is the maximum pesticide amount allowed per cell?
-#'@param crop_number How many crops exist on the landscape?
-#'@param pesticide_number How many pesticides are applied on the landscape?
-#'@param print_inds Should the full list of individuals be printed? (CAREFUL)
-#'@param print_gens Should a summary of each time step be printed?
-#'@param print_last Should the last time step of individuals be printed?
-#'@param K_on_birth Is there a carrying capacity applied on newborns?
-#'@return A two dimensional array of cells with ownership values
-#'@export
 sim_crops <- function(pests, 
                       land, 
                       time_steps = 100, 
@@ -341,7 +314,8 @@ sim_crops <- function(pests,
                       pesticide_consume = 0.1,
                       lambda_value = 1,
                       movement_bouts = 1,
-                      pesticide_start = 0
+                      pesticide_start = 0,
+                      immigration_rate = 0
                       ){
   
   N    <- dim(pests)[1];
@@ -377,6 +351,7 @@ sim_crops <- function(pests,
   plst <- as.numeric(print_last);
   konb <- K_on_birth;
   pdst <- pesticide_start;
+  immi <- immigration_rate;
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -546,7 +521,8 @@ sim_crops <- function(pests,
               prgn,   # 165) Print time step and N in the console
               plst,   # 166) Print last individuals in simulation
               konb,   # 167) Maximum number of births allowed in time step
-              pdst    # 168) When does the pesticide use start?
+              pdst,   # 168) When does the pesticide use start?
+              immi    # 169) Average number of immigrants per time step
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,
