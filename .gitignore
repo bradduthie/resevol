@@ -4,6 +4,8 @@
 .Ruserdata
 *.docx
 *.docx#
+src/*.o
+*.o
 
 .DS_Store
 **/.DS_Store
