@@ -10,6 +10,7 @@
 #include "fill_new_pests.h"
 #include "land_change.h"
 #include "statistics.h"
+#include "immigration.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -33,12 +34,15 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     int    offspring_number; /* New number of individuals post reproduction */
     int    new_total_N;      /* Total number of individuals after a time step */
     int    surviving_N;      /* Surviving individuals after a time step */
+    int    immigrants;       /* Immigrants in a time step */
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
     int    print_gen;        /* Should the generations be printed */
     int    *dim_IND;         /* Dimensions of the individual array */
     int    *dim_LAND;        /* Dimensions of the landscape */
   
+    double imm_rate;
+    double *imm_sample;
     double *paras_ptr;
     double *IND_ptr;
     double *LAND_ptr;
@@ -128,11 +132,18 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
-
+    imm_rate   = paras[169];
+    if(imm_rate > 0){
+        imm_sample = malloc(ind_traits * sizeof(double));
+        for(col = 0; col < ind_traits; col++){
+            imm_sample[col] = pests[0][col];
+        }
+    }
+    
     print_gen  = (int) paras[165];
     time_steps = (int) paras[140];
     ts         = 0;
-    
+
     while(ts < time_steps){
         
         land_change(land, paras, ts);
@@ -159,6 +170,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
         print_all_pests(pests, paras, ts);
         population_statistics(pests, paras, ts);
+        
+        immigrants = get_immigrant_number(paras);
     
         surviving_N = (int) paras[138];
         new_total_N = offspring_number + surviving_N;
@@ -218,7 +231,11 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     end        = clock();
     time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
     paras[163] = time_spent;
-    
+
+    if(imm_rate > 0){
+      free(imm_sample);
+    }
+
     /* This code switches from C back to R */
     /* ====================================================================== */        
     
