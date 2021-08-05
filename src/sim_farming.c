@@ -133,11 +133,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* Do the biology here now */
     /* ====================================================================== */
     imm_rate   = paras[169];
-    if(imm_rate > 0){
-        imm_sample = malloc(ind_traits * sizeof(double));
-        for(col = 0; col < ind_traits; col++){
-            imm_sample[col] = pests[0][col];
-        }
+    imm_sample = malloc(ind_traits * sizeof(double));
+    for(col = 0; col < ind_traits; col++){
+        imm_sample[col] = pests[0][col];
     }
     
     print_gen  = (int) paras[165];
@@ -172,9 +170,10 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         population_statistics(pests, paras, ts);
         
         immigrants = get_immigrant_number(paras);
+        paras[170] = (double) immigrants;
     
         surviving_N = (int) paras[138];
-        new_total_N = offspring_number + surviving_N;
+        new_total_N = offspring_number + surviving_N + immigrants;
         paras[139]  = (double) new_total_N; 
 
         if(new_total_N < 6){
@@ -191,7 +190,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
             new_pests[row] = malloc(ind_traits * sizeof(double));   
         } 
         
-        fill_new_pests(pests, offspring, new_pests, paras);
+        fill_new_pests(pests, offspring, new_pests, paras, imm_sample);
         
         for(row = 0; row < offspring_number; row++){
             free(offspring[row]);
@@ -232,10 +231,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
     paras[163] = time_spent;
 
-    if(imm_rate > 0){
-      free(imm_sample);
-    }
-
     /* This code switches from C back to R */
     /* ====================================================================== */        
     
@@ -274,10 +269,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     SET_VECTOR_ELT(OUTPUT, 1, LAND_NEW);
 
     UNPROTECT(protected_n);
-  
-    
      
     /* Free all of the allocated memory used in arrays */
+    free(imm_sample);
     for(xloc = 0; xloc < land_x; xloc++){
       for(yloc = 0; yloc < land_y; yloc++){
         free(land[xloc][yloc]);   

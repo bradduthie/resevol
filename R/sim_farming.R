@@ -39,8 +39,10 @@
 #'@param net_mu_layers Layers of the network allowed to mutate
 #'@param net_mu_dir  Layers mutate from loci to (1) or traits back (0)
 #'@param mutation_direction Is mutation directional (unlikely to need)
-#'@param crop_rotation_type None (0) or random (1) rotation of crop type
+#'@param crop_rotation_type None (1) or random (2) rotation of crop type
 #'@param crop_rotation_time How frequently are the crops rotated?
+#'@param pesticide_rotation_type None (1) or random (2) rotation of pesticide
+#'@param pesticide_rotation_time How frequently are the pesticides rotated?
 #'@param crop_per_cell How much crop is put on a single cell?
 #'@param pesticide_per_cell How much pesticide is put on a single cell?
 #'@param crop_sd What is the standard deviation of crop on a cell?
@@ -179,6 +181,10 @@ run_farm_sim <- function(mine_output,
     move_bout <- movement_bouts;
     if(movement_bouts_T == TRUE){
         move_bout <- 0;
+    }
+    
+    if(N < 5){
+      stop("Need to start with at least 5 pests");
     }
     
     food_consume <- as.list(food_consume);
@@ -522,7 +528,8 @@ sim_crops <- function(pests,
               plst,   # 166) Print last individuals in simulation
               konb,   # 167) Maximum number of births allowed in time step
               pdst,   # 168) When does the pesticide use start?
-              immi    # 169) Average number of immigrants per time step
+              immi,   # 169) Average number of immigrants per time step
+              0       # 170) Realised number of immigrants
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,

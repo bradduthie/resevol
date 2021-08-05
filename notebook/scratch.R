@@ -6,58 +6,60 @@ gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
 gmt[1, 2] <-  -0.5;
 gmt[2, 1] <-  -0.5;
-gmt[1, 3] <-  0.8;
-gmt[1, 4] <-  0.8;
-gmt[3, 1] <-  0.8;
-gmt[4, 1] <-  0.8;
-gmt[2, 3] <-  0.8;
-gmt[2, 4] <-  0.8;
-gmt[3, 2] <-  0.8;
-gmt[4, 2] <-  0.8;
-gmt[3, 4] <- -0.2;
-gmt[4, 3] <- -0.2;
-gmt[3, 3] <-  0.4;
-gmt[4, 4] <-  0.4;
+gmt[1, 3] <-  0.2;
+gmt[1, 4] <-  0.2;
+gmt[3, 1] <-  0.2;
+gmt[4, 1] <-  0.2;
+gmt[2, 3] <-  0.2;
+gmt[2, 4] <-  0.2;
+gmt[3, 2] <-  0.2;
+gmt[4, 2] <-  0.2;
+gmt[3, 4] <- -0.5;
+gmt[4, 3] <- -0.5;
+gmt[3, 3] <-  1.0;
+gmt[4, 4] <-  1.0;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 2000, npsize = 12000, 
-                    max_gen = 4, sampleK = 1200, chooseK = 6, layers = 4,
+                    max_gen = 400, sampleK = 1200, chooseK = 6, layers = 4,
                     mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, 
                     term_cri = -12);
 
 sim <- run_farm_sim(mine_output              = mg,
-                    N                        = 1000,
+                    N                        = 10000,
                     neutral_loci             = 1000,
-                    xdim                     = 100,
-                    ydim                     = 100,
+                    xdim                     = 40,
+                    ydim                     = 40,
                     repro                    = "sexual",
-                    max_age                  = 20,
+                    max_age                  = 10,
                     selfing                  = FALSE,
-                    food_consume             = 0.2,
-                    pesticide_consume        = c("T2", 0),
-                    food_needed_surv         = 0,
-                    food_needed_repr         = 0.6,
+                    food_consume             = c("T1", "T2"),
+                    pesticide_consume        = c("T3", "T4"),
+                    food_needed_surv         = 2,
+                    food_needed_repr         = 2,
                     reproduction_type        = "food_based",
-                    pesticide_tolerated_surv = 2,
+                    pesticide_tolerated_surv = 0,
                     pesticide_rotation_type  = 2,
-                    min_age_reproduce        = 2,
-                    max_age_feed             = 2,
+                    crop_rotation_type       = 2,
+                    min_age_reproduce        = 8,
+                    max_age_feed             = 6,
                     lambda_value             = 1.5,
-                    farms                    = 4,
-                    time_steps               = 20,
+                    farms                    = 16,
+                    time_steps               = 120,
                     mutation_pr              = 0.01,
                     crossover_pr             = 0.01,
-                    net_mu_layers            = 6,
-                    crop_rotation_time       = 4,
-                    pesticide_rotation_time  = 4,
+                    net_mu_layers            = 0,
+                    crop_rotation_time       = 24,
+                    pesticide_rotation_time  = 24,
                     crop_per_cell            = 2,
-                    pesticide_per_cell       = 1,
-                    crop_number              = 1,
+                    pesticide_per_cell       = 2,
+                    crop_number              = 2,
                     pesticide_number         = 2,
-                    print_inds               = FALSE, # Careful with this one
-                    K_on_birth               = 1000000,
-                    print_last               = FALSE,
-                    print_gens               = FALSE,
-                    immigration_rate         = 2
-                    );
+                    K_on_birth               = 10000,
+                    min_age_move             = 8,
+                    age_food_threshold       = 7,
+                    min_age_feed             = 1,
+                    pesticide_start          = 40
+);
+
 
 
 
@@ -258,5 +260,49 @@ assign_traits <- function(paras, move_distance, food_needed_surv,
     
     return(paras);
 }
+
+
+
+
+
+##########################3
+
+
+sim <- run_farm_sim(mine_output              = mg,
+                    N                        = 10000,
+                    neutral_loci             = 1000,
+                    xdim                     = 100,
+                    ydim                     = 100,
+                    repro                    = "biparental",
+                    max_age                  = 10,
+                    selfing                  = FALSE,
+                    food_consume             = c("T1", "T2"),
+                    pesticide_consume        = c("T3", "T4"),
+                    food_needed_surv         = 1,
+                    food_needed_repr         = 1,
+                    reproduction_type        = "food_based",
+                    pesticide_tolerated_surv = 0,
+                    pesticide_rotation_type  = 2,
+                    crop_rotation_type       = 2,
+                    min_age_reproduce        = 8,
+                    max_age_feed             = 6,
+                    lambda_value             = 1.5,
+                    farms                    = 16,
+                    time_steps               = 600,
+                    mutation_pr              = 0.01,
+                    crossover_pr             = 0.01,
+                    net_mu_layers            = 0,
+                    crop_rotation_time       = 24,
+                    pesticide_rotation_time  = 24,
+                    crop_per_cell            = 2,
+                    pesticide_per_cell       = 2,
+                    crop_number              = 2,
+                    pesticide_number         = 2,
+                    K_on_birth               = 1000000,
+                    min_age_move             = 8,
+                    age_food_threshold       = 7,
+                    min_age_feed             = 1,
+                    pesticide_start          = 200,
+);
 
 
