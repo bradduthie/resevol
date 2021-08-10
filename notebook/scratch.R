@@ -18,18 +18,20 @@ gmt[3, 4] <- -0.5;
 gmt[4, 3] <- -0.5;
 gmt[3, 3] <-  1.0;
 gmt[4, 4] <-  1.0;
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 6, indivs = 2000, npsize = 12000, 
-                    max_gen = 400, sampleK = 1200, chooseK = 6, layers = 4,
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
+                    max_gen = 2400, sampleK = 1200, chooseK = 6, layers = 6,
                     mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, 
                     term_cri = -12);
 
+
+mg  <- readRDS("mg.rds");
 sim <- run_farm_sim(mine_output              = mg,
-                    N                        = 10000,
+                    N                        = 1000,
                     neutral_loci             = 1000,
-                    xdim                     = 40,
-                    ydim                     = 40,
+                    xdim                     = 144,
+                    ydim                     = 144,
                     repro                    = "sexual",
-                    max_age                  = 10,
+                    max_age                  = 4,
                     selfing                  = FALSE,
                     food_consume             = c("T1", "T2"),
                     pesticide_consume        = c("T3", "T4"),
@@ -39,29 +41,32 @@ sim <- run_farm_sim(mine_output              = mg,
                     pesticide_tolerated_surv = 0,
                     pesticide_rotation_type  = 2,
                     crop_rotation_type       = 2,
-                    min_age_reproduce        = 8,
-                    max_age_feed             = 6,
+                    min_age_reproduce        = 4,
+                    max_age_feed             = 2,
                     lambda_value             = 1.5,
-                    farms                    = 16,
-                    time_steps               = 120,
-                    mutation_pr              = 0.01,
-                    crossover_pr             = 0.01,
+                    farms                    = 24,
+                    time_steps               = 400,
+                    mutation_pr              = 0.001,
+                    crossover_pr             = 0.1,
                     net_mu_layers            = 0,
-                    crop_rotation_time       = 24,
-                    pesticide_rotation_time  = 24,
+                    crop_rotation_time       = 12,
+                    pesticide_rotation_time  = 12,
                     crop_per_cell            = 2,
                     pesticide_per_cell       = 2,
                     crop_number              = 2,
                     pesticide_number         = 2,
-                    K_on_birth               = 10000,
-                    min_age_move             = 8,
-                    age_food_threshold       = 7,
+                    print_inds               = FALSE, # Careful with this one
+                    K_on_birth               = 20736,
+                    min_age_move             = 3,
+                    age_food_threshold       = 2,
                     min_age_feed             = 1,
-                    pesticide_start          = 40
+                    pesticide_start          = 200,
+                    print_last               = TRUE,
+                    immigration_rate         = 0
 );
 
-
-
+# gzip -v9 data.csv
+# gunzip -v data.csv.gz
 
 ################################################################################
 ################################################################################

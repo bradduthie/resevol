@@ -39,6 +39,10 @@ library(rhandsontable)
 
 [Project updates](#updates)
 
+ - **2021**
+ 
+    - **JUL** [23](#u-23-JUL-2021)
+
  - **2020**
  
     - **JAN** [27](#u-27-JAN-2020)
@@ -59,6 +63,681 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-23-JUL-2021">Update: 23 JUL 2021</a>
+
+I just want to walk through some of the work and simulations that I have been running in the past two weeks. I am not going to get into the details, but I just want to show what the model can do and roughly what kind of output we might expect for a larger set of simulations. Everything here is reproducible using the [helicoverpa](https://github.com/bradduthie/helicoverpa) package, which can be downloaded from the R console using the code below. 
+
+
+```{r, eval = FALSE}
+install.packages("devtools"); # If you've not got devtools already installed
+library(devtools);
+install_github("bradduthie/helicoverpa");
+```
+
+There are no real safeguards or error messagese built into the package yet, so it's probably best to keep to a small simulations when experimenting. There are a few key points I want to make before presenting the model.
+
+1. The code is written in a very modular way. We can take bits out and rearrange *most* things without too much effort, so please do make suggestions if you think something is important to change. Most changes will take very little time for me to implement now that the broad structure of the code is written.
+
+2. The results that I present below are really just about getting a feel for what the model can do, and for developing an intuition about what kind of results we might expect when we set things up more formally. It's also another layer of checking to make sure that there are no major bugs in the code. Hence, the simulations that I have run reflect my own testing of what the model can do rather than the best test of any specific question.
+
+3. I'm not going to explain all of the things that the software can do since I don't think this would be terribly productive. I just want to give a sense of what we're working with and what the possibilities are in relation to ENDORSE. There are some hidden hooks in here that were just too tempting not to code, which can be used for future papers. If I've done a good job, then it should be possible to use this one R package to address a range of potentially interesting questions. I don't need to take the lead in everything, and I would be delighted if folks were to use the software for individual-based modelling.
+
+Here are the basics of how to run simulations. You really only need to know two R functions, each of which can take a long list of arguments. The heavy lifting of both functions is done in C rather than R. The first function is the [mine_gmatrix](https://github.com/bradduthie/helicoverpa/blob/master/R/mine_gmatrix.R#L21) function. The second function is the [run_farm_sim](https://github.com/bradduthie/helicoverpa/blob/master/R/sim_farming.R#L60) function. The role of [mine_gmatrix](https://github.com/bradduthie/helicoverpa/blob/master/R/mine_gmatrix.R#L21) is to generate a genome that produces an arbitrary number of phenotypic traits with an arbitrary covariance structure given a set of allele values with a standard normal distribution. The role of [run_farm_sim](https://github.com/bradduthie/helicoverpa/blob/master/R/sim_farming.R#L60) is to do everything else -- that is, to generate individuals with the mined genomes simulate the ecology and evolution of the system over time. The output of the simulation is the creation of one or more CSV files in the directory where the simulation is run (more on this later).
+
+The `mine_gmatrix` function
+-----------------------------------------
+
+The goal of the `mine_gmatrix` function is to get from standard normal (mean = 0, stdev = 1) allele values at some number of loci (`loci`) through a network of some number of hidden layers (`layers`) to produce a set of traits that have some variance covariance structure (`gmatrix`, which is a square covariance matrix). 
+
+![](images/network.png)
+
+The figure above shows an example with 18 loci and 9 traits, separated by 6 hidden layers. Each of the black arrows can be represented by a number indicating how much one locus (green) or node (blue) should contribute to the next (mathematically, arrows between two sets of nodes are represented by matrices that get [multiplied together](https://github.com/bradduthie/helicoverpa/blob/master/src/mine_gmatrix.c#L413)). These numbers become part of the genome for individuals, determining what a newly born individual's traits will be given their allele values at each locus. For now, an evolutionary algorithm is used to find a set of numbers that will produce traits with a desired covariance structure given random standard normal allele values. How long it takes to find these numbers depends on the number of loci, layers, and traits, and how much error we are willing to accept. Here's a very simple example of running the function with four loci, two layers, and two traits that have a variance of 1 and a covariance of -0.5.
+
+```{r, eval = FALSE}
+library(helicoverpa);
+gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+gmt[1, 1] <- 1;
+gmt[2, 2] <- 1;
+gmt[1, 2] <- -0.5;
+gmt[2, 1] <- -0.5;
+```
+
+```{r, echo = FALSE}
+library(helicoverpa);
+gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+gmt[1, 1] <- 1;
+gmt[2, 2] <- 1;
+gmt[1, 2] <- -0.5;
+gmt[2, 1] <- -0.5;
+```
+
+The covariance matrix is shown below.
+
+```{r, echo = FALSE}
+print(gmt);
+```
+
+This matrix is set as the argument `gmatrix = gmt`. The number of loci is set with `loci = 4`, and the number of layers is set with `layers = 2` (there is no need to set trait number because the function figures this out from the `gmatrix`). The rest of the arguments specify how the evolutionary algorithm is to run:
+
+| Argument     | What it does                                                 |
+|--------------|--------------------------------------------------------------|
+| npsize       | How big a population of networks evolve in the algorithm     |
+| indivs       | How many random normals to test the fitness of each network  |
+| max_gen      | The maximum number of generations allowed to evolve          |
+| sampleK      | Number of randomly selected networks to compete              |
+| chooseK      | Number of tournament winners (highest fitness)               |
+| mu_pr        | Probability of a value in a network mutating                 |
+| pr_cross     | Probability of crossing over between networks                |
+| mu_sd        | Standard deviation of mutation effect size (mean is 0)       |
+| term_cri     | Logged stress criteria for termination                       |
+
+The details here are not terribly important, but the key concepts are explained in more detail in @Hamblin2013 and @Duthie2018 in one of the [GMSE R package vignettes](https://confoobio.github.io/gmse/articles/SI1.html). Basically, what we're doing is creating a random population of `npsize` networks like the one in the figure above with random arrow values. We're then letting this network evolve over time with selection for networks that do a better job of producing the `gmatrix` from a standard normal loci values. Evolution stops after `max_gen` generations have passed or the mean squared deviation of elements from the evolved variance covariance matrix and `gmatrix` is less than `exp(term_cri)`. Finding a genome is a bit of an art relying on trying different parameter combinations and seeing what works. Big `npsize` (higher than 10000) with low mutation rates and standard deviations (both below 0.01) are slow and steady, but usually necessary for a large `gmatrix`. For smaller `gmatrix`, smaller populations and higher mutation and crossover rates are fine and quite fast. For the matrix `gmt` above, we can probably get away with the following:
+
+```{r, eval = FALSE}
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, npsize = 2000, 
+                    indivs = 2000, max_gen = 800, sampleK = 1200, chooseK = 6,
+                    mu_pr = 0.3, pr_cross = 0.3, mu_sd = 0.05, term_cri = -4);
+```
+
+I'm being extremely relaxed here with the `term_cri` and `max_gen`, but I just want to show a quick example. The function prints off each generation, the mean stress, and the minimum stress (best) genome found. This is mostly just to reassure you that it's doing the job and has not crashed. The output in `mg` is a list with seven elements:
+
+1. The parameters input into `mine_gmatrix`.
+2. The specified `gmatrix`.
+3. The first set of arrows from loci to network (green to blue above) in matrix form.
+4. An array made up of `layers` square matrices, representing all of the rest of the arrows in the figure above.
+5. The summed effects that each loci has on each trait.
+6. The end variance covariance matrix.
+7. The whole network (figure above) as a genome to be inserted in individuals.
+8. The stress of the final network (mean squared deviation from `gmatrix`).
+
+Here is the output for `mg` above.
+
+```{r, echo = FALSE}
+mg <- readRDS(file = "data/2021_JUL_23_data/2021_JUL_23_mg.rds");
+```
+
+```{r}
+print(mg);
+```
+
+Note that the variance covariance matrix in `[[6]]` is reasonable, but probably not good enough for real simulations. It took less than 3 minutes to get, but the time taken appears to scale exponentially with `gmatrix` size and `term_cri`. But if we accept this result, we have all that we need to move ahead with the next function for actual simulation.
+
+
+The `run_farm_sim` function
+------------------------------------------------
+
+This function runs a single replicate simulation from start to finish. It generates a landscape divided into some arbitrary number of `farms` and places new individuals on them. A series of events then happen in pretty much any order that we want them to happen over the course of `time_steps` discrete time steps.
+
+First, individuals are initialised with their genomes as found in `mine_gmatrix`. They are given random allele values for their loci. Other options for individuals include the following (this is not exhaustive):
+
+- The reproduction type `repro` can be set as `asexual`, `sexual` (all individuals female and male with optional `selfing`), or `biparental` (females and males separate).
+- A `max_age` that an individual can be before death.
+- A minimum and maximum age at which the individual can move (`min_age_move` and `max_age_move`).
+- A minimum and maximum age at which the individual can reproduce (`min_age_reproduce` and `max_age_reproduce`).
+- A minimum and maximum age at which the individual can feed and imbibe pesticide (`min_age_feed`).
+- The amount of food consumed during feeding on a cell (`food_consume`, which can be a vector of up to length 10 -- an element for each possible food type).
+- The amount of pesticide consumed during feeding on a cell (`pesticide_consume`, which can be a vector of up to length 10 -- an element for each possible pesticide type).
+- The distance in cells an individual can travel when moving (`move_distance`).
+- The amount food that an individual needs to consume to survive (`food_need_surve`) and the age at which this threshold is assessed (`age_food_threshold`).
+- The amount of pesticide imbibed that an individual can tolerate before death (`pesticide_tolerated_repr`) and the age at which this threshold is assessed (`age_pesticide_threshold`).
+- The probability of mutation (`mutation_pr`) and crossover (`crossover_pr`). 
+- How much of the genome can mutate (`net_mu_layers`).
+- How many neutral loci individuals have (`neutral_loci`). 
+
+
+When the simulation starts, the following happens:
+
+- The `crop_number` crops (up to 10 possible) grown on `farms` unique farms are changed at `crop_rotation_time` intervals (rules for changing can be adjusted).
+- The `pesticide_number` pesticides (up to 10 possible) applied on each farm is changed at `pesticide_rotation_time` intervals (here too, rules for changing can be adjusted).
+- Individuals age by a time step (this is fixed; all individuals do it at the start of a time step, but individuals can be as old as we like)
+- If individuals are at least `min_age_feed` and not over `max_age_feed`, then they eat on the landscape cell in which they are located. The amount of food that they consume on the cell can be set as `food_consume`, which can be a vector of up to 10 elements (one for each food type). Food consumption rates can also be specified as a trait (more on that later). Food consumption occurs in a random order of individuals.
+- Similarly, if individuals at least`min_age_feed` and not over `max_age_feed` (same as feeding) imbibe biopesticde on the landscape cell in which they are located at a rate set by `pesticide_consume`, which can also be a vector of up to 10 elements (one for each pesticide type). Biopesticide consumption rates can also be specified as a trait. Biopesticide consumption occurs in a random order of individuals.
+- Individuals move on the landscape if they are at least `min_age_move` (there are more complex rules available for feeding and moving; the simplest is just moving once in any direction).
+- The number of offspring that an individual produces is calculated, potentially based on their food consumption, mate access, parameter values, or traits.
+- New offspring are made, potentially with recombination in the case of sexual reproduction.
+- Individuals die according to some criteria (food and biopesticide consumption, age).
+
+The simulation ends after a fixed number of time steps (`time_steps`) have passed, or if the population goes extinct. I'll now show a very simplified example of a simulation being run, then a more complicated example.
+
+A simple example of the simulation
+=====================================
+
+In this simulation, I will just consider a very simple scenario of two traits, which will model the rate at which food is consumed (Trait 1) and the rate at which pesticide is imbibed (Trait 2). Just to get started, let each of these traits have a variance of 1 and a covariance of about 0.5 to model the idea that the rate at which you consume pesticide increases with the rate at which you consume food.
+
+```{r, echo = FALSE}
+mg_simple <- readRDS(file = "data/2021_JUL_23_data/2021_JUL_23_mg_simple.rds");
+print(mg_simple[[2]]);
+```
+
+Using the `mine_gmatrix` function with similar parameter values tried above, I got a genome that produces the following matrix given random standard normal allele values.
+
+```{r, echo = FALSE}
+mg_simple[[6]];
+```
+
+
+A convenient part of the code that I've not yet mentioned is that we can replace several numerical parameter arguments with evolving traits. This is possible for `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value` (raw reproduction value), `movement_bouts`, `food_consume`, and `pesticide_consume`. If, for example, we want movement distance in cells to be defined by trait one, we just set `move_distance = "T1"` (in this case, the value will be floored since cells are discrete). With that in mind, we can run the following simulation.
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output              = mg,
+                    N                        = 1000,
+                    neutral_loci             = 1000,
+                    xdim                     = 40,
+                    ydim                     = 40,
+                    repro                    = "sexual",
+                    max_age                  = 5,
+                    selfing                  = FALSE,
+                    food_consume             = "T1",
+                    pesticide_consume        = c("T2", 0),
+                    food_needed_surv         = 1,
+                    food_needed_repr         = 1,
+                    reproduction_type        = "food_based",
+                    pesticide_tolerated_surv = 0,
+                    pesticide_rotation_type  = 2,
+                    min_age_reproduce        = 3,
+                    max_age_feed             = 2,
+                    farms                    = 4,
+                    time_steps               = 120,
+                    mutation_pr              = 0.01,
+                    crossover_pr             = 0.01,
+                    net_mu_layers            = 0,
+                    crop_rotation_time       = 4,
+                    pesticide_rotation_time  = 4,
+                    crop_per_cell            = 2,
+                    pesticide_per_cell       = 0,
+                    crop_number              = 1,
+                    pesticide_number         = 2,
+                    K_on_birth               = 1000000,
+                    print_last               = TRUE
+);
+```
+
+Note that the `mine_output` is just the whole vector output we got from the `mine_gmatrix` function. `N` is the initialsed number of individuals, `xdim` and `ydim` set the landscape dimensions (so we have a 40 by 40 square landscape). Individuals are sexual but cannot self. Note how `food_consume = "T1"`, so the amount of food consumed by each individual will be determined by its value in trait 1 (had we set `food_consume = 1`, then all individuals would consume 1 unit of food; note that individuals cannot consume negative food). The amount of pesticide 1 consumed by an individual will be determined by `"T2"`, while no individuals consume pesticide 2 (which can just be a trick for making some of the 4 `farms` not apply any pesticide -- since anything applied has no effect). Note that we indicate one crop by `crop_number = 1` and two pesticides by `pesticide_number = 2` (the second one being irrelevant), and each cell applies 0 pesticide (`pesticide_per_cell = 0`), so this is actually a null model in which no pesticide is applied at all.
+
+The argument `K_on_birth` limits the number of eggs that can be made in the population; if the population goes over, then eggs are randomly removed (this prevents the time consuming process of some individuals being initialised unnecessarily -- if they were just going to die immediately anyway). The argument `print_last` indicates that we want to print all of the information (everything, genome and all) for each individual in the last generation. The resulting file is often in the 100s of MBs. 
+
+After the simulation runs, we get a file `population_data.csv` that gives information for each generation on the time step, population size, mean age, mean food consumed, mean pesticide consumed, mortality rate, mean food consumed of each type, mean pesticide consumed of each type, mean trait values, and mean inbreeding coefficient. Here's a plot of population size, trait 1 value, trait 2 value, and mortality rate.
+
+```{r, echo = FALSE}
+dat <- read.csv("data/2021_JUL_23_data/2021_JUL_23_population_data_no_pesticide.csv");
+par(mfrow = c(2, 2));
+plot(x = dat$time_step, y = dat$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+```
+
+This makes sense (ignore the small spikes caused by the age structure). The population size increases, the trait 1 mean increases as individuals evolve to consume more food (which gives higher reproductive output), and trait 2 gets dragged along due to the correlation with trait 1 (despite not having any effect). Now we can see what happens when some of the farms start to apply pesticide by running the same model with `pesticide_per_cell = 0`.
+
+```{r, echo = FALSE}
+dat <- read.csv("data/2021_JUL_23_data/2021_JUL_23_population_data_pesticide.csv");
+par(mfrow = c(2, 2));
+plot(x = dat$time_step, y = dat$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+plot(x = dat$time_step, y = dat$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+```
+
+Note that the population size grows more slowly now, and that while trait 1 underlying food consumption evolves to be positive, the value is not as high as it was without the pesticide. This is because trait 2 now evolves to be a negative value, and traits 1 and 2 are positively correlated.
+
+![](images/2021_JUL_23/2021_JUL_23_img0.png)
+
+The plot above shows traits 1 and 2 for all individuals in the population where no pesticide is applied. The correlation here is 0.3219144. We can compare this to a plot of the same traits for the simulation in which pesticide was applied.
+
+![](images/2021_JUL_23/2021_JUL_23_img1.png)
+
+Note the shifted position of the y-axis, in particular, as selection pushes pesticide consumption trait values down while pushing food consumption values up. Even though the network itself has not changed (i.e., standard random normals will still give individuals with traits of the original correlation structure), the correlation between trait 1 and 2 is now 0.0577854. This is interesting, to me at least. I'm also not entirely sure if I understand what is maintaining the variance in traits, nor did I expect the realised correlation to change so much just as a consequence of alleles being selected. Note that if you set `net_mu_layers = 4` so that the entire genome can evolve, you get a strong negative covariance in 400 generations.
+
+![](images/2021_JUL_23/2021_JUL_23_img2.png)
+
+We can have a look how each trait is correlated with fitness, just measured by offspring production. Here is offspring production against the food consumption trait.
+
+![](images/2021_JUL_23/2021_JUL_23_img3.png)
+
+And here is offspring production against pesticide consumption trait.
+
+![](images/2021_JUL_23/2021_JUL_23_img4.png)
+
+The correlations are 0.0636287 and 0.0300173 for food consumption (trait 1) and pesticide consumption (trait 2) with offspring produced, respectively. This would seem to suggest that selection is quite weak after 120 generations? We could dive deeper into the mechanics of this if we wanted to, looking at how much food each individual consumed, exactly, and how much pesticide each individual consumed (and when, even, if needed). I'm tempted to let these run for a while longer to see if the correlation between traits drops to negative, and wondering if there is some reason for us to see a pattern of a 'trade-on' despite a hard coded loci to trait genome that causes a trade-off. Maybe there's a reason to expect mutation of allele values alone to easily find a way to create this pattern, meaning that constraints are not as important as would be intuitive? I definitely need to think more about it.
+
+
+A more complex simulation
+=====================================
+
+I have now also looked through the following simulation scenarios in which there are four crops and two traits.
+
+```{r, eval = FALSE}
+library(helicoverpa);
+set.seed(Sys.time());
+mg <- readRDS(file = "mg.rds");
+
+sim <- run_farm_sim(mine_output              = mg,
+                    N                        = 10000,
+                    neutral_loci             = 1000,
+                    xdim                     = 100,
+                    ydim                     = 100,
+                    repro                    = "biparental",
+                    max_age                  = 10,
+                    selfing                  = FALSE,
+                    food_consume             = c("T1", "T2"),
+                    pesticide_consume        = c("T3", "T4"),
+                    food_needed_surv         = 1,
+                    food_needed_repr         = 1,
+                    reproduction_type        = "food_based",
+                    pesticide_tolerated_surv = 0,
+                    pesticide_rotation_type  = 2,
+                    crop_rotation_type       = 2,
+                    min_age_reproduce        = 8,
+                    max_age_feed             = 6,
+                    lambda_value             = 1.5,
+                    farms                    = 16,
+                    time_steps               = 600,
+                    mutation_pr              = 0.01,
+                    crossover_pr             = 0.01,
+                    net_mu_layers            = 0,
+                    crop_rotation_time       = 24,
+                    pesticide_rotation_time  = 24,
+                    crop_per_cell            = 2,
+                    pesticide_per_cell       = 2,
+                    crop_number              = 2,
+                    pesticide_number         = 2,
+                    K_on_birth               = 1000000,
+                    min_age_move             = 8,
+                    age_food_threshold       = 7,
+                    min_age_feed             = 1,
+                    pesticide_start          = 200,
+                    );
+```
+
+These are a bit more high powered, but the general idea is that we now have four traits, two underlying crop consumption (one for each crop) and two underlying pesticide consumption (one for each pesticide). Here is what the covariance matrix was set to be.
+
+```{r, echo = FALSE}
+mg2 <- readRDS(file = "data/2021_JUL_23_data/2021_JUL_23_mg2.rds");
+print(mg2[[2]]);
+```
+
+Here is what the mining process came up with at some reasonable constraints.
+
+```{r, echo = FALSE}
+print(mg2[[6]]);
+```
+
+The general idea is that if you are good at consuming one crop, then you are probably not so good at consuming another crop. If you are good at consuming either crop, then you probably also imbibe a lot of pesticide. And if you are good at avoiding pesticide consumption in one trait, then you probably are in the other. I've run simulations above for all combinations of the following:
+
+- Reproductive type (`asexual`, `sexual`, and `biparental`)
+- No rotation of crops or pesticide
+- Only rotation of pesticide
+- Rotation of both crops and pesticide
+
+When rotated, each of 16 `farms` independently selects a crop and a pesticide at random. Below, I'm just going to show plots of population size, mortality rate, and each of the four trait values over time. I've run all of these simulations for 300 generations, and I'm considering the first 100 as a burn in before the pesticide is added. The pesticide is then added for the first time on time step 210. I've indicated these time steps with red vertical lines on the plots below. Note that these are just single runs -- we would need to run many replicates to make robust inferences.
+
+**No rotation: Asexual population**
+
+```{r, echo = FALSE}
+sim1 <- read.csv("data/2021_JUL_23_data/A_no_rotation/population_data_asexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim1$time_step, y = sim1$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim1$time_step, y = sim1$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim1$time_step, y = sim1$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim1$time_step, y = sim1$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim1$time_step, y = sim1$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim1$time_step, y = sim1$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+**No rotation: Sexual population**
+
+```{r, echo = FALSE}
+sim2 <- read.csv("data/2021_JUL_23_data/A_no_rotation/population_data_sexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim2$time_step, y = sim2$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim2$time_step, y = sim2$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim2$time_step, y = sim2$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim2$time_step, y = sim2$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim2$time_step, y = sim2$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim2$time_step, y = sim2$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+**No rotation: Biparental population**
+
+```{r, echo = FALSE}
+sim3 <- read.csv("data/2021_JUL_23_data/A_no_rotation/population_data_sexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim3$time_step, y = sim3$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim3$time_step, y = sim3$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim3$time_step, y = sim3$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim3$time_step, y = sim3$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim3$time_step, y = sim3$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim3$time_step, y = sim3$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+
+
+**Pesticide rotation only: Asexual population**
+
+```{r, echo = FALSE}
+sim4 <- read.csv("data/2021_JUL_23_data/B_rot_pesticide/population_data_asexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim4$time_step, y = sim4$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim4$time_step, y = sim4$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim4$time_step, y = sim4$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim4$time_step, y = sim4$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim4$time_step, y = sim4$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim4$time_step, y = sim4$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+
+**Pesticide rotation only: Sexual population**
+
+```{r, echo = FALSE}
+sim5 <- read.csv("data/2021_JUL_23_data/B_rot_pesticide/population_data_sexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim5$time_step, y = sim5$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim5$time_step, y = sim5$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim5$time_step, y = sim5$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim5$time_step, y = sim5$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim5$time_step, y = sim5$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim5$time_step, y = sim5$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+
+**Pesticide rotation only: Biparental population**
+
+```{r, echo = FALSE}
+sim6 <- read.csv("data/2021_JUL_23_data/B_rot_pesticide/population_data_biparental.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim6$time_step, y = sim6$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim6$time_step, y = sim6$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim6$time_step, y = sim6$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim6$time_step, y = sim6$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim6$time_step, y = sim6$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim6$time_step, y = sim6$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+
+**Crop and pesticide rotation: Asexual population**
+
+```{r, echo = FALSE}
+sim7 <- read.csv("data/2021_JUL_23_data/C_rotate_all/population_data_asexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim7$time_step, y = sim7$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim7$time_step, y = sim7$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim7$time_step, y = sim7$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim7$time_step, y = sim7$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim7$time_step, y = sim7$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim7$time_step, y = sim7$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+**Crop and pesticide rotation: Sexual population**
+
+```{r, echo = FALSE}
+sim8 <- read.csv("data/2021_JUL_23_data/C_rotate_all/population_data_sexual.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim8$time_step, y = sim8$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim8$time_step, y = sim8$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim8$time_step, y = sim8$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim8$time_step, y = sim8$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim8$time_step, y = sim8$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim8$time_step, y = sim8$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+**Crop and pesticide rotation: Biparental population**
+
+```{r, echo = FALSE}
+sim9 <- read.csv("data/2021_JUL_23_data/C_rotate_all/population_data_biparental.csv");
+par(mfrow = c(3, 2), mar = c(4, 4, 0.5, 1));
+plot(x = sim9$time_step, y = sim9$population_size, 
+     xlab = "Time", ylab = "Population Size", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim9$time_step, y = sim9$mortality_rate, 
+     xlab = "Time", ylab = "Mortality rate", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim9$time_step, y = sim9$trait1_mean_value, 
+     xlab = "Time", ylab = "Trait 1 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim9$time_step, y = sim9$trait2_mean_value, 
+     xlab = "Time", ylab = "Trait 2 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim9$time_step, y = sim9$trait3_mean_value, 
+     xlab = "Time", ylab = "Trait 3 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+plot(x = sim9$time_step, y = sim9$trait4_mean_value, 
+     xlab = "Time", ylab = "Trait 4 mean", type = "l",
+     lwd = 2);
+abline(v = 100, col = "red", lty = "dotted", lwd = 0.8);
+abline(v = 210, col = "red", lty = "dotted", lwd = 0.8);
+```
+
+
+Initial conclusions
+=====================================
+
+These simulations show some interesting dynamics, though we will need to think more carefully before running them at a larger scale. Despite having population sizes on the order of tens of thousands, these ran quite quickly, with most simulations finishing up within 10-20 minutes. It would not be difficult to run a huge number in 1-2 months if necessary. Annoyingly, when we increase by another order of magnitude, the pace is glacial, with me stopping after trying it after 72 hours and no more than 70 generations. We might be able to get a bit more power through some creative refactoring of the code, and a bit if I made a version entirely in C. The longest step by far is sexual reproduction and allocating new offspring with diploid genomes. Haploid genomes and asexual populations are much, much faster in comparison.
+
+I am thinking that it might be worthwhile to monitor the allelic diversity in the population in some way. Individuals are initialised with unique alleles, which at first I feared my be a bit unrealistic, but the population size starts out small, so perhaps not so much. We can always allow more burn-in to be safe. 
+
+It is nice to recover the sudden drop given the application of pesticide followed by the evolution of resistance and increase in population soon after. The strong selection is also reflected in the evolution of traits such that both pesticide traits are negative (indicating resistance). 
+
+One thing that concerned me at first was that only one of the crop feeding traits is positive in each simulation. This means that the population is quickly specialising on one type of food resource. But this is, I think, exactly what we would predict from theory in an evolving population. Evolutionary branching should only happen under some specific circumstances, which we would need to parameterise explicitly if we wanted to recreate. Perhaps we need to have a bit weaker of a negative correlation for feeding, or model multiple specialist populations?
 
 > <a name="u-27-JAN-2020">Update: 27 JAN 2020</a>
 
