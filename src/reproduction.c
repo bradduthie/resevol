@@ -64,15 +64,19 @@ int mate_available(double **pests, double *paras, int row){
           break;  
       case 1:
           mate_found = mate_in_range(pests, paras, row, 1);
-          if(mate_found == 0){ /* Can also look for just a male */
+          /* Below is unlikely to ever be needed, so avoid for now 
+          if(mate_found == 0){ 
               mate_found = mate_in_range(pests, paras, row, 3);
           }
+          */
           break;
       case 2:
           mate_found = mate_in_range(pests, paras, row, 3);
           break;
       case 3:
+          /* Only use if really need to know male's mate accessibility 
           mate_found = mate_in_range(pests, paras, row, 2);
+          */
           break;
       default:
           break;
