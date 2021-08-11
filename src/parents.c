@@ -615,18 +615,18 @@ int assign_sire(double **pests, double *paras, int ind){
     }
     while(N > 0 && mate_pos > 0){
         N--;
-        in_range = is_in_range(pests, ind, N, paras, range);
         opp_sex  = (int) pests[N][sex_col];
         age      = (int) pests[N][age_col];
         min_age  = (int) pests[N][min_age_col];
         max_age  = (int) pests[N][max_age_col];
-        if(in_range > 0 && opp_sex == mate_sex && age >= min_age && 
-           age <= max_age){
-            if(N != ind || selfing > 0){
-                mate_pos--;
+        if(opp_sex == mate_sex && age >= min_age && age <= max_age){
+            in_range = is_in_range(pests, ind, N, paras, range);
+            if(in_range > 0){
+                if(N != ind || selfing > 0){
+                    mate_pos--;
+                }                
             }
         }
-        
     }
     
     return N; /* The while loop above finds the row of the mate */
@@ -835,7 +835,12 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     paras[108]++; /* Increase the maximum ID by 1 */
 }
 
-
+/* =============================================================================
+ * Calculates the inbreeding coefficient and places it in the correct column
+ *     offspring: The array that will hold the offspring's information
+ *     paras:     The paras vector that holds global information
+ *     offspr:    The relevant offspring whose coefficient is calculated
+ * ========================================================================== */
 void inbreeding_coefficient(double **offspring, double *paras, int offspr){
     
     int locus, neut_col, inbreeding_coef_col, neutrals, trait_st, net_st;
