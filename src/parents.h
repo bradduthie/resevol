@@ -18,6 +18,6 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
 void add_asexual(double **pests, double **offspring, double *paras, int ind,
                  int offspring_count);
 
-void inbreeding_coefficient(double **offspring, double *paras, int offspr);
+void inbreeding_coef(double **offspring, double *paras, int offspr);
 
 void make_offspring(double **pests, double **offspring, double *paras);

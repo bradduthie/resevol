@@ -60,7 +60,10 @@ run_farm_sim(
   print_inds = FALSE,
   print_gens = TRUE,
   print_last = TRUE,
-  K_on_birth = 1e+06
+  K_on_birth = 1e+06,
+  pesticide_start = 0,
+  immigration_rate = 0,
+  get_f_coef = FALSE
 )
 }
 \arguments{
@@ -139,9 +142,13 @@ run_farm_sim(
 
 \item{mutation_direction}{Is mutation directional (unlikely to need)}
 
-\item{crop_rotation_type}{None (0) or random (1) rotation of crop type}
+\item{crop_rotation_type}{None (1) or random (2) rotation of crop type}
 
 \item{crop_rotation_time}{How frequently are the crops rotated?}
+
+\item{pesticide_rotation_type}{None (1) or random (2) rotation of pesticide}
+
+\item{pesticide_rotation_time}{How frequently are the pesticides rotated?}
 
 \item{crop_per_cell}{How much crop is put on a single cell?}
 
@@ -170,6 +177,12 @@ run_farm_sim(
 \item{print_last}{Should the last time step of individuals be printed?}
 
 \item{K_on_birth}{Is there a carrying capacity applied on newborns?}
+
+\item{pesticide_start}{What time step should pesticide start being applied?}
+
+\item{immigration_rate}{Mean number of immigrants per time step}
+
+\item{get_f_coef}{Get the inbreeding coefficient (not for asexual)}
 }
 \value{
 prints a simulation file and output

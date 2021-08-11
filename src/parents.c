@@ -794,7 +794,6 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     cide_col9  = (int) paras[76];
     cide_col10 = (int) paras[77];
     
-    
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
     }
@@ -841,7 +840,7 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
  *     paras:     The paras vector that holds global information
  *     offspr:    The relevant offspring whose coefficient is calculated
  * ========================================================================== */
-void inbreeding_coefficient(double **offspring, double *paras, int offspr){
+void inbreeding_coef(double **offspring, double *paras, int offspr){
     
     int locus, neut_col, inbreeding_coef_col, neutrals, trait_st, net_st;
     int loci1_st, neut1_st, traits, layers, trait_col, layer_col;
@@ -886,7 +885,7 @@ void inbreeding_coefficient(double **offspring, double *paras, int offspr){
 void make_offspring(double **pests, double **offspring, double *paras){
     
     int ind, N, offspring_N, offspring_col, offspring_count;
-    int sex_col, sex, selfing_col, selfing;
+    int sex_col, sex, selfing_col, selfing, get_f_coef;
     int *ind_offspring;
     
     N             = (int) paras[101];
@@ -894,6 +893,7 @@ void make_offspring(double **pests, double **offspring, double *paras){
     offspring_col = (int) paras[10];
     sex_col       = (int) paras[4];
     selfing_col   = (int) paras[26];
+    get_f_coef    = (int) paras[171];
     
     ind_offspring = malloc(N * sizeof(int));
     for(ind = 0; ind < N; ind++){
@@ -914,13 +914,17 @@ void make_offspring(double **pests, double **offspring, double *paras){
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
                     insert_diploid_traits(offspring, paras, offspring_count);
-                    inbreeding_coefficient(offspring, paras, offspring_count);
+                    if(get_f_coef > 0){
+                        inbreeding_coef(offspring, paras, offspring_count);
+                    }
                     break;
                 case 2: 
                     add_sexual(pests, offspring, paras, ind, offspring_count);
                     mutation_diploid(offspring, paras, offspring_count);
                     insert_diploid_traits(offspring, paras, offspring_count);
-                    inbreeding_coefficient(offspring, paras, offspring_count);
+                    if(get_f_coef > 0){
+                        inbreeding_coef(offspring, paras, offspring_count);
+                    }
                     break;
                 case 3:
                     break;
@@ -933,5 +937,4 @@ void make_offspring(double **pests, double **offspring, double *paras){
     }
     free(ind_offspring);
 }
-
 

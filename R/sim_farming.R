@@ -59,6 +59,7 @@
 #'@param K_on_birth Is there a carrying capacity applied on newborns?
 #'@param pesticide_start What time step should pesticide start being applied?
 #'@param immigration_rate Mean number of immigrants per time step
+#'@param get_f_coef Get the inbreeding coefficient (not for asexual)
 #'@return prints a simulation file and output
 #'@useDynLib helicoverpa
 #'@importFrom stats rnorm rpois runif
@@ -120,7 +121,8 @@ run_farm_sim <- function(mine_output,
                          print_last = TRUE,
                          K_on_birth = 1000000,
                          pesticide_start = 0,
-                         immigration_rate = 0){
+                         immigration_rate = 0,
+                         get_f_coef = FALSE){
   
     land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
@@ -133,6 +135,7 @@ run_farm_sim <- function(mine_output,
     lambda_value_T              <- check_is_trait(lambda_value);
     movement_bouts_T            <- check_is_trait(movement_bouts);
     
+    # Check to see if these are traits
     food_consume_T <- rep(x = 0, times = length(food_consume));
     for(i in 1:length(food_consume)){
           food_consume_T[i] <- check_is_trait(food_consume[i]);
@@ -278,7 +281,8 @@ run_farm_sim <- function(mine_output,
                              lambda_value             = lambda_value,
                              movement_bouts           = movement_bouts,
                              pesticide_start          = pesticide_start,
-                             immigration_rate         = immigration_rate);
+                             immigration_rate         = immigration_rate,
+                             get_f_coef               = get_f_coef);
   
     return(sim_results);
 }
@@ -321,7 +325,8 @@ sim_crops <- function(pests,
                       lambda_value = 1,
                       movement_bouts = 1,
                       pesticide_start = 0,
-                      immigration_rate = 0
+                      immigration_rate = 0,
+                      get_f_coef = FALSE
                       ){
   
   N    <- dim(pests)[1];
@@ -358,6 +363,7 @@ sim_crops <- function(pests,
   konb <- K_on_birth;
   pdst <- pesticide_start;
   immi <- immigration_rate;
+  fcoe <- as.numeric(get_f_coef);
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -529,7 +535,8 @@ sim_crops <- function(pests,
               konb,   # 167) Maximum number of births allowed in time step
               pdst,   # 168) When does the pesticide use start?
               immi,   # 169) Average number of immigrants per time step
-              0       # 170) Realised number of immigrants
+              0,      # 170) Realised number of immigrants
+              fcoe    # 171) Are inbreeding coefficients calculated?
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,
@@ -553,7 +560,6 @@ sim_crops <- function(pests,
 run_farming_sim <- function(IND, LAND, PARAS){
   .Call("sim_farming", IND, LAND, PARAS);
 }
-
 
 substitute_traits <- function(paras, move_distance, food_needed_surv,
                               pesticide_tolerated_surv, food_needed_repr,
