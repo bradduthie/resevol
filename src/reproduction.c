@@ -93,14 +93,11 @@ int mate_available(double **pests, double *paras, int row){
 void count_offspring(double **pests, double *paras, int row){
   
   int N, repr_param_col, offspring, repr_type_col, repr_type;
-  int mate_access, mate_access_col, sex_col, sex, off_col;
-  int min_age_col, max_age_col, min_age, max_age, age_col, age;
+  int mate_access, mate_access_col, off_col;
   int food_consumed_col, food_needed_col, repr_incr_col;
   double food_consumed, food_needed, repr_incr, repr_param;
   
   N                  = (int) paras[101];
-  sex_col            = (int) paras[4];
-  sex                = (int) pests[row][sex_col];
   repr_type_col      = (int) paras[23];
   repr_type          = (int) pests[row][repr_type_col];
   repr_param_col     = (int) paras[25];
@@ -110,21 +107,14 @@ void count_offspring(double **pests, double *paras, int row){
   mate_access_col    = (int) paras[27];
   mate_access        = 0;
   off_col            = (int) paras[10];
-  age_col            = (int) paras[3];
-  min_age_col        = (int) paras[35];
-  max_age_col        = (int) paras[36];
   food_consumed_col  = (int) paras[14];
   food_needed_col    = (int) paras[18];
-  
-  age     = (int) pests[row][age_col];
-  min_age = (int) pests[row][min_age_col];
-  max_age = (int) pests[row][max_age_col];
   
   offspring = 0;
   switch(repr_type){
       case 0:  /* Reproduction is just based off of lambda value */
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){
+          if(mate_access > 0){
               offspring = 0;
               if( (repr_param + repr_incr) > 0 ){
                   offspring = rpois(repr_param + repr_incr);
@@ -133,7 +123,7 @@ void count_offspring(double **pests, double *paras, int row){
           break;
       case 1: /* Offspring will be based off of food consumed */
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){ 
+          if(mate_access > 0){ 
               food_consumed = pests[row][food_consumed_col];
               food_needed   = pests[row][food_needed_col];
               offspring     = (int) floor(food_consumed / food_needed);
@@ -141,7 +131,7 @@ void count_offspring(double **pests, double *paras, int row){
           break;
       default:
           mate_access = mate_available(pests, paras, row);
-          if(mate_access > 0 && sex < 3 && age >= min_age && age <= max_age){
+          if(mate_access > 0){
               offspring = 0;
               if( (repr_param + repr_incr) > 0 ){
                   offspring = rpois(repr_param + repr_incr);
@@ -151,9 +141,7 @@ void count_offspring(double **pests, double *paras, int row){
   }
 
   pests[row][mate_access_col] = (double) mate_access;
-  if(sex < 3){
-      pests[row][off_col] = (double) offspring;
-  }
+  pests[row][off_col]         = (double) offspring;
 
   paras[106] += pests[row][off_col];
 }
@@ -165,16 +153,27 @@ void count_offspring(double **pests, double *paras, int row){
  * ========================================================================== */
 void calculate_offspring(double **pests, double *paras){
   
-  int ind, N, tot_offspring, birth_K, off_col;
+  int ind, N, tot_offspring, birth_K, off_col, sex_col, sex;
+  int age_col, age, min_age_col, max_age_col, min_age, max_age;
 
-  off_col = (int) paras[10];
-  N       = (int) paras[101];
-  birth_K = (int) paras[167];
+  age_col     = (int) paras[3];
+  sex_col     = (int) paras[4];
+  off_col     = (int) paras[10];
+  min_age_col = (int) paras[35];
+  max_age_col = (int) paras[36];
+  N           = (int) paras[101];
+  birth_K     = (int) paras[167];
   
   paras[106] = 0.0; /* Start with no offspring */
   
   for(ind = 0; ind < N; ind++){
-      count_offspring(pests, paras, ind);
+      sex     = (int) pests[ind][sex_col];
+      age     = (int) pests[ind][age_col];
+      min_age = (int) pests[ind][min_age_col];
+      max_age = (int) pests[ind][max_age_col];
+      if(age >= min_age && age <= max_age && sex < 3){
+          count_offspring(pests, paras, ind);
+      }
   }
   
   tot_offspring = (int) paras[106];
