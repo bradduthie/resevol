@@ -219,14 +219,14 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
     crop_number  = (int) paras[156];
     own_layer    = (int) paras[155];
     
-    for(i = 0; i <= max_own; i++){
+    for(i = 0; i < max_own; i++){
         owner_choice[i] = get_rand_int(0, crop_number - 1);
     }
 
     for(i = 0; i < xdim; i++){
         for(j = 0; j < ydim; j++){
-            owner             = (int) land[i][j][own_layer];
-            choice            = (int) owner_choice[owner];
+            owner             = (int) land[i][j][own_layer] - 1;
+            choice            = owner_choice[owner];
             layer             = choice + food_layer_1;
             land[i][j][layer] = get_crop_val(paras);
         }
