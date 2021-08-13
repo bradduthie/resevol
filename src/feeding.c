@@ -90,7 +90,7 @@ void feed(double **pests, double *paras, double ***land, int ind){
           }
       }
       if(land[xloc][yloc][land_layer2] > 0 && consume2 > 0){
-          food_land2 = land[xloc][yloc][land_layer1];
+          food_land2 = land[xloc][yloc][land_layer2];
           if(food_land2 < consume2){
               consumed                      += food_land2;
               land[xloc][yloc][land_layer2]  = 0;
