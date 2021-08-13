@@ -17,6 +17,10 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own);
 
 void change_crop(double ***land, double *paras, int max_own);
 
+void clean_pesticide(double ***land, double *paras);
+
+void clean_crops(double ***land, double *paras);
+
 void clean_landscape(double ***land, double *paras);
 
 void land_change(double ***land, double *paras, int ts);

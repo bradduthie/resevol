@@ -269,6 +269,87 @@ void change_crop(double ***land, double *paras, int max_own){
 }
 
 /* =============================================================================
+ * Cleans the landscape of all crops
+ *     land:   The landscape array to be adjusted
+ *     paras:  The paras vector that holds global information
+ * ========================================================================== */
+void clean_pesticide(double ***land, double *paras){
+  
+  int i, j, rows, cols;
+  int pest1_col, pest2_col, pest3_col, pest4_col, pest5_col, pest6_col;
+  int pest7_col, pest8_col, pest9_col, pest10_col;
+  
+  cols       = (int) paras[103];
+  rows       = (int) paras[104];
+  pest1_col  = (int) paras[128];
+  pest2_col  = (int) paras[129];
+  pest3_col  = (int) paras[130];
+  pest4_col  = (int) paras[131];
+  pest5_col  = (int) paras[132];
+  pest6_col  = (int) paras[133];
+  pest7_col  = (int) paras[134];
+  pest8_col  = (int) paras[135];
+  pest9_col  = (int) paras[136];
+  pest10_col = (int) paras[137];
+  
+  for(i = 0; i < rows; i++){
+    for(j = 0; j < cols; j++){
+      land[i][j][pest1_col]  = 0.0;
+      land[i][j][pest2_col]  = 0.0;
+      land[i][j][pest3_col]  = 0.0;
+      land[i][j][pest4_col]  = 0.0;
+      land[i][j][pest5_col]  = 0.0;
+      land[i][j][pest6_col]  = 0.0;
+      land[i][j][pest7_col]  = 0.0;
+      land[i][j][pest8_col]  = 0.0;
+      land[i][j][pest9_col]  = 0.0;
+      land[i][j][pest10_col] = 0.0;
+    }
+  }
+}
+
+
+/* =============================================================================
+ * Cleans the landscape of all crops
+ *     land:   The landscape array to be adjusted
+ *     paras:  The paras vector that holds global information
+ * ========================================================================== */
+void clean_crops(double ***land, double *paras){
+  
+  int i, j, rows, cols;
+  int crop1_col, crop2_col, crop3_col, crop4_col, crop5_col, crop6_col;
+  int crop7_col, crop8_col, crop9_col, crop10_col;
+  
+  cols       = (int) paras[103];
+  rows       = (int) paras[104];
+  crop1_col  = (int) paras[118];
+  crop2_col  = (int) paras[119];
+  crop3_col  = (int) paras[120];
+  crop4_col  = (int) paras[121];
+  crop5_col  = (int) paras[122];
+  crop6_col  = (int) paras[123];
+  crop7_col  = (int) paras[124];
+  crop8_col  = (int) paras[125];
+  crop9_col  = (int) paras[126];
+  crop10_col = (int) paras[127];
+  
+  for(i = 0; i < rows; i++){
+      for(j = 0; j < cols; j++){
+          land[i][j][crop1_col]  = 0.0;
+          land[i][j][crop2_col]  = 0.0;
+          land[i][j][crop3_col]  = 0.0;
+          land[i][j][crop4_col]  = 0.0;
+          land[i][j][crop5_col]  = 0.0;
+          land[i][j][crop6_col]  = 0.0;
+          land[i][j][crop7_col]  = 0.0;
+          land[i][j][crop8_col]  = 0.0;
+          land[i][j][crop9_col]  = 0.0;
+          land[i][j][crop10_col] = 0.0;
+      }
+  }
+}
+
+/* =============================================================================
  * Cleans the landscape of all but the owner layer
  *     land:   The landscape array to be adjusted
  *     paras:  The paras vector that holds global information
@@ -291,7 +372,6 @@ void clean_landscape(double ***land, double *paras){
           }
       }
   }
-  
 }
 
 /* =============================================================================
@@ -334,9 +414,11 @@ void land_change(double ***land, double *paras, int ts){
   }
 
   if(ts % rotate_crops == 0){
+      clean_crops(land, paras);
       change_crop(land, paras, max_own);
   }
   if(ts % rotate_pesticide == 0 && ts > start_pesticide){
+      clean_pesticide(land, paras);
       change_pesticide(land, paras, max_own);
   }
 }
