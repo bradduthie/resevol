@@ -2,6 +2,7 @@
 # Example with two traits
 ################################################################################
 library(helicoverpa);
+set.seed(Sys.time());
 gmt <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
 gmt[1, 2] <-  -0.5;
@@ -18,10 +19,10 @@ gmt[3, 4] <- -0.5;
 gmt[4, 3] <- -0.5;
 gmt[3, 3] <-  1.0;
 gmt[4, 4] <-  1.0;
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 18000, 
                     max_gen = 2400, sampleK = 1200, chooseK = 6, layers = 6,
-                    mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, 
-                    term_cri = -12);
+                    mu_pr = 0.01, pr_cross = 0.01, mu_sd = 0.01, 
+                    term_cri = -9);
 
 
 mg  <- readRDS("mg.rds");
@@ -74,6 +75,14 @@ sim <- run_farm_sim(mine_output              = mg,
 ################################################################################
 ################################################################################
 ################################################################################
+
+## OLD CALL:
+
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
+                    max_gen = 2400, sampleK = 1200, chooseK = 6, layers = 6,
+                    mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, 
+                    term_cri = -12);
+
 
 # Initialising a file
 #library(helicoverpa)

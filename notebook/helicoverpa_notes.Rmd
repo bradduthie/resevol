@@ -41,6 +41,7 @@ library(rhandsontable)
 
  - **2021**
  
+    - **AUG** [19](#u-19-AUG-2021) 
     - **JUL** [23](#u-23-JUL-2021)
 
  - **2020**
@@ -64,6 +65,196 @@ library(rhandsontable)
 <a name="updates">Project updates:</a>
 ================================================================================
 
+
+> <a name="u-19-AUG-2021">Update: 19 AUG 2021</a>
+
+The helicoverpa package will be submitted to [CRAN](https://cran.r-project.org/) sometime before early August. What this will require is some appropriate testing functions and documentation, and maybe one or two vignettes that show how the package works. I'll also make a website similar to the [GMSE website](https://confoobio.github.io/gmse/). We will want to decide if the package name should actually be 'helicoverpa', or if we should switch to something else ([endorse](https://cran.r-project.org/package=endorse) is unfortunately taken; I'm not sure if 'ENDORSE' in all caps would work, but probably best to not try this and avoid confusion). I will update with more details about this later.
+
+For now, I want to focus on some simulations that I have recently run with the idea of laying the foundations for a general paper on landscape heterogeneity and pesticide resistance (not so much focusing on the details of the *Helicoverpa* system). I've not yet checked to see how novel the general ideas are because this started more as a verification of the model (the code is working as intended, as far as I can tell).
+
+The model focuses on the way that negative genetic correlations affect niche differentiation across different ploidy and mating types. The idea is that sex can act as a constraint to adaptation due to outbreeding depression in a way that cannot happen given asexual reproduction. Given a heterogeneous landscape, specifically in the context of the evolution of pesticide resistance and crop specialisation, asexually reproducing pests can get the upper hand by specialising on specific combinations of crop and pesticide and ensuring that their descendants will keep these specialised genotypes intact. In contrast, sexually reproducing organisms have a risk of outbreeding depression, breeding with a conspecific that is specialised to different conditions and having offspring that is not good at dealing with any environment. I have not seen this point in the literature, and I need to figure out the extent to which it has or has not been made and modelled to determine whether or not it is actually novel.
+
+What follows is a lot of simulation results from four different types of species set by the `repro` argument in the R package:
+
+- **asexual**: A haploid organism that reproduces asexually.
+- **selfing**: A monoecious diploid organism that reproduces sexually and can self-fertilise.
+- **non-selfing**: A monoecious diploid organism that reproduces sexually and cannot self-fertilise.
+- **biparental**: A dioecious diploid organism that reproduces sexually.
+
+For each of these different organism types, I included two different crop types and two pesticide types, and I ran three different pesticide and crop rotation procedures on a landscape with 24 farms for 480 time steps (maybe very loosely thinking of 12 time steps as a year):
+
+- **no_rotation**: No rotation of either crop or pesticide. Farms randomly select a crop type and a pesticide to use at the start of the simulation and use it for the whole simulation.
+- **pesticide_rotation**: Crop is not rotated, but pesticide is randomly selected every 12 time steps. Farms randomly select a crop type and pesticide to use at the start of the simulation, and farmers use the same crop each time step.
+- **both**: Rotation of both crop and pesticide. Farms randomly select a crop and pesticide to use at the start of the simulation, and then randomly select a new crop and pesticide to use every 12 time steps.
+
+```{r, echo = FALSE}
+mg_2021_AUG_19 <- readRDS("data/2021_AUG_19_data/mg.rds");
+```
+
+I'm deliberately not having a crop rotation only simulation as it seems unrealistic and potentially a bit redundant, at least for now. The details of the simulation are as follows. The genome was created with the `mine_gmatrix` settings below.
+
+```{r, eval = FALSE}
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
+                    max_gen = 2400, sampleK = 1200, chooseK = 6, layers = 6,
+                    mu_pr = 0.05, pr_cross = 0.05, mu_sd = 0.01, 
+                    term_cri = -12);
+```
+
+The output of `mg` is below. Note that list element 2 shows the target variance covariance matrix of four traits. Element 6 below gives the mined matrix.
+
+```{r, echo = FALSE}
+print(mg_2021_AUG_19);
+```
+
+This output was used to run simulation with the following parameter values (asexual without rotation is shown below).
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output              = mg,
+                    N                        = 1000,
+                    neutral_loci             = 1000,
+                    xdim                     = 100,
+                    ydim                     = 100,
+                    repro                    = "asexual",
+                    max_age                  = 6,
+                    selfing                  = TRUE,
+                    food_consume             = c("T1", "T2"),
+                    pesticide_consume        = c("T3", "T4"),
+                    food_needed_surv         = 1,
+                    food_needed_repr         = 1,
+                    reproduction_type        = "food_based",
+                    pesticide_tolerated_surv = 0,
+                    pesticide_rotation_type  = 2,
+                    crop_rotation_type       = 2,
+                    min_age_reproduce        = 4,
+                    max_age_feed             = 3,
+                    lambda_value             = 1.5,
+                    farms                    = 24,
+                    time_steps               = 480,
+                    mutation_pr              = 0.001,
+                    crossover_pr             = 0.1,
+                    net_mu_layers            = 0,
+                    crop_rotation_time       = 12,
+                    pesticide_rotation_time  = 12,
+                    crop_per_cell            = 8,
+                    pesticide_per_cell       = 0.4,
+                    crop_number              = 2,
+                    pesticide_number         = 2,
+                    K_on_birth               = 1000000,
+                    min_age_move             = 4,
+                    age_food_threshold       = 2,
+                    min_age_feed             = 1,
+                    pesticide_start          = 100,
+                    print_last               = TRUE,
+                    mating_distance          = 2,
+);
+```
+
+I have left out some arguments that were set to their default options. Note that we have a 100 by 100 landscape. Two traits determine how much of crop an individual consumes at a time ("T1" and "T2"), and two separate traits determine how much of two types of pesticide an individual imbibes ("T3", "T4"). Individuals start feeding in their first time step and stop feeding after their third time step. On their four time step, individuals can move and reproduce, and they have a maximum age of 6 (though mortality happens at the end of a time step). Each cell has 8 units of crop that an individual can eat, and the crop is replaced each time the land is rotated (i.e., individuals can keep eating and feeding on it until there is either nothing left on a cell or the farmer plants a new crop after 12 time steps). Individuals must eat at least 1 unit to survive and reproduce, and can starve on or after their second time step. Individuals also cannot tolerate any pesticide (note, 'zero' is kind of arbitrary, but it's an easy number to use).
+
+The following shows images of all of the different scenarios. For each scenario, I will show an image of the landscape on the last time step. Different coloured squares show different farms, and the points on top of them are pests. I will also show the dynamics of pest abundance and traits over time, and I will show scatterplots of the correlations between traits.
+
+Note that the pesticide application *starts* on time step 100 to allow a period of burn-in.
+
+**Asexual, no rotation**
+
+![](images/2021_AUG_19/asexual_no_rotation_space.png)
+
+![](images/2021_AUG_19/asexual_no_rotation_time.png)
+
+![](images/2021_AUG_19/asexual_no_rotation_traits.png)
+
+**Asexual, pesticide rotation**
+
+![](images/2021_AUG_19/asexual_pesticide_rotation_space.png)
+
+![](images/2021_AUG_19/asexual_pesticide_rotation_time.png)
+
+![](images/2021_AUG_19/asexual_pesticide_rotation_traits.png)
+
+**Asexual, both rotation**
+
+![](images/2021_AUG_19/asexual_both_rotation_space.png)
+
+![](images/2021_AUG_19/asexual_both_rotation_time.png)
+
+![](images/2021_AUG_19/asexual_both_rotation_traits.png)
+
+**Selfing, no rotation**
+
+![](images/2021_AUG_19/sexual_selfing_no_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_selfing_no_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_selfing_no_rotation_traits.png)
+
+**Selfing, pesticide rotation**
+
+![](images/2021_AUG_19/sexual_selfing_pesticide_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_selfing_pesticide_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_selfing_pesticide_rotation_traits.png)
+
+**Selfing, both rotation**
+
+![](images/2021_AUG_19/sexual_selfing_both_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_selfing_both_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_selfing_both_rotation_traits.png)
+
+**Non-selfing, no rotation**
+
+![](images/2021_AUG_19/sexual_noselfing_no_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_noselfing_no_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_noselfing_no_rotation_traits.png)
+
+**Non-selfing, pesticide rotation**
+
+![](images/2021_AUG_19/sexual_noselfing_pesticide_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_noselfing_pesticide_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_noselfing_pesticide_rotation_traits.png)
+
+**Non-selfing, both rotation**
+
+![](images/2021_AUG_19/sexual_noselfing_both_rotation_space.png)
+
+![](images/2021_AUG_19/sexual_noselfing_both_rotation_time.png)
+
+![](images/2021_AUG_19/sexual_noselfing_both_rotation_traits.png)
+
+**Biparental, no rotation**
+
+![](images/2021_AUG_19/biparental_no_rotation_space.png)
+
+![](images/2021_AUG_19/biparental_no_rotation_time.png)
+
+![](images/2021_AUG_19/biparental_no_rotation_traits.png)
+
+**Biparental, pesticide rotation**
+
+![](images/2021_AUG_19/biparental_pesticide_rotation_space.png)
+
+![](images/2021_AUG_19/biparental_pesticide_rotation_time.png)
+
+![](images/2021_AUG_19/biparental_pesticide_rotation_traits.png)
+
+**Biparental, both rotation**
+
+![](images/2021_AUG_19/biparental_both_rotation_space.png)
+
+![](images/2021_AUG_19/biparental_both_rotation_time.png)
+
+![](images/2021_AUG_19/biparental_both_rotation_traits.png)
+
+
+It's worth mentioning that the reason for the oscillating population size is due to individuals sometimes consuming all of the food and starting to decrease in population density before the next crop is put down. To get a full picture on what is going on, I will need to run multiple replicate simulations with different mined genomes (i.e., same genetic correlations, but potentially achieved in a different way). I will also want to run the same simulations with an identity matrix (i.e., no genetic correlations) to act as a control so that we can understand the role of the negative genetic correlations in all of these results.
+
+I have not really given all of these figures a hard look to try to think more clearly about what's going on yet -- at least not apart from the outbreeding depression idea. 
 
 > <a name="u-23-JUL-2021">Update: 23 JUL 2021</a>
 
