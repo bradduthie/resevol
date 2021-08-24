@@ -20,9 +20,9 @@ gmt[4, 3] <- -0.5;
 gmt[3, 3] <-  1.0;
 gmt[4, 4] <-  1.0;
 mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 18000, 
-                    max_gen = 2400, sampleK = 1200, chooseK = 6, layers = 6,
+                    max_gen = 3200, sampleK = 1200, chooseK = 6, layers = 6,
                     mu_pr = 0.01, pr_cross = 0.01, mu_sd = 0.01, 
-                    term_cri = -9);
+                    term_cri = -12);
 
 
 mg  <- readRDS("mg.rds");

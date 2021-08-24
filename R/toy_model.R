@@ -1,4 +1,8 @@
-# sim1 <- replicate_toy_sims(generations = 20, xdim = 10, ydim = 10,  pathogens = 5, crops = 5, pest_init = 10000, crop_rotate = "rotate", path_rotate = "rotate", cell_K = 100, block_len = 1, print_it = FALSE,  fecundity = 10, pest_move_dist = 1)
+# sim1 <- replicate_toy_sims(generations = 20, xdim = 10, ydim = 10, 
+#                            pathogens = 5, crops = 5, pest_init = 10000, 
+#                            crop_rotate = "rotate", path_rotate = "rotate", 
+#                            cell_K = 100, block_len = 1, print_it = FALSE, 
+#                            fecundity = 10, pest_move_dist = 1)
 
 # ==============================================================================
 # This is just a toy version of the model, for the presentation
