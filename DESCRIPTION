@@ -7,10 +7,10 @@ Imports: grDevices (>= 4.0.0), graphics (>= 4.0.0), stats(>= 4.0.0),
 Authors@R: c(person("A. Bradley", "Duthie", email = "brad.duthie@gmail.com",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-8343-4995")),
-             person("Rose McKeon", role = c("aut", "ctr")),
-             person("Rosie Mangan", role = c("ctr")),
-             person("Luc Bussi\u0xC3re", role = c("ctr")),
-             person("Matthew Tinsley", role = c("ctr"))
+             person("Rose", "McKeon", role = c("aut", "ctr")),
+             person("Rosie", "Mangan", role = c("ctr")),
+             person("Luc", "Bussi&eacute;re", role = c("ctr")),
+             person("Matthew", "Tinsley", role = c("ctr"))
             )
 Maintainer: A. Bradley Duthie <brad.duthie@gmail.com>
 Description: Simulates individual-based models of agricultural pest management
