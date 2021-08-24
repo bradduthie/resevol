@@ -33,7 +33,15 @@ the_land A cols by rows landscape with randomly distributed cell types
 Initialise the landscape for a simulation. This should not normally need to 
 be done explicitly with this function because it is run inside of the 
 run_farm_sim function, but this gives the option to generate a landscape 
-without actually running a simulation.
+without actually running a simulation. All landscapes are produced as three
+dimensional arrays with varying numbers of rows and columns that determine
+landscape size, and a depth of 21 layers. The top layer defines which cells
+belong to which farm, while the remaining layers define how much of a given
+crop is on the landscape cell (2-11) or how much pesticide has been applied
+to it (12-21). An arbitrary number of farms are placed in a blocked design 
+on the landscape using a shortest split-line algorithm, which attempts to 
+make farm size as even as possible. Specifying public land is possible, and
+adds sections of land that are not farms, but this is not recommended.
 }
 \examples{
 land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)

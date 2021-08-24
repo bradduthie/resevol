@@ -59,11 +59,12 @@ run_farm_sim(
   pesticide_number = 1,
   print_inds = FALSE,
   print_gens = TRUE,
-  print_last = TRUE,
+  print_last = FALSE,
   K_on_birth = 1e+06,
   pesticide_start = 0,
   immigration_rate = 0,
-  get_f_coef = FALSE
+  get_f_coef = FALSE,
+  get_stats = TRUE
 )
 }
 \arguments{
@@ -185,12 +186,43 @@ run_farm_sim(
 \item{immigration_rate}{Mean number of immigrants per time step}
 
 \item{get_f_coef}{Get the inbreeding coefficient (not for asexual)}
+
+\item{get_stats}{Get population level statistics in a CSV printout}
 }
 \value{
-prints a simulation file and output
+The output in the R console is a list with two elements; the first 
+element is a vector of parameter values used by the model, and the second 
+element is the landscape in the simulation. The most relevant output will be
+produced as CSV files within the working directory. When get_stats = TRUE, 
+a file named 'population_data.csv' is produced in the working directory. When
+print_last = TRUE, a complete array of all individuals and their 
+characteristics is printed for the last time step in the working directory in
+a file named 'last_time_step.csv' (for large simulations, this file can be 
+> 1GB in size). When print_inds = TRUE, a complete array of all individuals 
+in all time steps is produced in the working directory in a file named
+'individuals.csv' (use this option with extreme caution for all but the
+smallest simulations).
 }
 \description{
-Initialises a new set of individuals and then simulates farming over time
+Initialises a new set of individuals and then simulates farming over time.
+This is the main function that runs individual-based simulations of crop and
+pesticide use and the evolution of pesticide resistance over time. To run 
+this function, output from the mine_gmatrix function is required to specify
+the covariance structure of individual traits and individual genomes. The
+arguments to this function are used to initialise a landscape with the 
+make_landscape function and initialise individuals with the initialise_inds
+function. After initialisation, the simulation continues for up to a set 
+number of time steps (unless extinction occurs), and individuals on the
+landscape feed, encounter pesticide, move, reproduce, and die depending upon
+the arguments specified in this function. After a specified number of time
+steps, the crop or pesticide applied to a landscape cell can also change. The
+end result is an evolving population of individuals that express traits 
+that can potentially affect fitness (e.g., food consumption, pesticide
+consumption, movement). Population level statistics are calculated by 
+default and printed to a CSV, but individual level data (which includes all 
+individual characteristics in a large table) need to be turned on because 
+files can become extremely large (use print_inds with extreme caution and
+print_last with care).
 }
 \examples{
 gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
@@ -200,5 +232,5 @@ mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100,
 sim       <- run_farm_sim(mine_output = mg, N = 100, xdim = 40, ydim = 40, 
                          repro = "asexual", time_steps = 10, 
                          print_inds = FALSE, print_gens = FALSE,
-                         print_last = FALSE);
+                         print_last = FALSE, get_stats = FALSE);
 }

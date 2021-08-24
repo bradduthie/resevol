@@ -1,14 +1,23 @@
 #'Initialise individuals
 #'
-#'Initialise new individuals into the IBM
+#'Initialise new individuals into the IBM. This function is generally not needed
+#'because it is run inside the run_farm_sim function to generate new individuals
+#'for simulations. To initialise individuals with this function, it is necessary
+#'to set the mine_output argument to output from the mine_gmatrix function. This
+#'output includes all of the information necessary to build individuals with
+#'genomes that produce traits that covary in a pre-specified way. The arguments
+#'of this function include addition information for building the individual
+#'array, which is a two-dimensional array in which each individual occupies a 
+#'row, and each column specifies a character of the individual (including all
+#'genome loci). See vignettes for a more detailed explanation. 
 #'
 #'@param mine_output The output from mine_gmatrix
 #'@param N Number of individuals to be initialised
 #'@param xdim Horizontal dimensions of the landscape
 #'@param ydim Vertical dimensions of the landscape
 #'@param repro Type of reproduction allowed: "asexual", "sexual", and
-#'  "biparental". Note that if repro > 0, this causes a diploid genome.
-#'@param neutral_loci The number of neutral loci individuals have
+#'  "biparental". Note that if repro != "asexual", this causes a diploid genome.
+#'@param neutral_loci The number of neutral loci individuals have (must be > 0)
 #'@param max_age The maximum age of an individual
 #'@param min_age_move The minimum age at which an individual can move
 #'@param max_age_move The maximum age at which an individual can move
@@ -18,7 +27,7 @@
 #'@param max_age_feed The maximum age at which an individual feeds
 #'@param food_consume The amount of food consumed during feeding
 #'@param pesticide_consume Amount of pesticide consumed while on a cell
-#'@param rand_age Initialise individuals with a random age
+#'@param rand_age Initialise individuals with a random age (TRUE/FALSE)
 #'@param move_distance Maximum cells moved in one bout of movement
 #'@param food_needed_surv Food needed to survive (if over min_age_feed)
 #'@param pesticide_tolerated_surv Pesticide tolerated by individual
@@ -28,12 +37,12 @@
 #'@param mating_distance Distance in cells within which mate is available
 #'@param lambda_value individual value for poisson reproduction
 #'@param movement_bouts Number of bouts of movement per time step
-#'@param selfing If sexual reproduction, is selfing allowed?
+#'@param selfing If sexual reproduction, is selfing allowed? (TRUE/FALSE)
 #'@param feed_while_moving Do individuals feed after each movement bout?
 #'@param mortality_type Type of mortality (currently only one option)
 #'@param age_food_threshold Age at which food threshold is enacted
 #'@param age_pesticide_threshold Age at which pesticide threshold is enacted
-#'@return A set of values that will produce a desired G-matrix
+#'@return A two-dimensional array of individuals for simulation
 #'@examples
 #'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
 #'diag(gmt) <- 1;

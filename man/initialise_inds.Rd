@@ -47,9 +47,9 @@ initialise_inds(
 \item{ydim}{Vertical dimensions of the landscape}
 
 \item{repro}{Type of reproduction allowed: "asexual", "sexual", and
-"biparental". Note that if repro > 0, this causes a diploid genome.}
+"biparental". Note that if repro != "asexual", this causes a diploid genome.}
 
-\item{neutral_loci}{The number of neutral loci individuals have}
+\item{neutral_loci}{The number of neutral loci individuals have (must be > 0)}
 
 \item{max_age}{The maximum age of an individual}
 
@@ -69,7 +69,7 @@ initialise_inds(
 
 \item{pesticide_consume}{Amount of pesticide consumed while on a cell}
 
-\item{rand_age}{Initialise individuals with a random age}
+\item{rand_age}{Initialise individuals with a random age (TRUE/FALSE)}
 
 \item{move_distance}{Maximum cells moved in one bout of movement}
 
@@ -89,7 +89,7 @@ initialise_inds(
 
 \item{movement_bouts}{Number of bouts of movement per time step}
 
-\item{selfing}{If sexual reproduction, is selfing allowed?}
+\item{selfing}{If sexual reproduction, is selfing allowed? (TRUE/FALSE)}
 
 \item{feed_while_moving}{Do individuals feed after each movement bout?}
 
@@ -100,10 +100,19 @@ initialise_inds(
 \item{age_pesticide_threshold}{Age at which pesticide threshold is enacted}
 }
 \value{
-A set of values that will produce a desired G-matrix
+A two-dimensional array of individuals for simulation
 }
 \description{
-Initialise new individuals into the IBM
+Initialise new individuals into the IBM. This function is generally not needed
+because it is run inside the run_farm_sim function to generate new individuals
+for simulations. To initialise individuals with this function, it is necessary
+to set the mine_output argument to output from the mine_gmatrix function. This
+output includes all of the information necessary to build individuals with
+genomes that produce traits that covary in a pre-specified way. The arguments
+of this function include addition information for building the individual
+array, which is a two-dimensional array in which each individual occupies a 
+row, and each column specifies a character of the individual (including all
+genome loci). See vignettes for a more detailed explanation.
 }
 \examples{
 gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
