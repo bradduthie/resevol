@@ -1,6 +1,9 @@
 #' Landscape initialisation
 #'
-#' Initialise the landscape of the G-MSE model.
+#' Initialise the landscape for a simulation. This should not normally need to 
+#' be done explicitly with this function because it is run inside of the 
+#' run_farm_sim function, but this gives the option to generate a landscape 
+#' without actually running a simulation. 
 #'
 #'@param rows The dimension of the other side of the landscape (e.g., Longitude)
 #'@param cols The dimension of one side of the landscape (e.g., Latitude)

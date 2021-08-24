@@ -165,7 +165,7 @@ double get_crop_val(double *paras){
 
 
 /* =============================================================================
- * Does not rotate the crop in any way -- just refereshes crop on the layer
+ * Does not rotate the crop in any way -- just refreshes crop on the layer
  *     land:        The landscape array to be adjusted
  *     paras:       The paras vector that holds global information
  *     owner_count: Vector of the number
@@ -275,12 +275,12 @@ void change_crop(double ***land, double *paras, int max_own){
  * ========================================================================== */
 void clean_pesticide(double ***land, double *paras){
   
-  int i, j, rows, cols;
+  int i, j, xdim, ydim;
   int pest1_col, pest2_col, pest3_col, pest4_col, pest5_col, pest6_col;
   int pest7_col, pest8_col, pest9_col, pest10_col;
   
-  cols       = (int) paras[103];
-  rows       = (int) paras[104];
+  xdim       = (int) paras[103];
+  ydim       = (int) paras[104];
   pest1_col  = (int) paras[128];
   pest2_col  = (int) paras[129];
   pest3_col  = (int) paras[130];
@@ -292,8 +292,8 @@ void clean_pesticide(double ***land, double *paras){
   pest9_col  = (int) paras[136];
   pest10_col = (int) paras[137];
   
-  for(i = 0; i < rows; i++){
-    for(j = 0; j < cols; j++){
+  for(i = 0; i < xdim; i++){
+    for(j = 0; j < ydim; j++){
       land[i][j][pest1_col]  = 0.0;
       land[i][j][pest2_col]  = 0.0;
       land[i][j][pest3_col]  = 0.0;
@@ -316,12 +316,12 @@ void clean_pesticide(double ***land, double *paras){
  * ========================================================================== */
 void clean_crops(double ***land, double *paras){
   
-  int i, j, rows, cols;
+  int i, j, xdim, ydim;
   int crop1_col, crop2_col, crop3_col, crop4_col, crop5_col, crop6_col;
   int crop7_col, crop8_col, crop9_col, crop10_col;
   
-  cols       = (int) paras[103];
-  rows       = (int) paras[104];
+  xdim       = (int) paras[103];
+  ydim       = (int) paras[104];
   crop1_col  = (int) paras[118];
   crop2_col  = (int) paras[119];
   crop3_col  = (int) paras[120];
@@ -333,8 +333,8 @@ void clean_crops(double ***land, double *paras){
   crop9_col  = (int) paras[126];
   crop10_col = (int) paras[127];
   
-  for(i = 0; i < rows; i++){
-      for(j = 0; j < cols; j++){
+  for(i = 0; i < xdim; i++){
+      for(j = 0; j < ydim; j++){
           land[i][j][crop1_col]  = 0.0;
           land[i][j][crop2_col]  = 0.0;
           land[i][j][crop3_col]  = 0.0;
@@ -356,16 +356,16 @@ void clean_crops(double ***land, double *paras){
  * ========================================================================== */
 void clean_landscape(double ***land, double *paras){
   
-  int i, j, k, rows, cols, layers, own_layer;
+  int i, j, k, xdim, ydim, layers, own_layer;
   
-  cols      = (int) paras[103];
-  rows      = (int) paras[104];
+  xdim      = (int) paras[103];
+  ydim      = (int) paras[104];
   layers    = (int) paras[105];
   own_layer = (int) paras[155];
   
   for(k = 0; k < layers; k++){
-      for(i = 0; i < rows; i++){
-          for(j = 0; j < cols; j++){
+      for(i = 0; i < xdim; i++){
+          for(j = 0; j < ydim; j++){
               if(k != own_layer){
                   land[i][j][k] = 0;
               }

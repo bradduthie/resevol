@@ -23,7 +23,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
-    int    i, j, k, ts;
+    int    i, ts;
     int    row, col;
     int    xloc, yloc, zloc;
     int    land_z, land_y, land_x;
@@ -38,10 +38,10 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
     int    print_gen;        /* Should the generations be printed */
+    int    get_stats;        /* Should print a CSV with statistics */
     int    *dim_IND;         /* Dimensions of the individual array */
     int    *dim_LAND;        /* Dimensions of the landscape */
   
-    double imm_rate;
     double *imm_sample;
     double *paras_ptr;
     double *IND_ptr;
@@ -109,9 +109,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     }
      
     /* Code below remakes the LAND array for easier use */
-    land_x = dim_LAND[0];
-    land_y = dim_LAND[1];
-    land_z = dim_LAND[2];   
+    land_x = dim_LAND[1];
+    land_y = dim_LAND[0];
+    land_z = dim_LAND[2];
     
     land   = malloc(land_x * sizeof(double *));
     for(xloc = 0; xloc < land_x; xloc++){
@@ -132,28 +132,28 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
-    imm_rate   = paras[169];
     imm_sample = malloc(ind_traits * sizeof(double));
     for(col = 0; col < ind_traits; col++){
         imm_sample[col] = pests[0][col];
     }
     
     print_gen  = (int) paras[165];
+    get_stats  = (int) paras[172];
     time_steps = (int) paras[140];
     ts         = 0;
 
     while(ts < time_steps){
-        
+ 
         land_change(land, paras, ts);
  
         age_pests(pests, paras); 
         
         feeding(pests, paras, land); 
-
+        
         pesticide_consumed(pests, paras, land); 
-    
+
         movement(pests, paras, land); 
-    
+        
         calculate_offspring(pests, paras);
     
         offspring_number = (int) paras[106]; /* Create the offspring array */
@@ -167,7 +167,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         apply_mortality(pests, paras);
     
         print_all_pests(pests, paras, ts);
-        population_statistics(pests, paras, ts);
+        if(get_stats > 0){
+            population_statistics(pests, paras, ts);
+        }
         
         immigrants = get_immigrant_number(paras);
         paras[170] = (double) immigrants;

@@ -39,8 +39,8 @@ test_that("Simulations are run and output is produced", {
                               print_inds = FALSE, print_gens = FALSE,
                               print_last = FALSE, K_on_birth = 1000,
                               pesticide_start = 0, immigration_rate = 0,
-                              get_f_coef = FALSE);
-    expect_equal(length(sim[[1]]), 172);
+                              get_f_coef = FALSE, get_stats = FALSE);
+    expect_equal(length(sim[[1]]), 173);
     expect_equal(dim(sim[[2]]), c(40, 40, 21));
 })
 

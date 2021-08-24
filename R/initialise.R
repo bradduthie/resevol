@@ -17,6 +17,7 @@
 #'@param min_age_feed The minimum age at which an individual feeds
 #'@param max_age_feed The maximum age at which an individual feeds
 #'@param food_consume The amount of food consumed during feeding
+#'@param pesticide_consume Amount of pesticide consumed while on a cell
 #'@param rand_age Initialise individuals with a random age
 #'@param move_distance Maximum cells moved in one bout of movement
 #'@param food_needed_surv Food needed to survive (if over min_age_feed)

@@ -16,6 +16,7 @@
 #'@param min_age_feed The minimum age at which an individual feeds
 #'@param max_age_feed The maximum age at which an individual feeds
 #'@param food_consume The amount of food consumed during feeding
+#'@param pesticide_consume Amount of pesticide consumed while on a cell
 #'@param rand_age Initialise individuals with a random age
 #'@param move_distance Maximum cells moved in one bout of movement
 #'@param food_needed_surv Food needed to survive (if over min_age_feed)
@@ -60,6 +61,7 @@
 #'@param pesticide_start What time step should pesticide start being applied?
 #'@param immigration_rate Mean number of immigrants per time step
 #'@param get_f_coef Get the inbreeding coefficient (not for asexual)
+#'@param get_stats Get population level statistics in a CSV printout
 #'@return prints a simulation file and output
 #'@examples
 #'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
@@ -67,7 +69,9 @@
 #'mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
 #'                          npsize = 100, max_gen = 4, prnt_out = FALSE);
 #'sim       <- run_farm_sim(mine_output = mg, N = 100, xdim = 40, ydim = 40, 
-#'                          repro = "asexual", time_steps = 10);
+#'                          repro = "asexual", time_steps = 10, 
+#'                          print_inds = FALSE, print_gens = FALSE,
+#'                          print_last = FALSE);
 #'@useDynLib helicoverpa
 #'@importFrom stats rnorm rpois runif
 #'@export
@@ -129,7 +133,8 @@ run_farm_sim <- function(mine_output,
                          K_on_birth = 1000000,
                          pesticide_start = 0,
                          immigration_rate = 0,
-                         get_f_coef = FALSE){
+                         get_f_coef = FALSE,
+                         get_stats = TRUE){
   
     land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
@@ -289,7 +294,8 @@ run_farm_sim <- function(mine_output,
                              movement_bouts           = movement_bouts,
                              pesticide_start          = pesticide_start,
                              immigration_rate         = immigration_rate,
-                             get_f_coef               = get_f_coef);
+                             get_f_coef               = get_f_coef,
+                             get_stats                = get_stats);
   
     return(sim_results);
 }
@@ -333,7 +339,8 @@ sim_crops <- function(pests,
                       movement_bouts = 1,
                       pesticide_start = 0,
                       immigration_rate = 0,
-                      get_f_coef = FALSE
+                      get_f_coef = FALSE,
+                      get_stats  = TRUE
                       ){
   
   N    <- dim(pests)[1];
@@ -371,6 +378,7 @@ sim_crops <- function(pests,
   pdst <- pesticide_start;
   immi <- immigration_rate;
   fcoe <- as.numeric(get_f_coef);
+  sttt <- as.numeric(get_stats);
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -543,7 +551,8 @@ sim_crops <- function(pests,
               pdst,   # 168) When does the pesticide use start?
               immi,   # 169) Average number of immigrants per time step
               0,      # 170) Realised number of immigrants
-              fcoe    # 171) Are inbreeding coefficients calculated?
+              fcoe,   # 171) Are inbreeding coefficients calculated?
+              sttt    # 172) Get a CSV printoff of statistics
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,

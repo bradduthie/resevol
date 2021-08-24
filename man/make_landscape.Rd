@@ -30,7 +30,10 @@ make_landscape(
 the_land A cols by rows landscape with randomly distributed cell types
 }
 \description{
-Initialise the landscape of the G-MSE model.
+Initialise the landscape for a simulation. This should not normally need to 
+be done explicitly with this function because it is run inside of the 
+run_farm_sim function, but this gives the option to generate a landscape 
+without actually running a simulation.
 }
 \examples{
 land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)

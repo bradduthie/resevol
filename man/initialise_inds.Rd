@@ -67,6 +67,8 @@ initialise_inds(
 
 \item{food_consume}{The amount of food consumed during feeding}
 
+\item{pesticide_consume}{Amount of pesticide consumed while on a cell}
+
 \item{rand_age}{Initialise individuals with a random age}
 
 \item{move_distance}{Maximum cells moved in one bout of movement}
