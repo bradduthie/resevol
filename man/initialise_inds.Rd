@@ -10,7 +10,7 @@ initialise_inds(
   xdim = 100,
   ydim = 100,
   repro = "sexual",
-  neutral_loci = 0,
+  neutral_loci = 10,
   max_age = 9,
   min_age_move = 0,
   max_age_move = 9,
@@ -102,4 +102,11 @@ A set of values that will produce a desired G-matrix
 }
 \description{
 Initialise new individuals into the IBM
+}
+\examples{
+gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+diag(gmt) <- 1;
+mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
+                         npsize = 100, max_gen = 4, prnt_out = FALSE);
+inds      <- initialise_inds(mine_output = mg, N = 40, repro = "asexual");
 }

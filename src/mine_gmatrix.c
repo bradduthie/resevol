@@ -849,6 +849,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int sampleK;
     int chooseK;
     int use_cor;
+    int prnt_out;
     
     double **VCV;
     double **gmatrix;
@@ -919,6 +920,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     term_cri = (double) paras[10]; /* Evol Alg stress termination crit */
     sd_ini   = (double) paras[11]; /* StDev of initialised network values */
     use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
+    prnt_out = (int) paras[13]; /* Whether or not to print anything out */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
@@ -1003,9 +1005,11 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
   
     gen     = 0;
     estress = term_cri + 1000;
-    Rprintf("===============================================\n");
-    Rprintf("Initialising gmatrix mining...                 \n");
-    Rprintf("===============================================\n");
+    if(prnt_out > 0){
+        Rprintf("===============================================\n");
+        Rprintf("Initialising gmatrix mining...                 \n");
+        Rprintf("===============================================\n");
+    }
     while(gen < max_gen & high_fitness[0] > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras); 
@@ -1026,9 +1030,10 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
                   W, high_fitness, gen); 
       
       /* Add print of highest fitness found */
-      Rprintf("Gen: %d\t Stress: %f\t Min: %f\n", 
-              gen, estress, high_fitness[0]);
-      
+      if(prnt_out > 0){
+          Rprintf("Gen: %d\t Stress: %f\t Min: %f\n", 
+                  gen, estress, high_fitness[0]);
+      }
       gen++;
     }
     

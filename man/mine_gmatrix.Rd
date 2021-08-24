@@ -18,6 +18,7 @@ mine_gmatrix(
   term_cri = -5.3,
   sd_ini = 0.1,
   use_cor = FALSE,
+  prnt_out = TRUE,
   gmatrix
 )
 }
@@ -48,6 +49,8 @@ mine_gmatrix(
 
 \item{use_cor}{Compare correlation matrix rather than the covariance matrix}
 
+\item{prnt_out}{Print out progress showing stress for each generation}
+
 \item{gmatrix}{G-matrix that the evolutionary algorithm will match}
 }
 \value{
@@ -55,4 +58,10 @@ A set of values that will produce a desired G-matrix
 }
 \description{
 Mine networks for establishing the link between genome and g-matrix.
+}
+\examples{
+gmt       <- matrix(data = 0, nrow = 3, ncol = 3);
+diag(gmt) <- 1;
+mg        <- mine_gmatrix(gmatrix = gmt, loci = 6, layers = 3, indivs = 100, 
+                         npsize = 100, max_gen = 8, prnt_out = FALSE);
 }

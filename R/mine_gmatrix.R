@@ -15,11 +15,17 @@
 #'@param term_cri Stress criteria (ln) for evolutionary algorithm terminating
 #'@param sd_ini StDev of initialised networked values
 #'@param use_cor Compare correlation matrix rather than the covariance matrix
+#'@param prnt_out Print out progress showing stress for each generation
 #'@param gmatrix G-matrix that the evolutionary algorithm will match
+#'@return A set of values that will produce a desired G-matrix
+#'@examples
+#'gmt       <- matrix(data = 0, nrow = 3, ncol = 3);
+#'diag(gmt) <- 1;
+#'mg        <- mine_gmatrix(gmatrix = gmt, loci = 6, layers = 3, indivs = 100, 
+#'                          npsize = 100, max_gen = 8, prnt_out = FALSE);
 #'@useDynLib helicoverpa
 #'@importFrom stats rnorm rpois runif rbinom
 #'@importFrom utils read.csv write.csv
-#'@return A set of values that will produce a desired G-matrix
 #'@export
 mine_gmatrix <- function(loci     = 18, 
                          layers   = 6, 
@@ -34,10 +40,12 @@ mine_gmatrix <- function(loci     = 18,
                          term_cri = -5.3,
                          sd_ini   = 0.1,
                          use_cor  = FALSE,
+                         prnt_out = TRUE,
                          gmatrix){
     
     paras <- c(loci, layers, indivs, npsize, mu_pr, mu_sd, max_gen, pr_cross,
-               sampleK, chooseK, term_cri, sd_ini, use_cor);
+               sampleK, chooseK, term_cri, sd_ini, use_cor, as.numeric(prnt_out)
+               );
     
     if(loci < 2 | loci %% 1 > 0){
         stop("ERROR: 'loci' needs to be an integer value above 1.")

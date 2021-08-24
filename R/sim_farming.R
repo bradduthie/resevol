@@ -61,6 +61,13 @@
 #'@param immigration_rate Mean number of immigrants per time step
 #'@param get_f_coef Get the inbreeding coefficient (not for asexual)
 #'@return prints a simulation file and output
+#'@examples
+#'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+#'diag(gmt) <- 1;
+#'mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
+#'                          npsize = 100, max_gen = 4, prnt_out = FALSE);
+#'sim       <- run_farm_sim(mine_output = mg, N = 100, xdim = 40, ydim = 40, 
+#'                          repro = "asexual", time_steps = 10);
 #'@useDynLib helicoverpa
 #'@importFrom stats rnorm rpois runif
 #'@export
