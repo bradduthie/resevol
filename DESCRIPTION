@@ -1,17 +1,37 @@
 Package: helicoverpa
 Type: Package
 Title: Helicoverpa
-Version: 0.1.0
-Imports: grDevices (>= 3.6.0), graphics (>= 3.6.0), stats(>= 3.6.0),
-         utils (>= 3.6.0)
+Version: 0.1.0.0
+Imports: grDevices (>= 4.0.0), graphics (>= 4.0.0), stats(>= 4.0.0),
+         utils (>= 4.0.0)
 Authors@R: c(person("A. Bradley", "Duthie", email = "brad.duthie@gmail.com",
                   role = c("aut", "cre"),
-                  comment = c(ORCID = "0000-0001-8343-4995"))
+                  comment = c(ORCID = "0000-0001-8343-4995")),
+             person("Rose McKeon", role = c("aut", "ctr")),
+             person("Rosie Mangan", role = c("ctr")),
+             person("Luc Bussi\u0xC3re", role = c("ctr")),
+             person("Matthew Tinsley", role = c("ctr"))
             )
 Maintainer: A. Bradley Duthie <brad.duthie@gmail.com>
-Description: Helicoverpa work in progress
-Depends: R (>= 3.4.0)
+Description: Simulates individual-based models of agricultural pest management
+    and the evolution of pesticide resistance. Management occurs on a spatially
+    explicit landscape that is divided into an arbitrary number of farms that
+    can grow one of up to 10 crops and apply one of up to 10 pesticides. Pest
+    genomes are modelled in a way that allows for any number of pest traits with
+    an arbitrary covariance structure that is constructed using an evolutionary
+    algorithm in the mine_gmatrix() function. Simulations are then run using the
+    run_farm_sim() function. This package thereby allows for highly mechanistic
+    social-ecological models of the evolution of pesticide resistance under
+    different types of crop rotation and pesticide application regimes.
+URL: https://bradduthie.github.io/helicoverpa/
+BugReports: https://github.com/bradduthie/helicoverpa/issues
+Depends: R (>= 4.0.0)
 License: GPL (>=2)
 LazyData: TRUE
 Encoding: UTF-8
+Suggests: knitr,
+    rmarkdown,
+    testthat,
 RoxygenNote: 7.1.1
+
+
