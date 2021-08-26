@@ -1,6 +1,6 @@
 Package: helicoverpa
 Type: Package
-Title: Helicoverpa
+Title: Simulate agricultural production and evolution of pesticide resistance
 Version: 0.1.5.0
 Imports: grDevices (>= 4.0.0), graphics (>= 4.0.0), stats(>= 4.0.0),
          utils (>= 4.0.0)

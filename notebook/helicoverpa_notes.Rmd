@@ -41,7 +41,7 @@ library(rhandsontable)
 
  - **2021**
  
-    - **AUG** [19](#u-19-AUG-2021) 
+    - **AUG** [19](#u-19-AUG-2021), [26](#u-26-AUG-2021)
     - **JUL** [23](#u-23-JUL-2021)
 
  - **2020**
@@ -65,6 +65,114 @@ library(rhandsontable)
 <a name="updates">Project updates:</a>
 ================================================================================
 
+> <a name="u-26-AUG-2021">Update: 26 AUG 2021</a>
+
+I have now run the same analysis that I did on [19 AUG 2021](#u-19-AUG-2021), but with traits that evolve independently. This was done by setting a covariance matrix to be the identity matrix for four traits. Here is the `mine_gmatrix` output that was used for the simulations.
+
+```{r, echo = FALSE}
+mg_2021_AUG_26 <- readRDS("data/2021_AUG_26_data/mg_n1.rds");
+print(mg_2021_AUG_26);
+```
+
+Note that the parameter values for mining the matrix were identical to those chosen in the simulations from [19 AUG 2021](#u-19-AUG-2021). The results are as expected; all traits evolve in response to selection to feed on both crop types and resist both pesticide types.
+
+**Asexual, no rotation**
+    
+![](images/2021_AUG_26/asexual_no_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/asexual_no_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/asexual_no_rotation_traits_NULL.png)
+
+**Asexual, pesticide rotation**
+    
+![](images/2021_AUG_26/asexual_pesticide_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/asexual_pesticide_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/asexual_pesticide_rotation_traits_NULL.png)
+
+**Asexual, both rotation**
+    
+![](images/2021_AUG_26/asexual_both_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/asexual_both_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/asexual_both_rotation_traits_NULL.png)
+
+**Selfing, no rotation**
+    
+![](images/2021_AUG_26/sexual_selfing_no_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_no_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_no_rotation_traits_NULL.png)
+
+**Selfing, pesticide rotation**
+    
+![](images/2021_AUG_26/sexual_selfing_pesticide_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_pesticide_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_pesticide_rotation_traits_NULL.png)
+
+**Selfing, both rotation**
+    
+![](images/2021_AUG_26/sexual_selfing_both_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_both_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_selfing_both_rotation_traits_NULL.png)
+
+**Non-selfing, no rotation**
+    
+![](images/2021_AUG_26/sexual_noselfing_no_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_no_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_no_rotation_traits_NULL.png)
+
+**Non-selfing, pesticide rotation**
+    
+![](images/2021_AUG_26/sexual_noselfing_pesticide_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_pesticide_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_pesticide_rotation_traits_NULL.png)
+
+**Non-selfing, both rotation**
+    
+![](images/2021_AUG_26/sexual_noselfing_both_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_both_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/sexual_noselfing_both_rotation_traits_NULL.png)
+
+**Biparental, no rotation**
+    
+![](images/2021_AUG_26/biparental_no_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/biparental_no_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/biparental_no_rotation_traits_NULL.png)
+
+**Biparental, pesticide rotation**
+    
+![](images/2021_AUG_26/biparental_pesticide_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/biparental_pesticide_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/biparental_pesticide_rotation_traits_NULL.png)
+
+**Biparental, both rotation**
+    
+![](images/2021_AUG_26/biparental_both_rotation_space_NULL.png)
+
+![](images/2021_AUG_26/biparental_both_rotation_time_NULL.png)
+
+![](images/2021_AUG_26/biparental_both_rotation_traits_NULL.png)
+
+For full simulations, I think it will be important to have each replicate (and I'm including all of the above as one replicate) with its own mined gmatrix. 
 
 > <a name="u-19-AUG-2021">Update: 19 AUG 2021</a>
 
@@ -1751,7 +1859,7 @@ We can run things the same way to generate the output. Note that the output from
 library(jsonlite);
 sim  <- toy_simulate_resistance(pathogens = 3, crops = 3);
 json <- results_to_json(pest = sim$PEST_DATA[[19]], land = sim$LAND_DATA[[19]],
-                        filename = "../data/sample_sim.json");
+                        filename = "toy_model/data/sample_sim.json");
 ```
 
  The output is [here]([sample_sim.json](https://github.com/bradduthie/helicoverpa/blob/dev/data/sample_sim.json)).
@@ -2145,7 +2253,7 @@ Using the function below to print and return the json. This relies on the `jsonl
 ```{r}
 library(jsonlite);
 sim_json <- results_to_json(sim = sim[[19]], 
-                            filename = "../data/sample_sim.json");
+                            filename = "toy_model/data/sample_sim.json");
 ```
 
 The `sim_json` output should be easy to modify as necessary. I've not added it here because it's much too large for the notebook, but it can be accessed on the dev branch in the file [sample_sim.json](https://github.com/bradduthie/helicoverpa/blob/dev/data/sample_sim.json).
