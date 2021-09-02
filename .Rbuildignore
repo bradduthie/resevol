@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 notebook*
 assets*
+^doc$
+^Meta$
