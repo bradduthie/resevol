@@ -29,9 +29,11 @@ Depends: R (>= 4.0.0)
 License: GPL (>=2)
 LazyData: TRUE
 Encoding: UTF-8
+VignetteBuilder: knitr
 Suggests: knitr,
     rmarkdown,
     testthat,
+    markdown
 RoxygenNote: 7.1.1
 
 

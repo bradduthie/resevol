@@ -1,0 +1,56 @@
+---
+title: "Getting Started"
+author: "A Bradley Duthie"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Getting Started}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+The helicoverpa R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the `mine_gmatrix` function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the `run_farm_sim` function; it initialises individuals with the `mine_gmatrix` output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.
+
+The `mine_gmatrix` function
+================================================================================
+
+The goal of the `mine_gmatrix` function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes eight loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function"}
+par(mar = c(0.2, 0.2, 0, 0.2));
+plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
+     xaxt = "n", yaxt = "n", bty = "n", xlab = "", ylab = "");
+mtext(side = 1, text = "Hidden layers", cex = 2, col = "blue", line = -1);
+mtext(side = 2, text = "Loci", cex = 2, col = "darkgreen", line = -2);
+mtext(side = 4, text = "Traits", cex = 2, col = "red", line = -1);
+Lx  <- rep(x = 100, times = 8);
+Ly  <- seq(from = 100, to = 900, length = 8);
+points(x = Lx, y = Ly, pch = 20, cex = 6, col = "darkgreen");
+H1x <- rep(x = 300, times = 4);
+H1y <- seq(from = 100, to = 900, length = 4);
+points(x = H1x, y = H1y, pch = 15, cex = 6, col = "blue");
+H2x <- rep(x = 500, times = 4);
+H2y <- seq(from = 100, to = 900, length = 4);
+points(x = H2x, y = H2y, pch = 15, cex = 6, col = "blue");
+H3x <- rep(x = 700, times = 4);
+H3y <- seq(from = 100, to = 900, length = 4);
+points(x = H3x, y = H3y, pch = 15, cex = 6, col = "blue");
+Tx  <- rep(x = 900, times = 4);
+Ty  <- seq(from = 100, to = 900, length = 4);
+points(x = Tx, y = Ty, pch = 18, cex = 8, col = "red");
+for(i in 1:4){
+    e1 <- seq(from = -36, to = 36, length = 4);
+    arrows(x0 = Lx + 26, x1 = H1x[i] - 40, y0 = Ly, y1 = H1y[i] + e1, 
+           length = 0.08);
+    arrows(x0 = H1x + 36, x1 = H2x[i] - 38, y0 = H1y, y1 = H2y[i] + e1, 
+           length = 0.08);
+    arrows(x0 = H2x + 36, x1 = H3x[i] - 38, y0 = H2y, y1 = H3y[i] + e1, 
+           length = 0.08);
+    e2 <- seq(from = -12, to = 12, length = 4)
+    arrows(x0 = H3x + 36, x1 = Tx[i] - 38, y0 = H3y, y1 = Ty[i] + e2, 
+           length = 0.08);
+}
+```
+
+Each arrow in the figure above is initialised as a number in the `mine_gmatrix` function.
