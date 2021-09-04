@@ -191,6 +191,44 @@ The output of `mine_gmatrix` is necessary for initialising new individuals in th
 The `run_farm_sim` function
 ================================================================================
 
+Simulations are run using the `run_farm_sim` function, which initialises a spatially explicit landscape and individual pests, then simulates the population and evolutionary dynamics of those pests for a specific landscape management regime of crop use and pesticide application. The simulation terminates after a fixed number of time steps have passed, or if the population goes extinct. Because of the way that events occur within the simulation (e.g., demographic processes of individuals, changes in landscape properties), time steps do not have a fixed interpretation (e.g., one growing season or year). Instead, arguments to `run_farm_sim` must be carefully considered to effectively model the social-ecological system. Similarly, the order of events in the life-cycle of individuals is not inherently fixed, but is instead defined by the minimum and maximum age at which movement, reproduction, and feeding occur for individuals in the population. How this works is presented in more detail with the explanation of time steps in `run_farm_sim`. We first explain the inputs.
+
+Inputs for `run_farm_sim`
+--------------------------------------------------------------------------------
+
+The `run_farm_sim` function takes arguments that specify simulation parameter values and produces simulation output mainly in the form of CSV files printed to the R working directory. Arguments to `run_farm_sim` are explained in the table below.
+
+| Argument                  | Description                                      |
+|---------------------------|--------------------------------------------------|  
+| `N`                       | The number of individuals that are initialised in a simulation. Individuals are initialised in a random location on the landscape, and at least two individuals are needed. |
+| `xdim`                    | The number of cells in the horizontal dimension of the landscape This value must be an integer greater than two. |
+| `ydim`                    | The number of cells in the vertical dimension of the landscape This value must be an integer greater than two. |
+| `repro`                   | The type of reproduction that individuals undergo in the simulation. There are three options: (1) "asexual", in which individuals reproduce clonally and offspring have haploid genomes and traits identical to their mother with the potential for mutation; (2) "sexual", in which individuals are monoecious (both female and male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination; (3) "biparental", in which individuals are dioecious (only female or male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination. |
+| `neutral_loci`            | The number of loci that are completely neutral (i.e., have no effect on fitness). These loci can be used to monitor genetic drift or calculate inbreeding coefficients. |
+| `max_age`                 | This is the maximum number of time steps that an individual can survive. Individuals that are older than this age in a time step will always die. |
+| `min_age_move`            | This is the minimum age at which an individual can move. Individuals below this age will always remain on their current cell. |
+| `min_age_move`            | This is the maximum age at which an individual can move. Individuals above this age will always remain on their current cell. |
+| `min_age_reproduce`       | This is the minimum age at which an individual can be reproductively active. No individuals below this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals. |
+| `max_age_reproduce`       | This is the maximum age at which an individual can be reproductively active. No individuals above this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals. |
+| `min_age_feed`            | This is the minimum age at which an individual can eat. No individuals below this age will be able to consume food on the landscape. |
+| `max_age_feed`            | This is the maximum age at which an individual can eat. No individuals above this age will be able to consume food on the landscape. |
+| `food_consume`            | This defines how much food an individual will consume from the cell on which it is feeding. Food consumption can take on any positive real value, and an individual will consume up to this amount if possible (if not, they will consume however much food is left within their landscape cell). |
+| `pesticide_consume`       | This defines how much pesticide an individual will consume from the cell on which it resides. Pesticide consumption can take on any positivie real value, and an individual will consume up to this amount if possible (if not, they will consume however much pesticide has been placed on the landscape cell). |
+| `rand_age`                | This argument determines whether individuals in the simulation will be initialised with a random age selected uniformly from zero to `max_age`. If `FALSE`, then all individuals will be initialised at age zero. |
+| `move_distance`           | This is the maximum number of cells that an individual can move, in any direction, on the landscape during one bout of movement. |
+| `food_needed_surv`         | This is the amount of food that an individual needs to consume to survive. If the individual has not consumed this amount of food before the age of `age_food_threshold`, then they will die in the time step. |
+| `pesticide_tolerated_surv` | This is the amount of pesticide that an individual can tolearte and still survive. If the individual has consumed more than this amount of pesticide on or after the age of `age_pesticide_threshold`, then they will die in the time step. |
+| `food_needed_repr`         | This is the amount of food that an individual needs to produce one offspring. The total number of offspring that an individual produces in a time step is the floor value of their food consumption divided by this value. |
+
+
+<!--- POPULATION inputs, traits --->
+
+<!--- Time steps ---> 
+
+<!--- POPULATION outputs --->
+
+
+
 Literature Cited
 ================================================================================
 
