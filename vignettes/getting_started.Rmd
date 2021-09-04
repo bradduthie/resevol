@@ -1,7 +1,8 @@
 ---
-title: "Getting Started"
+title: "Get Started"
 author: "A Bradley Duthie"
 date: "`r Sys.Date()`"
+bibliography: '`r system.file("refs.bib", package = "helicoverpa")`'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
@@ -15,17 +16,17 @@ The helicoverpa R package is used to simulate individual-based models of agricul
 The `mine_gmatrix` function
 ================================================================================
 
-The goal of the `mine_gmatrix` function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes eight loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).
+The goal of the `mine_gmatrix` function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes 12 loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).
 
-```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function"}
+```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function"}
 par(mar = c(0.2, 0.2, 0, 0.2));
 plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
      xaxt = "n", yaxt = "n", bty = "n", xlab = "", ylab = "");
 mtext(side = 1, text = "Hidden layers", cex = 2, col = "blue", line = -1);
 mtext(side = 2, text = "Loci", cex = 2, col = "darkgreen", line = -2);
 mtext(side = 4, text = "Traits", cex = 2, col = "red", line = -1);
-Lx  <- rep(x = 100, times = 8);
-Ly  <- seq(from = 100, to = 900, length = 8);
+Lx  <- rep(x = 100, times = 12);
+Ly  <- seq(from = 100, to = 900, length = 12);
 points(x = Lx, y = Ly, pch = 20, cex = 6, col = "darkgreen");
 H1x <- rep(x = 300, times = 4);
 H1y <- seq(from = 100, to = 900, length = 4);
@@ -53,4 +54,144 @@ for(i in 1:4){
 }
 ```
 
-Each arrow in the figure above is initialised as a number in the `mine_gmatrix` function.
+Each arrow in the figure above is initialised as a number in the `mine_gmatrix` function. An evolutionary algorithm is then used to find a set of arrow values that produces traits with the pre-specified covariance structure given a set of randomly drawn standard normal allele values at loci. The details of this evolutionary algorithm are explained in a separate vignette, but the general idea is that a large set of random networks (i.e., arrow values in the diagram above) are initialised, and the networks that produce traits with a covariance structure most similar to the pre-specified one produce a new generation of networks with some degree of mutation and recombination. Generations continue to evolve until either the maximum number of allowed generations is reached or the network produces traits with a covariance structure that is sufficiently close to the pre-specified one. As an example, we can consider the covariance matrix below.
+
+```{r, echo = FALSE}
+gmt <- matrix(data = 0, nrow = 4, ncol = 4);
+diag(gmt) <- 1;
+gmt[1, 2] <-  -0.5;
+gmt[2, 1] <-  -0.5;
+gmt[1, 3] <-  0.2;
+gmt[1, 4] <-  0.2;
+gmt[3, 1] <-  0.2;
+gmt[4, 1] <-  0.2;
+gmt[2, 3] <-  0.2;
+gmt[2, 4] <-  0.2;
+gmt[3, 2] <-  0.2;
+gmt[4, 2] <-  0.2;
+gmt[3, 4] <- -0.5;
+gmt[4, 3] <- -0.5;
+gmt[3, 3] <-  1.0;
+gmt[4, 4] <-  1.0;
+print(gmt);
+```
+
+This matrix models the pre-specified covariance among four traits. We can assign it as `gmt` and use it in the `mine_gmatrix` function to find a network that will produce traits with this covariance structure given random standard normal allele values at each loci. 
+
+```{r, eval = FALSE}
+mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
+                    max_gen = 1200, sampleK = 1200, chooseK = 6, layers = 6,
+                    mu_pr = 0.05, mu_sd = 0.01, pr_cross = 0.05,
+                    term_cri = -5.3, sd_ini = 0.1, use_cor = FALSE);
+```
+
+
+The above use of `mine_gmatrix` includes arguments that specify the details of the evolutionary algorithm. 
+
+
+| Argument   | Description                                                    |
+|------------|----------------------------------------------------------------|
+| `gmatrix`  | The pre-specified trait covariance matrix. This will define what the covariance will be between each trait when allele values are drawn from a standard normal distribution. |
+| `loci`     | The number of loci for an individual (green circles in Figure 1). Simulations can allow for both haploid and diploid individuals. Allele values at each loci affect trait values (red squares in Figure 1) through a network of intermediary nodes (blue squares in Figure 1). |
+| `indivs`   | The number of individuals initialised in each generation of the evolutionary algorithm to test among-individual trait correlations. Individuals are initialised with allele values (green circles in Figure 1) drawn from a standard normal distribution. |
+| `npsize`   | The size of the population of networks in each generation of the evolutionary algorithm. Each network (Figure 1) is a discrete individual in the population. |
+| `max_gen`  | The maximum number of generations that the evolutionary algorithm is allowed to run before terminating (regardless of how well the evolved covariance structure matches the pre-specified `gmatrix`). |
+| `sampleK` | During a round of selection, the number of random networks chosen to compete in a tournament. A single generation will include as many tournaments as necessary to create a new network population of size `npsize`. |
+| `chooseK` | During a round of selection tournament, the number of networks within the `sampleK` random subset of the tournament that have the highest fitness will be selected to populate the next generation of networks |
+| `layers`  | The number of hidden layers in the network linking loci to traits (blue squares in Figure 1) |
+| `mu_pr`  | The probability that a value in the network (black arrows in Figure 1) will mutate in a generation. Mutation events change the existing value by adding a new value drawn from a normal distribution with a mean of 0 and standard deviation of `mu_sd`.
+| `mu_sd`   | The standard deviation of the random normal value mean centered at 0 that is added to the existing value of the network (black arrows in Figure 1) when a mutation event occurs.
+| `pr_cross` | The probability that a focal network in the population will initiate a crossover of a subset of its values with a randomly selected second network (note that any given network might therefore be included in more than one crossover event in a generation). The size of the subset is determined randomly (conceptually equivalent to drawing a rectangle around arrows in Figure 1, with values within the rectangle then swapped between networks). |
+| `term_cri` | The criteria for terminating the evolutionary algorithm. The algorithm will terminate if a network is found in which the mean squared deviation of the covariance matrix elements from `gmatrix` is less than `exp(term_crit)` . |
+| `sd_ini`   | The standard deviation of initialised network values at the start of the evolutionary algorithm. All network values are initialised by randomly sampling from a normal distribution with a mean of 0 and a standard deviation of `sd_ini`. |
+| `use_cor`  | Should the `gmatrix` be treated as a correlation matrix rather than a covariance matrix when calculating fitness? |
+
+Table: Arguments taken by the `mine_gmatrix` function.
+
+Running the `mine_gmatrix` function can take several minutes to several hours (or longer) depending on the parameters used. The time required scales exponentially with the dimensions of `gmatrix` (i.e., the number of traits that need to be found). Default argument values are specified in attempt to be efficient across a wide range of conditions, but in practice it is often best to experiment with different values. As with any evolving population, selection is more effective in larger populations (i.e., high `npsize`), but large populations are also more time consuming to simulate. The `indivs` argument can be increased to give more precision when comparing the fitness of networks. Values of `sd_ini` are usually most effective when they are roughly an order of magnitude below that of the largest element value of `gmatrix`. Values of `sampleK`, `chooseK`, `mu_pr`, `mu_sd`, and `pr_cross` sometimes require a bit more experimentation to maximise the efficiency of the function in finding solutions. Note that `mu_pr` and `pr_cross` are often most effective at values much higher than would be expected in real biological organisms [@Hamblin2013]. 
+
+When `mine_gmatrix` is running, the generation number, mean stress (i.e., log mean squared deviation of the covariance matrix elements from `gmatrix`), and minimum stress will be printed in the console (this can be turned off by specifying `prnt_out = FALSE`). Below shows how the console output will appear.
+
+
+```
+===============================================
+Initialising gmatrix mining...                 
+===============================================
+Gen: 0	 Stress: -0.763570	 Min: -0.763570
+Gen: 1	 Stress: -0.763570	 Min: -0.763570
+Gen: 2	 Stress: -0.763570	 Min: -0.763570
+Gen: 3	 Stress: -0.763570	 Min: -0.763570
+Gen: 4	 Stress: -0.763570	 Min: -0.763571
+Gen: 5	 Stress: -0.763570	 Min: -0.763571
+Gen: 6	 Stress: -0.763571	 Min: -0.763572
+```
+
+As previously mentioned, finding a network can be time-consuming. The helicoverpa package comes with some example pre-installed.
+
+```{r, eval = FALSE}
+data("gmatrices");
+```
+
+```{r, echo = FALSE}
+load("../data/gmatrices.rda");
+mg_v1[[1]][11] <- -5.3;
+```
+
+We can use `mg_v1` as an example of output from `mine_gmatrix`. In `mg_v1`, the pre-specified covariance matrix is the same as the `gmt` matrix used above. The output includes eight elements, the first of which includes all of the argument inputs to the `mine_gmatrix` function.
+
+```{r, echo = FALSE}
+print(mg_v1[[1]]);
+```
+
+Argument inputs in the elements above include (1) `loci`, (2) `layers`, (3) `indivs`, (4) `npsize`, (5) `mu_pr`, (6) `mu_sd`, (7) `max_gen`, (8) `pr_cross`, (9) `sampleK`, (10) `chooseK`, (11) `term_cri`, (12) `sd_ini`, (13) `use_cor`, and (14) `prnt_out`. The second element of `mine_gmatrix` output is the pre-specified covariance matrix `gmatrix`.
+
+```{r, echo = FALSE}
+print(mg_v1[[2]]);
+```
+
+The third element of `mine_gmatrix` output is a matrix with elements that specify the effect of each locus value (rows) on the first hidden layer (columns). Conceptually, these are the values of the Figure 1 arrows mapping the green circles to the first column of blue squares.
+
+```{r, echo = FALSE}
+print(mg_v1[[3]]);
+```
+
+The fourth element of `mine_gmatrix` output is a three dimensional array that specifies the effects between all hidden layers, and between the last hidden layer and the trait values (i.e., in Figure 1, all of the arrows to the right of the first column of blue squares). The third dimension of the array below separates the sets arrows between hidden layers (i.e., each matrix below corresponds to a map between hidden layers, or between the last hidden layer and the traits). Note that while Figure 1 includes only three hidden layers, there are six below.
+
+```{r, echo = FALSE}
+print(mg_v1[[4]]);
+```
+
+
+The fifth element of `mine_gmatrix` is a matrix that shows the marginal effect of each locus (rows) on each trait (columns) value. Note that this is this is the product of `mg_v1[[3]]` times each layer of `mg_v1[[4]]` in sequence (i.e., `mg_v1[[4]][,,1]` times `mg_v1[[4]][,,2]`, and so forth). Conceptually, this matrix isolates the effect of each locus on each trait if all other loci are held at a constant value.
+
+```{r, echo = FALSE}
+print(mg_v1[[5]]);
+```
+
+The sixth element of `mine_gmatrix` is a matrix of the observed covariance structure of traits given a set of `indivs` individuals with random standard normal values at each locus. This matrix can be compared to the pre-specified `gmatrix`. While there will always be small deviations that are minimised by the function, it might often be useful to check the difference between matrices manually.
+
+```{r, echo = FALSE}
+print(mg_v1[[6]]);
+```
+
+The seventh element of `mine_gmatrix` is a vectorisation of `mg_v1[[3]]` and `mg_v1[[4]]`. That is, a vector that includes all of the information needed to map a set of allele values to trait values (i.e., values for all arrows shown in Figure 1). This vector of network values is inserted into the genome of each individual during a simulation, so each individual's allele values can then be mapped to their appropriate trait values. Simulations can then be run in which these network values are static, or in which they may evolve at any number of paths from layer to layer (i.e., columns of arrows in Figure 1).
+
+```{r, echo = FALSE}
+print(mg_v1[[7]]);
+```
+
+The eighth and final element of `mine_gmatrix` reports the stress of the network produced. That is, the logged expected squared deviation of each element in the observed covariance matrix from the pre-specified covariance matrix (note, small deviations might arise between this value and the value obtained from manually comparing `mg_v1[[2]]` and `mg_v1[[6]]` due to a different set of `indivs` individuals being used to produce `mg_v1[[6]]` and calculate `mg_v1[[8]]` below).
+
+```{r, echo = FALSE}
+print(mg_v1[[8]]);
+```
+
+The output of `mine_gmatrix` is necessary for initialising new individuals in the individual-based model. The individual-based model is run using the `run_farm_sim` function, which is explained in the next section.
+
+The `run_farm_sim` function
+================================================================================
+
+Literature Cited
+================================================================================
+
+
