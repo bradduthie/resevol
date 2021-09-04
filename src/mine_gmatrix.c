@@ -1,5 +1,10 @@
 #include "utilities.h"
 
+/* =============================================================================
+ * This function gets the mean fitness from a vector of fitnesses
+ *     W: The vector of fitnesses
+ *     npsize: The size of the population evolving in the evolutionary algorithm
+ * ========================================================================== */
 double get_mean_fitness(double *W, int npsize){
   
   int i;
@@ -776,7 +781,7 @@ void retain_best(double ****netpop, double ***ltnpop, double ***win_net,
     }
   }
   
-  if(gen < 1 | win_val < high_fitness[0]){
+  if(gen < 1 || win_val < high_fitness[0]){
     for(i = 0; i < loci; i++){
       for(j = 0; j < traits; j++){
         win_loci_layer_one[i][j] = ltnpop[win_pos][i][j];
