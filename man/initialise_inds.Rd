@@ -34,7 +34,8 @@ initialise_inds(
   feed_while_moving = FALSE,
   mortality_type = 0,
   age_food_threshold = NA,
-  age_pesticide_threshold = NA
+  age_pesticide_threshold = NA,
+  metabolism = 0
 )
 }
 \arguments{
@@ -98,6 +99,8 @@ initialise_inds(
 \item{age_food_threshold}{Age at which food threshold is enacted}
 
 \item{age_pesticide_threshold}{Age at which pesticide threshold is enacted}
+
+\item{metabolism}{The amount of consumed food lost each time step}
 }
 \value{
 A two-dimensional array of individuals for simulation

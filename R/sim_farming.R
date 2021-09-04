@@ -81,6 +81,7 @@
 #'@param immigration_rate Mean number of immigrants per time step
 #'@param get_f_coef Get the inbreeding coefficient (not for asexual)
 #'@param get_stats Get population level statistics in a CSV printout
+#'@param metabolism The rate at which food consumed is burned in a time step
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -164,7 +165,8 @@ run_farm_sim <- function(mine_output,
                          pesticide_start = 0,
                          immigration_rate = 0,
                          get_f_coef = FALSE,
-                         get_stats = TRUE){
+                         get_stats = TRUE,
+                         metabolism = 0){
   
     land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
@@ -176,6 +178,7 @@ run_farm_sim <- function(mine_output,
     mating_distance_T           <- check_is_trait(mating_distance);
     lambda_value_T              <- check_is_trait(lambda_value);
     movement_bouts_T            <- check_is_trait(movement_bouts);
+    metabolism_T                <- check_is_trait(metabolism);
     
     # Check to see if these are traits
     food_consume_T <- rep(x = 0, times = length(food_consume));
@@ -226,6 +229,11 @@ run_farm_sim <- function(mine_output,
     move_bout <- movement_bouts;
     if(movement_bouts_T == TRUE){
         move_bout <- 0;
+    }
+    
+    metab_rate <- metabolism;
+    if(metabolism_T == TRUE){
+        metab_rate <- 0;
     }
     
     if(N < 5){
@@ -283,7 +291,8 @@ run_farm_sim <- function(mine_output,
                             feed_while_moving        = feed_while_moving,
                             mortality_type           = mortality_type,
                             age_food_threshold       = age_food_threshold,
-                            age_pesticide_threshold  = age_pesticide_threshold);
+                            age_pesticide_threshold  = age_pesticide_threshold,
+                            metabolism               = metab_rate);
     
     sim_results <- sim_crops(pests                    = pest, 
                              land                     = land,
@@ -325,7 +334,8 @@ run_farm_sim <- function(mine_output,
                              pesticide_start          = pesticide_start,
                              immigration_rate         = immigration_rate,
                              get_f_coef               = get_f_coef,
-                             get_stats                = get_stats);
+                             get_stats                = get_stats,
+                             metabolism               = metabolism);
   
     return(sim_results);
 }
@@ -370,7 +380,8 @@ sim_crops <- function(pests,
                       pesticide_start = 0,
                       immigration_rate = 0,
                       get_f_coef = FALSE,
-                      get_stats  = TRUE
+                      get_stats  = TRUE,
+                      metabolism = 0
                       ){
   
   N    <- dim(pests)[1];
@@ -496,7 +507,7 @@ sim_crops <- function(pests,
               83.0,   # 83) pests column for age of pesticide threshold enacted
               84.0,   # 84) pests column for inbreeding coefficient
               85.0,   # 85) pests column for lamba adjustment
-              86.0,   # 86)
+              86.0,   # 86) pests column for metabolic rate (food lost)
               87.0,   # 87)
               88.0,   # 88)
               89.0,   # 89)
@@ -589,7 +600,7 @@ sim_crops <- function(pests,
                              pesticide_tolerated_surv, food_needed_repr,
                              pesticide_tolerated_repr, mating_distance,
                              food_consume, pesticide_consume, lambda_value,
-                             movement_bouts);
+                             movement_bouts, metabolism);
   
   if(is.array(pests) == FALSE){
     stop("ERROR: pests must be a 2D array.");
@@ -611,7 +622,7 @@ substitute_traits <- function(paras, move_distance, food_needed_surv,
                               pesticide_tolerated_surv, food_needed_repr,
                               pesticide_tolerated_repr, mating_distance,
                               food_consume, pesticide_consume, lambda_value,
-                              movement_bouts){
+                              movement_bouts, metabolism){
   
     Tst <- paras[110] - 1;
   
@@ -623,6 +634,7 @@ substitute_traits <- function(paras, move_distance, food_needed_surv,
     mating_distance_T           <- check_is_trait(mating_distance);
     lambda_value_T              <- check_is_trait(lambda_value);
     movement_bouts_T            <- check_is_trait(movement_bouts);
+    metabolism_T                <- check_is_trait(metabolism);
     
     food_consume_T <- rep(x = 0, times = length(food_consume));
     for(i in 1:length(food_consume)){
@@ -672,6 +684,11 @@ substitute_traits <- function(paras, move_distance, food_needed_surv,
     if(movement_bouts_T == TRUE){
         movement_bouts_N <- get_trait_number(movement_bouts) + Tst;
         paras[31]        <- movement_bouts_N;
+    }
+    
+    if(metabolism_T == TRUE){
+      metabolism_N     <- get_trait_number(metabolism) + Tst;
+      paras[87]        <- metabolism_N;
     }
     
     for(i in 1:length(food_consume)){

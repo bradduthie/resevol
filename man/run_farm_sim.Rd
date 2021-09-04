@@ -64,7 +64,8 @@ run_farm_sim(
   pesticide_start = 0,
   immigration_rate = 0,
   get_f_coef = FALSE,
-  get_stats = TRUE
+  get_stats = TRUE,
+  metabolism = 0
 )
 }
 \arguments{
@@ -188,6 +189,8 @@ run_farm_sim(
 \item{get_f_coef}{Get the inbreeding coefficient (not for asexual)}
 
 \item{get_stats}{Get population level statistics in a CSV printout}
+
+\item{metabolism}{The rate at which food consumed is burned in a time step}
 }
 \value{
 The output in the R console is a list with two elements; the first 
