@@ -28,5 +28,4 @@ void age_pests(double **pests, double *paras){
     }
     pests[ind][age_col]++;
   }
-  
 }
