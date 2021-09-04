@@ -202,6 +202,43 @@ void feed(double **pests, double *paras, double ***land, int ind){
 }
 
 /* =============================================================================
+ * Processes all of the food consumed by individuals
+ *     pests: The array holding the parent's information
+ *     paras: The paras vector that holds global information
+ * ========================================================================== */
+void refresh_consumed(double **pests, double *paras){
+
+  int ind, N, consumed_col10;
+  int consumed_col1, consumed_col2, consumed_col3, consumed_col4, consumed_col5;
+  int consumed_col6, consumed_col7, consumed_col8, consumed_col9;
+
+  N              = (int) paras[101];
+  consumed_col1  = (int) paras[58];
+  consumed_col2  = (int) paras[59];
+  consumed_col3  = (int) paras[60];
+  consumed_col4  = (int) paras[61];
+  consumed_col5  = (int) paras[62];
+  consumed_col6  = (int) paras[63];
+  consumed_col7  = (int) paras[64];
+  consumed_col8  = (int) paras[65];
+  consumed_col9  = (int) paras[66];
+  consumed_col10 = (int) paras[67];
+  
+  for(ind = 0; ind < N; ind++){
+      pests[ind][consumed_col1]  = 0.0;
+      pests[ind][consumed_col2]  = 0.0;
+      pests[ind][consumed_col3]  = 0.0;
+      pests[ind][consumed_col4]  = 0.0;
+      pests[ind][consumed_col5]  = 0.0;
+      pests[ind][consumed_col6]  = 0.0;
+      pests[ind][consumed_col7]  = 0.0;
+      pests[ind][consumed_col8]  = 0.0;
+      pests[ind][consumed_col9]  = 0.0;
+      pests[ind][consumed_col10] = 0.0;
+  }
+}
+
+/* =============================================================================
  * Feeds all individuals on the x-y location where it is located
  *     pests: The array holding the parent's information
  *     paras: The paras vector that holds global information
@@ -210,6 +247,8 @@ void feed(double **pests, double *paras, double ***land, int ind){
 void feeding(double **pests, double *paras, double ***land){
   
   int ind, N, *not_fed, N_count;
+  
+  refresh_consumed(pests, paras);
   
   N       = (int) paras[101];
   not_fed = malloc(N * sizeof(int));
