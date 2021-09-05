@@ -66,7 +66,9 @@ run_farm_sim(
   get_f_coef = FALSE,
   get_stats = TRUE,
   metabolism = 0,
-  baseline_metabolism = 0
+  baseline_metabolism = 0,
+  min_age_metabolism = 1,
+  max_age_metabolism = 9
 )
 }
 \arguments{
@@ -194,6 +196,10 @@ run_farm_sim(
 \item{metabolism}{The rate at which food consumed is burned in a time step}
 
 \item{baseline_metabolism}{A fixed baseline rate added to 'metabolism'}
+
+\item{min_age_metabolism}{The minimum age affected by metabolism}
+
+\item{max_age_metabolism}{The maximum age affected by metabolism}
 }
 \value{
 The output in the R console is a list with two elements; the first 
