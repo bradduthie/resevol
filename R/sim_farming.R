@@ -48,6 +48,7 @@
 #'@param movement_bouts Number of bouts of movement per time step
 #'@param selfing If sexual reproduction, is selfing allowed?
 #'@param feed_while_moving Do individuals feed after each movement bout?
+#'@param pesticide_while_moving Individuals consume pesticide after move bout?
 #'@param mortality_type Type of mortality (currently only one option)
 #'@param age_food_threshold Age at which food threshold is enacted
 #'@param age_pesticide_threshold Age at which pesticide threshold is enacted
@@ -136,6 +137,7 @@ run_farm_sim <- function(mine_output,
                          movement_bouts = 1,
                          selfing = TRUE,
                          feed_while_moving = FALSE,
+                         pesticide_while_moving = FALSE,
                          mortality_type = 0,
                          age_food_threshold = 0,
                          age_pesticide_threshold = 0,
@@ -295,6 +297,7 @@ run_farm_sim <- function(mine_output,
                             movement_bouts           = move_bout,
                             selfing                  = selfing,
                             feed_while_moving        = feed_while_moving,
+                            pesticide_while_moving   = pesticide_while_moving,
                             mortality_type           = mortality_type,
                             age_food_threshold       = age_food_threshold,
                             age_pesticide_threshold  = age_pesticide_threshold,

@@ -39,6 +39,7 @@
 #'@param movement_bouts Number of bouts of movement per time step
 #'@param selfing If sexual reproduction, is selfing allowed? (TRUE/FALSE)
 #'@param feed_while_moving Do individuals feed after each movement bout?
+#'@param pesticide_while_moving Individuals consume pesticide after move bout?
 #'@param mortality_type Type of mortality (currently only one option)
 #'@param age_food_threshold Age at which food threshold is enacted
 #'@param age_pesticide_threshold Age at which pesticide threshold is enacted
@@ -82,6 +83,7 @@ initialise_inds <- function(mine_output,
                             movement_bouts = 1,
                             selfing = TRUE,
                             feed_while_moving = FALSE,
+                            pesticide_while_moving = FALSE,
                             mortality_type = 0,
                             age_food_threshold = NA,
                             age_pesticide_threshold = NA,
@@ -197,6 +199,7 @@ initialise_inds <- function(mine_output,
   inds[, 56] <-  pesticide[[9]];
   inds[, 57] <-  pesticide[[10]];
   inds[, 58] <-  feed_while_moving; # Do not eat on a bout
+  inds[, 79] <-  pesticide_while_moving;
   inds[, 80] <-  mortality_type;
   inds[, 81] <-  max_age;
   inds[, 83] <-  age_food_threshold;

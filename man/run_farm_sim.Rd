@@ -32,6 +32,7 @@ run_farm_sim(
   movement_bouts = 1,
   selfing = TRUE,
   feed_while_moving = FALSE,
+  pesticide_while_moving = FALSE,
   mortality_type = 0,
   age_food_threshold = 0,
   age_pesticide_threshold = 0,
@@ -126,6 +127,8 @@ run_farm_sim(
 \item{selfing}{If sexual reproduction, is selfing allowed?}
 
 \item{feed_while_moving}{Do individuals feed after each movement bout?}
+
+\item{pesticide_while_moving}{Individuals consume pesticide after move bout?}
 
 \item{mortality_type}{Type of mortality (currently only one option)}
 

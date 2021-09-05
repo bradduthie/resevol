@@ -11,9 +11,22 @@ vignette: >
 ---
 
 
+- [Introduction](#introduction)
+- [The `mine_gmatrix` function](#mine_gmatrix)
+- [The `run_farm_sim` function](#run_farm_sim)
+    - [Inputs for `run_farm_sim`](#inputs)
+    - [Example uses of `run_farm_sim`](#example)
+    - [Output of `run_farm_sim`](#output)
+    - [Use of evolving traits in `run_farm_sim`](#traits)
+- [Additional guidance](#additional)
+- [Literature cited](#lit)
+
+<a name = "introduction">Introduction</a>
+================================================================================
+
 The helicoverpa R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the `mine_gmatrix` function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the `run_farm_sim` function; it initialises individuals with the `mine_gmatrix` output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.
 
-The `mine_gmatrix` function
+<a name = "mine_gmatrix">The `mine_gmatrix` function</a>
 ================================================================================
 
 The goal of the `mine_gmatrix` function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes 12 loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).
@@ -188,12 +201,12 @@ print(mg_v1[[8]]);
 
 The output of `mine_gmatrix` is necessary for initialising new individuals in the individual-based model. The individual-based model is run using the `run_farm_sim` function, which is explained in the next section.
 
-The `run_farm_sim` function
+<a name = "run_farm_sim">The `run_farm_sim` function</a>
 ================================================================================
 
 Simulations are run using the `run_farm_sim` function, which initialises a spatially explicit landscape and individual pests, then simulates the population and evolutionary dynamics of those pests for a specific landscape management regime of crop use and pesticide application. The simulation terminates after a fixed number of time steps have passed, or if the population goes extinct. Because of the way that events occur within the simulation (e.g., demographic processes of individuals, changes in landscape properties), time steps do not have a fixed interpretation (e.g., one growing season or year). Instead, arguments to `run_farm_sim` must be carefully considered to effectively model the social-ecological system. Similarly, the order of events in the life-cycle of individuals is not inherently fixed, but is instead defined by the minimum and maximum age at which movement, reproduction, and feeding occur for individuals in the population. How this works is presented in more detail with the explanation of time steps in `run_farm_sim`. We first explain the inputs.
 
-Inputs for `run_farm_sim`
+<a name = "inputs">Inputs for `run_farm_sim`</a>
 --------------------------------------------------------------------------------
 
 The `run_farm_sim` function takes arguments that specify simulation parameter values and produces simulation output mainly in the form of CSV files printed to the R working directory. Arguments to `run_farm_sim` are explained in the table below.
@@ -225,7 +238,8 @@ The `run_farm_sim` function takes arguments that specify simulation parameter va
 | `lambda_value`             | This is the rate parameter for the Poisson sampling of offspring number; it only applies when `reproduction_type` is set to "lambda". |
 | `movement_bouts`           | This is the number of times an individual can move in a single time step (i.e., the number of cells that it can potentially visit). Each time an individual visits a new cell, it can potentially feed or consume pesticide. |
 | `selfing`                  | This determines whether or not self-fertilisation is allowed when `repro` is set to 'sexual'. |
-| `feed_while_moving`        | If `TRUE`, then individuals will feed each time in each movement bout. |
+| `feed_while_moving`        | If `TRUE`, then individuals will feed in each movement bout when they arrive to a new landscape cell. |
+| `pesticide_while_moving`        | If `TRUE`, then individuals will consume pesticide in each movement bout when they arrive to a new landscape cell. |
 | `mortality_type`           | This determines how mortality is enacted in the simulation. Currently there is only one mortality type possible; mortality occurs if individuals exceed their maximum age, do not consume enough food, or consume too much pesticide. |
 | `age_food_threshold`       | This is the age at which mortality associated with feeding is enacted, so an individual younger than this age will not die if they have not yet consumed sufficient food to satisfy `food_needed_surv`. |
 | `age_pesticide_threshold`  | This is the age at which mortality associated with pesticide consumption is enacted, so an individual younger than this age will not die even if they have exceeded their pesticide threshold. |
@@ -264,16 +278,136 @@ The `run_farm_sim` function takes arguments that specify simulation parameter va
 | `min_age_metabolism`     | This determines the minimum age at which losses of food consumed in previous time steps enacted by `metabolism` and `baseline_metabolsim` can occur. |
 | `max_age_metabolism`     | This determines the maximum age at which losses of food consumed in previous time steps enacted by `metabolism` and `baseline_metabolsim` can occur. |
 
+This large list of potential inputs can make setting up simulations challenging, but the options are intended to give a high degree of flexibility in the type of biological system being modelled. 
 
-<!--- POPULATION inputs, traits --->
+<a name = "example">Example uses of `run_farm_sim`</a>
+--------------------------------------------------------------------------------
 
-<!--- Time steps ---> 
+To model a species with non-overlapping generations that moves around the landscape and has a reproductive success that is determined by their food consumption, parameters could be set with a `max_age` of one, high `movement_bouts`, and no age related threshold of feeding, reproducing, or pesticide consumption. Below shows a hypothetical set of parameter combinations that might fulfil this criteria (note that maximum age thresholds for feeding, reproducing, or pesticide consumption are 9 by default). 
 
-<!--- POPULATION outputs --->
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci  = 1000, 
+                    xdim = 64, ydim = 64, repro = "sexual", max_age = 1,
+                    selfing = TRUE, food_consume = c(2, 2),
+                    pesticide_consume = c(0, 0), food_needed_surv = 1,
+                    food_needed_repr = 2, reproduction_type = "food_based",
+                    pesticide_tolerated_surv = 0, pesticide_rotation_type = 2,
+                    crop_rotation_type = 2, min_age_reproduce = 0,
+                    farms = 24, time_steps = 40, mutation_pr = 0.001, 
+                    crossover_pr = 0.1, net_mu_layers = 0, 
+                    crop_rotation_time = 1, pesticide_rotation_time = 1,
+                    crop_per_cell = 1, pesticide_per_cell = 0.4,
+                    crop_number = 2, pesticide_number = 2, print_inds = FALSE,          
+                    K_on_birth = 1000000, min_age_move = 0, 
+                    age_food_threshold = 0, min_age_feed = 0, 
+                    pesticide_start = 20, print_last = TRUE, 
+                    mating_distance = 2, immigration_rate = 0, metabolism = 0,
+                    baseline_metabolism = 0, movement_bouts = 4,
+                    feed_while_moving = TRUE, pesticide_while_moving = TRUE);
+```
+
+To model a similar system with overlapping generations, parameters could be set with `max_age > 1` and a very high `baseline_metabolism` (i.e., high enough so that food consumption gains can only apply to the current time step), and otherwise identical parameters. The function above has been modified slightly to fulfil this criteria by increasing `max_age` to 4 and setting `baseline_metabolism = 10000`, but otherwise keeping the same arguments.
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci  = 1000, 
+                    xdim = 64, ydim = 64, repro = "sexual", max_age = 4,
+                    selfing = TRUE, food_consume = c(2, 2),
+                    pesticide_consume = c(0, 0), food_needed_surv = 1,
+                    food_needed_repr = 2, reproduction_type = "food_based",
+                    pesticide_tolerated_surv = 0, pesticide_rotation_type = 2,
+                    crop_rotation_type = 2, min_age_reproduce = 0,
+                    max_age_feed = 1, farms = 24, time_steps = 40, 
+                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
+                    crop_rotation_time = 1, pesticide_rotation_time = 1,
+                    crop_per_cell = 1, pesticide_per_cell = 0.4,
+                    crop_number = 2, pesticide_number = 2, print_inds = FALSE,          
+                    K_on_birth = 1000000, min_age_move = 0, 
+                    age_food_threshold = 0, min_age_feed = 0, 
+                    pesticide_start = 20, print_last = TRUE, 
+                    mating_distance = 2, immigration_rate = 0, metabolism = 0,
+                    baseline_metabolism = 10000, movement_bouts = 4,
+                    feed_while_moving = TRUE, pesticide_while_moving = TRUE);
+```
+
+To model a system in which individuals develop in a sedentary life history stage that persists until a final stage of movement and reproduction (e.g., an insect with a larval and pupal stage), parameters could be set with min and max ages of feeding and pesticide consumption from 0 to 3, with min and max ages of movement and reproduction set at 4, `max_age = 4`, and `baseline_metabolism = 0`. Hence, food or pesticide consumption accrued in early life history stages would affect reproductive output in a later life history stage. 
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci = 1000, 
+                    xdim = 64, ydim = 64, repro = "asexual", max_age = 4, 
+                    selfing = TRUE, food_consume = c(2, 2), 
+                    pesticide_consume = c(0, 0), food_needed_surv = 1, 
+                    food_needed_repr = 1, reproduction_type = "food_based", 
+                    pesticide_tolerated_surv = 0, pesticide_rotation_type  = 2,
+                    crop_rotation_type = 2, min_age_reproduce = 4,
+                    max_age_feed = 3, farms = 24, time_steps = 48,
+                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
+                    crop_rotation_time = 12, pesticide_rotation_time = 12,
+                    crop_per_cell = 4, pesticide_per_cell = 0.4, 
+                    crop_number = 2, pesticide_number = 2, min_age_move = 4,
+                    age_food_threshold = 3, min_age_feed = 1, 
+                    pesticide_start = 100, print_last = TRUE, 
+                    mating_distance = 2, metabolism = 0);
+```
+
+It might often be useful to think of `crop_rotation_time` and `pesticide_rotation_time` as defining the length of a season, with minimum and maximum ages for individuals defining the relative length of their life history processes. It is important to emphasise that crops are not replenished in each time step, so if, e.g., half of the food on a cell is eaten in a time step, then the amount of food will not be replenished until the next rotation occurs regardless of whether or not the crop type will change. Note that non-crop and pesticide free land can be created by creating more crops or pesticides than can be consumed (e.g., in the above simulation, by setting `crop_number = 3` and `pesticide_number = 3`, areas of the landscape would be generated with effectively no crops or pesticides because the default `food_consume` and `pesticide_consume` for the third crop and pesticide would be zero).
+
+<a name = "output">Output of `run_farm_sim`</a>
+--------------------------------------------------------------------------------
+
+The output of `run_farm_sim` to the console is a list of two elements. The first element is just a list of parameter values run in the model, and the second element is a three dimensional array of the landscape. The most useful output will be some combination of three CSV files printed off when the simulation is run. The first file is 'population_data.csv', which will provide a large table of population level statistics for each time step in the simulation. This is the smallest and often most useful file. Column names in the file provide information about the data.
+
+The second file is 'last_time_step.csv', which will provide a very large able that includes the characteristics (columns) of all individuals (rows) in the last time step of the simulation. This file can be used to make inferences about individual-level variation in the population (e.g., spatial distribution of individuals, correlations between traits and fitness). The number of columns will vary based on simulation parameters, and column names are not currently printed. Nevertheless, a few relevant column numbers are consistent in the information that they provide about an individual:
+
+- Col 1. Time step
+- Col 2. Individual ID
+- Col 3. x-location
+- Col 4. y-location
+- Col 5. Age
+- Col 6. Sex
+- Col 7. Movement distance
+- Col 8. Mother ID
+- Col 9. Father ID
+- Col 12. Offspring produced
+- Col 102. Start of trait values
+
+The trait value columns continue for as many traits as are specified by the `mine_gmatrix` output (`mine_output` argument in `run_farm_sim`). This 'last_time_step.csv' should be printed out with some care; since the entire genomes of each individual are included, large populations can produce very large file sizes. 
+
+The third file is 'individuals.csv', which will provide an extremely large table with every individual in the simulation and all of their characteristics (i.e., the same contents as are in 'last_time_step.csv', but for all time steps). This file should not be made unless a trial simulation has been run with a small number of time steps first to ensure that the CSV file will not become too large to store.
+
+<a name = "traits">Use of evolving traits in `run_farm_sim`</a>
+--------------------------------------------------------------------------------
+
+In all of the [examples used](#example) above, values were hard coded into the `run_farm_sim` function, so the four traits mined in `mg_v1` were not actually used. The helicoverpa package allows evolving traits to be substituted for the following individual characteristics set in the arguments of `run_farm_sim`: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume` (up to 10 elements), and `pesticide_consume` (up to 10 elements). When a trait is substituted for the argument, an individual's value for the argument is determined by the trait (e.g., the food needed to survive can be determined by a trait unique to each individual rather than set as a numerical value that applies to all individuals). Setting an argument to the trait is done by placing "T[n]" in quotes where [n] is the number of the trait (corresponding to the n row and column of the pre-specified trait covariance matrix). Below shows the last [example used above](#example), but with `food_consume = c(2, 2)` and `pesticide_consume = c(0, 0)` replaced with evolving traits.
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci = 1000, 
+                    xdim = 64, ydim = 64, repro = "asexual", max_age = 4, 
+                    selfing = TRUE, food_consume = c("T1", "T2"), 
+                    pesticide_consume = c("T3", "T4"), 
+                    food_needed_surv = 1, food_needed_repr = 1, 
+                    reproduction_type = "food_based", 
+                    pesticide_tolerated_surv = 0, pesticide_rotation_type  = 2,
+                    crop_rotation_type = 2, min_age_reproduce = 4,
+                    max_age_feed = 3, farms = 24, time_steps = 48,
+                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
+                    crop_rotation_time = 12, pesticide_rotation_time = 12,
+                    crop_per_cell = 4, pesticide_per_cell = 0.4, 
+                    crop_number = 2, pesticide_number = 2, min_age_move = 4,
+                    age_food_threshold = 3, min_age_feed = 1, 
+                    pesticide_start = 100, print_last = TRUE, 
+                    mating_distance = 2, metabolism = 0);
+```
+
+The `run_farm_sim` will recognise now that traits 1 and 2 will determine the amount of consumed on a landscape cell, while traits 3 and 4 will determine the amount of pesticide consumed. 
 
 
+<a name = "additional">Additional guidance</a>
+================================================================================
 
-Literature Cited
+Additional guidance can be found in the [package notes](https://bradduthie.github.io/helicoverpa/notebook/helicoverpa_notes.html) on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the [GitHub issues page](https://github.com/bradduthie/helicoverpa/issues) or emailed to the package maintainer Brad Duthie (see email address in the [package DESCRIPTION](https://github.com/bradduthie/helicoverpa/blob/master/DESCRIPTION)). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.
+
+
+<a name = "lit">Literature Cited</a>
 ================================================================================
 
 

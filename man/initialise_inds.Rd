@@ -32,6 +32,7 @@ initialise_inds(
   movement_bouts = 1,
   selfing = TRUE,
   feed_while_moving = FALSE,
+  pesticide_while_moving = FALSE,
   mortality_type = 0,
   age_food_threshold = NA,
   age_pesticide_threshold = NA,
@@ -96,6 +97,8 @@ initialise_inds(
 \item{selfing}{If sexual reproduction, is selfing allowed? (TRUE/FALSE)}
 
 \item{feed_while_moving}{Do individuals feed after each movement bout?}
+
+\item{pesticide_while_moving}{Individuals consume pesticide after move bout?}
 
 \item{mortality_type}{Type of mortality (currently only one option)}
 
