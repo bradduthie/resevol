@@ -65,7 +65,8 @@ run_farm_sim(
   immigration_rate = 0,
   get_f_coef = FALSE,
   get_stats = TRUE,
-  metabolism = 0
+  metabolism = 0,
+  baseline_metabolism = 0
 )
 }
 \arguments{
@@ -191,6 +192,8 @@ run_farm_sim(
 \item{get_stats}{Get population level statistics in a CSV printout}
 
 \item{metabolism}{The rate at which food consumed is burned in a time step}
+
+\item{baseline_metabolism}{A fixed baseline rate added to 'metabolism'}
 }
 \value{
 The output in the R console is a list with two elements; the first 

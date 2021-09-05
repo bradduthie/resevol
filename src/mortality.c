@@ -38,7 +38,7 @@ void mortality(double **pests, double *paras, int ind){
   
   switch(mortality_type){
       case 0: /* Mortality if too old, not enough food, too much pesticide */
-          if(age > max_age){
+          if(age >= max_age){
               pests[ind][mortality_col] = 1.0;
           }
           if(food_consumed < food_threshold && age >= food_age){
@@ -49,7 +49,7 @@ void mortality(double **pests, double *paras, int ind){
           }
           break;
       default: /* Mortality if too old, not enough food, too much pesticide */
-          if(age > max_age){
+          if(age >= max_age){
               pests[ind][mortality_col] = 1.0;
           }
           if(food_consumed < food_threshold && age >= food_age){

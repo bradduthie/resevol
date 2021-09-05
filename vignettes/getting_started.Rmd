@@ -217,8 +217,15 @@ The `run_farm_sim` function takes arguments that specify simulation parameter va
 | `rand_age`                | This argument determines whether individuals in the simulation will be initialised with a random age selected uniformly from zero to `max_age`. If `FALSE`, then all individuals will be initialised at age zero. |
 | `move_distance`           | This is the maximum number of cells that an individual can move, in any direction, on the landscape during one bout of movement. |
 | `food_needed_surv`         | This is the amount of food that an individual needs to consume to survive. If the individual has not consumed this amount of food before the age of `age_food_threshold`, then they will die in the time step. |
-| `pesticide_tolerated_surv` | This is the amount of pesticide that an individual can tolearte and still survive. If the individual has consumed more than this amount of pesticide on or after the age of `age_pesticide_threshold`, then they will die in the time step. |
+| `pesticide_tolerated_surv` | This is the amount of pesticide that an individual can tolerate and still survive. If the individual has consumed more than this amount of pesticide on or after the age of `age_pesticide_threshold`, then they will die in the time step. |
 | `food_needed_repr`         | This is the amount of food that an individual needs to produce one offspring. The total number of offspring that an individual produces in a time step is the floor value of their food consumption divided by this value. |
+| `pesticide_tolerated_repr` | This is the amount of pesticide tolerated below which an individual can reproduce. Note that individuals above the threshold can still mate and sire offspring, |
+
+
+| `reproduction_type`        | This determines how individuals reproduce; the two options are "lambda" and "food_based". If "lambda", then the number of offspring an individual produces is sampled from a Poisson distribution with a fixed rate parameter `lambda` (potentially adjusted by other factors in the simulation). If "food_based", then the number of offspring produced is based on the amount of food consumed by the individual. |
+| `pesticide_rotation_type`  | 
+
+
 
 
 <!--- POPULATION inputs, traits --->

@@ -10,7 +10,7 @@
 int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   
   int ind, N, range_col, range, sex_col;
-  int range_count, opp_sex, in_range, selfing, focal_sex;
+  int range_count, opp_sex, in_range, selfing, selfing_col;
   int age_col, min_age_col, max_age_col, age, min_age, max_age;
   
   sex_col   = (int) paras[4];
@@ -19,16 +19,16 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
   range     = pests[row][range_col];
   
   age_col         = (int) paras[3];
+  selfing_col     = (int) paras[26];
   min_age_col     = (int) paras[35];
   max_age_col     = (int) paras[36];
-  
-  focal_sex = (int) pests[ind][sex_col];
-  
+ 
   range_count = 0;
   for(ind = 0; ind < N; ind++){
     in_range = is_in_range(pests, row, ind, paras, range);
     opp_sex  = (int) pests[ind][sex_col];
     age      = (int) pests[ind][age_col];
+    selfing  = (int) pests[ind][selfing_col];
     min_age  = (int) pests[ind][min_age_col];
     max_age  = (int) pests[ind][max_age_col];
     if(in_range > 0 && opp_sex == mate_sex && age >= min_age && age <= max_age){
@@ -49,14 +49,11 @@ int mate_in_range(double **pests, double *paras, int row, int mate_sex){
  * ========================================================================== */
 int mate_available(double **pests, double *paras, int row){
   
-  int N, ind, sex, sex_col, mate_found,selfing_col, selfing;
+  int sex, sex_col, mate_found;
   
-  N            = (int) paras[101];
   sex_col      = (int) paras[4];
   sex          = (int) pests[row][sex_col];
-  selfing_col  = (int) paras[26];
-  selfing      = pests[row][selfing_col];
-  
+
   mate_found = 0;
   switch(sex){
       case 0:
@@ -92,12 +89,11 @@ int mate_available(double **pests, double *paras, int row){
  * ========================================================================== */
 void count_offspring(double **pests, double *paras, int row){
   
-  int N, repr_param_col, offspring, repr_type_col, repr_type;
+  int repr_param_col, offspring, repr_type_col, repr_type;
   int mate_access, mate_access_col, off_col;
   int food_consumed_col, food_needed_col, repr_incr_col;
   double food_consumed, food_needed, repr_incr, repr_param;
   
-  N                  = (int) paras[101];
   repr_type_col      = (int) paras[23];
   repr_type          = (int) pests[row][repr_type_col];
   repr_param_col     = (int) paras[25];
