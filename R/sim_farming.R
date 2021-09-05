@@ -82,6 +82,7 @@
 #'@param get_f_coef Get the inbreeding coefficient (not for asexual)
 #'@param get_stats Get population level statistics in a CSV printout
 #'@param metabolism The rate at which food consumed is burned in a time step
+#'@param baseline_metabolism A fixed baseline rate added to 'metabolism'
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -166,7 +167,8 @@ run_farm_sim <- function(mine_output,
                          immigration_rate = 0,
                          get_f_coef = FALSE,
                          get_stats = TRUE,
-                         metabolism = 0){
+                         metabolism = 0,
+                         baseline_metabolism = 0){
   
     land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
   
@@ -292,7 +294,8 @@ run_farm_sim <- function(mine_output,
                             mortality_type           = mortality_type,
                             age_food_threshold       = age_food_threshold,
                             age_pesticide_threshold  = age_pesticide_threshold,
-                            metabolism               = metab_rate);
+                            metabolism               = metab_rate,
+                            baseline_metabolism      = baseline_metabolism);
     
     sim_results <- sim_crops(pests                    = pest, 
                              land                     = land,
@@ -508,7 +511,7 @@ sim_crops <- function(pests,
               84.0,   # 84) pests column for inbreeding coefficient
               85.0,   # 85) pests column for lamba adjustment
               86.0,   # 86) pests column for metabolic rate (food lost)
-              87.0,   # 87)
+              87.0,   # 87) pests column for baseline metabolic rate (fixed)
               88.0,   # 88)
               89.0,   # 89)
               90.0,   # 90)

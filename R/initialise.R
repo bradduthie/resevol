@@ -43,6 +43,7 @@
 #'@param age_food_threshold Age at which food threshold is enacted
 #'@param age_pesticide_threshold Age at which pesticide threshold is enacted
 #'@param metabolism The amount of consumed food lost each time step
+#'@param baseline_metabolism A fixed baseline rate added to 'metabolism'
 #'@return A two-dimensional array of individuals for simulation
 #'@examples
 #'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
@@ -82,7 +83,8 @@ initialise_inds <- function(mine_output,
                             mortality_type = 0,
                             age_food_threshold = NA,
                             age_pesticide_threshold = NA,
-                            metabolism = 0){
+                            metabolism = 0,
+                            baseline_metabolism = 0){
   
   food      <- rep(x = 0, times = 10);
   pesticide <- rep(x = 0, times = 10);
@@ -196,6 +198,7 @@ initialise_inds <- function(mine_output,
   inds[, 83] <-  age_food_threshold;
   inds[, 84] <-  age_pesticide_threshold;
   inds[, 87] <-  metabolism;
+  inds[, 88] <-  baseline_metabolism;
   
   return(inds);
 }
