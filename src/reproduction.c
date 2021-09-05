@@ -149,7 +149,7 @@ void count_offspring(double **pests, double *paras, int row){
  * ========================================================================== */
 void calculate_offspring(double **pests, double *paras){
   
-  int ind, N, tot_offspring, birth_K, off_col, sex_col, sex, pest_thresh_col;
+  int ind, N, tot_offspring, birth_K, off_col, sex_col, sex, pest_thresh_col, i;
   int age_col, age, min_age_col, max_age_col, min_age, max_age, pest_consum_col;
   double pesticide_thresh, pesticide_consumed;
 
@@ -163,8 +163,9 @@ void calculate_offspring(double **pests, double *paras){
   N               = (int) paras[101];
   birth_K         = (int) paras[167];
   
-  paras[106]         = 0.0; /* Start with no offspring */
+  paras[106]      = 0.0; /* Start with no offspring */
   
+  i = 0;
   for(ind = 0; ind < N; ind++){
       sex                = (int) pests[ind][sex_col];
       age                = (int) pests[ind][age_col];
@@ -173,13 +174,14 @@ void calculate_offspring(double **pests, double *paras){
       pesticide_thresh   = pests[ind][pest_thresh_col];
       pesticide_consumed = pests[ind][pest_consum_col];
       if(age >= min_age && age <= max_age && sex < 3 && 
-         pesticide_consumed < pesticide_thresh){
+         pesticide_consumed <= pesticide_thresh){
           count_offspring(pests, paras, ind);
+          i++;
       }
   }
   
   tot_offspring = (int) paras[106];
-  if(birth_K > 0){
+  if(birth_K > 0 && tot_offspring > 0){
       while(tot_offspring > birth_K){
           ind = get_rand_int(0, N - 1);
           if(pests[ind][off_col] > 0){

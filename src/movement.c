@@ -111,8 +111,6 @@ void movement(double **pests, double *paras, double ***land){
   }
   
   if(max_bout > 1){
-      eat_on_bout       = pests[ind][eat_on_bout_col];
-      pesticide_on_bout = pests[ind][cide_on_bout_col]; 
       bout_vec          = malloc(N * sizeof(int));
       tot_bouts         = 0;
       for(ind = 0; ind < N; ind++){
@@ -121,8 +119,10 @@ void movement(double **pests, double *paras, double ***land){
       }
       while(tot_bouts > 0){
         do{ /* This makes movement happen in a random order */
-          ind = get_rand_int(0, N);
+            ind = get_rand_int(0, N - 1);
         } while (bout_vec[ind] == 0);
+        eat_on_bout       = pests[ind][eat_on_bout_col];
+        pesticide_on_bout = pests[ind][cide_on_bout_col]; 
         move(pests, paras, ind);
         if(eat_on_bout > 0){
             feed(pests, paras, land, ind);

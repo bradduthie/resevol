@@ -145,7 +145,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     while(ts < time_steps){
  
         land_change(land, paras, ts);
- 
+      
         age_pests(pests, paras); 
         
         feeding(pests, paras, land); 
@@ -156,14 +156,16 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         
         calculate_offspring(pests, paras);
     
-        offspring_number = (int) paras[106]; /* Create the offspring array */
+        offspring_number = (int) paras[106]; 
         offspring        = malloc(offspring_number * sizeof(double *));
         for(row = 0; row < offspring_number; row++){
             offspring[row] = malloc(ind_traits * sizeof(double));   
         } 
 
-        make_offspring(pests, offspring, paras);
-    
+        if(offspring_number > 0){
+            make_offspring(pests, offspring, paras);
+        }
+
         apply_mortality(pests, paras);
     
         print_all_pests(pests, paras, ts);
