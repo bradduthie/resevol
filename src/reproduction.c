@@ -153,25 +153,31 @@ void count_offspring(double **pests, double *paras, int row){
  * ========================================================================== */
 void calculate_offspring(double **pests, double *paras){
   
-  int ind, N, tot_offspring, birth_K, off_col, sex_col, sex;
-  int age_col, age, min_age_col, max_age_col, min_age, max_age;
+  int ind, N, tot_offspring, birth_K, off_col, sex_col, sex, pest_thresh_col;
+  int age_col, age, min_age_col, max_age_col, min_age, max_age, pest_consum_col;
+  double pesticide_thresh, pesticide_consumed;
 
-  age_col     = (int) paras[3];
-  sex_col     = (int) paras[4];
-  off_col     = (int) paras[10];
-  min_age_col = (int) paras[35];
-  max_age_col = (int) paras[36];
-  N           = (int) paras[101];
-  birth_K     = (int) paras[167];
+  age_col         = (int) paras[3];
+  sex_col         = (int) paras[4];
+  off_col         = (int) paras[10];
+  pest_consum_col = (int) paras[15];
+  pest_thresh_col = (int) paras[19];
+  min_age_col     = (int) paras[35];
+  max_age_col     = (int) paras[36];
+  N               = (int) paras[101];
+  birth_K         = (int) paras[167];
   
-  paras[106] = 0.0; /* Start with no offspring */
+  paras[106]         = 0.0; /* Start with no offspring */
   
   for(ind = 0; ind < N; ind++){
-      sex     = (int) pests[ind][sex_col];
-      age     = (int) pests[ind][age_col];
-      min_age = (int) pests[ind][min_age_col];
-      max_age = (int) pests[ind][max_age_col];
-      if(age >= min_age && age <= max_age && sex < 3){
+      sex                = (int) pests[ind][sex_col];
+      age                = (int) pests[ind][age_col];
+      min_age            = (int) pests[ind][min_age_col];
+      max_age            = (int) pests[ind][max_age_col];
+      pesticide_thresh   = pests[ind][pest_thresh_col];
+      pesticide_consumed = pests[ind][pest_consum_col];
+      if(age >= min_age && age <= max_age && sex < 3 && 
+         pesticide_consumed < pesticide_thresh){
           count_offspring(pests, paras, ind);
       }
   }
