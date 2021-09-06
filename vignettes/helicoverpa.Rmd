@@ -6,7 +6,7 @@ bibliography: '`r system.file("refs.bib", package = "helicoverpa")`'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Getting Started}
+  %\VignetteIndexEntry{Get Started}
   %\usepackage[UTF-8]{inputenc}
 ---
 

@@ -1,8 +1,43 @@
-Modelling for the *Helicoverpa* project
-============================================================================
+Resistance Evolution (resevol) simulation package
+--------------------------------------------------------------------------------
 
-This is the starting point for the *Helicoverpa* project. While I think that the workhorse of the model will likely need to be written in C, I am initialising this repository as an R package. This way, we can have a standalone version in C that is as fast as possible and can be run on a high performance cluster if need be, but also link the C code to R so that the model can be called from an R function (or shiny).
+**The resevol R package is a tool for simulating social-ecological individual-based models (IBMs) for the ecology and evolution of agricultural pest species. Simulations model a spatially explicit landscape broken down into one or more independent farms on which one of up to 10 crops can be grown and one of up to 10 pesticides can be applied. Crop and pesticide application can be rotated during a simulation at different spatial and temporal scales to simulate the effects of heterogeneity of pest environment. Haploid or diploid pest genomes are modelled explicitly with an arbitrary number of loci that map to any number of traits. This mapping of loci to traits can be set with a pre-specified trait correlation structure, which is found using an evolutionary algorithm run using the mine_gmatrix() function. Individual pest traits can affect movement, reproduction, feeding, pesticide tolerance, metabolism, and other individual characteristics. Simulations of pest populations dynamics run with the run_sim_farm() function can track individual pest locations, pedigree, behaviour, and trait evolution.**
 
-The src subdirectory will include all of the C code, and the R directory will include all of the R code. I use the notebook subdirectory to keep track of notes and scratch ideas; other directories are fine too, and we can use .Rignore to ignore them when building the R package. [Here](https://github.com/bradduthie/gmse) is a general idea of how I tend to organise projects. Shortly, I'll initialise a lab notebook like [the one for GMSE](https://bradduthie.github.io/gmse/notebook/gmse_notes.html) to keep a general timeline of the coding (of course, the commit history will do this too).
+--------------------------------------------------------------------------------
+
+*This software was developed as part of the project for [Enhancing Diversity to Overcome Resistance Evolution](https://gtr.ukri.org/projects?ref=BB%2FS018956%2F1) (ENDORSE) led by [Dr Luc Bussi&egrave;re](https://lucbussiere.com/), [Dr Ricardo Polanczyk](https://www.fcav.unesp.br/#!/docentes/ricardo-antonio-polanczyk/), and [Dr Matthew Tinsley](https://www.stir.ac.uk/people/256411) (Co-Investigators: [Brad Duthie](https://bradduthie.github.io), [Belinda Luke](https://www.cabi.org/cabi-people/belinda-luke/), [Nils Bunnefeld](https://www.stir.ac.uk/people/257162), and [Rosie Mangan](https://sites.google.com/site/rosemarygmangan/home)). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the S&atilde;o Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. This software package is authored by [Brad Duthie](https://github.com/bradduthie) and [Rose McKeon](https://github.com/rosemckeon), and is maintained by [Brad Duthie](https://github.com/bradduthie).*
+
+--------------------------------------------------------------------------------
+
+
+## Installation
+
+**Install from CRAN**
+
+To install [this package](https://CRAN.R-project.org/package=resevol) from CRAN.
+
+```
+install.packages("resevol")
+```
+
+**Install with GitHub**
+
+To install this package from GitHub, make sure that the `devtools` library is installed.
+
+```
+install.packages("devtools")
+library(devtools)
+```
+
+Use `install_github` to install using `devtools`.
+
+```
+install_github("bradduthie/resevol")
+```
+
+
+## Documentation
+
+To get started with the resevol package, we strongly recommend first reading through the **Get Started** vignette.
 
 
