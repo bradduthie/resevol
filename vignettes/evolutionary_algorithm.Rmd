@@ -13,7 +13,7 @@ vignette: >
 
 - [Introduction](#introduction)
 
-< a name = "introduction">Introduction</a>
+<a name = "introduction">Introduction</a>
 ================================================================================
 
 This vignette explains the evolutionary algorithm.
