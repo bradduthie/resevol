@@ -1,5 +1,5 @@
 library("testthat");
-library("helicoverpa");
+library("resevol");
 context("initialise tests");
 
 test_that("Correctly initialises different individual types", {

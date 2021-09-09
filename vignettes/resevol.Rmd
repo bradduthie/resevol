@@ -2,7 +2,7 @@
 title: "Get Started"
 author: "A Bradley Duthie"
 date: "`r Sys.Date()`"
-bibliography: '`r system.file("refs.bib", package = "helicoverpa")`'
+bibliography: '`r system.file("refs.bib", package = "resevol")`'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
@@ -24,7 +24,7 @@ vignette: >
 <a name = "introduction">Introduction</a>
 ================================================================================
 
-The helicoverpa R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the `mine_gmatrix` function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the `run_farm_sim` function; it initialises individuals with the `mine_gmatrix` output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.
+The resevol R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the `mine_gmatrix` function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the `run_farm_sim` function; it initialises individuals with the `mine_gmatrix` output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.
 
 <a name = "mine_gmatrix">The `mine_gmatrix` function</a>
 ================================================================================
@@ -139,7 +139,7 @@ Gen: 5	 Stress: -0.763570	 Min: -0.763571
 Gen: 6	 Stress: -0.763571	 Min: -0.763572
 ```
 
-As previously mentioned, finding a network can be time-consuming. The helicoverpa package comes with some example pre-installed.
+As previously mentioned, finding a network can be time-consuming. The resevol package comes with some example pre-installed.
 
 ```{r, eval = FALSE}
 data("gmatrices");
@@ -377,7 +377,7 @@ The third file is 'individuals.csv', which will provide an extremely large table
 <a name = "traits">Use of evolving traits in `run_farm_sim`</a>
 --------------------------------------------------------------------------------
 
-In all of the [examples used](#example) above, values were hard coded into the `run_farm_sim` function, so the four traits mined in `mg_v1` were not actually used. The helicoverpa package allows evolving traits to be substituted for the following individual characteristics set in the arguments of `run_farm_sim`: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume` (up to 10 elements), and `pesticide_consume` (up to 10 elements). When a trait is substituted for the argument, an individual's value for the argument is determined by the trait (e.g., the food needed to survive can be determined by a trait unique to each individual rather than set as a numerical value that applies to all individuals). Setting an argument to the trait is done by placing "T[n]" in quotes where [n] is the number of the trait (corresponding to the n row and column of the pre-specified trait covariance matrix). Below shows the last [example used above](#example), but with `food_consume = c(2, 2)` and `pesticide_consume = c(0, 0)` replaced with evolving traits.
+In all of the [examples used](#example) above, values were hard coded into the `run_farm_sim` function, so the four traits mined in `mg_v1` were not actually used. The resevol package allows evolving traits to be substituted for the following individual characteristics set in the arguments of `run_farm_sim`: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume` (up to 10 elements), and `pesticide_consume` (up to 10 elements). When a trait is substituted for the argument, an individual's value for the argument is determined by the trait (e.g., the food needed to survive can be determined by a trait unique to each individual rather than set as a numerical value that applies to all individuals). Setting an argument to the trait is done by placing "T[n]" in quotes where [n] is the number of the trait (corresponding to the n row and column of the pre-specified trait covariance matrix). Below shows the last [example used above](#example), but with `food_consume = c(2, 2)` and `pesticide_consume = c(0, 0)` replaced with evolving traits.
 
 ```{r, eval = FALSE}
 sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci = 1000, 
@@ -404,7 +404,7 @@ The `run_farm_sim` will recognise now that traits 1 and 2 will determine the amo
 <a name = "additional">Additional guidance</a>
 ================================================================================
 
-Additional guidance can be found in the [package notes](https://bradduthie.github.io/helicoverpa/notebook/helicoverpa_notes.html) on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the [GitHub issues page](https://github.com/bradduthie/helicoverpa/issues) or emailed to the package maintainer Brad Duthie (see email address in the [package DESCRIPTION](https://github.com/bradduthie/helicoverpa/blob/master/DESCRIPTION)). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.
+Additional guidance can be found in the [package notes](https://bradduthie.github.io/resevol/notebook/index.html) on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the [GitHub issues page](https://github.com/bradduthie/resevol/issues) or emailed to the package maintainer Brad Duthie (see email address in the [package DESCRIPTION](https://github.com/bradduthie/resevol/blob/master/DESCRIPTION)). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.
 
 
 <a name = "lit">Literature Cited</a>

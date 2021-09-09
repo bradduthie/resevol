@@ -1,5 +1,5 @@
 library("testthat");
-library("helicoverpa");
+library("resevol");
 context("mine_gmatrix tests");
 
 test_that("Correct number of elements in the mine_gmatrix output", {

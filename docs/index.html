@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulate agricultural production and evolution of pesticide resistance • helicoverpa</title>
+<title>Simulate agricultural production and evolution of pesticide resistance • resevol</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -39,7 +39,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">helicoverpa</a>
+        <a class="navbar-link" href="index.html">resevol</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.0</span>
       </span>
     </div>
@@ -53,7 +53,7 @@
   </a>
 </li>
 <li>
-  <a href="articles/helicoverpa.html">Get started</a>
+  <a href="articles/resevol.html">Get started</a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
@@ -67,7 +67,7 @@
   <a href="https://bradduthie.github.io/helicoverpa/notebook/helicoverpa_notes.html">Lab notebook</a>
 </li>
 <li>
-  <a href="https://github.com/bradduthie/helicoverpa">
+  <a href="https://github.com/bradduthie/resevol">
     <span class="fa fa-github"></span>
      
   </a>
@@ -85,12 +85,13 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
+<p><img src="https://raw.githubusercontent.com/bradduthie/resevol/6cdcc156c1286125554e501381ce8afee813b704/notebook/images/resevol_logo.png"></p>
 <div id="resistance-evolution-resevol-simulation-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#resistance-evolution-resevol-simulation-package" class="anchor"></a>Resistance Evolution (resevol) simulation package</h2>
 <p><strong>The resevol R package is a tool for simulating social-ecological individual-based models (IBMs) for the ecology and evolution of agricultural pest species. Simulations model a spatially explicit landscape broken down into one or more independent farms on which one of up to 10 crops can be grown and one of up to 10 pesticides can be applied. Crop and pesticide application can be rotated during a simulation at different spatial and temporal scales to simulate the effects of heterogeneity of pest environment. Haploid or diploid pest genomes are modelled explicitly with an arbitrary number of loci that map to any number of traits. This mapping of loci to traits can be set with a pre-specified trait correlation structure, which is found using an evolutionary algorithm run using the mine_gmatrix() function. Individual pest traits can affect movement, reproduction, feeding, pesticide tolerance, metabolism, and other individual characteristics. Simulations of pest populations dynamics run with the run_sim_farm() function can track individual pest locations, pedigree, behaviour, and trait evolution.</strong></p>
 <hr>
-<p><em>This project has received funding from the BBSRC-FAPESP-Newton joint Funded Project: <a href="https://gtr.ukri.org/projects?ref=BB%2FS018956%2F1">Enhancing Diversity to Overcome Resistance Evolution</a> (ENDORSE) led by <a href="https://lucbussiere.com/">Dr Luc Bussière</a>, <a href="https://www.fcav.unesp.br/#!/docentes/ricardo-antonio-polanczyk/">Dr Ricardo Polanczyk</a>, and <a href="https://www.stir.ac.uk/people/256411">Dr Matthew Tinsley</a> (Co-Investigators: <a href="https://bradduthie.github.io">Brad Duthie</a>, <a href="https://www.cabi.org/cabi-people/belinda-luke/">Belinda Luke</a>, <a href="https://www.stir.ac.uk/people/257162">Nils Bunnefeld</a>, and <a href="https://sites.google.com/site/rosemarygmangan/home">Rosie Mangan</a>). This package is authored by <a href="https://github.com/bradduthie">Brad Duthie</a> and <a href="https://github.com/rosemckeon">Rose McKeon</a>, and is maintained by <a href="https://github.com/bradduthie">Brad Duthie</a>.</em></p>
+<p><em>This software was developed as part of the project for <a href="https://gtr.ukri.org/projects?ref=BB%2FS018956%2F1">Enhancing Diversity to Overcome Resistance Evolution</a> (ENDORSE) led by <a href="https://lucbussiere.com/">Dr Luc Bussière</a>, <a href="https://www.fcav.unesp.br/#!/docentes/ricardo-antonio-polanczyk/">Dr Ricardo Polanczyk</a>, and <a href="https://www.stir.ac.uk/people/256411">Dr Matthew Tinsley</a> (Co-Investigators: <a href="https://bradduthie.github.io">Brad Duthie</a>, <a href="https://www.cabi.org/cabi-people/belinda-luke/">Belinda Luke</a>, <a href="https://www.stir.ac.uk/people/257162">Nils Bunnefeld</a>, and <a href="https://sites.google.com/site/rosemarygmangan/home">Rosie Mangan</a>). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the São Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. This software package is authored by <a href="https://github.com/bradduthie">Brad Duthie</a> and <a href="https://github.com/rosemckeon">Rose McKeon</a>, and is maintained by <a href="https://github.com/bradduthie">Brad Duthie</a>.</em></p>
 <hr>
 </div>
 <div id="installation" class="section level2">
@@ -118,9 +119,9 @@ library(devtools)</a></code></pre>
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/bradduthie/helicoverpa/">https://​github.com/​bradduthie/​helicoverpa/​</a>
+<li>Browse source code at <br><a href="https://github.com/bradduthie/resevol/">https://​github.com/​bradduthie/​resevol/​</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/bradduthie/helicoverpa/issues">https://​github.com/​bradduthie/​helicoverpa/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/bradduthie/resevol/issues">https://​github.com/​bradduthie/​resevol/​issues</a>
 </li>
 </ul>
 </div>

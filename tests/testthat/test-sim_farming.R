@@ -1,5 +1,5 @@
 library("testthat");
-library("helicoverpa");
+library("resevol");
 context("Simulation run tests");
 
 test_that("Simulations are run and output is produced", {

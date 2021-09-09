@@ -22,7 +22,7 @@
 #'@return the_land A cols by rows landscape with randomly distributed cell types
 #'@examples
 #'land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
-#'@useDynLib helicoverpa
+#'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif
 #'@export
 make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0, 

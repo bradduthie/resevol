@@ -41,7 +41,7 @@
 #'diag(gmt) <- 1;
 #'mg        <- mine_gmatrix(gmatrix = gmt, loci = 6, layers = 3, indivs = 100, 
 #'                          npsize = 100, max_gen = 8, prnt_out = FALSE);
-#'@useDynLib helicoverpa
+#'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif rbinom
 #'@importFrom utils read.csv write.csv
 #'@export

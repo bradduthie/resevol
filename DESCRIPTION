@@ -1,4 +1,4 @@
-Package: helicoverpa
+Package: resevol
 Type: Package
 Title: Simulate agricultural production and evolution of pesticide resistance
 Version: 0.2.0.0
@@ -23,8 +23,8 @@ Description: Simulates individual-based models of agricultural pest management
     run_farm_sim() function. This package thereby allows for highly mechanistic
     social-ecological models of the evolution of pesticide resistance under
     different types of crop rotation and pesticide application regimes.
-URL: https://bradduthie.github.io/helicoverpa/
-BugReports: https://github.com/bradduthie/helicoverpa/issues
+URL: https://bradduthie.github.io/resevol/
+BugReports: https://github.com/bradduthie/resevol/issues
 Depends: R (>= 4.0.0)
 License: GPL (>=2)
 LazyData: TRUE

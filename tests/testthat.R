@@ -1,4 +1,4 @@
 library("testthat");
-library("helicoverpa");
+library("resevol");
 
-test_check("helicoverpa");
+test_check("resevol");

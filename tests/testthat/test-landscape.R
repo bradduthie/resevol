@@ -1,5 +1,5 @@
 library("testthat");
-library("helicoverpa");
+library("resevol");
 context("landscape tests");
 
 test_that("Landscape dimensions are correct", {

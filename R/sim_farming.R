@@ -107,7 +107,7 @@
 #'                          repro = "asexual", time_steps = 10, 
 #'                          print_inds = FALSE, print_gens = FALSE,
 #'                          print_last = FALSE, get_stats = FALSE);
-#'@useDynLib helicoverpa
+#'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif
 #'@export
 run_farm_sim <- function(mine_output,
