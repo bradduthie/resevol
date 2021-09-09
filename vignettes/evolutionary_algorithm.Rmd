@@ -1,0 +1,24 @@
+---
+title: "The evolutionary algorithm"
+author: "A Bradley Duthie"
+date: "`r Sys.Date()`"
+bibliography: '`r system.file("refs.bib", package = "resevol")`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{The evolutionary algorithm}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+- [Introduction](#introduction)
+
+< a name = "introduction">Introduction</a>
+================================================================================
+
+This vignette explains the evolutionary algorithm.
+
+<a name = "lit">Literature Cited</a>
+================================================================================
+
+

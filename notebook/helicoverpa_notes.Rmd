@@ -1,5 +1,5 @@
 ---
-title: "The helicoverpa package"
+title: "The resevol package"
 author: "Brad Duthie and Rose McKeon"
 output:
   html_document: default

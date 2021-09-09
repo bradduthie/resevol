@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/bradduthie/resevol/6cdcc156c1286125554e501381ce8afee813b704/notebook/images/resevol_logo.png)
+![](https://raw.githubusercontent.com/bradduthie/resevol/6b5f68620fb1f45f0bfdc5aa4e853a8305d04bf5/notebook/images/resevol_logo.png)
 
 
 Resistance Evolution (resevol) simulation package
