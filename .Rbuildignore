@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 notebook*
 assets*
-^doc$
+^docs$
 ^Meta$
+_pkgdown.yml
