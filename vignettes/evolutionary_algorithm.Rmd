@@ -12,6 +12,16 @@ vignette: >
 
 
 - [Introduction](#introduction)
+- [Key data structures used](#structures)
+- [General overview of the evolutionary algorithm](#overview)
+    - [Initialisation](#initialisation)
+    - [Crossover](#crossover)
+    - [Mutation](#mutation)
+    - [Fitness evaluation](#fitness)
+    - [Tournament selection](#tournament)
+    - [Termination](#termination)
+- [Haploid and diploid individuals](#ploidy)
+- [Literature cited](#lit)
 
 <a name = "introduction">Introduction</a>
 ================================================================================

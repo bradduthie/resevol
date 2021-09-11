@@ -102,6 +102,20 @@
     
 <ul>
 <li><a href="#introduction">Introduction</a></li>
+<li><a href="#structures">Key data structures used</a></li>
+<li>
+<a href="#overview">General overview of the evolutionary algorithm</a>
+<ul>
+<li><a href="#initialisation">Initialisation</a></li>
+<li><a href="#crossover">Crossover</a></li>
+<li><a href="#mutation">Mutation</a></li>
+<li><a href="#fitness">Fitness evaluation</a></li>
+<li><a href="#tournament">Tournament selection</a></li>
+<li><a href="#termination">Termination</a></li>
+</ul>
+</li>
+<li><a href="#ploidy">Haploid and diploid individuals</a></li>
+<li><a href="#lit">Literature cited</a></li>
 </ul>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
@@ -128,42 +142,42 @@ Figure 1: Network mapping loci to traits through an intermediate set of hidden l
 <code class="sourceCode R"><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code>##                [,1]         [,2]         [,3]        [,4]
-##  [1,] -0.2662724356  0.080663803  0.107940983  0.02503812
-##  [2,]  0.0980795899 -0.006468696  0.084743566  0.15303347
-##  [3,] -0.0371715262  0.009586238  0.021966536 -0.03283567
-##  [4,]  0.1808770180  0.033910779 -0.019933675 -0.01396430
-##  [5,] -0.0765205777 -0.169003290 -0.052599675 -0.14861704
-##  [6,]  0.0478869945  0.097311706  0.247338602 -0.01146746
-##  [7,] -0.0272038342  0.064828529  0.041658378 -0.01048097
-##  [8,]  0.1717964748 -0.099347054  0.005587217  0.07288078
-##  [9,]  0.0451388912 -0.008273629 -0.080800049 -0.10872434
-## [10,]  0.0003001344 -0.085098289 -0.050068782 -0.05891733
-## [11,]  0.1817218636  0.201887618  0.050655672 -0.08445114
-## [12,]  0.0815465250  0.204293785  0.049207357 -0.06433243</code></pre>
+<pre><code>##              [,1]        [,2]          [,3]        [,4]
+##  [1,] -0.10229469  0.10998208 -0.0051976949  0.08411067
+##  [2,] -0.01465473  0.09028958  0.1131528969  0.06741763
+##  [3,] -0.17530462 -0.13427194 -0.1905171783  0.04366699
+##  [4,] -0.22627889  0.12207676  0.0227204035 -0.05943012
+##  [5,]  0.05406480 -0.01722231 -0.0005469609  0.04406804
+##  [6,] -0.07456512 -0.09868671  0.0139812281  0.09465581
+##  [7,]  0.05593055  0.01996630  0.1172458785  0.05024329
+##  [8,] -0.09337892 -0.21619730 -0.0290091030 -0.14453720
+##  [9,] -0.14596608  0.12227967 -0.0308842192  0.01206607
+## [10,]  0.07242099  0.16423639  0.0835777176 -0.03659397
+## [11,] -0.02956157 -0.04009008 -0.1207548514  0.06608244
+## [12,] -0.07269610  0.09694594  0.0238123919 -0.11772983</code></pre>
 <p>We can initialise 12 allele values, one for each locus.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</code></pre></div>
 <p>To then get the value of the first column of four hidden layer nodes (i.e., the first column of blue squares in Figure 1), we can use matrix multiplication.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op">%*%</span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code>##          [,1]      [,2]       [,3]      [,4]
-## [1,] 1.084662 0.1710534 0.09115153 0.5338003</code></pre>
+<pre><code>##           [,1]      [,2]       [,3]       [,4]
+## [1,] -1.016588 0.2851988 -0.0932516 -0.1138409</code></pre>
 <p>We can likewise use a 4 by 4 square matrix to represent the values of the arrows from the first column of four hidden layer nodes to the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code>##             [,1]        [,2]         [,3]         [,4]
-## [1,] -0.26627244 -0.07652058 0.0451388912  0.080663803
-## [2,]  0.09807959  0.04788699 0.0003001344 -0.006468696
-## [3,] -0.03717153 -0.02720383 0.1817218636  0.009586238
-## [4,]  0.18087702  0.17179647 0.0815465250  0.033910779</code></pre>
+<pre><code>##             [,1]        [,2]        [,3]        [,4]
+## [1,] -0.10229469  0.05406480 -0.14596608  0.10998208
+## [2,] -0.01465473 -0.07456512  0.07242099  0.09028958
+## [3,] -0.17530462  0.05593055 -0.02956157 -0.13427194
+## [4,] -0.22627889 -0.09337892 -0.07269610  0.12207676</code></pre>
 <p>We can then use matrix multiplication to map the 12 allele values to the values of the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op">%*%</span> <span class="va">arrows_1_mat</span> <span class="op">%*%</span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code>##            [,1]       [,2]      [,3]      [,4]
-## [1,] -0.1788747 0.01441762 0.1091056 0.1053618</code></pre>
+<pre><code>##           [,1]        [,2]      [,3]        [,4]
+## [1,] 0.1419193 -0.07081276 0.1800742 -0.08743222</code></pre>
 <p>This pattern can continue, with 4 by 4 square matrices representing the value of arrows between columns of hidden layer nodes, and between the last hidden layer column and traits (note that the number of hidden layer columns can be any natural number, but the number of nodes within a column always equals the number of traits). In the <a href="https://github.com/bradduthie/resevol/blob/master/src/mine_gmatrix.c">actual evolutionary algorithm code</a>, all of these square matrices are themselves held in a large 3D array. But the idea is the same; a vector of allele values is multiplied by multiple matrices until a set of trait values is produced. If multiple vectors of random standard normal allele values are generated, then the traits that they produce from all of this matrix multiplication can be made to covary in some pre-specified way using the evolutionary algorithm.</p>
 </div>
 <div id="general-overview-of-the-evolutionary-algorithm" class="section level1">
