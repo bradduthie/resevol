@@ -7,6 +7,6 @@ reference:
 navbar:
     right:
     - text: "Lab notebook"
-      href: https://bradduthie.github.io/resevol/notebook/index.html
+      href: https://bradduthie.github.io/resevol/notebook/
     - icon: fa-github
       href: https://github.com/bradduthie/resevol

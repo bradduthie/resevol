@@ -67,7 +67,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://bradduthie.github.io/resevol/notebook/index.html">Lab notebook</a>
+  <a href="https://bradduthie.github.io/resevol/notebook/">Lab notebook</a>
 </li>
 <li>
   <a href="https://github.com/bradduthie/resevol">
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>The evolutionary algorithm</h1>
                         <h4 class="author">A Bradley Duthie</h4>
             
-            <h4 class="date">2021-09-09</h4>
+            <h4 class="date">2021-09-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/master/vignettes/evolutionary_algorithm.Rmd"><code>vignettes/evolutionary_algorithm.Rmd</code></a></small>
       <div class="hidden name"><code>evolutionary_algorithm.Rmd</code></div>
@@ -107,12 +107,136 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a><a name="introduction">Introduction</a>
 </h1>
-<p>This vignette explains the evolutionary algorithm.</p>
+<p>The resevol package models individuals with complex genomes that can include any number of haploid or diploid loci and any number of traits with an arbitrary pre-specified covariance structure. It does this by using a complex network mapping a path from the allele values at each loci to the covarying trait values of individuals.</p>
+<div class="figure">
+<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-1-1.png" alt="Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function" width="672"><p class="caption">
+Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function
+</p>
 </div>
-<div id="literature-cited" class="section level1">
+<p>The objective of the evolutionary algorithm in resevol is to find a set of network values that produce traits (red diamonds above) with the pre-specified covariance structure given allele values (green circles above) that are sampled from a standard normal distribution (i.e., mean of zero and standard deviation of one). Conceptually, the problem is simple; we need to find values for the black arrows above that produce traits that covary in the way that we want them to covary (within some acceptable margin of error). The <code>mine_gmatrix</code> function uses an evolutionary algorithm for identifying sets of values that work. An evolutionary algorithm is an algorithm that works especially well for <em>I know it when I see it</em> problems <span class="citation">(Hamblin 2013)</span>. <span class="citation">Luke (2015)</span> explains the idea behind these algorithms in more detail:</p>
+<blockquote>
+<p>They’re algorithms used to find answers to problems when you have very little to help you: you don’t know beforehand what the optimal solution looks like, you don’t know how to go about finding it in a principled way, you have very little heuristic information to go on, and brute-force search is out of the question because the space is too large. But if you’re given a candidate solution to your problem, you can test it and assess how good it is. That is, you know a good one when you see it.</p>
+</blockquote>
+<p>In the <code>mine_gmatrix</code> function of the resevol package, an evolving population of networks like that in Figure 1 above is initialised. Parent networks produce offspring networks with some recombination and mutation, and offspring networks are selected based on how close their trait covariance matrix is to the pre-specified matrix input into the function. The algorithm is inspired by a similar algorithm within the <a href="https://confoobio.github.io/gmse/index.html">GMSE R package</a> <span class="citation">(Duthie et al. 2018)</span>.</p>
+</div>
+<div id="key-data-structures-used" class="section level1">
+<h1 class="hasAnchor">
+<a href="#key-data-structures-used" class="anchor"></a><a name="structures">Key data structures used</a>
+</h1>
+<p>In the code, the arrows in the above Figure 1 are represented by a set of matrices that map loci values to trait values. There are 12 loci in Figure 1, and 4 nodes in each hidden layer (blue squares). Arrow values between loci and the first hidden layer can then be represented by a matrix with 12 rows and 4 columns (i.e., row 1 holds a value for each of 4 arrows that point to the 4 hidden layer nodes). Note that the values below are initialised randomly, which is how they are initialised in the evolutionary algorithm.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
+<span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
+<pre><code>##                [,1]         [,2]         [,3]        [,4]
+##  [1,] -0.2662724356  0.080663803  0.107940983  0.02503812
+##  [2,]  0.0980795899 -0.006468696  0.084743566  0.15303347
+##  [3,] -0.0371715262  0.009586238  0.021966536 -0.03283567
+##  [4,]  0.1808770180  0.033910779 -0.019933675 -0.01396430
+##  [5,] -0.0765205777 -0.169003290 -0.052599675 -0.14861704
+##  [6,]  0.0478869945  0.097311706  0.247338602 -0.01146746
+##  [7,] -0.0272038342  0.064828529  0.041658378 -0.01048097
+##  [8,]  0.1717964748 -0.099347054  0.005587217  0.07288078
+##  [9,]  0.0451388912 -0.008273629 -0.080800049 -0.10872434
+## [10,]  0.0003001344 -0.085098289 -0.050068782 -0.05891733
+## [11,]  0.1817218636  0.201887618  0.050655672 -0.08445114
+## [12,]  0.0815465250  0.204293785  0.049207357 -0.06433243</code></pre>
+<p>We can initialise 12 allele values, one for each locus.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</code></pre></div>
+<p>To then get the value of the first column of four hidden layer nodes (i.e., the first column of blue squares in Figure 1), we can use matrix multiplication.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op">%*%</span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
+<pre><code>##          [,1]      [,2]       [,3]      [,4]
+## [1,] 1.084662 0.1710534 0.09115153 0.5338003</code></pre>
+<p>We can likewise use a 4 by 4 square matrix to represent the values of the arrows from the first column of four hidden layer nodes to the second column of hidden layer nodes.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
+<span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
+<pre><code>##             [,1]        [,2]         [,3]         [,4]
+## [1,] -0.26627244 -0.07652058 0.0451388912  0.080663803
+## [2,]  0.09807959  0.04788699 0.0003001344 -0.006468696
+## [3,] -0.03717153 -0.02720383 0.1817218636  0.009586238
+## [4,]  0.18087702  0.17179647 0.0815465250  0.033910779</code></pre>
+<p>We can then use matrix multiplication to map the 12 allele values to the values of the second column of hidden layer nodes.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op">%*%</span> <span class="va">arrows_1_mat</span> <span class="op">%*%</span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
+<pre><code>##            [,1]       [,2]      [,3]      [,4]
+## [1,] -0.1788747 0.01441762 0.1091056 0.1053618</code></pre>
+<p>This pattern can continue, with 4 by 4 square matrices representing the value of arrows between columns of hidden layer nodes, and between the last hidden layer column and traits (note that the number of hidden layer columns can be any natural number, but the number of nodes within a column always equals the number of traits). In the <a href="https://github.com/bradduthie/resevol/blob/master/src/mine_gmatrix.c">actual evolutionary algorithm code</a>, all of these square matrices are themselves held in a large 3D array. But the idea is the same; a vector of allele values is multiplied by multiple matrices until a set of trait values is produced. If multiple vectors of random standard normal allele values are generated, then the traits that they produce from all of this matrix multiplication can be made to covary in some pre-specified way using the evolutionary algorithm.</p>
+</div>
+<div id="general-overview-of-the-evolutionary-algorithm" class="section level1">
+<h1 class="hasAnchor">
+<a href="#general-overview-of-the-evolutionary-algorithm" class="anchor"></a><a name="overview">General overview of the evolutionary algorithm</a>
+</h1>
+<p>The evolutionary algorithm first initialises a population of networks, with each network having a unique set of values (i.e., black arrows in Figure 1, represented in the code by matrices explained in the <a href="#structures">previous selction</a>). In each iteration of the evolutionary algorithm, with some probability, networks crossover their values with another randomly selected network. Individual values in each network then mutate with some probability. The fitness of each network is then calculated by comparing its trait covariances with those of a pre-specified covariance matrix. A tournament is then used to select the highest fitness networks, and those selected networks replace the old to comprise the new population. Iterations continue until either a maximum number of iterations is reached or a network is found that produces trait covariances sufficiently close to the pre-specified covariance matrix. Figure 2 below provides a general overview of the evolutionary algorithm.</p>
+<div class="figure">
+<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-7-1.png" alt="Figure 2: Conceptual overview of the evolutionary algorithm used in the resevol package." width="576"><p class="caption">
+Figure 2: Conceptual overview of the evolutionary algorithm used in the resevol package.
+</p>
+</div>
+<p>The steps listed in the box above are explained in more detail below with reference to the arguments applied in the <code>mine_gmatrix</code> function that calls it.</p>
+<div id="initialisation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#initialisation" class="anchor"></a><a name="initialisation">Initialisation</a>
+</h2>
+<p>At the start of the evolutionary algorithm, a population of <code>npsize</code> networks is initialised. Each individual network in this population is represented by one matrix and one three dimensional array (see an explanation of <a href="#structures">the data structures</a> above). All the elements of networks are initialised with a random sample from a normal distribution with a mean of 0 and a standard deviation of <code>sd_ini</code>.</p>
+</div>
+<div id="crossover" class="section level2">
+<h2 class="hasAnchor">
+<a href="#crossover" class="anchor"></a><a name="crossover">Crossover</a>
+</h2>
+<p>An iteration of the evolutionary algorithm begins with a crossover between the values of networks in the population. For each network in the population, a crossover event will occur in the values linking loci to the first hidden layer (see Figure 1) with a probability of <code>pr_cross</code>. And a second independent crossover event will occur in the values linking the first hidden layer to traits, also with a probability of <code>pr_cross</code>. The reason that these two crossover events are independent is due to the different dimensions of the underlying arrays (see <a href="#structures">key data structures used</a> above). A matrix with <code>loci</code> rows and a number of columns that matches the number of traits holds the values linking loci to the first hidden layer. A three dimensional array with row and column numbers matching trait number, and a depth matching the number of hidden <code>layers</code> (e.g., 3 in Figure 1) holds the remaining values linking the first hidden layer to trait values.</p>
+<p>If a crossover event occurs for a focal network, then a contiguous set of values is defined and swapped with another randomly selected network in the population. Dimensions of the contiguous set are selected from a random uniform distribution. For example, given that the network in Figure 1 would be represented by a three dimensional array with 4 rows, 4 columns, and 3 layers, three random integers from 1-4, 1-4, and 1-3 would be sampled twice, respectively, with replacement. If the values selected were 1, 3, and 2 in the first sample, then 3, 3, and 1 in the second sample, then all values from rows 1-3, column 3, and layers 1-2 would be swapped between networks. Conceptually, this is the equivalent of drawing a square around set of arrows in Figure 1 and swapping the arrow values with the values of another network.</p>
+</div>
+<div id="mutation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mutation" class="anchor"></a><a name="mutation">Mutation</a>
+</h2>
+<p>After crossover occurs, all network values mutate independently at a fixed probability of <code>mu_pr</code>. If a mutation event occurs, then a new value is randomly sampled from a normal distribution with a mean of 0 and a standard deviation of <code>mu_sd</code>. This value is then added to the existing value in the network.</p>
+</div>
+<div id="fitness-evaluation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fitness-evaluation" class="anchor"></a><a name="fitness">Fitness evaluation</a>
+</h2>
+<p>After mutation, the fitness of each network in the population is evaluated. For each network, a set of <code>indivs</code> loci vectors is created, which represents the allele values of <code>indivs</code> potential individuals in a simulated population. Elements of each loci vector are randomly sampled from a standard normal distribution. For example, in the network of Figure 1 where <code>loci = 12</code>, <code>loci * indivs</code> standard normal values would be generated in total. After these <code>indivs</code> loci vectors are initialised, values in each vector are mapped to traits using the focal network, thereby producing <code>indivs</code> sets of traits from the focal network. These <code>indivs</code> sets of traits are then used to calculate the among trait covariances and build a trait covariance matrix for the network. This trait covariance matrix is then compared to the pre-specified <code>gmatrix</code> by calculating stress as the mean squared deviation between matrix elements. Lower stress values correspond to higher network fitness.</p>
+<p>The stress of each network in the population of <code>npsize</code> networks is calculated using the above algorithm. Selection of the next generation of <code>npsize</code> networks is then done using a tournament.</p>
+</div>
+<div id="tournament-selection" class="section level2">
+<h2 class="hasAnchor">
+<a href="#tournament-selection" class="anchor"></a><a name="tournament">Tournament selection</a>
+</h2>
+<p>After fitness evaluation, networks in the population compete in a series of tournaments to determine the composition of the next generation of <code>npsize</code> networks. Tournament selection is a flexible way to choose the fittest subset of the population <span class="citation">(Hamblin 2013)</span>. It starts by randomly selecting <code>sampleK</code> networks with replacement to form the competitors in a tournament (note that <code>sampleK</code> is constrained to be less than or equal to <code>npsize</code>). Of those <code>sampleK</code> networks, the <code>chooseK</code> networks with the highest fitness (i.e., lowest stress) are set aside to be placed in the new population (note that <code>chooseK</code> must be less than or equal to <code>sampleK</code>). More tournaments continue until a total of <code>npsize</code> new networks are set aside to form the new generation of networks.</p>
+</div>
+<div id="termination" class="section level2">
+<h2 class="hasAnchor">
+<a href="#termination" class="anchor"></a><a name="termination">Termination</a>
+</h2>
+<p>Throughout the evolutionary algorithm, the network with the lowest overall stress (from any generation) is retained. The evolutionary algorithm terminates if either the logged stress of this network is less than or equal to <code>term_cri</code>, or if <code>max_gen</code> generations of the evolutionary algorithm have occurred. When the evolutionary algorithm terminates, only the network with the lowest overall stress is returned.</p>
+</div>
+</div>
+<div id="haploid-and-diploid-individuals" class="section level1">
+<h1 class="hasAnchor">
+<a href="#haploid-and-diploid-individuals" class="anchor"></a><a name="ploidy">Haploid and diploid individuals</a>
+</h1>
+<p>The evolutionary algorithm does not distinguish between haploid and diploid genomes Instead, haploid and diploid individuals in resevol simulations are build differently from the mined network described above. For haploid individuals, network values are placed in individual genomes exactly as they are returned by <code>mine_gmatrix</code>. Hence, standard normal allele values at loci from haploid genomes will map to predictably covarying traits. For diploid individuals, all network values returned by <code>mine_gmatrix</code> are divided by 2, and two copies of each value are then placed in each individual to model diploid genomes. Allele values are then randomly sampled from a normal distribution with a mean of 0 and a standard deviation of <code>1 / sqrt(2)</code>, so that summed allele values at homologous loci will have a standard normal distribution. As such, effects of each loci are determined by the sum of homologous alleles. Similarly, homologous network values mapping allele values to traits are also summed, thereby producing the expected trait covariance structure.</p>
+</div>
+<div id="literature-cited" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#literature-cited" class="anchor"></a><a name="lit">Literature Cited</a>
 </h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Duthie2018" class="csl-entry">
+Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen, Rocio A Pozo, O. Sarobidy Rakotonarivo, Bram Van Moorter, and Nils Bunnefeld. 2018. <span>“<span class="nocase">GMSE: an R package for generalised management strategy evaluation</span>.”</span> <em>Methods in Ecology and Evolution</em> 9: 2396–2401. <a href="https://doi.org/10.1101/221432">https://doi.org/10.1101/221432</a>.
+</div>
+<div id="ref-Hamblin2013" class="csl-entry">
+Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical usage of genetic algorithms in ecology and evolution</span>.”</span> <em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000">https://doi.org/10.1111/2041-210X.12000</a>.
+</div>
+<div id="ref-Luke2015" class="csl-entry">
+Luke, Sean. 2015. <em><span class="nocase">Essentials of Metaheuristics</span></em>. <a href="https://doi.org/10.1007/s10710-011-9139-0">https://doi.org/10.1007/s10710-011-9139-0</a>.
+</div>
+</div>
 </div>
   </div>
 
