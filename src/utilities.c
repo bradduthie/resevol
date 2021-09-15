@@ -63,7 +63,7 @@ void sum_network_layers(int traits, int layers, double ***net,
     for(k = 1; k < layers; k++){
         matrix_multiply(net_temp[k-1], net_temp[k], traits, traits, traits, 
                         traits, net_out);
-        if(k < layers == 1){
+        if(k < layers){
             for(i = 0; i < traits; i++){
                 for(j = 0; j < traits; j++){
                     net_temp[k][i][j] = net_out[i][j]; 

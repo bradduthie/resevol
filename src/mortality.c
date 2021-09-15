@@ -8,10 +8,10 @@
  * ========================================================================== */
 void mortality(double **pests, double *paras, int ind){
   
-  int N, age_col, mortality_type_col, mortality_type, mortality_col, max_age;
+  int age_col, mortality_type_col, mortality_type, mortality_col, max_age;
   int food_threshold_age_col, pesticide_threshold_age_col, max_age_col;
   int pesticide_consumed_col, food_age, pesticide_age, food_consumed_col, age;
-  int food_threshold_col, pesticide_threshold_col, died;
+  int food_threshold_col, pesticide_threshold_col;
   double food_consumed, pesticide_consumed, food_threshold, pesticide_threshold;
   
   age_col                       = (int) paras[3];
@@ -19,7 +19,6 @@ void mortality(double **pests, double *paras, int ind){
   pesticide_consumed_col        = (int) paras[15];
   food_threshold_col            = (int) paras[16];
   pesticide_threshold_col       = (int) paras[17];
-  N                             = (int) paras[101];
   mortality_type_col            = (int) paras[79];
   max_age_col                   = (int) paras[80];
   mortality_col                 = (int) paras[81];

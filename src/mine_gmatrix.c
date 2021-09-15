@@ -32,7 +32,7 @@ double get_mean_fitness(double *W, int npsize){
 void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
              int traits){
   
-  int i, j, k, l, row, col, winner, pop_size, ROWS, COLS, loci, layers, npsize;
+  int i, j, k, l, row, col, winner, loci, layers, npsize;
   double a_value, ****NEW_NET, ***NEW_LTN;
 
   /** Parameter values as defined in R **/
@@ -154,7 +154,7 @@ void find_ascending_order(int *order_array, double *by_array, int length){
  * ========================================================================== */
 void tournament(double *fitnesses, int *winners, double *paras){
   
-  int samp, placed, pop_size, rand_samp, sampleK, chooseK, i;
+  int samp, placed, pop_size, rand_samp, sampleK, chooseK;
   int *samples;
   double *samp_fit;
   
@@ -304,8 +304,8 @@ void ea_pop_ini(double **inds, int indivs, int loci){
 void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV, 
              int traits, double *paras){
   
-  int indivs, loci, layers, use_cor, row, col;
-  double stress, **T, **L, **net_sum, **loci_to_traits;
+  int indivs, loci, layers, use_cor, row;
+  double **T, **L, **net_sum, **loci_to_traits;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
   layers   = (int) paras[1]; /* Layers in the network from loci to trait */
@@ -380,7 +380,7 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
 double fitness(double ***ltnpop, double ****netpop, double **gmatrix, 
                int traits, double *paras, int k){
   
-  int indivs, loci, layers, use_cor, row, col;
+  int indivs, loci, layers, use_cor, row;
   double stress, **T, **L, **net_sum, **loci_to_traits, **VCV;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
@@ -467,10 +467,8 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
 void net_fit(double ***ltnpop, double ****netpop, double **gmatrix, int traits, 
              double *paras, double *W){
   
-  int loci, indivs, npsize, k;
+  int npsize, k;
   
-  loci     = (int) paras[0]; /* Number of loci for an individual */
-  indivs   = (int) paras[2]; /* Individuals in the population */
   npsize   = (int) paras[3]; /* Size of the strategy population */
   
   for(k = 0; k < npsize; k++){
@@ -544,7 +542,7 @@ void crossover_ltn(double ***ltnpop, int npsize, int loci, int traits,
 void mutation_ltn(double ***ltnpop, int npsize, int loci, int traits, 
                   double *paras){
   
-  int k, l, i, j, mu;
+  int k, i, j, mu;
   double mu_pr, mu_sd;
   
   mu_pr = paras[4]; /* Mutation rate in the evolutionary algorithm */
@@ -826,10 +824,6 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int    *winners;       /* Pointer to the winners of tournaments */
     double term_cri;       /* Termination criteria (stress) for evol alg */
     double estress;        /* Mean stress in the evol algorithm */
-    double val;            /* Value of matrix elements */
-    double mu_pr;          /* Mutation rate of the evolutionary algorithm */
-    double mu_sd;          /* Mutation effect size standard deviation */
-    double pr_cross;       /* Pr of crossover between two paired 3D arrays */
     double sd_ini;         /* StDev of initialised network values */
     double final_stress;   /* Final stress of the variance covariance matrix */
     double *high_fitness;  /* Holds the highest fitness strategy found */
@@ -851,9 +845,6 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     int layers;
     int indivs;   /* Seeded individuals in evolutionary algorithm */
     int npsize;   /* Number of arrays in the evolutionary algorithm */
-    int sampleK;
-    int chooseK;
-    int use_cor;
     int prnt_out;
     
     double **VCV;
@@ -916,15 +907,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     layers   = (int) paras[1]; /* Layers in the network from loci to trait */
     indivs   = (int) paras[2]; /* Individuals in the population */
     npsize   = (int) paras[3]; /* Size of the strategy population */
-    mu_pr    = (double) paras[4]; /* Mutation rate in evolutionary algorithm */
-    mu_sd    = (double) paras[5]; /* Standard dev. of mutation effect size  */
     max_gen  = (int) paras[6]; /* Max generations in evolutionary algorithm */
-    pr_cross = (double) paras[7]; /* Pr of crossover between two 3D arrays */
-    sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
-    chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
     term_cri = (double) paras[10]; /* Evol Alg stress termination crit */
     sd_ini   = (double) paras[11]; /* StDev of initialised network values */
-    use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
     prnt_out = (int) paras[13]; /* Whether or not to print anything out */
     
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
@@ -1015,7 +1000,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         Rprintf("Initialising gmatrix mining...                 \n");
         Rprintf("===============================================\n");
     }
-    while(gen < max_gen & high_fitness[0] > term_cri){
+    while(gen < max_gen && high_fitness[0] > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras); 
       mutation_ltn(ltnpop, npsize, loci, traits, paras); 

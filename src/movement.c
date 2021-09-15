@@ -41,11 +41,10 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
  * ========================================================================== */
 void move(double **pests, double *paras, int ind){
   
-  int N, age_col, move_dist_col, min_age_col, max_age_col, Xpos_col, Ypos_col;
+  int age_col, move_dist_col, min_age_col, max_age_col, Xpos_col, Ypos_col;
   int move_dist, min_age, max_age, land_type, X_dim, Y_dim, disp_x, disp_y;
   int Xpos, Ypos, new_xpos, new_ypos, age;
   
-  N               = (int) paras[101];
   Xpos_col        = (int) paras[1];
   Ypos_col        = (int) paras[2];
   age_col         = (int) paras[3];
@@ -82,7 +81,7 @@ void move(double **pests, double *paras, int ind){
 void movement(double **pests, double *paras, double ***land){
   
   int ind, N, age_col, min_age_col, max_age_col, bout_col, eat_on_bout_col;
-  int age, bout, min_age, max_age, max_bout, ind_bout, tot_bouts, *bout_vec;
+  int age, min_age, max_age, max_bout, ind_bout, tot_bouts, *bout_vec;
   int eat_on_bout, pesticide_on_bout, cide_on_bout_col;
   
   N                = (int) paras[101];

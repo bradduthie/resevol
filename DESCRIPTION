@@ -1,6 +1,6 @@
 Package: resevol
 Type: Package
-Title: Simulate agricultural production and evolution of pesticide resistance
+Title: Simulate Agricultural Production and Evolution of Pesticide Resistance
 Version: 0.2.0.0
 Imports: grDevices (>= 4.0.0), graphics (>= 4.0.0), stats(>= 4.0.0),
          utils (>= 4.0.0)

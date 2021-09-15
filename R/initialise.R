@@ -49,11 +49,13 @@
 #'@param max_age_metabolism The maximum age affected by metabolism
 #'@return A two-dimensional array of individuals for simulation
 #'@examples
+#'\dontrun{
 #'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
 #'diag(gmt) <- 1;
 #'mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
 #'                          npsize = 100, max_gen = 4, prnt_out = FALSE);
 #'inds      <- initialise_inds(mine_output = mg, N = 40, repro = "asexual");
+#'}
 #'@importFrom stats rnorm
 #'@export
 initialise_inds <- function(mine_output, 

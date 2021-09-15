@@ -108,7 +108,7 @@ void no_pest_rot(double ***land, double *paras, int *owner_choice, int max_own){
  * ========================================================================== */
 void change_pesticide(double ***land, double *paras, int max_own){
   
-  int i, j;
+  int i;
   int pesticide_rotate_type, *owner_choice;
   
   pesticide_rotate_type = (int) paras[148];
@@ -242,7 +242,7 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
  * ========================================================================== */
 void change_crop(double ***land, double *paras, int max_own){
   
-  int i, j;
+  int i;
   int crop_rotate_type, *owner_choice;
   
   crop_rotate_type = (int) paras[142];
@@ -382,17 +382,12 @@ void clean_landscape(double ***land, double *paras){
  * ========================================================================== */
 void land_change(double ***land, double *paras, int ts){
   
-  int i, j, k, layer, min_own, max_own, own_layer, xdim, ydim, own_val;
-  int crops_produced, pesticides_used, possible_crops, possible_pesti;
+  int i, j, min_own, max_own, own_layer, xdim, ydim, own_val;
   int rotate_crops, rotate_pesticide, start_pesticide;
   
   xdim              = (int) paras[103];
   ydim              = (int) paras[104];
   own_layer         = (int) paras[155];
-  crops_produced    = (int) paras[156];
-  pesticides_used   = (int) paras[157];
-  possible_crops    = (int) paras[158];
-  possible_pesti    = (int) paras[159];
   rotate_crops      = (int) paras[143];
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];

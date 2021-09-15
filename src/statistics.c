@@ -55,13 +55,13 @@ void print_all_pests(double **pests, double *paras, int ts){
  * ========================================================================== */
 void population_statistics(double **pests, double *paras, int ts){
   
-  int i, j, N, cols, age_col, sex_col, off_col, loci_col, traits_col, traits;  
+  int i, j, N, age_col, sex_col, traits_col, traits;  
   int food_consumed_col, pesticide_consumed_col, mated_col, trait_start_col;
   int food1_col, food2_col, food3_col, food4_col, food5_col, food6_col; 
   int food7_col, food8_col, food9_col, food10_col;
   int pesticide1_col, pesticide2_col, pesticide3_col, pesticide4_col;
   int pesticide5_col, pesticide6_col, pesticide7_col, pesticide8_col;
-  int pesticide9_col, pesticide10_col, mortality_col, total_offspring;
+  int pesticide9_col, pesticide10_col, mortality_col;
   int food_types_used, pesticide_types_used, f_col;
   double NN, m_age, m_sex, m_food_consumed, m_pesticide_consumed, m_mated;
   double m_mortality, *m_traits, *m_food_vals, *m_pesticide_vals, m_fval;
@@ -72,11 +72,8 @@ void population_statistics(double **pests, double *paras, int ts){
   pesticide_types_used   = (int) paras[157];
   
   N                      = (int) paras[101];
-  cols                   = (int) paras[107];
   age_col                = (int) paras[3];
   sex_col                = (int) paras[4]; 
-  off_col                = (int) paras[10];
-  loci_col               = (int) paras[11];
   traits_col             = (int) paras[12];
   food_consumed_col      = (int) paras[14];
   pesticide_consumed_col = (int) paras[15];
@@ -103,7 +100,6 @@ void population_statistics(double **pests, double *paras, int ts){
   pesticide10_col        = (int) paras[77];
   mortality_col          = (int) paras[81];
   f_col                  = (int) paras[84];
-  total_offspring        = (int) paras[106];
   trait_start_col        = (int) paras[109];
   
   traits           = (int) pests[0][traits_col];

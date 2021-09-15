@@ -8,8 +8,8 @@
  * ========================================================================== */
 void insert_diploid_traits(double **offspring, double *paras, int offspr){
     
-    int i, j, k, vec_pos, row, col, layer, loci, traits, layers, net_vals;
-    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, net1_st;
+    int i, k, vec_pos, row, col, layer, loci, traits, layers, net_vals;
+    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st;
     double L1, L2, **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
     
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
@@ -148,8 +148,8 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void insert_haploid_traits(double **offspring, double *paras, int offspr){
     
-    int i, j, k, vec_pos, row, col, layer, loci, traits, layers;
-    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, net1_st;
+    int i, k, vec_pos, row, col, layer, loci, traits, layers;
+    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st;
     double **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
 
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
@@ -280,7 +280,7 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void mutation_haploid(double **offspring, double *paras, int offspr){
     
-    int i, j, sex_col, sex, loci, traits, layers, neutrals;
+    int i, sex_col, traits, layers;
     int loci_col, trait_col, layer_col, neut_col, cols;
     int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
     int net1_st, net_st_mu, net_ed_mu, base_start;
@@ -288,8 +288,7 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
     double mu, mu_effect, mu_sd, mutate;
     
     sex_col = (int) paras[4];
-    sex     = (int) offspring[offspr][sex_col];
-    
+
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
     trait_col  = (int) paras[12];  /* Column where the number of traits held  */
     layer_col  = (int) paras[13];  /* Column where network layer number held  */
@@ -302,10 +301,8 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
     mu_effect       = paras[114];
     mu_sd           = paras[115];
 
-    loci     = (int) offspring[offspr][loci_col];
     traits   = (int) offspring[offspr][trait_col];
     layers   = (int) offspring[offspr][layer_col];
-    neutrals = (int) offspring[offspr][neut_col];
 
     trait_st  = (int) paras[109];     /* Column where the trait columns start */
     net_st    = trait_st + traits;    /* Column where net locations start     */
@@ -381,10 +378,10 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void mutation_diploid(double **offspring, double *paras, int offspr){
     
-    int i, j, loci, traits, layers, neutrals;
+    int i, traits, layers;
     int loci_col, trait_col, layer_col, neut_col, cols;
     int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
-    int net1_st, net1_ed, net_st_mu, net_ed_mu, base_start;
+    int net1_st, net_st_mu, net_ed_mu, base_start;
     int network_st, network_end, network_len, off_col;
     double mu, mu_effect, mu_sd, mutate;
     
@@ -400,16 +397,13 @@ void mutation_diploid(double **offspring, double *paras, int offspr){
     mu_effect       = paras[114];
     mu_sd           = paras[116];
     
-    loci     = (int) offspring[offspr][loci_col];
     traits   = (int) offspring[offspr][trait_col];
     layers   = (int) offspring[offspr][layer_col];
-    neutrals = (int) offspring[offspr][neut_col];
 
     trait_st  = (int) paras[109];     /* Column where the trait columns start */
     net_st    = trait_st + traits;    /* Column where net locations start     */
     loci_st   = net_st + layers + 3;  /* Col where first loci values start    */
     net1_st   = offspring[offspr][net_st] - 1; /* Minus 1 switches R to C     */
-    net1_ed   = offspring[offspr][net_st + layers + 1] - 1; /* Minus 1 too    */
     neut_st   = offspring[offspr][loci_st - 1];
     
     if(mutation_layers > (layers + 1) ){
@@ -491,7 +485,7 @@ void mutation_diploid(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void sire_genes(double **pests, double *paras, double **offspring, int offspr){
     
-    int i, j, sire_row, dame_row, traits, layers, loci;
+    int i, sire_row, dame_row, traits, layers, loci;
     int mrow_col, srow_col, trait_col, layer_col, loci_col;
     int neut_col, neutrals, loci1_st, loci2_st, sire_chrome;
     int trait_st, net_st, net1_st, net2_st, neut1_st, neut2_st, sire_loc;
@@ -584,9 +578,9 @@ void sire_genes(double **pests, double *paras, double **offspring, int offspr){
  * ========================================================================== */
 int assign_sire(double **pests, double *paras, int ind){
     
-    int i, N, in_range, opp_sex, range;
+    int N, in_range, opp_sex, range;
     int mate_col, sex_col, range_col, self_col;
-    int nearby_mates, mate_pos, mate_row, mate_sex, focal_sex, selfing;
+    int nearby_mates, mate_pos, mate_sex, focal_sex, selfing;
     int age_col, min_age_col, max_age_col, age, min_age, max_age;
     
     sex_col     = (int) paras[4];  /* Column where the sex of individual is */
@@ -643,7 +637,7 @@ int assign_sire(double **pests, double *paras, int ind){
 void add_sexual(double **pests, double **offspring, double *paras, int ind,
                 int offspring_count){
     
-    int trait, cols, ID, sire_row, sire_ID, srow_col, sID_col, sex_col;
+    int trait, cols, sire_row, sire_ID, srow_col, sID_col, sex_col;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
     int tag1_col, tag2_col, tag3_col, mate_col, mort_col;
     int cons_col1, cons_col2, cons_col3, cons_col4, cons_col5, cons_col6; 
@@ -752,7 +746,7 @@ void add_sexual(double **pests, double **offspring, double *paras, int ind,
 void add_asexual(double **pests, double **offspring, double *paras, int ind,
                  int offspring_count){
     
-    int trait, cols, ID;
+    int trait, cols;
     int ID_col, age_col, mID_col, mrow_col, off_col, food_col, pest_col;
     int tag1_col, tag2_col, tag3_col, mate_col, mort_col;
     int cons_col1, cons_col2, cons_col3, cons_col4, cons_col5, cons_col6; 
@@ -884,15 +878,13 @@ void inbreeding_coef(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void make_offspring(double **pests, double **offspring, double *paras){
     
-    int ind, N, offspring_N, offspring_col, offspring_count;
-    int sex_col, sex, selfing_col, selfing, get_f_coef;
+    int ind, N, offspring_col, offspring_count;
+    int sex_col, sex, get_f_coef;
     int *ind_offspring;
     
     N             = (int) paras[101];
-    offspring_N   = (int) paras[106];
     offspring_col = (int) paras[10];
     sex_col       = (int) paras[4];
-    selfing_col   = (int) paras[26];
     get_f_coef    = (int) paras[171];
     
     ind_offspring = malloc(N * sizeof(int));

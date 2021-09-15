@@ -21,7 +21,9 @@
 #'@param farm_var Does the land distribution vary among farms (>=0, <1)
 #'@return the_land A cols by rows landscape with randomly distributed cell types
 #'@examples
+#'\dontrun{
 #'land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
+#'}
 #'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif
 #'@export
