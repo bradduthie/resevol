@@ -280,19 +280,15 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void mutation_haploid(double **offspring, double *paras, int offspr){
     
-    int i, sex_col, traits, layers;
-    int loci_col, trait_col, layer_col, neut_col, cols;
+    int i, traits, layers;
+    int trait_col, layer_col, cols;
     int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
     int net1_st, net_st_mu, net_ed_mu, base_start;
     int network_st, network_end, network_len, off_col;
     double mu, mu_effect, mu_sd, mutate;
     
-    sex_col = (int) paras[4];
-
-    loci_col   = (int) paras[11];  /* Column where the number of loci is held */
     trait_col  = (int) paras[12];  /* Column where the number of traits held  */
     layer_col  = (int) paras[13];  /* Column where network layer number held  */
-    neut_col   = (int) paras[29];  /* Column where N neutral alleles held     */
     cols       = (int) paras[107]; /* Number of cols in the offspring array   */
 
     mutation_type   = (int) paras[111];
@@ -340,6 +336,7 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
         }
     }
 
+    network_len = 0;
     /* Mutate the network layers of interest */
     if(mutation_layers > 0){
         base_start  = (int) paras[117];
@@ -379,16 +376,14 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
 void mutation_diploid(double **offspring, double *paras, int offspr){
     
     int i, traits, layers;
-    int loci_col, trait_col, layer_col, neut_col, cols;
+    int trait_col, layer_col, cols;
     int mutation_type, mutation_layers, trait_st, net_st, loci_st, neut_st;
     int net1_st, net_st_mu, net_ed_mu, base_start;
     int network_st, network_end, network_len, off_col;
     double mu, mu_effect, mu_sd, mutate;
     
-    loci_col   = (int) paras[11];  /* Column where the number of loci is held */
     trait_col  = (int) paras[12];  /* Column where the number of traits held  */
     layer_col  = (int) paras[13];  /* Column where network layer number held  */
-    neut_col   = (int) paras[29];  /* Column where N neutral alleles held     */
     cols       = (int) paras[107]; /* Number of cols in the offspring array   */
     
     mutation_type   = (int) paras[111];
