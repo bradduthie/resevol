@@ -363,6 +363,7 @@ void mutation_haploid(double **offspring, double *paras, int offspr){
             }
         }
     }
+    network_len++;
     
 }
 
