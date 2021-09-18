@@ -23,6 +23,10 @@ vignette: >
 - [Haploid and diploid individuals](#ploidy)
 - [Literature cited](#lit)
 
+```{r, echo = FALSE}
+oldpar <- par();
+```
+
 <a name = "introduction">Introduction</a>
 ================================================================================
 
@@ -97,7 +101,7 @@ We can likewise use a 4 by 4 square matrix to represent the values of the arrows
 
 ```{r}
 arrows_2_dat <- rnorm(n = 4 * 4, mean = 0, sd = 0.1);
-arrows_2_mat <- matrix(data = arrows_1_dat, nrow = 4, ncol = 4);
+arrows_2_mat <- matrix(data = arrows_2_dat, nrow = 4, ncol = 4);
 print(arrows_2_mat);
 ```
 
@@ -215,3 +219,6 @@ The evolutionary algorithm does not distinguish between haploid and diploid geno
 ================================================================================
 
 
+```{r, echo = FALSE}
+par(oldpar);
+```

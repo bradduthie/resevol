@@ -21,6 +21,10 @@ vignette: >
 - [Additional guidance](#additional)
 - [Literature cited](#lit)
 
+```{r, echo = FALSE}
+oldpar <- par();
+```
+
 <a name = "introduction">Introduction</a>
 ================================================================================
 
@@ -410,4 +414,8 @@ Additional guidance can be found in the [package notes](https://bradduthie.githu
 <a name = "lit">Literature Cited</a>
 ================================================================================
 
+
+```{r, echo = FALSE}
+par(oldpar);
+```
 
