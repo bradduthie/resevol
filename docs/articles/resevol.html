@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.1</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Get Started</h1>
                         <h4 class="author">A Bradley Duthie</h4>
             
-            <h4 class="date">2021-09-11</h4>
+            <h4 class="date">2021-09-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/master/vignettes/resevol.Rmd"><code>vignettes/resevol.Rmd</code></a></small>
       <div class="hidden name"><code>resevol.Rmd</code></div>
@@ -127,7 +127,7 @@
 </h1>
 <p>The goal of the <code>mine_gmatrix</code> function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes 12 loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).</p>
 <div class="figure">
-<img src="resevol_files/figure-html/unnamed-chunk-1-1.png" alt="Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function" width="672"><p class="caption">
+<img src="resevol_files/figure-html/unnamed-chunk-2-1.png" alt="Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function" width="672"><p class="caption">
 Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function
 </p>
 </div>
@@ -749,10 +749,16 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
 </h1>
 <p>Additional guidance can be found in the <a href="https://bradduthie.github.io/resevol/notebook/index.html">package notes</a> on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the <a href="https://github.com/bradduthie/resevol/issues">GitHub issues page</a> or emailed to the package maintainer Brad Duthie (see email address in the <a href="https://github.com/bradduthie/resevol/blob/master/DESCRIPTION">package DESCRIPTION</a>). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.</p>
 </div>
-<div id="literature-cited" class="section level1 unnumbered">
+<div id="literature-cited" class="section level1">
 <h1 class="hasAnchor">
 <a href="#literature-cited" class="anchor"></a><a name="lit">Literature Cited</a>
 </h1>
+<pre><code>## Warning in par(oldpar): graphical parameter "cin" cannot be set</code></pre>
+<pre><code>## Warning in par(oldpar): graphical parameter "cra" cannot be set</code></pre>
+<pre><code>## Warning in par(oldpar): graphical parameter "csi" cannot be set</code></pre>
+<pre><code>## Warning in par(oldpar): graphical parameter "cxy" cannot be set</code></pre>
+<pre><code>## Warning in par(oldpar): graphical parameter "din" cannot be set</code></pre>
+<pre><code>## Warning in par(oldpar): graphical parameter "page" cannot be set</code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Hamblin2013" class="csl-entry">
 Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical usage of genetic algorithms in ecology and evolution</span>.”</span> <em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000">https://doi.org/10.1111/2041-210X.12000</a>.

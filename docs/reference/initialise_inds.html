@@ -81,7 +81,7 @@ genome loci). See vignettes for a more detailed explanation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.1</span>
       </span>
     </div>
 
@@ -345,11 +345,13 @@ genome loci). See vignettes for a more detailed explanation.</p>
     <p>A two-dimensional array of individuals for simulation</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>gmt</span>       <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span>data <span class='op'>=</span> <span class='fl'>0</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, ncol <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>;
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>gmt</span>       <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span>data <span class='op'>=</span> <span class='fl'>0</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, ncol <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>;
 <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='va'>gmt</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>;
 <span class='va'>mg</span>        <span class='op'>&lt;-</span> <span class='fu'><a href='mine_gmatrix.html'>mine_gmatrix</a></span><span class='op'>(</span>gmatrix <span class='op'>=</span> <span class='va'>gmt</span>, loci <span class='op'>=</span> <span class='fl'>4</span>, layers <span class='op'>=</span> <span class='fl'>2</span>, indivs <span class='op'>=</span> <span class='fl'>100</span>, 
                          npsize <span class='op'>=</span> <span class='fl'>100</span>, max_gen <span class='op'>=</span> <span class='fl'>4</span>, prnt_out <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>;
 <span class='va'>inds</span>      <span class='op'>&lt;-</span> <span class='fu'>initialise_inds</span><span class='op'>(</span>mine_output <span class='op'>=</span> <span class='va'>mg</span>, N <span class='op'>=</span> <span class='fl'>40</span>, repro <span class='op'>=</span> <span class='st'>"asexual"</span><span class='op'>)</span>;
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
