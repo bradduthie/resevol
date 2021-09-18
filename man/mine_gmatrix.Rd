@@ -78,8 +78,10 @@ chosen and the number of traits. See vignettes for a more comprehensive
 explanation for what this function is doing.
 }
 \examples{
+\dontrun{
 gmt       <- matrix(data = 0, nrow = 3, ncol = 3);
 diag(gmt) <- 1;
 mg        <- mine_gmatrix(gmatrix = gmt, loci = 6, layers = 3, indivs = 100, 
-                         npsize = 100, max_gen = 8, prnt_out = FALSE);
+                         npsize = 100, max_gen = 2, prnt_out = FALSE);
+}
 }
