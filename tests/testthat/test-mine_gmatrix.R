@@ -3,6 +3,7 @@ library("resevol");
 context("mine_gmatrix tests");
 
 test_that("Correct number of elements in the mine_gmatrix output", {
+    skip_on_cran();
     set.seed(Sys.time());
     gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
     diag(gmt) <- 1;
@@ -12,6 +13,7 @@ test_that("Correct number of elements in the mine_gmatrix output", {
 })
 
 test_that("Correct element sizes or dimensions in the mine_gmatrix output", {
+    skip_on_cran();
     set.seed(Sys.time());
     gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
     diag(gmt) <- 1;

@@ -3,6 +3,7 @@ library("resevol");
 context("initialise tests");
 
 test_that("Correctly initialises different individual types", {
+    skip_on_cran();
     set.seed(Sys.time());
     gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
     diag(gmt) <- 1;
