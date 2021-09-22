@@ -130,11 +130,9 @@ row, and each column specifies a character of the individual (including all
 genome loci). See vignettes for a more detailed explanation.
 }
 \examples{
-\dontrun{
 gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
 mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
                          npsize = 100, max_gen = 4, prnt_out = FALSE);
 inds      <- initialise_inds(mine_output = mg, N = 40, repro = "asexual");
-}
 }

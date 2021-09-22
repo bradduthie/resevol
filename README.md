@@ -1,5 +1,8 @@
 ![](https://raw.githubusercontent.com/bradduthie/resevol/6b5f68620fb1f45f0bfdc5aa4e853a8305d04bf5/notebook/images/resevol_logo.png)
 
+[![](http://www.r-pkg.org/badges/version/resevol?color=yellowgreen)](https://cran.r-project.org/package=resevol) [![](https://cranlogs.r-pkg.org:443/badges/grand-total/resevol?color=yellowgreen)](https://cranlogs.r-pkg.org:443/badges/grand-total/resevol)
+[![](https://cranlogs.r-pkg.org:443/badges/last-month/resevol?color=yellowgreen)](https://cranlogs.r-pkg.org:443/badges/last-month/resevol)
+
 
 Resistance Evolution (resevol) simulation package
 --------------------------------------------------------------------------------

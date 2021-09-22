@@ -240,7 +240,6 @@ files can become extremely large (use print_inds with extreme caution and
 print_last with care).
 }
 \examples{
-\dontrun{
 gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
 diag(gmt) <- 1;
 mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
@@ -249,5 +248,4 @@ sim       <- run_farm_sim(mine_output = mg, N = 100, xdim = 40, ydim = 40,
                          repro = "asexual", time_steps = 3, 
                          print_inds = FALSE, print_gens = FALSE,
                          print_last = FALSE, get_stats = FALSE);
-}
 }
