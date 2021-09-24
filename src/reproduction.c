@@ -164,15 +164,15 @@ void calculate_offspring(double **pests, double *paras){
   birth_K         = (int) paras[167];
   
   paras[106]      = 0.0; /* Start with no offspring */
-  
   i = 0;
   for(ind = 0; ind < N; ind++){
-      sex                = (int) pests[ind][sex_col];
-      age                = (int) pests[ind][age_col];
-      min_age            = (int) pests[ind][min_age_col];
-      max_age            = (int) pests[ind][max_age_col];
-      pesticide_thresh   = pests[ind][pest_thresh_col];
-      pesticide_consumed = pests[ind][pest_consum_col];
+      sex                 = (int) pests[ind][sex_col];
+      age                 = (int) pests[ind][age_col];
+      min_age             = (int) pests[ind][min_age_col];
+      max_age             = (int) pests[ind][max_age_col];
+      pesticide_thresh    = pests[ind][pest_thresh_col];
+      pesticide_consumed  = pests[ind][pest_consum_col];
+      pests[ind][off_col] = 0;
       if(age >= min_age && age <= max_age && sex < 3 && 
          pesticide_consumed <= pesticide_thresh){
           count_offspring(pests, paras, ind);

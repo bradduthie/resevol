@@ -49,16 +49,16 @@ void rand_pesticide(double ***land, double *paras, int *owner_choice,
   pesticide_number  = (int) paras[157];
   own_layer         = (int) paras[155];
   
-  for(i = 0; i <= max_own; i++){
+  for(i = 0; i < max_own; i++){
       owner_choice[i] = get_rand_int(0, pesticide_number - 1);
   }
   
   for(i = 0; i < xdim; i++){
       for(j = 0; j < ydim; j++){
-          owner             = (int) land[i][j][own_layer];
+          owner             = (int) land[i][j][own_layer] - 1;
           choice            = (int) owner_choice[owner];
-          layer             = choice + pesticide_layer_1;  
-          land[i][j][layer] = get_pesticide_val(paras);
+          layer             = (int) choice + pesticide_layer_1;  
+          land[i][j][layer] = (double) get_pesticide_val(paras);
       }
   }
 }
@@ -82,7 +82,7 @@ void no_pest_rot(double ***land, double *paras, int *owner_choice, int max_own){
   pesticide_number  = (int) paras[157];
   
   pesticide = 0;
-  for(i = 0; i <= max_own; i++){
+  for(i = 0; i < max_own; i++){
     owner_choice[i] = pesticide;
     pesticide++;
     if(pesticide >= pesticide_number){
@@ -92,7 +92,7 @@ void no_pest_rot(double ***land, double *paras, int *owner_choice, int max_own){
   
   for(i = 0; i < xdim; i++){
     for(j = 0; j < ydim; j++){
-      owner             = (int) land[i][j][own_layer];
+      owner             = (int) land[i][j][own_layer] - 1;
       choice            = (int) owner_choice[owner];
       layer             = choice + pesticide_layer_1;
       land[i][j][layer] = get_pesticide_val(paras);
@@ -183,7 +183,7 @@ void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
     crop_number  = (int) paras[156];
     
     crop = 0;
-    for(i = 0; i <= max_own; i++){
+    for(i = 0; i < max_own; i++){
         owner_choice[i] = crop;
         crop++;
         if(crop >= crop_number){
@@ -193,7 +193,7 @@ void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
     
     for(i = 0; i < xdim; i++){
         for(j = 0; j < ydim; j++){
-            owner             = (int) land[i][j][own_layer];
+            owner             = (int) land[i][j][own_layer] - 1;
             choice            = (int) owner_choice[owner];
             layer             = choice + food_layer_1;
             land[i][j][layer] = get_crop_val(paras);

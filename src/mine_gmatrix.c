@@ -1000,6 +1000,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         Rprintf("Initialising gmatrix mining...                 \n");
         Rprintf("===============================================\n");
     }
+    high_fitness[0] = estress;
     while(gen < max_gen && high_fitness[0] > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras); 
@@ -1231,6 +1232,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     free(paras);
     free(winners);
+    free(mean_fitness);
     free(W);
     
     return(GOUT); 

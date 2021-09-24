@@ -1,9 +1,8 @@
 Package: resevol
 Type: Package
 Title: Simulate Agricultural Production and Evolution of Pesticide Resistance
-Version: 0.2.0.2
-Imports: grDevices (>= 4.0.0), graphics (>= 4.0.0), stats(>= 4.0.0),
-         utils (>= 4.0.0)
+Version: 0.2.0.8
+Imports: stats(>= 4.0.0), utils (>= 4.0.0)
 Authors@R: c(person("A. Bradley", "Duthie", email = "brad.duthie@gmail.com",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-8343-4995")),

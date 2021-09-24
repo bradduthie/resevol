@@ -89,7 +89,7 @@ void pesticide(double **pests, double *paras, double ***land, int ind){
           }
       }
       if(land_layer2 > 0 && consume2 > 0){
-          pesticide_land2 = land[xloc][yloc][land_layer1];
+          pesticide_land2 = land[xloc][yloc][land_layer2];
           if(pesticide_land2 < consume2){
               consumed                      += pesticide_land2;
               pests[ind][consumed_col2]     += pesticide_land2;

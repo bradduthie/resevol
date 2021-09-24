@@ -782,7 +782,7 @@ void add_asexual(double **pests, double **offspring, double *paras, int ind,
     cide_col7  = (int) paras[74];
     cide_col8  = (int) paras[75];
     cide_col9  = (int) paras[76];
-    cide_col10 = (int) paras[77];
+    cide_col10 = (int) paras[77]; 
     
     for(trait = 0; trait < cols; trait++){
         offspring[offspring_count][trait] = pests[ind][trait];
