@@ -110,7 +110,7 @@ void movement(double **pests, double *paras, double ***land){
   }
   
   if(max_bout > 1){
-      bout_vec          = malloc(N * sizeof(int));
+      bout_vec          = (int *) malloc(N * sizeof(int));
       tot_bouts         = 0;
       for(ind = 0; ind < N; ind++){
         bout_vec[ind]  = (int) pests[ind][bout_col];

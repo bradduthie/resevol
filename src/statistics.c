@@ -103,9 +103,9 @@ void population_statistics(double **pests, double *paras, int ts){
   trait_start_col        = (int) paras[109];
   
   traits           = (int) pests[0][traits_col];
-  m_traits         = malloc(traits * sizeof(double));
-  m_food_vals      = malloc(10 * sizeof(double));
-  m_pesticide_vals = malloc(10 * sizeof(double));
+  m_traits         = (double *) malloc(traits * sizeof(double));
+  m_food_vals      = (double *) malloc(10 * sizeof(double));
+  m_pesticide_vals = (double *) malloc(10 * sizeof(double));
   NN               = (double) N;
   
   m_age                  = 0.0;

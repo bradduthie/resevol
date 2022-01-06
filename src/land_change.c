@@ -113,7 +113,7 @@ void change_pesticide(double ***land, double *paras, int max_own){
   
   pesticide_rotate_type = (int) paras[148];
   
-  owner_choice = malloc(max_own * sizeof(int));
+  owner_choice = (int *) malloc(max_own * sizeof(int));
   for(i = 0; i < max_own; i++){
       owner_choice[i] = 0;
   }
@@ -247,7 +247,7 @@ void change_crop(double ***land, double *paras, int max_own){
   
   crop_rotate_type = (int) paras[142];
   
-  owner_choice = malloc(max_own * sizeof(int));
+  owner_choice = (int *) malloc(max_own * sizeof(int));
   for(i = 0; i < max_own; i++){
     owner_choice[i] = 0;
   }

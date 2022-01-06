@@ -85,7 +85,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = malloc(len_PARAS * sizeof(double));
+    paras   = (double *) malloc(len_PARAS * sizeof(double));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -96,9 +96,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     ind_number = dim_IND[0];
     ind_traits = dim_IND[1];
     
-    pests  = malloc(ind_number * sizeof(double *));
+    pests  = (double **) malloc(ind_number * sizeof(double *));
     for(row = 0; row < ind_number; row++){
-        pests[row] = malloc(ind_traits * sizeof(double));   
+        pests[row] = (double *) malloc(ind_traits * sizeof(double));   
     } 
     vec_pos = 0;
     for(col = 0; col < ind_traits; col++){
@@ -113,11 +113,11 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     land_y = dim_LAND[0];
     land_z = dim_LAND[2];
     
-    land   = malloc(land_x * sizeof(double *));
+    land   = (double ***) malloc(land_x * sizeof(double **));
     for(xloc = 0; xloc < land_x; xloc++){
-      land[xloc] = malloc(land_y * sizeof(double));
+      land[xloc] = (double **) malloc(land_y * sizeof(double *));
       for(yloc = 0; yloc < land_y; yloc++){
-        land[xloc][yloc] = malloc(land_z * sizeof(double));   
+        land[xloc][yloc] = (double *) malloc(land_z * sizeof(double));   
       }
     } 
     vec_pos = 0;
@@ -132,7 +132,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     /* Do the biology here now */
     /* ====================================================================== */
-    imm_sample = malloc(ind_traits * sizeof(double));
+    imm_sample = (double *) malloc(ind_traits * sizeof(double));
     for(col = 0; col < ind_traits; col++){
         imm_sample[col] = pests[0][col];
     }
@@ -157,9 +157,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         calculate_offspring(pests, paras);
     
         offspring_number = (int) paras[106]; 
-        offspring        = malloc(offspring_number * sizeof(double *));
+        offspring  = (double **) malloc(offspring_number * sizeof(double *));
         for(row = 0; row < offspring_number; row++){
-            offspring[row] = malloc(ind_traits * sizeof(double));   
+            offspring[row] = (double *) malloc(ind_traits * sizeof(double));   
         } 
 
         if(offspring_number > 0){
@@ -189,9 +189,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
             break;
         }
         
-        new_pests   = malloc(new_total_N * sizeof(double *));
+        new_pests   = (double **) malloc(new_total_N * sizeof(double *));
         for(row = 0; row < new_total_N; row++){
-            new_pests[row] = malloc(ind_traits * sizeof(double));   
+            new_pests[row] = (double *) malloc(ind_traits * sizeof(double));   
         } 
         
         fill_new_pests(pests, offspring, new_pests, paras, imm_sample);
@@ -208,9 +208,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
         free(pests);
         
         paras[101] = (double) new_total_N; 
-        pests      = malloc(new_total_N * sizeof(double *));
+        pests      = (double **) malloc(new_total_N * sizeof(double *));
         for(row = 0; row < new_total_N; row++){
-            pests[row] = malloc(ind_traits * sizeof(double));   
+            pests[row] = (double *) malloc(ind_traits * sizeof(double));   
         } 
         
         for(row = 0; row < new_total_N; row++){

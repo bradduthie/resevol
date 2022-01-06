@@ -193,7 +193,7 @@ void pesticide_consumed(double **pests, double *paras, double ***land){
   int ind, N, *not_fed, N_count;
   
   N       = (int) paras[101];
-  not_fed = malloc(N * sizeof(int));
+  not_fed = (int *) malloc(N * sizeof(int));
   for(ind = 0; ind < N; ind++){
         not_fed[ind] = 1;
   }
