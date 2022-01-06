@@ -40,21 +40,21 @@ void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
   layers   = (int) paras[1]; /* Layers in the network from loci to trait */
   npsize   = (int) paras[3]; /* Size of the strategy population */
 
-  NEW_LTN = malloc(npsize * sizeof(double *));
+  NEW_LTN = (double ***) malloc(npsize * sizeof(double **));
   for(k = 0; k < npsize; k++){
-    NEW_LTN[k] = malloc(loci * sizeof(double *));
+    NEW_LTN[k] = (double **) malloc(loci * sizeof(double *));
     for(i = 0; i < loci; i++){
-      NEW_LTN[k][i] = malloc(traits * sizeof(double));   
+      NEW_LTN[k][i] = (double *) malloc(traits * sizeof(double));   
     }
   } 
   
-  NEW_NET = malloc(npsize * sizeof(double *));
+  NEW_NET = (double ****) malloc(npsize * sizeof(double ***));
   for(k = 0; k < npsize; k++){
-    NEW_NET[k] = malloc(layers * sizeof(double *));
+    NEW_NET[k] = (double ***) malloc(layers * sizeof(double **));
     for(j = 0; j < layers; j++){
-      NEW_NET[k][j] = malloc(traits * sizeof(double *));
+      NEW_NET[k][j] = (double **) malloc(traits * sizeof(double *));
       for(i = 0; i < traits; i++){
-        NEW_NET[k][j][i] = malloc(traits * sizeof(double));
+        NEW_NET[k][j][i] = (double *) malloc(traits * sizeof(double));
       }
     }
   } 
@@ -115,7 +115,7 @@ void find_ascending_order(int *order_array, double *by_array, int length){
   int i, k, min_index, *sarray;
   double max_val, min_val;
   
-  sarray  = malloc(length * sizeof(int));
+  sarray  = (int *) malloc(length * sizeof(int));
   for(i = 0; i < length; i++){
     sarray[i] = order_array[i];
   }
@@ -162,8 +162,8 @@ void tournament(double *fitnesses, int *winners, double *paras){
   sampleK  = (int) paras[8]; /* No. of samples for a tournament in evol alg */
   chooseK  = (int) paras[9]; /* No. to choose within tournament in evol alg */
   
-  samples  = malloc(sampleK * sizeof(int));
-  samp_fit = malloc(sampleK * sizeof(double));
+  samples  = (int *) malloc(sampleK * sizeof(int));
+  samp_fit = (double *) malloc(sampleK * sizeof(double));
   placed   = 0;
   
   if(chooseK > sampleK){
@@ -239,7 +239,7 @@ void calc_VCV(double **mat, int rows, int cols, double **VCV, int use_cor){
   
   N = (double) rows;
   
-  means = malloc(cols * sizeof(double));
+  means = (double *) malloc(cols * sizeof(double));
   for(i = 0; i < cols; i++){
     means[i] = 0;
     for(j = 0; j < rows; j++){
@@ -312,24 +312,24 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
   indivs   = (int) paras[2]; /* Individuals in the population */
   use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
 
-  T  = malloc(indivs * sizeof(double *));
+  T  = (double **) malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
-    T[row] = malloc(traits * sizeof(double));   
+    T[row] = (double *) malloc(traits * sizeof(double));   
   }
 
-  L  = malloc(indivs * sizeof(double *));
+  L  = (double **) malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
-    L[row] = malloc(loci * sizeof(double));   
+    L[row] = (double *) malloc(loci * sizeof(double));   
   }
 
-  net_sum = malloc(traits * sizeof(double *));
+  net_sum = (double **) malloc(traits * sizeof(double *));
   for(row = 0; row < traits; row++){
-    net_sum[row] = malloc(traits * sizeof(double));   
+    net_sum[row] = (double *) malloc(traits * sizeof(double));   
   } 
 
-  loci_to_traits  = malloc(loci * sizeof(double *));
+  loci_to_traits  = (double **) malloc(loci * sizeof(double *));
   for(row = 0; row < loci; row++){
-    loci_to_traits[row] = malloc(traits * sizeof(double));   
+    loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
   } 
 
   ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
@@ -388,29 +388,29 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
   indivs   = (int) paras[2]; /* Individuals in the population */
   use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
   
-  T  = malloc(indivs * sizeof(double *));
+  T  = (double **) malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
-    T[row] = malloc(traits * sizeof(double));   
+    T[row] = (double *) malloc(traits * sizeof(double));   
   }
 
-  L  = malloc(indivs * sizeof(double *));
+  L  = (double **) malloc(indivs * sizeof(double *));
   for(row = 0; row < indivs; row++){
-    L[row] = malloc(loci * sizeof(double));   
+    L[row] = (double *) malloc(loci * sizeof(double));   
   }
   
-  net_sum = malloc(traits * sizeof(double *));
+  net_sum = (double **) malloc(traits * sizeof(double *));
   for(row = 0; row < traits; row++){
-    net_sum[row] = malloc(traits * sizeof(double));   
+    net_sum[row] = (double *) malloc(traits * sizeof(double));   
   } 
   
-  loci_to_traits  = malloc(loci * sizeof(double *));
+  loci_to_traits  = (double **) malloc(loci * sizeof(double *));
   for(row = 0; row < loci; row++){
-    loci_to_traits[row] = malloc(traits * sizeof(double));   
+    loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
   } 
   
-  VCV = malloc(traits * sizeof(double *));
+  VCV = (double **) malloc(traits * sizeof(double *));
   for(row = 0; row < traits; row++){
-    VCV[row] = malloc(traits * sizeof(double));   
+    VCV[row] = (double *) malloc(traits * sizeof(double));   
   } 
   
   ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
@@ -878,7 +878,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = malloc(len_PARAS * sizeof(double));
+    paras   = (double *) malloc(len_PARAS * sizeof(double));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -887,9 +887,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     /* Code below remakes the GMATRIX matrix for easier use */
     traits   = dim_GMATRIX[0];
-    gmatrix  = malloc(traits * sizeof(double *));
+    gmatrix  = (double **) malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
-        gmatrix[row] = malloc(traits * sizeof(double));   
+        gmatrix[row] = (double *) malloc(traits * sizeof(double));   
     } 
     vec_pos = 0;
     for(col = 0; col < traits; col++){
@@ -915,75 +915,75 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
      */ 
-    loci_layer_one  = malloc(loci * sizeof(double *));
+    loci_layer_one  = (double **) malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
-        loci_layer_one[row] = malloc(traits * sizeof(double));   
+        loci_layer_one[row] = (double *) malloc(traits * sizeof(double));   
     }
 
-    net   = malloc(layers * sizeof(double *));
+    net   = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
-        net[k] = malloc(traits * sizeof(double *));
+        net[k] = (double **) malloc(traits * sizeof(double *));
         for(i = 0; i < traits; i++){
-            net[k][i] = malloc(traits * sizeof(double));   
+            net[k][i] = (double *) malloc(traits * sizeof(double));   
         }
     } 
 
-    net_sum = malloc(traits * sizeof(double *));
+    net_sum = (double **) malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
-        net_sum[row] = malloc(traits * sizeof(double));   
+        net_sum[row] = (double *) malloc(traits * sizeof(double));   
     } 
     
-    loci_to_traits  = malloc(loci * sizeof(double *));
+    loci_to_traits  = (double **) malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
-        loci_to_traits[row] = malloc(traits * sizeof(double));   
+        loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
     } 
     
-    inds = malloc(indivs * sizeof(double *));
+    inds = (double **) malloc(indivs * sizeof(double *));
     for(row = 0; row < indivs; row++){
-        inds[row] = malloc(loci * sizeof(double));
+        inds[row] = (double *) malloc(loci * sizeof(double));
     }
 
-    ltnpop = malloc(npsize * sizeof(double *));
+    ltnpop = (double ***) malloc(npsize * sizeof(double **));
     for(k = 0; k < npsize; k++){
-        ltnpop[k] = malloc(loci * sizeof(double *));
+        ltnpop[k] = (double **) malloc(loci * sizeof(double *));
         for(i = 0; i < loci; i++){
-            ltnpop[k][i] = malloc(traits * sizeof(double));   
+            ltnpop[k][i] = (double *) malloc(traits * sizeof(double));   
         }
     } 
 
-    netpop = malloc(npsize * sizeof(double *));
+    netpop = (double ****) malloc(npsize * sizeof(double ***));
     for(k = 0; k < npsize; k++){
-        netpop[k] = malloc(layers * sizeof(double *));
+        netpop[k] = (double ***) malloc(layers * sizeof(double **));
         for(j = 0; j < layers; j++){
-            netpop[k][j] = malloc(traits * sizeof(double *));
+            netpop[k][j] = (double **) malloc(traits * sizeof(double *));
             for(i = 0; i < traits; i++){
-                netpop[k][j][i] = malloc(traits * sizeof(double));
+                netpop[k][j][i] = (double *) malloc(traits * sizeof(double));
             }
         }
     } 
  
-    VCV = malloc(traits * sizeof(double *));
+    VCV = (double **) malloc(traits * sizeof(double *));
     for(row = 0; row < traits; row++){
-        VCV[row] = malloc(traits * sizeof(double));   
+        VCV[row] = (double *) malloc(traits * sizeof(double));   
     } 
     
-    win_loci_layer_one  = malloc(loci * sizeof(double *));
+    win_loci_layer_one  = (double **) malloc(loci * sizeof(double *));
     for(row = 0; row < loci; row++){
-      win_loci_layer_one[row] = malloc(traits * sizeof(double));   
+      win_loci_layer_one[row] = (double *)  malloc(traits * sizeof(double));   
     }
     
-    win_net   = malloc(layers * sizeof(double *));
+    win_net   = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
-      win_net[k] = malloc(traits * sizeof(double *));
+      win_net[k] = (double **) malloc(traits * sizeof(double *));
       for(i = 0; i < traits; i++){
-        win_net[k][i] = malloc(traits * sizeof(double));   
+        win_net[k][i] = (double *) malloc(traits * sizeof(double));   
       }
     }
  
-    W            = malloc(npsize * sizeof(double));
-    winners      = malloc(npsize * sizeof(int));
-    mean_fitness = malloc(max_gen * sizeof(double));
-    high_fitness = malloc(sizeof(double));
+    W            = (double *) malloc(npsize * sizeof(double));
+    winners      = (int *) malloc(npsize * sizeof(int));
+    mean_fitness = (double *) malloc(max_gen * sizeof(double));
+    high_fitness = (double *) malloc(sizeof(double));
 
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);

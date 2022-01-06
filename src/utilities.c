@@ -45,11 +45,11 @@ void sum_network_layers(int traits, int layers, double ***net,
     int i, j, k;
     double ***net_temp;
     
-    net_temp = malloc(layers * sizeof(double *));
+    net_temp = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
-        net_temp[k] = malloc(traits * sizeof(double *));
+        net_temp[k] = (double **) malloc(traits * sizeof(double *));
         for(i = 0; i < traits; i++){
-            net_temp[k][i] = malloc(traits * sizeof(double));   
+            net_temp[k][i] = (double *)  malloc(traits * sizeof(double));   
         }
     }
     for(k = 0; k < layers; k++){
