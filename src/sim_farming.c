@@ -85,7 +85,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
     
-    paras   = malloc(len_PARAS * sizeof(double *));
+    paras   = malloc(len_PARAS * sizeof(double));
     vec_pos = 0;
     for(i = 0; i < len_PARAS; i++){
         paras[i] = paras_ptr[vec_pos];
@@ -115,7 +115,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS){
     
     land   = malloc(land_x * sizeof(double *));
     for(xloc = 0; xloc < land_x; xloc++){
-      land[xloc] = malloc(land_y * sizeof(double *));
+      land[xloc] = malloc(land_y * sizeof(double));
       for(yloc = 0; yloc < land_y; yloc++){
         land[xloc][yloc] = malloc(land_z * sizeof(double));   
       }

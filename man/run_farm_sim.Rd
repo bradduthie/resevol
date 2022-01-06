@@ -240,12 +240,12 @@ files can become extremely large (use print_inds with extreme caution and
 print_last with care).
 }
 \examples{
-gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
-mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
+mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 3, indivs = 100, 
                          npsize = 100, max_gen = 2, prnt_out = FALSE);
 sim       <- run_farm_sim(mine_output = mg, N = 100, xdim = 40, ydim = 40, 
-                         repro = "asexual", time_steps = 3, 
+                         repro = "asexual", time_steps = 1, 
                          print_inds = FALSE, print_gens = FALSE,
                          print_last = FALSE, get_stats = FALSE);
 }

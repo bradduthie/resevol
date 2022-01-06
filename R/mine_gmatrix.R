@@ -37,9 +37,9 @@
 #'structure, (7) all network values to be inserted into individual genomes, and
 #'(8) the log stress of the mined matrix against the pre-specified matrix.
 #'@examples
-#'gmt       <- matrix(data = 0, nrow = 3, ncol = 3);
+#'gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
 #'diag(gmt) <- 1;
-#'mg        <- mine_gmatrix(gmatrix = gmt, loci = 6, layers = 3, indivs = 100, 
+#'mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 3, indivs = 100, 
 #'                          npsize = 100, max_gen = 2, prnt_out = FALSE);
 #'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif rbinom
