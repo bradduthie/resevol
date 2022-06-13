@@ -1,0 +1,106 @@
+---
+title: 'resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes'
+author: |
+        | A. Bradley Duthie&#xb9;&#xb2;, et al.
+date: '[1] Biological and Environmental Sciences, University of Stirling, Stirling,
+  UK [2]  alexander.duthie@stir.ac.uk,
+  Biological and Environmental Sciences 3A149 University of Stirling Stirling, FK9
+  4LA, UK'
+output:
+  pdf_document:
+    citation_package: natbib
+    fig_caption: yes
+  html_document: default
+  word_document: default
+header-includes:
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[R]{RESEVOL, AN R PACKAGE}
+linestretch: 1
+link-citations: yes
+linkcolor: blue
+bibliography: resevol.bib
+biblio-style: apalike
+---
+
+******************************
+
+<!---
+
+1. Software: new packages or significant updates in functionality - significant is defined as “novel capabilities enabling new applications”, as opposed to refinements on existing functionalities.
+
+2. At a minimum, everything the reader will need to install and run the software; this includes a URL to see the source in an anonymous way (no login required), a specification of the language(s) used and their version(s), and dependencies on binaries that are not bundled with the software itself nor handled by the language package manager.
+
+3.  Although we do not wish to be prescriptive about the structure, we recommend that the paper includes the application description along with one or several worked examples. Please note that the typical introduction, methods, results, discussion structure isn’t required, and often is not appropriate, for Applications papers.
+
+4. Style guide for R: http://adv-r.had.co.nz/Style.html
+
+
+--->
+
+
+Abstract
+===================================================
+
+1. Pesticide resistance is a serious problem.
+2. We introduce the resevol R package, which runs individual-based models of pests with quantitative and covarying traits and three mating systems.
+3. Simulations are on a landscape where crops and pesticides are changed.
+4. We give an example of simulating pests with covarying traits
+5. The resevol R package is open source under GNU Public License; source code and documents are freely available on GitHub.
+
+**Key words:** *pest management*, *food security*, *ecological modelling*
+
+Introduction
+===================================================
+
+- Pest resistance to pesticide is a serious wicked problem that affects food security.
+- A quantitative genetic approach to pesticide resistance to maintaining resistance.
+- The resevol R package addresses two problems: genetic architecture and landscape selection
+- The R package can facilitate general questions and targetted ones
+
+
+Covarying pest quantitative traits
+===================================================
+
+- The issue is that we want mechanistic, not phenomenological, trait covariances
+- Solution is to use a genetic algorithm to find genome structures [@Hamblin2013]
+- Genomes include values that then define a network from alleles to traits
+- Example using the `mine_gmatrix` function, and its various arguments
+
+Simulating landscape-level pesticide resistance
+===================================================
+
+- We want to model evolution of pesticide resistance across heterogenous landscape
+- Track entire genomes, traits, and yield over time and across space
+- Use covarying traits from `mine_gmatrix` to make evolving pests
+- Options for 10 crops and 10 pesticides simultaneously, and rotation
+- Function `run_farm_sim` runs simulations
+
+Example of individual-based simulations
+===================================================
+
+- Example of evolving species with different crop and pesticide appications
+
+Conclusions
+===================================================
+
+
+Availability
+===================================================
+
+The resevol R package can be downloaded from CRAN (https://cran.r-project.org/package=resevol) or GitHub (https://bradduthie.github.io/resevol/). The package is open source under GNU Public License.
+
+Conclusions
+===================================================
+
+
+
+Acknowledgements
+===================================================
+
+This software was developed as part of the project for Enhancing Diversity to Overcome Resistance Evolution (ENDORSE). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the S&#xE3;o Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. ENDORSE is a partnership among Universidade Estadual Paulista (UNESP), the University of Stirling (UoS), and the Centre for Agricultural and Biosciences International (CABI).
+
+References
+===================================================
+
+
