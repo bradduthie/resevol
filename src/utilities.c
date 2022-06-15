@@ -204,3 +204,26 @@ int max_in_col(double **array, int rows, int col){
     return max_val;
 }
 
+/* =============================================================================
+ * Sample an element from a probability vector
+ *     vec: The vector
+ *     len: The length of the vector
+ * ========================================================================== */
+int sample_pr_vector(double *vec, int len){
+    
+    int i;
+    double u, S;
+    
+    u = runif(0, 1);
+    S = 0.0;
+
+    for(i = 0; i < len; i++){
+        S += vec[i];
+        if(S >= u){
+            break;
+        }
+    }
+    
+    
+    return 0;
+}

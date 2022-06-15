@@ -171,6 +171,7 @@ double get_crop_val(double *paras){
  *     owner_count: Vector of the number
  *     max_own:     The highest ID of a land owner
  * ========================================================================== */
+/* SLATED FOR DELETION
 void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
     
     int i, j, xdim, ydim, crop, owner, own_layer, choice, layer;
@@ -200,6 +201,7 @@ void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
         }
     }
 }
+ */
 
 /* =============================================================================
  * Each owner randomly selects a crop to put down
@@ -208,6 +210,7 @@ void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
  *     owner_count: Vector of the number
  *     max_own:     The highest ID of a land owner
  * ========================================================================== */
+/* SLATED FOR DELETION
 void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
   
     int i, j, xdim, ydim, owner, own_layer, choice, layer;
@@ -232,7 +235,7 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
         }
     }
 }
-
+*/
 
 /* =============================================================================
  * Changes the crop in a specific way
@@ -240,6 +243,7 @@ void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
  *     paras:   The paras vector that holds global information
  *     max_own: The maximum ID of an owner
  * ========================================================================== */
+/* SLATED FOR DELETION
 void change_crop(double ***land, double *paras, int max_own){
   
   int i;
@@ -253,12 +257,12 @@ void change_crop(double ***land, double *paras, int max_own){
   }
   
   switch(crop_rotate_type){
-      case 0: /* Nothing happens */
+      case 0:
           break;
-      case 1: /* Heterogeneous pattern but no rotation */
+      case 1:
           no_crop_rot(land, paras, owner_choice, max_own);
           break;
-      case 2: /* Random selection independent for each owner */
+      case 2:
           rand_crop(land, paras, owner_choice, max_own);
           break;
       default:
@@ -267,6 +271,7 @@ void change_crop(double ***land, double *paras, int max_own){
   
   free(owner_choice);
 }
+*/
 
 /* =============================================================================
  * Cleans the landscape of all crops
@@ -374,13 +379,88 @@ void clean_landscape(double ***land, double *paras){
   }
 }
 
+
+/* =============================================================================
+ * TESTING THESE FUNCTIONS BELOW
+ * ========================================================================== */
+ 
+ /* =============================================================================
+  * Initialise crops in their starting positions on the landscape
+  *     land:   The landscape array to be adjusted
+  *     paras:  The paras vector that holds global information
+  *     C_init: The matrix for the initial crop positions
+  * ========================================================================== */
+ void init_crop(double ***land, double *paras, double **C_init){
+     
+     int i, j, xdim, ydim, owner, own_layer, choice, layer, farms;
+     int crop_number, food_layer_1, *owner_choice;
+     double *init_vec;
+     
+     xdim         = (int) paras[103];
+     ydim         = (int) paras[104];
+     food_layer_1 = (int) paras[118];
+     farms        = (int) paras[142];
+     own_layer    = (int) paras[155];
+     crop_number  = (int) paras[156];
+     
+     owner_choice = (int *) malloc(farms * sizeof(int));
+     for(i = 0; i < farms; i++){
+         init_vec = (double *) malloc(crop_number * sizeof(double));
+         for(j = 0; j < crop_number; j++){
+             init_vec[j] = C_init[i][j];
+         }
+         owner_choice[i] = sample_pr_vector(init_vec, crop_number);
+         free(init_vec);
+     }
+     
+     for(i = 0; i < xdim; i++){
+         for(j = 0; j < ydim; j++){
+             owner             = (int) land[i][j][own_layer] - 1;
+             choice            = (int) owner_choice[owner];
+             layer             = choice + food_layer_1;
+             land[i][j][layer] = get_crop_val(paras);
+         }
+     }
+     
+     free(owner_choice);
+ }
+
+/* =============================================================================
+ * Change the crop choice based on the rotation matrix
+ *     CINIT:  The matrix for the initial (current) crop positions
+ *     CROT:   The matrix describing how crop changes occur
+ *     paras:  The paras vector that holds global information
+ * ========================================================================== */
+void change_crop_choice(double **CINIT, double **CROT, double *paras){
+    
+    int i, j, farms, crop_number, now_choice, new_choice;
+    
+    farms        = (int) paras[142];
+    crop_number  = (int) paras[156];
+    
+    for(i = 0; i < farms; i++){
+        now_choice = sample_pr_vector(CINIT[i], crop_number);
+        new_choice = sample_pr_vector(CROT[now_choice], crop_number);
+        for(j = 0; j < crop_number; j++){
+            CINIT[i][j] = 0.0;
+        }
+        CINIT[i][new_choice] = 1.0;
+    }
+}
+ /* ============================================================================
+  * TESTING THESE FUNCTIONS ABOVE
+  * ==========================================================================*/
+
+
+
 /* =============================================================================
  * Increases the age of each pest by a single time step
  *     land:   The landscape array to be adjusted
  *     paras:  The paras vector that holds global information
  *     ts:     The time step of the simulation
  * ========================================================================== */
-void land_change(double ***land, double *paras, int ts){
+void land_change(double ***land, double *paras, int ts, double **C_init,
+                 double **C_change){
   
   int i, j, min_own, max_own, own_layer, xdim, ydim, own_val;
   int rotate_crops, rotate_pesticide, start_pesticide;
@@ -392,7 +472,12 @@ void land_change(double ***land, double *paras, int ts){
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];
   
-  if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0){
+  if(ts == 0){
+      clean_crops(land, paras);
+      init_crop(land, paras, C_init);
+  }
+  
+  if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0 || ts == 0){
       min_own = land[0][0][own_layer];
       max_own = land[0][0][own_layer];
       for(i = 0; i < xdim; i++){
@@ -410,7 +495,8 @@ void land_change(double ***land, double *paras, int ts){
 
   if(ts % rotate_crops == 0){
       clean_crops(land, paras);
-      change_crop(land, paras, max_own);
+      change_crop_choice(C_init, C_change, paras);
+      init_crop(land, paras, C_init);
   }
   if(ts % rotate_pesticide == 0 && ts > start_pesticide){
       clean_pesticide(land, paras);
@@ -420,3 +506,11 @@ void land_change(double ***land, double *paras, int ts){
 
 
 
+
+
+
+
+
+
+    
+    

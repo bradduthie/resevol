@@ -41,6 +41,7 @@ library(rhandsontable)
 
  - **2022**
  
+   - **JUN** [13](#u-13-JUN-2022)
    - **JAN** [06](#u-06-JAN-2022)
 
  - **2021**
@@ -68,6 +69,18 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-13-JUN-2022">Update: 13 JUN 2022</a>
+
+As I prepare the pre-print and software note for the resevol package, I am thinking that might be worth doing just a bit more coding so that the publication can include four more features:
+
+1. **More explicit crop and pesticide rotation**, as mentioned in [Issue #43](https://github.com/bradduthie/resevol/issues/43). I think that this would be fairly easy to implement and worth the time. Currently, the `run_farm_sim` argument `crop_rotation_type` accepts either 1 or a 2. A 1 results in no rotation of crops on the landscape, and a 2 results in a random transition between types. I think that a custom transition matrix should be possible to insert, whereby each element should specify the probability of transitioning from crop *i* (row) to crop *j* (column). In the simplest case (e.g., could be `crop_rotation_type = 3`), this could just be a binary matrix that forms a cyclical graph. The current options 1 and 2 could even be subsumed in the transition matrix.
+2. **Allow custom landscapes.** I think that this should be possible by allowing users to put their own matrix in a function, with numbers on the matrix representing different farms (integers greater than zeros) or public land (zeros). A new `custom_landscape` function could check this matrix, then use it as the top layer of an array.
+3. **Custom plotting functions.** This one is tricky given the flexibility of simulations and therefore the complexity of the output, but it might be worth including at least some basic plotting functions, or summary functions.
+4. **Simulated annealing algorithm** for the `mine_gmatrix` option. This could be fairly easy to implement, and for some cases might actually find genome solutions faster than the evolutionary algorithm.
+
+My hope is that these different tasks could be done fairly quickly, and that they will make writing up the paper go more smoothly.
 
 > <a name="u-06-JAN-2022">Update: 06 JAN 2022</a>
 
@@ -412,7 +425,7 @@ gmt[2, 1] <- -0.5;
 ```
 
 ```{r, echo = FALSE}
-library(helicoverpa);
+library(resevol);
 gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
 gmt[1, 1] <- 1;
 gmt[2, 2] <- 1;

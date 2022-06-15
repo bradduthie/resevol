@@ -23,4 +23,5 @@ void clean_crops(double ***land, double *paras);
 
 void clean_landscape(double ***land, double *paras);
 
-void land_change(double ***land, double *paras, int ts);
+void land_change(double ***land, double *paras, int ts, double **C_init,
+                 double **C_change);

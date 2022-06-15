@@ -60,8 +60,12 @@
 #'@param net_mu_layers Layers of the network allowed to mutate
 #'@param net_mu_dir  Layers mutate from loci to (1) or traits back (0)
 #'@param mutation_direction Is mutation directional (unlikely to need)
+#'@param crop_init Initial crop type for each farm (either "random" or a 
+#'   vector of the same length as farm number with integer crop types)
 #'@param crop_rotation_type None (1) or random (2) rotation of crop type
 #'@param crop_rotation_time How frequently are the crops rotated?
+#'@param pesticide_init Initial crop type for each farm (either "random" or a 
+#'   vector of the same length as farm number with integer pesticide types)
 #'@param pesticide_rotation_type None (1) or random (2) rotation of pesticide
 #'@param pesticide_rotation_time How frequently are the pesticides rotated?
 #'@param crop_per_cell How much crop is put on a single cell?
@@ -149,8 +153,10 @@ run_farm_sim <- function(mine_output,
                          net_mu_layers = 0,
                          net_mu_dir = 0, 
                          mutation_direction = 0,
+                         crop_init = "random",
                          crop_rotation_type = 2,
                          crop_rotation_time = 1,
+                         pesticide_init = "random",
                          pesticide_rotation_type = 2,
                          pesticide_rotation_time = 1,
                          crop_per_cell = 1,
@@ -315,8 +321,10 @@ run_farm_sim <- function(mine_output,
                              net_mu_layers            = net_mu_layers, 
                              net_mu_dir               = net_mu_dir,
                              mutation_direction       = mutation_direction,
+                             crop_init                = crop_init,
                              crop_rotation_type       = crop_rotation_type,
                              crop_rotation_time       = crop_rotation_time,
+                             pesticide_init           = pesticide_init,
                              pesticide_rotation_type  = pesticide_rotation_type,
                              pesticide_rotation_time  = pesticide_rotation_time,
                              crop_per_cell            = crop_per_cell,
@@ -347,7 +355,8 @@ run_farm_sim <- function(mine_output,
                              immigration_rate         = immigration_rate,
                              get_f_coef               = get_f_coef,
                              get_stats                = get_stats,
-                             metabolism               = metabolism);
+                             metabolism               = metabolism,
+                             farms                    = farms);
   
     return(sim_results);
 }
@@ -361,8 +370,10 @@ sim_crops <- function(pests,
                       net_mu_layers = 0,
                       net_mu_dir = 0, 
                       mutation_direction = 0,
+                      crop_init = "random",
                       crop_rotation_type = 2,
                       crop_rotation_time = 1,
+                      pesticide_init = "random",
                       pesticide_rotation_type = 2,
                       pesticide_rotation_time = 1,
                       crop_per_cell = 1,
@@ -393,7 +404,8 @@ sim_crops <- function(pests,
                       immigration_rate = 0,
                       get_f_coef = FALSE,
                       get_stats  = TRUE,
-                      metabolism = 0
+                      metabolism = 0,
+                      farms = 4
                       ){
   
   N    <- dim(pests)[1];
@@ -410,9 +422,7 @@ sim_crops <- function(pests,
   netm <- net_mu_layers;
   mudr <- mutation_direction;
   netd <- net_mu_dir;
-  crty <- crop_rotation_type;
   crti <- crop_rotation_time;
-  prty <- pesticide_rotation_type;
   prti <- pesticide_rotation_time;
   crpc <- crop_per_cell;
   pepc <- pesticide_per_cell;
@@ -575,13 +585,13 @@ sim_crops <- function(pests,
               N,      # 139) Number of individuals in the next time step
               ts,     # 140) Total number of time steps to run
               0,      # 141) Extinction has occurred
-              crty,   # 142) Type of crop rotation
+              farms,  # 142) Total number of farms
               crti,   # 143) Time steps between crop rotation
               crpc,   # 144) Crop production per landscape cell
               0,      # 145) Type of crop production (UNUSED)
               crmn,   # 146) Minimum crop production per landscape cell
               crmx,   # 147) Maximum crop production per landscape cell
-              prty,   # 148) Type of biopesticide rotation
+              1,      # 148) Type of biopesticide rotation (no longer used)
               crti,   # 149) Time steps between biopesticide rotation
               pepc,   # 150) Biopesticide amount per landscape cell
               0,      # 151) Type of biopesticide application (UNUSED)
@@ -621,13 +631,19 @@ sim_crops <- function(pests,
     stop("ERROR: land must be a 3D array.");
   }
   
-  SIM_RESULTS        <- run_farming_sim(pests, land, paras);
+  c_rotate     <- crop_transitions(crop_rotation_type, crpN);
+  p_rotate     <- pesticide_transitions(pesticide_rotation_type, pesN); 
+  c_init       <- crop_init(crop_init, crpN, farms);
+  p_init       <- pesticide_init(crop_init, crpN, farms);
+
+  SIM_RESULTS  <- run_farming_sim(pests, land, paras, c_rotate, p_rotate,
+                                  c_init, p_init);
 
   return(SIM_RESULTS);
 }
 
-run_farming_sim <- function(IND, LAND, PARAS){
-  .Call("sim_farming", IND, LAND, PARAS);
+run_farming_sim <- function(IND, LAND, PARAS, CROT, PROT, CINIT, PINIT){
+  .Call("sim_farming", IND, LAND, PARAS, CROT, PROT, CINIT, PINIT);
 }
 
 substitute_traits <- function(paras, move_distance, food_needed_surv,

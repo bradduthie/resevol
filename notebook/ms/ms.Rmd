@@ -74,12 +74,12 @@ Simulating landscape-level pesticide resistance
 - Track entire genomes, traits, and yield over time and across space
 - Use covarying traits from `mine_gmatrix` to make evolving pests
 - Options for 10 crops and 10 pesticides simultaneously, and rotation
-- Function `run_farm_sim` runs simulations
+- Function `run_farm_sim` runs simulations. Note unusual timing structure
 
 Example of individual-based simulations
 ===================================================
 
-- Example of evolving species with different crop and pesticide appications
+- Example of evolving species with different crop and pesticide applications
 
 Conclusions
 ===================================================
