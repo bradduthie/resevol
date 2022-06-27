@@ -168,7 +168,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
       }
     }  /* LAND is now stored as land */   
     
-    
     /* Code below remakes the crop rotation matrix for easier use */
     CROT_d1   = dim_CROT[0];
     CROT_d2   = dim_CROT[1];
@@ -202,7 +201,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the crop initialisation matrix for easier use */
     CINIT_d1   = dim_CINIT[0];
     CINIT_d2   = dim_CINIT[1];
-    C_init  = (double **) malloc(CINIT_d1 * sizeof(double *));
+    C_init     = (double **) malloc(CINIT_d1 * sizeof(double *));
     for(row = 0; row < CINIT_d1; row++){
         C_init[row] = (double *) malloc(CINIT_d2 * sizeof(double));   
     } 
@@ -217,7 +216,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the pesticide initialisation matrix for easier use */
     PINIT_d1   = dim_PINIT[0];
     PINIT_d2   = dim_PINIT[1];
-    P_init  = (double **) malloc(PINIT_d1 * sizeof(double *));
+    P_init     = (double **) malloc(PINIT_d1 * sizeof(double *));
     for(row = 0; row < PINIT_d1; row++){
         P_init[row] = (double *) malloc(PINIT_d2 * sizeof(double));   
     } 
@@ -243,7 +242,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     
     while(ts < time_steps){
  
-        land_change(land, paras, ts, C_init, C_change); 
+        land_change(land, paras, ts, C_init, C_change, P_init, P_change); 
       
         age_pests(pests, paras); 
         

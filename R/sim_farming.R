@@ -253,6 +253,12 @@ run_farm_sim <- function(mine_output,
     if(N < 5){
       stop("Need to start with at least 5 pests");
     }
+    if(crop_number > 10){
+        stop("Cannot have more than 10 crops");
+    }
+    if(pesticide_number > 10){
+        stop("Cannot have more than 10 pesticides");
+    }
     
     food_consume <- as.list(food_consume);
     food_cons    <- NULL;
@@ -633,8 +639,8 @@ sim_crops <- function(pests,
   
   c_rotate     <- crop_transitions(crop_rotation_type, crpN);
   p_rotate     <- pesticide_transitions(pesticide_rotation_type, pesN); 
-  c_init       <- crop_init(crop_init, crpN, farms);
-  p_init       <- pesticide_init(crop_init, crpN, farms);
+  c_init       <- initialise_crops(crop_init, crpN, farms);
+  p_init       <- initialise_pesticide(pesticide_init, pesN, farms); 
 
   SIM_RESULTS  <- run_farming_sim(pests, land, paras, c_rotate, p_rotate,
                                   c_init, p_init);

@@ -44,8 +44,10 @@ run_farm_sim(
   net_mu_layers = 0,
   net_mu_dir = 0,
   mutation_direction = 0,
+  crop_init = "random",
   crop_rotation_type = 2,
   crop_rotation_time = 1,
+  pesticide_init = "random",
   pesticide_rotation_type = 2,
   pesticide_rotation_time = 1,
   crop_per_cell = 1,
@@ -152,9 +154,15 @@ run_farm_sim(
 
 \item{mutation_direction}{Is mutation directional (unlikely to need)}
 
-\item{crop_rotation_type}{None (1) or random (2) rotation of crop type}
+\item{crop_init}{Initial crop type for each farm (either "random" or a 
+vector of the same length as farm number with integer crop types)}
+
+\item{crop_rotation_type}{None (1), random (2), or (3) rotation of crop type}
 
 \item{crop_rotation_time}{How frequently are the crops rotated?}
+
+\item{pesticide_init}{Initial crop type for each farm (either "random" or a 
+vector of the same length as farm number with integer pesticide types)}
 
 \item{pesticide_rotation_type}{None (1) or random (2) rotation of pesticide}
 
