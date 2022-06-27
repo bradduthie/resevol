@@ -240,7 +240,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     get_stats  = (int) paras[172];
     time_steps = (int) paras[140];
     ts         = 0;
-
+    
     while(ts < time_steps){
  
         land_change(land, paras, ts, C_init, C_change); 

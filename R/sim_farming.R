@@ -62,7 +62,7 @@
 #'@param mutation_direction Is mutation directional (unlikely to need)
 #'@param crop_init Initial crop type for each farm (either "random" or a 
 #'   vector of the same length as farm number with integer crop types)
-#'@param crop_rotation_type None (1) or random (2) rotation of crop type
+#'@param crop_rotation_type None (1), random (2), or (3) rotation of crop type
 #'@param crop_rotation_time How frequently are the crops rotated?
 #'@param pesticide_init Initial crop type for each farm (either "random" or a 
 #'   vector of the same length as farm number with integer pesticide types)
@@ -592,7 +592,7 @@ sim_crops <- function(pests,
               crmn,   # 146) Minimum crop production per landscape cell
               crmx,   # 147) Maximum crop production per landscape cell
               1,      # 148) Type of biopesticide rotation (no longer used)
-              crti,   # 149) Time steps between biopesticide rotation
+              prti,   # 149) Time steps between biopesticide rotation
               pepc,   # 150) Biopesticide amount per landscape cell
               0,      # 151) Type of biopesticide application (UNUSED)
               pssd,   # 152) StDev in biopesticide per landscape cell

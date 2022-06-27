@@ -224,6 +224,5 @@ int sample_pr_vector(double *vec, int len){
         }
     }
     
-    
-    return 0;
+    return i;
 }

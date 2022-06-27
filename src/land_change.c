@@ -165,115 +165,6 @@ double get_crop_val(double *paras){
 
 
 /* =============================================================================
- * Does not rotate the crop in any way -- just refreshes crop on the layer
- *     land:        The landscape array to be adjusted
- *     paras:       The paras vector that holds global information
- *     owner_count: Vector of the number
- *     max_own:     The highest ID of a land owner
- * ========================================================================== */
-/* SLATED FOR DELETION
-void no_crop_rot(double ***land, double *paras, int *owner_choice, int max_own){
-    
-    int i, j, xdim, ydim, crop, owner, own_layer, choice, layer;
-    int crop_number, food_layer_1;
-    
-    xdim         = (int) paras[103];
-    ydim         = (int) paras[104];
-    food_layer_1 = (int) paras[118];
-    own_layer    = (int) paras[155];
-    crop_number  = (int) paras[156];
-    
-    crop = 0;
-    for(i = 0; i < max_own; i++){
-        owner_choice[i] = crop;
-        crop++;
-        if(crop >= crop_number){
-          crop = 0;
-        }
-    }
-    
-    for(i = 0; i < xdim; i++){
-        for(j = 0; j < ydim; j++){
-            owner             = (int) land[i][j][own_layer] - 1;
-            choice            = (int) owner_choice[owner];
-            layer             = choice + food_layer_1;
-            land[i][j][layer] = get_crop_val(paras);
-        }
-    }
-}
- */
-
-/* =============================================================================
- * Each owner randomly selects a crop to put down
- *     land:        The landscape array to be adjusted
- *     paras:       The paras vector that holds global information
- *     owner_count: Vector of the number
- *     max_own:     The highest ID of a land owner
- * ========================================================================== */
-/* SLATED FOR DELETION
-void rand_crop(double ***land, double *paras, int *owner_choice, int max_own){
-  
-    int i, j, xdim, ydim, owner, own_layer, choice, layer;
-    int crop_number, food_layer_1;
-
-    xdim         = (int) paras[103];
-    ydim         = (int) paras[104];
-    food_layer_1 = (int) paras[118];
-    crop_number  = (int) paras[156];
-    own_layer    = (int) paras[155];
-    
-    for(i = 0; i < max_own; i++){
-        owner_choice[i] = get_rand_int(0, crop_number - 1);
-    }
-
-    for(i = 0; i < xdim; i++){
-        for(j = 0; j < ydim; j++){
-            owner             = (int) land[i][j][own_layer] - 1;
-            choice            = owner_choice[owner];
-            layer             = choice + food_layer_1;
-            land[i][j][layer] = get_crop_val(paras);
-        }
-    }
-}
-*/
-
-/* =============================================================================
- * Changes the crop in a specific way
- *     land:    The landscape array to be adjusted
- *     paras:   The paras vector that holds global information
- *     max_own: The maximum ID of an owner
- * ========================================================================== */
-/* SLATED FOR DELETION
-void change_crop(double ***land, double *paras, int max_own){
-  
-  int i;
-  int crop_rotate_type, *owner_choice;
-  
-  crop_rotate_type = (int) paras[142];
-  
-  owner_choice = (int *) malloc(max_own * sizeof(int));
-  for(i = 0; i < max_own; i++){
-    owner_choice[i] = 0;
-  }
-  
-  switch(crop_rotate_type){
-      case 0:
-          break;
-      case 1:
-          no_crop_rot(land, paras, owner_choice, max_own);
-          break;
-      case 2:
-          rand_crop(land, paras, owner_choice, max_own);
-          break;
-      default:
-          break;
-  }
-  
-  free(owner_choice);
-}
-*/
-
-/* =============================================================================
  * Cleans the landscape of all crops
  *     land:   The landscape array to be adjusted
  *     paras:  The paras vector that holds global information
@@ -379,11 +270,6 @@ void clean_landscape(double ***land, double *paras){
   }
 }
 
-
-/* =============================================================================
- * TESTING THESE FUNCTIONS BELOW
- * ========================================================================== */
- 
  /* =============================================================================
   * Initialise crops in their starting positions on the landscape
   *     land:   The landscape array to be adjusted
@@ -427,11 +313,11 @@ void clean_landscape(double ***land, double *paras){
 
 /* =============================================================================
  * Change the crop choice based on the rotation matrix
- *     CINIT:  The matrix for the initial (current) crop positions
- *     CROT:   The matrix describing how crop changes occur
- *     paras:  The paras vector that holds global information
+ *     C_init:   The matrix for the initial (current) crop positions
+ *     C_change: The matrix describing how crop changes occur
+ *     paras:    The paras vector that holds global information
  * ========================================================================== */
-void change_crop_choice(double **CINIT, double **CROT, double *paras){
+void change_crop_choice(double **C_init, double **C_change, double *paras){
     
     int i, j, farms, crop_number, now_choice, new_choice;
     
@@ -439,25 +325,23 @@ void change_crop_choice(double **CINIT, double **CROT, double *paras){
     crop_number  = (int) paras[156];
     
     for(i = 0; i < farms; i++){
-        now_choice = sample_pr_vector(CINIT[i], crop_number);
-        new_choice = sample_pr_vector(CROT[now_choice], crop_number);
+        now_choice = sample_pr_vector(C_init[i], crop_number);
+        new_choice = sample_pr_vector(C_change[now_choice], crop_number);
         for(j = 0; j < crop_number; j++){
-            CINIT[i][j] = 0.0;
+            C_init[i][j] = 0.0;
         }
-        CINIT[i][new_choice] = 1.0;
+        C_init[i][new_choice] = 1.0;
     }
 }
- /* ============================================================================
-  * TESTING THESE FUNCTIONS ABOVE
-  * ==========================================================================*/
-
 
 
 /* =============================================================================
  * Increases the age of each pest by a single time step
- *     land:   The landscape array to be adjusted
- *     paras:  The paras vector that holds global information
- *     ts:     The time step of the simulation
+ *     land:     The landscape array to be adjusted
+ *     paras:    The paras vector that holds global information
+ *     ts:       The time step of the simulation
+ *     C_init:   The matrix for the initial (current) crop positions
+ *     C_change: The matrix describing how crop changes occur
  * ========================================================================== */
 void land_change(double ***land, double *paras, int ts, double **C_init,
                  double **C_change){
@@ -471,13 +355,8 @@ void land_change(double ***land, double *paras, int ts, double **C_init,
   rotate_crops      = (int) paras[143];
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];
-  
-  if(ts == 0){
-      clean_crops(land, paras);
-      init_crop(land, paras, C_init);
-  }
-  
-  if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0 || ts == 0){
+
+  if(ts % rotate_crops == 0 || ts % rotate_pesticide == 0){
       min_own = land[0][0][own_layer];
       max_own = land[0][0][own_layer];
       for(i = 0; i < xdim; i++){
