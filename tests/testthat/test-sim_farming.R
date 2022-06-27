@@ -4,7 +4,6 @@ context("Simulation run tests");
 
 test_that("Simulations are run and output is produced", {
     skip_on_cran();
-    set.seed(Sys.time());
     gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
     diag(gmt) <- 1;
     mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 

@@ -151,7 +151,7 @@ pesticide_transitions <- function(rotation_type = 1, pesticide_number){
 
 initialise_crops <- function(crop_init = "random", crop_N, farms){
     init_mat <- matrix(data = 0, nrow = farms, ncol = crop_N);
-    if(crop_init == "random"){
+    if(crop_init[1] == "random"){
         choice <- sample(x = 1:crop_N, size = farms, replace = TRUE);
         for(i in 1:farms){
             init_mat[i, choice[i]] <- 1;
@@ -162,7 +162,7 @@ initialise_crops <- function(crop_init = "random", crop_N, farms){
             stop("ERROR: Initialised crop choices must equal farm number");
         }
         poss_crops <- 1:crop_N;
-        if(sum(choice %in% poss_crops) != crop_N){
+        if(sum(choice %in% poss_crops == FALSE) > 0){
             stop("ERROR: choices must be value from 1 to crop number");
         }
         for(i in 1:farms){
@@ -185,7 +185,7 @@ initialise_pesticide <- function(pesticide_init = "random", pesticide_N, farms){
             stop("ERROR: Initialised pesticide choices must equal farm number");
         }
         poss_crops <- 1:pesticide_N;
-        if(sum(choice %in% poss_crops) != pesticide_N){
+        if(sum(choice %in% poss_crops == FALSE) > 0){
             stop("ERROR: choices must be value from 1 to pesticide number");
         }
         for(i in 1:farms){
