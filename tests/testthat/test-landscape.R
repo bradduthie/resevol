@@ -23,6 +23,16 @@ test_that("Landscape farm allocation is equal", {
     expect_equal(as.vector(farmland), rep(12, farms));
 })
 
+test_that("Custom landscape can be added", {
+    skip_on_cran();
+    custom_terrain       <- matrix(data = 0, nrow = 8, ncol = 8);
+    custom_terrain[,1:2] <- 1;
+    custom_terrain[,2:6] <- 2;
+    custom_terrain[,7:8] <- 3;
+    land <- make_landscape(terrain = custom_terrain);
+    expect_equal(dim(land), c(8, 8, 21));
+})
+
 test_that("Crops rotate correctly over time", {
     skip_on_cran();
     gmt       <- matrix(data = 0, nrow = 2, ncol = 2);

@@ -13,6 +13,7 @@
 #' make farm size as even as possible. Specifying public land is possible, and
 #' adds sections of land that are not farms, but this is not recommended.
 #'
+#'@param terrain a layer of terrain that can be added to specify farm position
 #'@param rows The dimension of the other side of the landscape (e.g., Longitude)
 #'@param cols The dimension of one side of the landscape (e.g., Latitude)
 #'@param depth The number of layers in the 3D landscape
@@ -25,9 +26,35 @@
 #'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif
 #'@export
-make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0, 
-                           farm_var = 0){
+make_landscape <- function(terrain = NA, rows = NA, cols = NA, depth = 21, 
+                           farms = 4, public_land = 0, farm_var = 0){
     
+    if(is.na(terrain)[1] == FALSE){
+        if(is.matrix(terrain) == FALSE){
+            stop("Custom terrain needs to be a matrix of integers");
+        }
+        min_terrain <- min(terrain);
+        max_terrain <- max(terrain);
+        if(min_terrain < 1){
+            stop("Terrain values cannot be less than 1")
+        }
+        min_to_max  <- min_terrain:max_terrain;
+        terrain_in  <- sum(terrain %in% min_to_max == FALSE);
+        if(terrain_in > 0){
+            stop("Values in the custom terrain need to be natural numbers");
+        }
+        terrain_out <- sum(min_to_max %in% terrain == FALSE);
+        if(terrain_out > 0){
+            stop("At least one farm number is left out of the terrain");
+        }
+        rows <- dim(terrain)[1];
+        cols <- dim(terrain)[2];
+    }else{
+        if(is.na(rows) == TRUE | is.na(cols) == TRUE){
+            stop("Must specify landscape rows and cols if no custom terrain");
+        }
+    }
+
     the_land  <- NULL;
     if(rows < 2){
         stop("Landscape dimensions must be 2 by 2 or greater");   
@@ -36,8 +63,12 @@ make_landscape <- function(rows, cols, depth = 21, farms = 4,  public_land = 0,
         stop("Landscape dimensions must be 2 by 2 or greater");   
     }
     
-    who_owns       <- land_ssa(rows, cols, farms, public_land, farm_var);
-    farmland       <- who_owns - 1;
+    if(is.na(terrain)[1] == TRUE){
+      who_owns       <- land_ssa(rows, cols, farms, public_land, farm_var);
+      farmland       <- who_owns - 1;
+    }else{
+      farmland       <- terrain;
+    }
     
     extr_layers    <- rep(x = 0, times = (depth-1) * rows * cols);
     alldata        <- c(farmland, extr_layers);
@@ -174,7 +205,7 @@ initialise_crops <- function(crop_init = "random", crop_N, farms){
 
 initialise_pesticide <- function(pesticide_init = "random", pesticide_N, farms){
     init_mat <- matrix(data = 0, nrow = farms, ncol = pesticide_N);
-    if(pesticide_init == "random"){
+    if(pesticide_init[1] == "random"){
         choice <- sample(x = 1:pesticide_N, size = farms, replace = TRUE);
         for(i in 1:farms){
             init_mat[i, choice[i]] <- 1;
@@ -194,5 +225,4 @@ initialise_pesticide <- function(pesticide_init = "random", pesticide_N, farms){
     }
     return(init_mat);
 }
-
 

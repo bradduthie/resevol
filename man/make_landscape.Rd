@@ -5,8 +5,9 @@
 \title{Landscape initialisation}
 \usage{
 make_landscape(
-  rows,
-  cols,
+  terrain = NA,
+  rows = NA,
+  cols = NA,
   depth = 21,
   farms = 4,
   public_land = 0,
@@ -14,6 +15,8 @@ make_landscape(
 )
 }
 \arguments{
+\item{terrain}{a layer of terrain that can be added to specify farm position}
+
 \item{rows}{The dimension of the other side of the landscape (e.g., Longitude)}
 
 \item{cols}{The dimension of one side of the landscape (e.g., Latitude)}
