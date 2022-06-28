@@ -18,8 +18,9 @@ bibliography: references.bib
 ---
 
 ```{r, echo=FALSE}
-library(shiny)
-library(rhandsontable)
+library("shiny");
+library("rhandsontable");
+library("resevol");
 ```
 
 
@@ -41,7 +42,7 @@ library(rhandsontable)
 
  - **2022**
  
-   - **JUN** [13](#u-13-JUN-2022)
+   - **JUN** [13](#u-13-JUN-2022), [28](#u-28-JUN-2022)
    - **JAN** [06](#u-06-JAN-2022)
 
  - **2021**
@@ -69,6 +70,93 @@ library(rhandsontable)
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-28-JUN-2022">Update: 28 JUN 2022</a>
+
+**Custom crop and pesticide initialisation and rotation**
+
+I have now introduced custom crop and pesticide initialisation and rotation, as I set out to do in the [13 JUN 2022](#u-13-JUN-2022) notes below. The code appears to be stable, and I have introduced two new automated tests in the package to make sure that the feature remains stable. Below is an example of how to have a custom rotation regime for crops and pesticides; I will start with crops. First, I will use the `mg_n1` gmatrix that comes with the `resevol` package (I could have also made a dummy one; the details are not important here).
+
+```{r}
+data("gmatrices");
+```
+
+Now I will run a simulation. The `run_farm_sim` takes some simple options for `crop_init` and `crop_rotation_type`. This includes `crop_init = "random"`, which randomly assigns each farm to one of the potential `crops`. There are also three `crop_rotation_type` arguments, including `1` (no crop rotation), `2` (random crop choice whenever it is time to change), and `3` (cycling through crops by number; i.e., 1, 2, 3, 1, 2, 3). I might add more preset options like this later, but here is how to run a simulation with two crops, random crop initialisation on farms, and random rotation between crops.
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4, 
+                          repro = "asexual", time_steps = 10, farms = 4,
+                          crop_number        = 2,
+                          crop_init          = "random",
+                          crop_rotation_type = 2,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
+The new feature is that `crop_init` and `crop_rotation_type` can take custom arguments, so potentially any initialisation and cycling of crop choices is possible. With `crop_init`, we can specify which farm gets what crop at the start of the simulation using a fector of length `farms`. If, for example, we want farms 1 and 4 to have crop 1, and farms 2 and 3 to have crop 2, we could run the below.
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4, 
+                          repro = "asexual", time_steps = 10, farms = 4,
+                          crop_number        = 2,
+                          crop_init          = c(1, 2, 2, 1),
+                          crop_rotation_type = 2,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
+Note that the position of farms on the landscape is shown below.
+
+```{r, echo = FALSE}
+print(sim[[2]][,,1]);
+```
+
+Hence, this landscape would start out with farms numbered 1 and 4, diagonal from one another, applying crop 1, and farms numbered 2 and 3, also diagonal, applying crop 2. Now, suppose that we want users of crop 1 to switch to crop 2 with a probability of 0.75, and retain the use of crop 1 with a probability of 0.25. Likewise, suppose that we want users of crop 2 to switch to crop 1 with a probability of 0.75, and retain the use of crop 2 with a probability of 0.25. We can now specify this with a square matrix to input in place of the number for the argument `crop_rotation_type`. 
+
+```{r}
+change_mat <- matrix(data = c(0.25, 0.75, 0.75, 0.25), nrow = 2, ncol = 2);
+```
+
+```{r, echo = FALSE}
+print(change_mat);
+```
+
+Note that matrix elements $M_{i,j}$ specify the probability of changing from crop $i$ to crop $j$, meaning that row elements must sum to 1. This can be binary too, as in the default `crop_rotation_type = 3`.
+
+```{r, echo = FALSE}
+change_mat <- matrix(data = c(0, 1, 1, 0), nrow = 2, ncol = 2);
+print(change_mat);
+```
+
+The matrix above cycles back and forth between crops 1 and 2. Overall, this should give a lot more flexibility in terms of specifying how crops cycle over time. We can input the `change_mat` directly as an argument in `run_farm_sim`.
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4, 
+                          repro = "asexual", time_steps = 10, farms = 4,
+                          crop_number        = 2,
+                          crop_init          = c(1, 2, 2, 1),
+                          crop_rotation_type = change_mat,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
+Nevertheless, the cycling is restricted to Markov chains, meaning that it cannot include cycles of crops such as 1, 1, 2, 1, 1, 2, 1, 1, etc., where the cycling repeats complex patterns. This is mainly due to the awkwardness of trying to allow for such cycles given simulations that can have high numbers of time steps (i.e., I do not think it is worth figuring out a system that allows for these kinds of cycles as an option in the code).
+
+Pesticide rotation options work exactly the same way as crop rotation options, so I will not spend to much time on them. Here is an example of running one.
+
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4, 
+                          repro = "asexual", time_steps = 10, farms = 4,
+                          pesticide_number        = 2,
+                          pesticide_init          = c(1, 2, 2, 1),
+                          pesticide_rotation_type = change_mat,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
+In conclusion, this new feature will allow for a very flexible range of different crop and pesticide cycling options.
 
 
 > <a name="u-13-JUN-2022">Update: 13 JUN 2022</a>
