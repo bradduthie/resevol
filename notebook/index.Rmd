@@ -158,6 +158,109 @@ sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4,
 
 In conclusion, this new feature will allow for a very flexible range of different crop and pesticide cycling options.
 
+**Custom landscape option**
+
+I have also added an option to customise the farming landscape, also as I set out to do in the [13 JUN 2022](#u-13-JUN-2022) notes below. The customisation is on the top layer of the landscape that differentiates independent farms. What is required is a matrix that includes a sequence of natural numbers in all elements, so if there are 4 farms, then all matrix elements must be either 1, 2, 3, or 4. Beyond this requirement, there is no restriction on where different farms are placed; the do not even need to be contiguous on the landscape. Custom terrains can be inserted using the `terrain` argument in `run_farm_sim`. Below makes a custom terrain with three farms.
+
+```{r}
+custom_terrain       <- matrix(data = 0, nrow = 8, ncol = 8);
+custom_terrain[,1:2] <- 1;
+custom_terrain[,2:6] <- 2;
+custom_terrain[,7:8] <- 3;
+```
+
+```{r, echo = FALSE}
+printf(custom_terrain);
+```
+
+
+We can insert the terrain into the landscape with the `terrain` argument.
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, xdim = 4, ydim = 4, 
+                          repro = "asexual", time_steps = 10, farms = 4,
+                          terrain = custom_terrain,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
+
+Note that a custom terrain will override the arguments `farms`, `xdim`, and `ydim`, so even though the above sets `farms = 4`, there are actually only three farms on the landscape. I am tempted to put up a warning for this, but I am actually not sure if it is needed; my hope is that anyone customising the landscape would recognise this from the documentation.
+
+Also note that these terrain values do not necessarily need to be farms. Through the use of a custom landscape and pesticide rotation option, these cells could represent something like diversionary feeding sites or even buildings or rivers. Consider, for example, the following matrix.
+
+```{r}
+complex_terrain              <- matrix(data = 0, nrow = 12, ncol = 12)
+complex_terrain[1:2, 1:3]    <- 1;
+complex_terrain[3:7, 1:2]    <- 1;
+complex_terrain[8:12, 1:2]   <- 2;
+complex_terrain[1:2, 6:9]    <- 3;
+complex_terrain[3:6, 7:9]    <- 3;
+complex_terrain[1:6, 10:12]  <- 4;
+complex_terrain[10:12, 7]    <- 5;
+complex_terrain[7:12, 8:12]  <- 5;
+complex_terrain[3:12, 3:4]   <- 6;
+complex_terrain[7:9, 5]      <- 6;
+complex_terrain[1:2, 4:5]    <- 7;
+complex_terrain[3:6, 5:6]    <- 7;
+complex_terrain[7:9, 6:7]    <- 7;
+complex_terrain[10:12, 5:6]  <- 7;
+```
+
+```{r, echo = FALSE}
+print(complex_terrain);
+```
+
+We can visualise the terrain a bit more clearly with an image below.
+
+```{r, echo = FALSE}
+image(t(complex_terrain), xaxt = "n", yaxt = "n")
+```
+
+We can imagine the dark maroon colour as being a river (7), and the red region on the immediate left of the river as being a nature reserve (6). To get the simulations to run treating it this way, we would only need to spray a crop and pesticide that has no effect on the pests on the river (effectively making it an empty area of landscape in terms of feeding or resistance), and a pesticide but not crop in the nature reserve. First we can initialise the crop and pesticide vectors. Assume that there are 2 legitimate crops and pesticides that the actual farms (1-5) will use.
+
+```{r}
+initial_crops      <- c(1, 2, 1, 2, 1, 3, 4);
+initial_pesticides <- c(1, 1, 2, 2, 1, 3, 3);
+```
+
+We can then clarify the matrix so that there is only a cycle between 1 and 2, but never 3 and 4 for either the pesticide or the crops. First I will do the crops.
+
+```{r}
+crop_cycle <- matrix(data = 0, nrow = 4, ncol = 4);
+crop_cycle[1, 2] <- 1;
+crop_cycle[2, 1] <- 1;
+crop_cycle[3, 3] <- 1;
+crop_cycle[4, 4] <- 1;
+```
+
+```{r, echo = FALSE}
+print(crop_cycle);
+```
+
+Now I will do the pesticide.
+
+```{r}
+pesticide_cycle <- matrix(data = 0, nrow = 3, ncol = 3);
+pesticide_cycle[1, 2] <- 1;
+pesticide_cycle[2, 1] <- 1;
+pesticide_cycle[3, 3] <- 1;
+```
+
+```{r, echo = FALSE}
+print(pesticide_cycle);
+```
+
+So farms (1-5) will swap between crops 1 and 2, while the reserve (6) will maintain crop 3 and the river (7) will be 'crop' 4. And farms will swap between pesticides 1 and 2, while the reserve and river will hold pesticide 3. Then, to make crop 4 and pesticide 3 not really exist, we just make it impossible for the pests to consume these.
+
+```{r}
+sim       <- run_farm_sim(mine_output = mg_n1, N = 100, 
+                          repro = "asexual", time_steps = 10,
+                          terrain = complex_terrain,
+                          print_inds = FALSE, print_gens = FALSE,
+                          print_last = FALSE, get_stats = FALSE);
+```
+
 
 > <a name="u-13-JUN-2022">Update: 13 JUN 2022</a>
 

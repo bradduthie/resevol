@@ -71,7 +71,8 @@ run_farm_sim(
   metabolism = 0,
   baseline_metabolism = 0,
   min_age_metabolism = 1,
-  max_age_metabolism = 9
+  max_age_metabolism = 9,
+  terrain = NA
 )
 }
 \arguments{
@@ -211,6 +212,8 @@ vector of the same length as farm number with integer pesticide types)}
 \item{min_age_metabolism}{The minimum age affected by metabolism}
 
 \item{max_age_metabolism}{The maximum age affected by metabolism}
+
+\item{terrain}{Insert a custom terrain of different farms (matrix)}
 }
 \value{
 The output in the R console is a list with two elements; the first 

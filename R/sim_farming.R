@@ -90,6 +90,7 @@
 #'@param baseline_metabolism A fixed baseline rate added to 'metabolism'
 #'@param min_age_metabolism The minimum age affected by metabolism
 #'@param max_age_metabolism The maximum age affected by metabolism
+#'@param terrain Insert a custom terrain of different farms (matrix)
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -180,10 +181,18 @@ run_farm_sim <- function(mine_output,
                          metabolism = 0,
                          baseline_metabolism = 0,
                          min_age_metabolism  = 1,
-                         max_age_metabolism  = 9){
+                         max_age_metabolism  = 9,
+                         terrain             = NA){
   
-    land <- make_landscape(rows = ydim, cols = xdim, depth = 21, farms = farms);
-  
+    if(is.na(terrain)[1] == FALSE){
+        xdim  <- dim(terrain)[1];
+        ydim  <- dim(terrain)[2];
+        farms <- max(terrain);
+    }
+    
+    land <- make_landscape(terrain = terrain, rows = ydim, cols = xdim, 
+                           depth = 21, farms = farms);
+
     move_distance_T             <- check_is_trait(move_distance);
     food_needed_surv_T          <- check_is_trait(food_needed_surv);
     pesticide_tolerated_surv_T  <- check_is_trait(pesticide_tolerated_surv);
