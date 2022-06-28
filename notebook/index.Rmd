@@ -170,7 +170,7 @@ custom_terrain[,7:8] <- 3;
 ```
 
 ```{r, echo = FALSE}
-printf(custom_terrain);
+print(custom_terrain);
 ```
 
 
@@ -256,10 +256,26 @@ So farms (1-5) will swap between crops 1 and 2, while the reserve (6) will maint
 ```{r}
 sim       <- run_farm_sim(mine_output = mg_n1, N = 100, 
                           repro = "asexual", time_steps = 10,
-                          terrain = complex_terrain,
+                          crop_number = 4, pesticide_number = 3,
+                          terrain                 = complex_terrain,
+                          food_consume            = c(0.25, 0.25, 0.25, 0),
+                          pesticide_consume       = c(0.1, 0.1, 0),
+                          crop_init               = initial_crops,
+                          crop_rotation_type      = crop_cycle,
+                          pesticide_init          = initial_pesticides,
+                          pesticide_rotation_type = pesticide_cycle,
                           print_inds = FALSE, print_gens = FALSE,
                           print_last = FALSE, get_stats = FALSE);
 ```
+
+
+The output shows that the pests leave the 'food' on the river alone (see layer 5), while the reserve (see layer 4) gets used very much.
+
+```{r, echo = FALSE}
+print(sim[[2]][,,1:5]);
+```
+
+Similarly, the pests will only be affected by pesticides 1 and 2, while 3 is effectively nothing. Note that this is of course a trick for modelling landscape areas without food or pesticide, but I do not see a reason to make this more explicit in the function (unless I receive requests due to confusion, but my hope is it is clear from these notes and documentation).
 
 
 > <a name="u-13-JUN-2022">Update: 13 JUN 2022</a>
