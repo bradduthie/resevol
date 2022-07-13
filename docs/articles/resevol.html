@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/resevol.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -67,10 +63,10 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://bradduthie.github.io/resevol/notebook/">Lab notebook</a>
+  <a href="https://bradduthie.github.io/resevol/notebook/" class="external-link">Lab notebook</a>
 </li>
 <li>
-  <a href="https://github.com/bradduthie/resevol">
+  <a href="https://github.com/bradduthie/resevol" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
@@ -85,15 +81,16 @@
 
       
 
-      </header><script src="resevol_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Get Started</h1>
-                        <h4 class="author">A Bradley Duthie</h4>
+                        <h4 data-toc-skip class="author">A Bradley
+Duthie</h4>
             
-            <h4 class="date">2021-09-24</h4>
+            <h4 data-toc-skip class="date">2022-07-13</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/master/vignettes/resevol.Rmd"><code>vignettes/resevol.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/resevol.Rmd" class="external-link"><code>vignettes/resevol.Rmd</code></a></small>
       <div class="hidden name"><code>resevol.Rmd</code></div>
 
     </div>
@@ -102,50 +99,97 @@
     
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#mine_gmatrix">The <code>mine_gmatrix</code> function</a></li>
+<li><a href="#mine_gmatrix">The <code>mine_gmatrix</code>
+function</a></li>
 <li>
 <a href="#run_farm_sim">The <code>run_farm_sim</code> function</a>
 <ul>
 <li><a href="#inputs">Inputs for <code>run_farm_sim</code></a></li>
-<li><a href="#example">Example uses of <code>run_farm_sim</code></a></li>
+<li><a href="#example">Example uses of
+<code>run_farm_sim</code></a></li>
 <li><a href="#output">Output of <code>run_farm_sim</code></a></li>
-<li><a href="#traits">Use of evolving traits in <code>run_farm_sim</code></a></li>
+<li><a href="#traits">Use of evolving traits in
+<code>run_farm_sim</code></a></li>
 </ul>
 </li>
 <li><a href="#additional">Additional guidance</a></li>
 <li><a href="#lit">Literature cited</a></li>
 </ul>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a><a name="introduction">Introduction</a>
-</h1>
-<p>The resevol R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the <code>mine_gmatrix</code> function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the <code>run_farm_sim</code> function; it initialises individuals with the <code>mine_gmatrix</code> output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.</p>
+<div class="section level2">
+<h2 id="introduction">
+<a name="introduction">Introduction</a><a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>The resevol R package is used to simulate individual-based models of
+agricultural production, pesticide application, and the evolution of
+pesticide resistance on a spatially explicit landscape. Individual pests
+are modelled with any number of quantitative traits that have a
+customisable covariance structure. Covarying trait values are underlied
+by a pre-specified number of loci and a complex network mapping loci to
+traits, all of which are specified at the individual level in explicit
+pest genomes. Simulation requires two steps, each carried out by a
+separate R function. Step one is run with the <code>mine_gmatrix</code>
+function; it finds individual genomes that produce appropriately
+covarying traits given allele values that are drawn from a standard
+normal distribution. Step two is run with the <code>run_farm_sim</code>
+function; it initialises individuals with the <code>mine_gmatrix</code>
+output, then simulates agricultural management in the presence of
+evolving pests. Here we demonstrate the use of these two functions and
+offer tips for doing so most effectively.</p>
 </div>
-<div id="the-mine_gmatrix-function" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-mine_gmatrix-function" class="anchor"></a><a name="mine_gmatrix">The <code>mine_gmatrix</code> function</a>
-</h1>
-<p>The goal of the <code>mine_gmatrix</code> function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes 12 loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).</p>
+<div class="section level2">
+<h2 id="the-mine_gmatrix-function">
+<a name="mine_gmatrix">The <code>mine_gmatrix</code>
+function</a><a class="anchor" aria-label="anchor" href="#the-mine_gmatrix-function"></a>
+</h2>
+<p>The goal of the <code>mine_gmatrix</code> function is to map a set of
+random standard normal (mean = 0, stdev = 1) values to a set of
+covarying values using a network of hidden layers. The set of random
+standard normal values in this case are allele values for a positive
+integer value of loci. The set of covarying values are the traits that
+take a pre-specified covariance structure, which is represented by a
+square variance covariance matrix. An example below includes 12 loci
+(green circles) and four traits (red diamonds), which are linked through
+three hidden layers of nodes (blue squares).</p>
 <div class="figure">
 <img src="resevol_files/figure-html/unnamed-chunk-2-1.png" alt="Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function" width="672"><p class="caption">
-Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function
+Figure 1: Network mapping loci to traits through an intermediate set of
+hidden layers in the mine_gmatrix function
 </p>
 </div>
-<p>Each arrow in the figure above is initialised as a number in the <code>mine_gmatrix</code> function. An evolutionary algorithm is then used to find a set of arrow values that produces traits with the pre-specified covariance structure given a set of randomly drawn standard normal allele values at loci. The details of this evolutionary algorithm are explained in a separate vignette, but the general idea is that a large set of random networks (i.e., arrow values in the diagram above) are initialised, and the networks that produce traits with a covariance structure most similar to the pre-specified one produce a new generation of networks with some degree of mutation and recombination. Generations continue to evolve until either the maximum number of allowed generations is reached or the network produces traits with a covariance structure that is sufficiently close to the pre-specified one. As an example, we can consider the covariance matrix below.</p>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]  1.0 -0.5  0.2  0.2
-## [2,] -0.5  1.0  0.2  0.2
-## [3,]  0.2  0.2  1.0 -0.5
-## [4,]  0.2  0.2 -0.5  1.0</code></pre>
-<p>This matrix models the pre-specified covariance among four traits. We can assign it as <code>gmt</code> and use it in the <code>mine_gmatrix</code> function to find a network that will produce traits with this covariance structure given random standard normal allele values at each loci.</p>
+<p>Each arrow in the figure above is initialised as a number in the
+<code>mine_gmatrix</code> function. An evolutionary algorithm is then
+used to find a set of arrow values that produces traits with the
+pre-specified covariance structure given a set of randomly drawn
+standard normal allele values at loci. The details of this evolutionary
+algorithm are explained in a separate vignette, but the general idea is
+that a large set of random networks (i.e., arrow values in the diagram
+above) are initialised, and the networks that produce traits with a
+covariance structure most similar to the pre-specified one produce a new
+generation of networks with some degree of mutation and recombination.
+Generations continue to evolve until either the maximum number of
+allowed generations is reached or the network produces traits with a
+covariance structure that is sufficiently close to the pre-specified
+one. As an example, we can consider the covariance matrix below.</p>
+<pre><code><span class="co">##      [,1] [,2] [,3] [,4]</span>
+<span class="co">## [1,]  1.0 -0.5  0.2  0.2</span>
+<span class="co">## [2,] -0.5  1.0  0.2  0.2</span>
+<span class="co">## [3,]  0.2  0.2  1.0 -0.5</span>
+<span class="co">## [4,]  0.2  0.2 -0.5  1.0</span></code></pre>
+<p>This matrix models the pre-specified covariance among four traits. We
+can assign it as <code>gmt</code> and use it in the
+<code>mine_gmatrix</code> function to find a network that will produce
+traits with this covariance structure given random standard normal
+allele values at each loci.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mg</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">12</span>, indivs <span class="op">=</span> <span class="fl">2000</span>, npsize <span class="op">=</span> <span class="fl">12000</span>, 
                     max_gen <span class="op">=</span> <span class="fl">1200</span>, sampleK <span class="op">=</span> <span class="fl">1200</span>, chooseK <span class="op">=</span> <span class="fl">6</span>, layers <span class="op">=</span> <span class="fl">6</span>,
                     mu_pr <span class="op">=</span> <span class="fl">0.05</span>, mu_sd <span class="op">=</span> <span class="fl">0.01</span>, pr_cross <span class="op">=</span> <span class="fl">0.05</span>,
                     term_cri <span class="op">=</span> <span class="op">-</span><span class="fl">5.3</span>, sd_ini <span class="op">=</span> <span class="fl">0.1</span>, use_cor <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</code></pre></div>
-<p>The above use of <code>mine_gmatrix</code> includes arguments that specify the details of the evolutionary algorithm.</p>
+<p>The above use of <code>mine_gmatrix</code> includes arguments that
+specify the details of the evolutionary algorithm.</p>
 <table class="table">
-<caption>Arguments taken by the <code>mine_gmatrix</code> function.</caption>
+<caption>Arguments taken by the <code>mine_gmatrix</code>
+function.</caption>
 <colgroup>
 <col width="15%">
 <col width="84%">
@@ -157,64 +201,126 @@ Figure 1: Network mapping loci to traits through an intermediate set of hidden l
 <tbody>
 <tr class="odd">
 <td><code>gmatrix</code></td>
-<td>The pre-specified trait covariance matrix. This will define what the covariance will be between each trait when allele values are drawn from a standard normal distribution.</td>
+<td>The pre-specified trait covariance matrix. This will define what the
+covariance will be between each trait when allele values are drawn from
+a standard normal distribution.</td>
 </tr>
 <tr class="even">
 <td><code>loci</code></td>
-<td>The number of loci for an individual (green circles in Figure 1). Simulations can allow for both haploid and diploid individuals. Allele values at each loci affect trait values (red squares in Figure 1) through a network of intermediary nodes (blue squares in Figure 1).</td>
+<td>The number of loci for an individual (green circles in Figure 1).
+Simulations can allow for both haploid and diploid individuals. Allele
+values at each loci affect trait values (red squares in Figure 1)
+through a network of intermediary nodes (blue squares in Figure 1).</td>
 </tr>
 <tr class="odd">
 <td><code>indivs</code></td>
-<td>The number of individuals initialised in each generation of the evolutionary algorithm to test among-individual trait correlations. Individuals are initialised with allele values (green circles in Figure 1) drawn from a standard normal distribution.</td>
+<td>The number of individuals initialised in each generation of the
+evolutionary algorithm to test among-individual trait correlations.
+Individuals are initialised with allele values (green circles in Figure
+1) drawn from a standard normal distribution.</td>
 </tr>
 <tr class="even">
 <td><code>npsize</code></td>
-<td>The size of the population of networks in each generation of the evolutionary algorithm. Each network (Figure 1) is a discrete individual in the population.</td>
+<td>The size of the population of networks in each generation of the
+evolutionary algorithm. Each network (Figure 1) is a discrete individual
+in the population.</td>
 </tr>
 <tr class="odd">
 <td><code>max_gen</code></td>
-<td>The maximum number of generations that the evolutionary algorithm is allowed to run before terminating (regardless of how well the evolved covariance structure matches the pre-specified <code>gmatrix</code>).</td>
+<td>The maximum number of generations that the evolutionary algorithm is
+allowed to run before terminating (regardless of how well the evolved
+covariance structure matches the pre-specified
+<code>gmatrix</code>).</td>
 </tr>
 <tr class="even">
 <td><code>sampleK</code></td>
-<td>During a round of selection, the number of random networks chosen to compete in a tournament. A single generation will include as many tournaments as necessary to create a new network population of size <code>npsize</code>.</td>
+<td>During a round of selection, the number of random networks chosen to
+compete in a tournament. A single generation will include as many
+tournaments as necessary to create a new network population of size
+<code>npsize</code>.</td>
 </tr>
 <tr class="odd">
 <td><code>chooseK</code></td>
-<td>During a round of selection tournament, the number of networks within the <code>sampleK</code> random subset of the tournament that have the highest fitness will be selected to populate the next generation of networks</td>
+<td>During a round of selection tournament, the number of networks
+within the <code>sampleK</code> random subset of the tournament that
+have the highest fitness will be selected to populate the next
+generation of networks</td>
 </tr>
 <tr class="even">
 <td><code>layers</code></td>
-<td>The number of hidden layers in the network linking loci to traits (blue squares in Figure 1)</td>
+<td>The number of hidden layers in the network linking loci to traits
+(blue squares in Figure 1)</td>
 </tr>
 <tr class="odd">
 <td><code>mu_pr</code></td>
-<td>The probability that a value in the network (black arrows in Figure 1) will mutate in a generation. Mutation events change the existing value by adding a new value drawn from a normal distribution with a mean of 0 and standard deviation of <code>mu_sd</code>.</td>
+<td>The probability that a value in the network (black arrows in Figure
+1) will mutate in a generation. Mutation events change the existing
+value by adding a new value drawn from a normal distribution with a mean
+of 0 and standard deviation of <code>mu_sd</code>.</td>
 </tr>
 <tr class="even">
 <td><code>mu_sd</code></td>
-<td>The standard deviation of the random normal value mean centered at 0 that is added to the existing value of the network (black arrows in Figure 1) when a mutation event occurs.</td>
+<td>The standard deviation of the random normal value mean centered at 0
+that is added to the existing value of the network (black arrows in
+Figure 1) when a mutation event occurs.</td>
 </tr>
 <tr class="odd">
 <td><code>pr_cross</code></td>
-<td>The probability that a focal network in the population will initiate a crossover of a subset of its values with a randomly selected second network (note that any given network might therefore be included in more than one crossover event in a generation). The size of the subset is determined randomly (conceptually equivalent to drawing a rectangle around arrows in Figure 1, with values within the rectangle then swapped between networks).</td>
+<td>The probability that a focal network in the population will initiate
+a crossover of a subset of its values with a randomly selected second
+network (note that any given network might therefore be included in more
+than one crossover event in a generation). The size of the subset is
+determined randomly (conceptually equivalent to drawing a rectangle
+around arrows in Figure 1, with values within the rectangle then swapped
+between networks).</td>
 </tr>
 <tr class="even">
 <td><code>term_cri</code></td>
-<td>The criteria for terminating the evolutionary algorithm. The algorithm will terminate if a network is found in which the mean squared deviation of the covariance matrix elements from <code>gmatrix</code> is less than <code><a href="https://rdrr.io/r/base/Log.html">exp(term_crit)</a></code> .</td>
+<td>The criteria for terminating the evolutionary algorithm. The
+algorithm will terminate if a network is found in which the mean squared
+deviation of the covariance matrix elements from <code>gmatrix</code> is
+less than <code>exp(term_crit)</code> .</td>
 </tr>
 <tr class="odd">
 <td><code>sd_ini</code></td>
-<td>The standard deviation of initialised network values at the start of the evolutionary algorithm. All network values are initialised by randomly sampling from a normal distribution with a mean of 0 and a standard deviation of <code>sd_ini</code>.</td>
+<td>The standard deviation of initialised network values at the start of
+the evolutionary algorithm. All network values are initialised by
+randomly sampling from a normal distribution with a mean of 0 and a
+standard deviation of <code>sd_ini</code>.</td>
 </tr>
 <tr class="even">
 <td><code>use_cor</code></td>
-<td>Should the <code>gmatrix</code> be treated as a correlation matrix rather than a covariance matrix when calculating fitness?</td>
+<td>Should the <code>gmatrix</code> be treated as a correlation matrix
+rather than a covariance matrix when calculating fitness?</td>
 </tr>
 </tbody>
 </table>
-<p>Running the <code>mine_gmatrix</code> function can take several minutes to several hours (or longer) depending on the parameters used. The time required scales exponentially with the dimensions of <code>gmatrix</code> (i.e., the number of traits that need to be found). Default argument values are specified in attempt to be efficient across a wide range of conditions, but in practice it is often best to experiment with different values. As with any evolving population, selection is more effective in larger populations (i.e., high <code>npsize</code>), but large populations are also more time consuming to simulate. The <code>indivs</code> argument can be increased to give more precision when comparing the fitness of networks. Values of <code>sd_ini</code> are usually most effective when they are roughly an order of magnitude below that of the largest element value of <code>gmatrix</code>. Values of <code>sampleK</code>, <code>chooseK</code>, <code>mu_pr</code>, <code>mu_sd</code>, and <code>pr_cross</code> sometimes require a bit more experimentation to maximise the efficiency of the function in finding solutions. Note that <code>mu_pr</code> and <code>pr_cross</code> are often most effective at values much higher than would be expected in real biological organisms <span class="citation">(Hamblin 2013)</span>.</p>
-<p>When <code>mine_gmatrix</code> is running, the generation number, mean stress (i.e., log mean squared deviation of the covariance matrix elements from <code>gmatrix</code>), and minimum stress will be printed in the console (this can be turned off by specifying <code>prnt_out = FALSE</code>). Below shows how the console output will appear.</p>
+<p>Running the <code>mine_gmatrix</code> function can take several
+minutes to several hours (or longer) depending on the parameters used.
+The time required scales exponentially with the dimensions of
+<code>gmatrix</code> (i.e., the number of traits that need to be found).
+Default argument values are specified in attempt to be efficient across
+a wide range of conditions, but in practice it is often best to
+experiment with different values. As with any evolving population,
+selection is more effective in larger populations (i.e., high
+<code>npsize</code>), but large populations are also more time consuming
+to simulate. The <code>indivs</code> argument can be increased to give
+more precision when comparing the fitness of networks. Values of
+<code>sd_ini</code> are usually most effective when they are roughly an
+order of magnitude below that of the largest element value of
+<code>gmatrix</code>. Values of <code>sampleK</code>,
+<code>chooseK</code>, <code>mu_pr</code>, <code>mu_sd</code>, and
+<code>pr_cross</code> sometimes require a bit more experimentation to
+maximise the efficiency of the function in finding solutions. Note that
+<code>mu_pr</code> and <code>pr_cross</code> are often most effective at
+values much higher than would be expected in real biological organisms
+<span class="citation">(Hamblin 2013)</span>.</p>
+<p>When <code>mine_gmatrix</code> is running, the generation number,
+mean stress (i.e., log mean squared deviation of the covariance matrix
+elements from <code>gmatrix</code>), and minimum stress will be printed
+in the console (this can be turned off by specifying
+<code>prnt_out = FALSE</code>). Below shows how the console output will
+appear.</p>
 <pre><code>===============================================
 Initialising gmatrix mining...                 
 ===============================================
@@ -225,144 +331,220 @@ Gen: 3   Stress: -0.763570   Min: -0.763570
 Gen: 4   Stress: -0.763570   Min: -0.763571
 Gen: 5   Stress: -0.763570   Min: -0.763571
 Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
-<p>As previously mentioned, finding a network can be time-consuming. The resevol package comes with some example pre-installed.</p>
+<p>As previously mentioned, finding a network can be time-consuming. The
+resevol package comes with some example pre-installed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"gmatrices"</span><span class="op">)</span>;</code></pre></div>
-<p>We can use <code>mg_v1</code> as an example of output from <code>mine_gmatrix</code>. In <code>mg_v1</code>, the pre-specified covariance matrix is the same as the <code>gmt</code> matrix used above. The output includes eight elements, the first of which includes all of the argument inputs to the <code>mine_gmatrix</code> function.</p>
-<pre><code>##  [1]    12.00     6.00  2000.00 12000.00     0.05     0.01  2400.00     0.05
-##  [9]  1200.00     6.00    -5.30     0.10     0.00     1.00</code></pre>
-<p>Argument inputs in the elements above include (1) <code>loci</code>, (2) <code>layers</code>, (3) <code>indivs</code>, (4) <code>npsize</code>, (5) <code>mu_pr</code>, (6) <code>mu_sd</code>, (7) <code>max_gen</code>, (8) <code>pr_cross</code>, (9) <code>sampleK</code>, (10) <code>chooseK</code>, (11) <code>term_cri</code>, (12) <code>sd_ini</code>, (13) <code>use_cor</code>, and (14) <code>prnt_out</code>. The second element of <code>mine_gmatrix</code> output is the pre-specified covariance matrix <code>gmatrix</code>.</p>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]  1.0 -0.5  0.2  0.2
-## [2,] -0.5  1.0  0.2  0.2
-## [3,]  0.2  0.2  1.0 -0.5
-## [4,]  0.2  0.2 -0.5  1.0</code></pre>
-<p>The third element of <code>mine_gmatrix</code> output is a matrix with elements that specify the effect of each locus value (rows) on the first hidden layer (columns). Conceptually, these are the values of the Figure 1 arrows mapping the green circles to the first column of blue squares.</p>
-<pre><code>##              [,1]        [,2]          [,3]        [,4]
-##  [1,] -0.62181158 -0.23246088  1.027398e-01  0.36089789
-##  [2,]  0.11516718  0.35628744  1.932607e-06  0.38293051
-##  [3,] -0.33493318  0.32627944  6.940649e-02 -0.30558144
-##  [4,] -0.07520604 -0.32440111  3.741366e-01  0.24383415
-##  [5,] -0.51259791 -0.06048184 -8.689474e-01  0.60746638
-##  [6,]  0.21803456 -0.38792630  2.014267e-01 -0.42601954
-##  [7,] -0.22419755 -0.84531007  5.902170e-01 -0.10942012
-##  [8,]  0.73822815 -0.30174497  2.573475e-01  0.23633850
-##  [9,] -0.45722066  0.09532205  5.540713e-01 -0.06608855
-## [10,]  0.28739580 -0.12243227 -1.553612e-01 -0.01861052
-## [11,] -0.09843707 -0.18971567  6.172619e-01 -0.17746038
-## [12,]  0.64383533 -0.19503881 -1.054181e-01 -0.37567049</code></pre>
-<p>The fourth element of <code>mine_gmatrix</code> output is a three dimensional array that specifies the effects between all hidden layers, and between the last hidden layer and the trait values (i.e., in Figure 1, all of the arrows to the right of the first column of blue squares). The third dimension of the array below separates the sets arrows between hidden layers (i.e., each matrix below corresponds to a map between hidden layers, or between the last hidden layer and the traits). Note that while Figure 1 includes only three hidden layers, there are six below.</p>
-<pre><code>## , , 1
-## 
-##            [,1]       [,2]       [,3]       [,4]
-## [1,]  0.1876383 -0.7766931  0.2561096 -0.1594451
-## [2,] -0.7218431 -0.1720015  0.1051845 -0.1391646
-## [3,] -0.5724185 -0.6303034 -0.1351206 -0.1521792
-## [4,] -0.1518009 -0.4726420  0.6897870 -0.2687902
-## 
-## , , 2
-## 
-##             [,1]       [,2]       [,3]       [,4]
-## [1,] -0.89598885 -0.2361661 0.03713508 -0.4339221
-## [2,] -0.03818028  0.1322045 0.52982046 -0.2206081
-## [3,] -0.16489913  0.2119842 0.44171859  0.7881612
-## [4,]  0.35726940 -0.5271966 0.13122182 -0.2990653
-## 
-## , , 3
-## 
-##             [,1]        [,2]       [,3]       [,4]
-## [1,]  0.41092320  0.28480202 -0.1120791 -0.4511020
-## [2,]  0.19794635  0.70486627 -0.2855835 -0.3474222
-## [3,] -0.84575895 -0.06894474  0.2846113 -0.5004831
-## [4,]  0.08297854  0.31942452  0.8976090  0.4573121
-## 
-## , , 4
-## 
-##            [,1]      [,2]        [,3]       [,4]
-## [1,]  0.2253143 0.2004491  0.74271147  1.0243443
-## [2,] -0.7223198 0.5598523  0.41619436 -0.1152639
-## [3,] -0.2417876 0.5954666 -0.03304092 -0.4663887
-## [4,]  0.4589945 0.5626436 -0.42824309 -0.3633294
-## 
-## , , 5
-## 
-##             [,1]       [,2]      [,3]        [,4]
-## [1,]  0.05722936 -0.7678113 0.7009198  0.15491320
-## [2,]  0.08709396 -0.6969477 0.4913277 -0.73493561
-## [3,] -0.70780111  0.7518397 0.4779771  0.41039047
-## [4,] -0.18146366 -0.6877152 0.4546469 -0.01592507
-## 
-## , , 6
-## 
-##              [,1]       [,2]       [,3]        [,4]
-## [1,] -0.484868322  0.2352634 -0.5067399  0.51615705
-## [2,]  1.272293446 -0.7279591 -0.4885374  1.19602908
-## [3,]  0.653742180 -0.6679193  0.2497727 -0.05637619
-## [4,] -0.008199929  1.2147659  0.9983367  0.26934001</code></pre>
-<p>The fifth element of <code>mine_gmatrix</code> is a matrix that shows the marginal effect of each locus (rows) on each trait (columns) value. Note that this is this is the product of <code>mg_v1[[3]]</code> times each layer of <code>mg_v1[[4]]</code> in sequence (i.e., <code>mg_v1[[4]][,,1]</code> times <code>mg_v1[[4]][,,2]</code>, and so forth). Conceptually, this matrix isolates the effect of each locus on each trait if all other loci are held at a constant value.</p>
-<pre><code>##              [,1]         [,2]         [,3]        [,4]
-##  [1,]  0.11355835  0.002908792 -0.122576128  0.24062456
-##  [2,]  0.19860768 -0.560485161 -0.238001247 -0.13433740
-##  [3,]  0.35488346  0.057368027  0.251966132  0.15915978
-##  [4,] -0.01866734 -0.145837880 -0.007194782 -0.16074206
-##  [5,] -0.23320888  0.208434036 -0.643175344  0.63047911
-##  [6,] -0.24710427  0.412170404  0.305025482 -0.13385957
-##  [7,] -0.21817543  0.395054251  0.293741747 -0.11102551
-##  [8,] -0.33650514 -0.312956818 -0.128296727 -0.52754011
-##  [9,]  0.46183511 -0.197388878  0.295203638 -0.03835963
-## [10,] -0.24765628  0.105117973 -0.078117455 -0.06127897
-## [11,]  0.17745685 -0.052061251  0.344817622 -0.22442234
-## [12,] -0.40187122  0.296093799  0.120292139 -0.22079164</code></pre>
-<p>The sixth element of <code>mine_gmatrix</code> is a matrix of the observed covariance structure of traits given a set of <code>indivs</code> individuals with random standard normal values at each locus. This matrix can be compared to the pre-specified <code>gmatrix</code>. While there will always be small deviations that are minimised by the function, it might often be useful to check the difference between matrices manually.</p>
-<pre><code>##            [,1]       [,2]       [,3]       [,4]
-## [1,]  0.9936103 -0.5106387  0.2324040  0.2367691
-## [2,] -0.5106387  1.0193888  0.2573216  0.2723028
-## [3,]  0.2324040  0.2573216  0.9334559 -0.4480018
-## [4,]  0.2367691  0.2723028 -0.4480018  0.9689539</code></pre>
-<p>The seventh element of <code>mine_gmatrix</code> is a vectorisation of <code>mg_v1[[3]]</code> and <code>mg_v1[[4]]</code>. That is, a vector that includes all of the information needed to map a set of allele values to trait values (i.e., values for all arrows shown in Figure 1). This vector of network values is inserted into the genome of each individual during a simulation, so each individual’s allele values can then be mapped to their appropriate trait values. Simulations can then be run in which these network values are static, or in which they may evolve at any number of paths from layer to layer (i.e., columns of arrows in Figure 1).</p>
-<pre><code>##   [1] -6.218116e-01 -2.324609e-01  1.027398e-01  3.608979e-01  1.151672e-01
-##   [6]  3.562874e-01  1.932607e-06  3.829305e-01 -3.349332e-01  3.262794e-01
-##  [11]  6.940649e-02 -3.055814e-01 -7.520604e-02 -3.244011e-01  3.741366e-01
-##  [16]  2.438342e-01 -5.125979e-01 -6.048184e-02 -8.689474e-01  6.074664e-01
-##  [21]  2.180346e-01 -3.879263e-01  2.014267e-01 -4.260195e-01 -2.241976e-01
-##  [26] -8.453101e-01  5.902170e-01 -1.094201e-01  7.382282e-01 -3.017450e-01
-##  [31]  2.573475e-01  2.363385e-01 -4.572207e-01  9.532205e-02  5.540713e-01
-##  [36] -6.608855e-02  2.873958e-01 -1.224323e-01 -1.553612e-01 -1.861052e-02
-##  [41] -9.843707e-02 -1.897157e-01  6.172619e-01 -1.774604e-01  6.438353e-01
-##  [46] -1.950388e-01 -1.054181e-01 -3.756705e-01  1.876383e-01 -7.766931e-01
-##  [51]  2.561096e-01 -1.594451e-01 -7.218431e-01 -1.720015e-01  1.051845e-01
-##  [56] -1.391646e-01 -5.724185e-01 -6.303034e-01 -1.351206e-01 -1.521792e-01
-##  [61] -1.518009e-01 -4.726420e-01  6.897870e-01 -2.687902e-01 -8.959888e-01
-##  [66] -2.361661e-01  3.713508e-02 -4.339221e-01 -3.818028e-02  1.322045e-01
-##  [71]  5.298205e-01 -2.206081e-01 -1.648991e-01  2.119842e-01  4.417186e-01
-##  [76]  7.881612e-01  3.572694e-01 -5.271966e-01  1.312218e-01 -2.990653e-01
-##  [81]  4.109232e-01  2.848020e-01 -1.120791e-01 -4.511020e-01  1.979463e-01
-##  [86]  7.048663e-01 -2.855835e-01 -3.474222e-01 -8.457590e-01 -6.894474e-02
-##  [91]  2.846113e-01 -5.004831e-01  8.297854e-02  3.194245e-01  8.976090e-01
-##  [96]  4.573121e-01  2.253143e-01  2.004491e-01  7.427115e-01  1.024344e+00
-## [101] -7.223198e-01  5.598523e-01  4.161944e-01 -1.152639e-01 -2.417876e-01
-## [106]  5.954666e-01 -3.304092e-02 -4.663887e-01  4.589945e-01  5.626436e-01
-## [111] -4.282431e-01 -3.633294e-01  5.722936e-02 -7.678113e-01  7.009198e-01
-## [116]  1.549132e-01  8.709396e-02 -6.969477e-01  4.913277e-01 -7.349356e-01
-## [121] -7.078011e-01  7.518397e-01  4.779771e-01  4.103905e-01 -1.814637e-01
-## [126] -6.877152e-01  4.546469e-01 -1.592507e-02 -4.848683e-01  2.352634e-01
-## [131] -5.067399e-01  5.161570e-01  1.272293e+00 -7.279591e-01 -4.885374e-01
-## [136]  1.196029e+00  6.537422e-01 -6.679193e-01  2.497727e-01 -5.637619e-02
-## [141] -8.199929e-03  1.214766e+00  9.983367e-01  2.693400e-01</code></pre>
-<p>The eighth and final element of <code>mine_gmatrix</code> reports the stress of the network produced. That is, the logged expected squared deviation of each element in the observed covariance matrix from the pre-specified covariance matrix (note, small deviations might arise between this value and the value obtained from manually comparing <code>mg_v1[[2]]</code> and <code>mg_v1[[6]]</code> due to a different set of <code>indivs</code> individuals being used to produce <code>mg_v1[[6]]</code> and calculate <code>mg_v1[[8]]</code> below).</p>
-<pre><code>## [1] -6.237817</code></pre>
-<p>The output of <code>mine_gmatrix</code> is necessary for initialising new individuals in the individual-based model. The individual-based model is run using the <code>run_farm_sim</code> function, which is explained in the next section.</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gmatrices"</span><span class="op">)</span>;</code></pre></div>
+<p>We can use <code>mg_v1</code> as an example of output from
+<code>mine_gmatrix</code>. In <code>mg_v1</code>, the pre-specified
+covariance matrix is the same as the <code>gmt</code> matrix used above.
+The output includes eight elements, the first of which includes all of
+the argument inputs to the <code>mine_gmatrix</code> function.</p>
+<pre><code><span class="co">##  [1]    12.00     6.00  2000.00 12000.00     0.05     0.01  2400.00     0.05</span>
+<span class="co">##  [9]  1200.00     6.00    -5.30     0.10     0.00     1.00</span></code></pre>
+<p>Argument inputs in the elements above include (1) <code>loci</code>,
+(2) <code>layers</code>, (3) <code>indivs</code>, (4)
+<code>npsize</code>, (5) <code>mu_pr</code>, (6) <code>mu_sd</code>, (7)
+<code>max_gen</code>, (8) <code>pr_cross</code>, (9)
+<code>sampleK</code>, (10) <code>chooseK</code>, (11)
+<code>term_cri</code>, (12) <code>sd_ini</code>, (13)
+<code>use_cor</code>, and (14) <code>prnt_out</code>. The second element
+of <code>mine_gmatrix</code> output is the pre-specified covariance
+matrix <code>gmatrix</code>.</p>
+<pre><code><span class="co">##      [,1] [,2] [,3] [,4]</span>
+<span class="co">## [1,]  1.0 -0.5  0.2  0.2</span>
+<span class="co">## [2,] -0.5  1.0  0.2  0.2</span>
+<span class="co">## [3,]  0.2  0.2  1.0 -0.5</span>
+<span class="co">## [4,]  0.2  0.2 -0.5  1.0</span></code></pre>
+<p>The third element of <code>mine_gmatrix</code> output is a matrix
+with elements that specify the effect of each locus value (rows) on the
+first hidden layer (columns). Conceptually, these are the values of the
+Figure 1 arrows mapping the green circles to the first column of blue
+squares.</p>
+<pre><code><span class="co">##              [,1]        [,2]          [,3]        [,4]</span>
+<span class="co">##  [1,] -0.62181158 -0.23246088  1.027398e-01  0.36089789</span>
+<span class="co">##  [2,]  0.11516718  0.35628744  1.932607e-06  0.38293051</span>
+<span class="co">##  [3,] -0.33493318  0.32627944  6.940649e-02 -0.30558144</span>
+<span class="co">##  [4,] -0.07520604 -0.32440111  3.741366e-01  0.24383415</span>
+<span class="co">##  [5,] -0.51259791 -0.06048184 -8.689474e-01  0.60746638</span>
+<span class="co">##  [6,]  0.21803456 -0.38792630  2.014267e-01 -0.42601954</span>
+<span class="co">##  [7,] -0.22419755 -0.84531007  5.902170e-01 -0.10942012</span>
+<span class="co">##  [8,]  0.73822815 -0.30174497  2.573475e-01  0.23633850</span>
+<span class="co">##  [9,] -0.45722066  0.09532205  5.540713e-01 -0.06608855</span>
+<span class="co">## [10,]  0.28739580 -0.12243227 -1.553612e-01 -0.01861052</span>
+<span class="co">## [11,] -0.09843707 -0.18971567  6.172619e-01 -0.17746038</span>
+<span class="co">## [12,]  0.64383533 -0.19503881 -1.054181e-01 -0.37567049</span></code></pre>
+<p>The fourth element of <code>mine_gmatrix</code> output is a three
+dimensional array that specifies the effects between all hidden layers,
+and between the last hidden layer and the trait values (i.e., in Figure
+1, all of the arrows to the right of the first column of blue squares).
+The third dimension of the array below separates the sets arrows between
+hidden layers (i.e., each matrix below corresponds to a map between
+hidden layers, or between the last hidden layer and the traits). Note
+that while Figure 1 includes only three hidden layers, there are six
+below.</p>
+<pre><code><span class="co">## , , 1</span>
+<span class="co">## </span>
+<span class="co">##            [,1]       [,2]       [,3]       [,4]</span>
+<span class="co">## [1,]  0.1876383 -0.7766931  0.2561096 -0.1594451</span>
+<span class="co">## [2,] -0.7218431 -0.1720015  0.1051845 -0.1391646</span>
+<span class="co">## [3,] -0.5724185 -0.6303034 -0.1351206 -0.1521792</span>
+<span class="co">## [4,] -0.1518009 -0.4726420  0.6897870 -0.2687902</span>
+<span class="co">## </span>
+<span class="co">## , , 2</span>
+<span class="co">## </span>
+<span class="co">##             [,1]       [,2]       [,3]       [,4]</span>
+<span class="co">## [1,] -0.89598885 -0.2361661 0.03713508 -0.4339221</span>
+<span class="co">## [2,] -0.03818028  0.1322045 0.52982046 -0.2206081</span>
+<span class="co">## [3,] -0.16489913  0.2119842 0.44171859  0.7881612</span>
+<span class="co">## [4,]  0.35726940 -0.5271966 0.13122182 -0.2990653</span>
+<span class="co">## </span>
+<span class="co">## , , 3</span>
+<span class="co">## </span>
+<span class="co">##             [,1]        [,2]       [,3]       [,4]</span>
+<span class="co">## [1,]  0.41092320  0.28480202 -0.1120791 -0.4511020</span>
+<span class="co">## [2,]  0.19794635  0.70486627 -0.2855835 -0.3474222</span>
+<span class="co">## [3,] -0.84575895 -0.06894474  0.2846113 -0.5004831</span>
+<span class="co">## [4,]  0.08297854  0.31942452  0.8976090  0.4573121</span>
+<span class="co">## </span>
+<span class="co">## , , 4</span>
+<span class="co">## </span>
+<span class="co">##            [,1]      [,2]        [,3]       [,4]</span>
+<span class="co">## [1,]  0.2253143 0.2004491  0.74271147  1.0243443</span>
+<span class="co">## [2,] -0.7223198 0.5598523  0.41619436 -0.1152639</span>
+<span class="co">## [3,] -0.2417876 0.5954666 -0.03304092 -0.4663887</span>
+<span class="co">## [4,]  0.4589945 0.5626436 -0.42824309 -0.3633294</span>
+<span class="co">## </span>
+<span class="co">## , , 5</span>
+<span class="co">## </span>
+<span class="co">##             [,1]       [,2]      [,3]        [,4]</span>
+<span class="co">## [1,]  0.05722936 -0.7678113 0.7009198  0.15491320</span>
+<span class="co">## [2,]  0.08709396 -0.6969477 0.4913277 -0.73493561</span>
+<span class="co">## [3,] -0.70780111  0.7518397 0.4779771  0.41039047</span>
+<span class="co">## [4,] -0.18146366 -0.6877152 0.4546469 -0.01592507</span>
+<span class="co">## </span>
+<span class="co">## , , 6</span>
+<span class="co">## </span>
+<span class="co">##              [,1]       [,2]       [,3]        [,4]</span>
+<span class="co">## [1,] -0.484868322  0.2352634 -0.5067399  0.51615705</span>
+<span class="co">## [2,]  1.272293446 -0.7279591 -0.4885374  1.19602908</span>
+<span class="co">## [3,]  0.653742180 -0.6679193  0.2497727 -0.05637619</span>
+<span class="co">## [4,] -0.008199929  1.2147659  0.9983367  0.26934001</span></code></pre>
+<p>The fifth element of <code>mine_gmatrix</code> is a matrix that shows
+the marginal effect of each locus (rows) on each trait (columns) value.
+Note that this is this is the product of <code>mg_v1[[3]]</code> times
+each layer of <code>mg_v1[[4]]</code> in sequence (i.e.,
+<code>mg_v1[[4]][,,1]</code> times <code>mg_v1[[4]][,,2]</code>, and so
+forth). Conceptually, this matrix isolates the effect of each locus on
+each trait if all other loci are held at a constant value.</p>
+<pre><code><span class="co">##              [,1]         [,2]         [,3]        [,4]</span>
+<span class="co">##  [1,]  0.11355835  0.002908792 -0.122576128  0.24062456</span>
+<span class="co">##  [2,]  0.19860768 -0.560485161 -0.238001247 -0.13433740</span>
+<span class="co">##  [3,]  0.35488346  0.057368027  0.251966132  0.15915978</span>
+<span class="co">##  [4,] -0.01866734 -0.145837880 -0.007194782 -0.16074206</span>
+<span class="co">##  [5,] -0.23320888  0.208434036 -0.643175344  0.63047911</span>
+<span class="co">##  [6,] -0.24710427  0.412170404  0.305025482 -0.13385957</span>
+<span class="co">##  [7,] -0.21817543  0.395054251  0.293741747 -0.11102551</span>
+<span class="co">##  [8,] -0.33650514 -0.312956818 -0.128296727 -0.52754011</span>
+<span class="co">##  [9,]  0.46183511 -0.197388878  0.295203638 -0.03835963</span>
+<span class="co">## [10,] -0.24765628  0.105117973 -0.078117455 -0.06127897</span>
+<span class="co">## [11,]  0.17745685 -0.052061251  0.344817622 -0.22442234</span>
+<span class="co">## [12,] -0.40187122  0.296093799  0.120292139 -0.22079164</span></code></pre>
+<p>The sixth element of <code>mine_gmatrix</code> is a matrix of the
+observed covariance structure of traits given a set of
+<code>indivs</code> individuals with random standard normal values at
+each locus. This matrix can be compared to the pre-specified
+<code>gmatrix</code>. While there will always be small deviations that
+are minimised by the function, it might often be useful to check the
+difference between matrices manually.</p>
+<pre><code><span class="co">##            [,1]       [,2]       [,3]       [,4]</span>
+<span class="co">## [1,]  0.9936103 -0.5106387  0.2324040  0.2367691</span>
+<span class="co">## [2,] -0.5106387  1.0193888  0.2573216  0.2723028</span>
+<span class="co">## [3,]  0.2324040  0.2573216  0.9334559 -0.4480018</span>
+<span class="co">## [4,]  0.2367691  0.2723028 -0.4480018  0.9689539</span></code></pre>
+<p>The seventh element of <code>mine_gmatrix</code> is a vectorisation
+of <code>mg_v1[[3]]</code> and <code>mg_v1[[4]]</code>. That is, a
+vector that includes all of the information needed to map a set of
+allele values to trait values (i.e., values for all arrows shown in
+Figure 1). This vector of network values is inserted into the genome of
+each individual during a simulation, so each individual’s allele values
+can then be mapped to their appropriate trait values. Simulations can
+then be run in which these network values are static, or in which they
+may evolve at any number of paths from layer to layer (i.e., columns of
+arrows in Figure 1).</p>
+<pre><code><span class="co">##   [1] -6.218116e-01 -2.324609e-01  1.027398e-01  3.608979e-01  1.151672e-01</span>
+<span class="co">##   [6]  3.562874e-01  1.932607e-06  3.829305e-01 -3.349332e-01  3.262794e-01</span>
+<span class="co">##  [11]  6.940649e-02 -3.055814e-01 -7.520604e-02 -3.244011e-01  3.741366e-01</span>
+<span class="co">##  [16]  2.438342e-01 -5.125979e-01 -6.048184e-02 -8.689474e-01  6.074664e-01</span>
+<span class="co">##  [21]  2.180346e-01 -3.879263e-01  2.014267e-01 -4.260195e-01 -2.241976e-01</span>
+<span class="co">##  [26] -8.453101e-01  5.902170e-01 -1.094201e-01  7.382282e-01 -3.017450e-01</span>
+<span class="co">##  [31]  2.573475e-01  2.363385e-01 -4.572207e-01  9.532205e-02  5.540713e-01</span>
+<span class="co">##  [36] -6.608855e-02  2.873958e-01 -1.224323e-01 -1.553612e-01 -1.861052e-02</span>
+<span class="co">##  [41] -9.843707e-02 -1.897157e-01  6.172619e-01 -1.774604e-01  6.438353e-01</span>
+<span class="co">##  [46] -1.950388e-01 -1.054181e-01 -3.756705e-01  1.876383e-01 -7.766931e-01</span>
+<span class="co">##  [51]  2.561096e-01 -1.594451e-01 -7.218431e-01 -1.720015e-01  1.051845e-01</span>
+<span class="co">##  [56] -1.391646e-01 -5.724185e-01 -6.303034e-01 -1.351206e-01 -1.521792e-01</span>
+<span class="co">##  [61] -1.518009e-01 -4.726420e-01  6.897870e-01 -2.687902e-01 -8.959888e-01</span>
+<span class="co">##  [66] -2.361661e-01  3.713508e-02 -4.339221e-01 -3.818028e-02  1.322045e-01</span>
+<span class="co">##  [71]  5.298205e-01 -2.206081e-01 -1.648991e-01  2.119842e-01  4.417186e-01</span>
+<span class="co">##  [76]  7.881612e-01  3.572694e-01 -5.271966e-01  1.312218e-01 -2.990653e-01</span>
+<span class="co">##  [81]  4.109232e-01  2.848020e-01 -1.120791e-01 -4.511020e-01  1.979463e-01</span>
+<span class="co">##  [86]  7.048663e-01 -2.855835e-01 -3.474222e-01 -8.457590e-01 -6.894474e-02</span>
+<span class="co">##  [91]  2.846113e-01 -5.004831e-01  8.297854e-02  3.194245e-01  8.976090e-01</span>
+<span class="co">##  [96]  4.573121e-01  2.253143e-01  2.004491e-01  7.427115e-01  1.024344e+00</span>
+<span class="co">## [101] -7.223198e-01  5.598523e-01  4.161944e-01 -1.152639e-01 -2.417876e-01</span>
+<span class="co">## [106]  5.954666e-01 -3.304092e-02 -4.663887e-01  4.589945e-01  5.626436e-01</span>
+<span class="co">## [111] -4.282431e-01 -3.633294e-01  5.722936e-02 -7.678113e-01  7.009198e-01</span>
+<span class="co">## [116]  1.549132e-01  8.709396e-02 -6.969477e-01  4.913277e-01 -7.349356e-01</span>
+<span class="co">## [121] -7.078011e-01  7.518397e-01  4.779771e-01  4.103905e-01 -1.814637e-01</span>
+<span class="co">## [126] -6.877152e-01  4.546469e-01 -1.592507e-02 -4.848683e-01  2.352634e-01</span>
+<span class="co">## [131] -5.067399e-01  5.161570e-01  1.272293e+00 -7.279591e-01 -4.885374e-01</span>
+<span class="co">## [136]  1.196029e+00  6.537422e-01 -6.679193e-01  2.497727e-01 -5.637619e-02</span>
+<span class="co">## [141] -8.199929e-03  1.214766e+00  9.983367e-01  2.693400e-01</span></code></pre>
+<p>The eighth and final element of <code>mine_gmatrix</code> reports the
+stress of the network produced. That is, the logged expected squared
+deviation of each element in the observed covariance matrix from the
+pre-specified covariance matrix (note, small deviations might arise
+between this value and the value obtained from manually comparing
+<code>mg_v1[[2]]</code> and <code>mg_v1[[6]]</code> due to a different
+set of <code>indivs</code> individuals being used to produce
+<code>mg_v1[[6]]</code> and calculate <code>mg_v1[[8]]</code>
+below).</p>
+<pre><code><span class="co">## [1] -6.237817</span></code></pre>
+<p>The output of <code>mine_gmatrix</code> is necessary for initialising
+new individuals in the individual-based model. The individual-based
+model is run using the <code>run_farm_sim</code> function, which is
+explained in the next section.</p>
 </div>
-<div id="the-run_farm_sim-function" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-run_farm_sim-function" class="anchor"></a><a name="run_farm_sim">The <code>run_farm_sim</code> function</a>
-</h1>
-<p>Simulations are run using the <code>run_farm_sim</code> function, which initialises a spatially explicit landscape and individual pests, then simulates the population and evolutionary dynamics of those pests for a specific landscape management regime of crop use and pesticide application. The simulation terminates after a fixed number of time steps have passed, or if the population goes extinct. Because of the way that events occur within the simulation (e.g., demographic processes of individuals, changes in landscape properties), time steps do not have a fixed interpretation (e.g., one growing season or year). Instead, arguments to <code>run_farm_sim</code> must be carefully considered to effectively model the social-ecological system. Similarly, the order of events in the life-cycle of individuals is not inherently fixed, but is instead defined by the minimum and maximum age at which movement, reproduction, and feeding occur for individuals in the population. How this works is presented in more detail with the explanation of time steps in <code>run_farm_sim</code>. We first explain the inputs.</p>
-<div id="inputs-for-run_farm_sim" class="section level2">
-<h2 class="hasAnchor">
-<a href="#inputs-for-run_farm_sim" class="anchor"></a><a name="inputs">Inputs for <code>run_farm_sim</code></a>
+<div class="section level2">
+<h2 id="the-run_farm_sim-function">
+<a name="run_farm_sim">The <code>run_farm_sim</code>
+function</a><a class="anchor" aria-label="anchor" href="#the-run_farm_sim-function"></a>
 </h2>
-<p>The <code>run_farm_sim</code> function takes arguments that specify simulation parameter values and produces simulation output mainly in the form of CSV files printed to the R working directory. Arguments to <code>run_farm_sim</code> are explained in the table below.</p>
+<p>Simulations are run using the <code>run_farm_sim</code> function,
+which initialises a spatially explicit landscape and individual pests,
+then simulates the population and evolutionary dynamics of those pests
+for a specific landscape management regime of crop use and pesticide
+application. The simulation terminates after a fixed number of time
+steps have passed, or if the population goes extinct. Because of the way
+that events occur within the simulation (e.g., demographic processes of
+individuals, changes in landscape properties), time steps do not have a
+fixed interpretation (e.g., one growing season or year). Instead,
+arguments to <code>run_farm_sim</code> must be carefully considered to
+effectively model the social-ecological system. Similarly, the order of
+events in the life-cycle of individuals is not inherently fixed, but is
+instead defined by the minimum and maximum age at which movement,
+reproduction, and feeding occur for individuals in the population. How
+this works is presented in more detail with the explanation of time
+steps in <code>run_farm_sim</code>. We first explain the inputs.</p>
+<div class="section level3">
+<h3 id="inputs-for-run_farm_sim">
+<a name="inputs">Inputs for <code>run_farm_sim</code></a><a class="anchor" aria-label="anchor" href="#inputs-for-run_farm_sim"></a>
+</h3>
+<p>The <code>run_farm_sim</code> function takes arguments that specify
+simulation parameter values and produces simulation output mainly in the
+form of CSV files printed to the R working directory. Arguments to
+<code>run_farm_sim</code> are explained in the table below.</p>
 <table class="table">
 <colgroup>
 <col width="35%">
@@ -375,274 +557,462 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
 <tbody>
 <tr class="odd">
 <td><code>N</code></td>
-<td>The number of individuals that are initialised in a simulation. Individuals are initialised in a random location on the landscape, and at least two individuals are needed.</td>
+<td>The number of individuals that are initialised in a simulation.
+Individuals are initialised in a random location on the landscape, and
+at least two individuals are needed.</td>
 </tr>
 <tr class="even">
 <td><code>xdim</code></td>
-<td>The number of cells in the horizontal dimension of the landscape This value must be an integer greater than two.</td>
+<td>The number of cells in the horizontal dimension of the landscape
+This value must be an integer greater than two.</td>
 </tr>
 <tr class="odd">
 <td><code>ydim</code></td>
-<td>The number of cells in the vertical dimension of the landscape This value must be an integer greater than two.</td>
+<td>The number of cells in the vertical dimension of the landscape This
+value must be an integer greater than two.</td>
 </tr>
 <tr class="even">
 <td><code>repro</code></td>
-<td>The type of reproduction that individuals undergo in the simulation. There are three options: (1) “asexual,” in which individuals reproduce clonally and offspring have haploid genomes and traits identical to their mother with the potential for mutation; (2) “sexual,” in which individuals are monoecious (both female and male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination; (3) “biparental,” in which individuals are dioecious (only female or male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination.</td>
+<td>The type of reproduction that individuals undergo in the simulation.
+There are three options: (1) “asexual”, in which individuals reproduce
+clonally and offspring have haploid genomes and traits identical to
+their mother with the potential for mutation; (2) “sexual”, in which
+individuals are monoecious (both female and male) and offspring have
+diploid genomes with alleles inherited from both parents with mutation
+and recombination; (3) “biparental”, in which individuals are dioecious
+(only female or male) and offspring have diploid genomes with alleles
+inherited from both parents with mutation and recombination.</td>
 </tr>
 <tr class="odd">
 <td><code>neutral_loci</code></td>
-<td>The number of loci that are completely neutral (i.e., have no effect on fitness). These loci can be used to monitor genetic drift or calculate inbreeding coefficients.</td>
+<td>The number of loci that are completely neutral (i.e., have no effect
+on fitness). These loci can be used to monitor genetic drift or
+calculate inbreeding coefficients.</td>
 </tr>
 <tr class="even">
 <td><code>max_age</code></td>
-<td>This is the maximum number of time steps that an individual can survive. Individuals that are older than this age in a time step will always die.</td>
+<td>This is the maximum number of time steps that an individual can
+survive. Individuals that are older than this age in a time step will
+always die.</td>
 </tr>
 <tr class="odd">
 <td><code>min_age_move</code></td>
-<td>This is the minimum age at which an individual can move. Individuals below this age will always remain on their current cell.</td>
+<td>This is the minimum age at which an individual can move. Individuals
+below this age will always remain on their current cell.</td>
 </tr>
 <tr class="even">
 <td><code>min_age_move</code></td>
-<td>This is the maximum age at which an individual can move. Individuals above this age will always remain on their current cell.</td>
+<td>This is the maximum age at which an individual can move. Individuals
+above this age will always remain on their current cell.</td>
 </tr>
 <tr class="odd">
 <td><code>min_age_reproduce</code></td>
-<td>This is the minimum age at which an individual can be reproductively active. No individuals below this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals.</td>
+<td>This is the minimum age at which an individual can be reproductively
+active. No individuals below this age will engage in any reproductive
+activity, nor will they be recognised as potential mates by other
+individuals.</td>
 </tr>
 <tr class="even">
 <td><code>max_age_reproduce</code></td>
-<td>This is the maximum age at which an individual can be reproductively active. No individuals above this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals.</td>
+<td>This is the maximum age at which an individual can be reproductively
+active. No individuals above this age will engage in any reproductive
+activity, nor will they be recognised as potential mates by other
+individuals.</td>
 </tr>
 <tr class="odd">
 <td><code>min_age_feed</code></td>
-<td>This is the minimum age at which an individual can eat. No individuals below this age will be able to consume food on the landscape.</td>
+<td>This is the minimum age at which an individual can eat. No
+individuals below this age will be able to consume food on the
+landscape.</td>
 </tr>
 <tr class="even">
 <td><code>max_age_feed</code></td>
-<td>This is the maximum age at which an individual can eat. No individuals above this age will be able to consume food on the landscape.</td>
+<td>This is the maximum age at which an individual can eat. No
+individuals above this age will be able to consume food on the
+landscape.</td>
 </tr>
 <tr class="odd">
 <td><code>food_consume</code></td>
-<td>This defines how much food an individual will consume from the cell on which it is feeding. Food consumption can take on any positive real value, and an individual will consume up to this amount if possible (if not, they will consume however much food is left within their landscape cell).</td>
+<td>This defines how much food an individual will consume from the cell
+on which it is feeding. Food consumption can take on any positive real
+value, and an individual will consume up to this amount if possible (if
+not, they will consume however much food is left within their landscape
+cell).</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_consume</code></td>
-<td>This defines how much pesticide an individual will consume from the cell on which it resides. Pesticide consumption can take on any positivie real value, and an individual will consume up to this amount if possible (if not, they will consume however much pesticide has been placed on the landscape cell).</td>
+<td>This defines how much pesticide an individual will consume from the
+cell on which it resides. Pesticide consumption can take on any
+positivie real value, and an individual will consume up to this amount
+if possible (if not, they will consume however much pesticide has been
+placed on the landscape cell).</td>
 </tr>
 <tr class="odd">
 <td><code>rand_age</code></td>
-<td>This argument determines whether individuals in the simulation will be initialised with a random age selected uniformly from zero to <code>max_age</code>. If <code>FALSE</code>, then all individuals will be initialised at age zero.</td>
+<td>This argument determines whether individuals in the simulation will
+be initialised with a random age selected uniformly from zero to
+<code>max_age</code>. If <code>FALSE</code>, then all individuals will
+be initialised at age zero.</td>
 </tr>
 <tr class="even">
 <td><code>move_distance</code></td>
-<td>This is the maximum number of cells that an individual can move, in any direction, on the landscape during one bout of movement.</td>
+<td>This is the maximum number of cells that an individual can move, in
+any direction, on the landscape during one bout of movement.</td>
 </tr>
 <tr class="odd">
 <td><code>food_needed_surv</code></td>
-<td>This is the amount of food that an individual needs to consume to survive. If the individual has not consumed this amount of food before the age of <code>age_food_threshold</code>, then they will die in the time step.</td>
+<td>This is the amount of food that an individual needs to consume to
+survive. If the individual has not consumed this amount of food before
+the age of <code>age_food_threshold</code>, then they will die in the
+time step.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_tolerated_surv</code></td>
-<td>This is the amount of pesticide that an individual can tolerate and still survive. If the individual has consumed more than this amount of pesticide on or after the age of <code>age_pesticide_threshold</code>, then they will die in the time step.</td>
+<td>This is the amount of pesticide that an individual can tolerate and
+still survive. If the individual has consumed more than this amount of
+pesticide on or after the age of <code>age_pesticide_threshold</code>,
+then they will die in the time step.</td>
 </tr>
 <tr class="odd">
 <td><code>food_needed_repr</code></td>
-<td>This is the amount of food that an individual needs to produce one offspring. The total number of offspring that an individual produces in a time step is the floor value of their food consumption divided by this value.</td>
+<td>This is the amount of food that an individual needs to produce one
+offspring. The total number of offspring that an individual produces in
+a time step is the floor value of their food consumption divided by this
+value.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_tolerated_repr</code></td>
-<td>This is the amount of pesticide tolerated below which an individual can reproduce. Note that individuals above the threshold can still mate and sire offspring,</td>
+<td>This is the amount of pesticide tolerated below which an individual
+can reproduce. Note that individuals above the threshold can still mate
+and sire offspring,</td>
 </tr>
 <tr class="odd">
 <td><code>reproduction_type</code></td>
-<td>This determines how individuals reproduce; the two options are “lambda” and “food_based.” If “lambda,” then the number of offspring an individual produces is sampled from a Poisson distribution with a fixed rate parameter <code>lambda_value</code> (potentially adjusted by other factors in the simulation). If “food_based,” then the number of offspring produced is based on the amount of food consumed by the individual.</td>
+<td>This determines how individuals reproduce; the two options are
+“lambda” and “food_based”. If “lambda”, then the number of offspring an
+individual produces is sampled from a Poisson distribution with a fixed
+rate parameter <code>lambda_value</code> (potentially adjusted by other
+factors in the simulation). If “food_based”, then the number of
+offspring produced is based on the amount of food consumed by the
+individual.</td>
 </tr>
 <tr class="even">
 <td><code>mating_distance</code></td>
-<td>This is the distance in cells (any direction) away from a focal individual from which they can successfully find and identify a mate (e.g., if 0, then only individuals on the same cell are potential mates).</td>
+<td>This is the distance in cells (any direction) away from a focal
+individual from which they can successfully find and identify a mate
+(e.g., if 0, then only individuals on the same cell are potential
+mates).</td>
 </tr>
 <tr class="odd">
 <td><code>lambda_value</code></td>
-<td>This is the rate parameter for the Poisson sampling of offspring number; it only applies when <code>reproduction_type</code> is set to “lambda.”</td>
+<td>This is the rate parameter for the Poisson sampling of offspring
+number; it only applies when <code>reproduction_type</code> is set to
+“lambda”.</td>
 </tr>
 <tr class="even">
 <td><code>movement_bouts</code></td>
-<td>This is the number of times an individual can move in a single time step (i.e., the number of cells that it can potentially visit). Each time an individual visits a new cell, it can potentially feed or consume pesticide.</td>
+<td>This is the number of times an individual can move in a single time
+step (i.e., the number of cells that it can potentially visit). Each
+time an individual visits a new cell, it can potentially feed or consume
+pesticide.</td>
 </tr>
 <tr class="odd">
 <td><code>selfing</code></td>
-<td>This determines whether or not self-fertilisation is allowed when <code>repro</code> is set to ‘sexual.’</td>
+<td>This determines whether or not self-fertilisation is allowed when
+<code>repro</code> is set to ‘sexual’.</td>
 </tr>
 <tr class="even">
 <td><code>feed_while_moving</code></td>
-<td>If <code>TRUE</code>, then individuals will feed in each movement bout when they arrive to a new landscape cell.</td>
+<td>If <code>TRUE</code>, then individuals will feed in each movement
+bout when they arrive to a new landscape cell.</td>
 </tr>
 <tr class="odd">
 <td><code>pesticide_while_moving</code></td>
-<td>If <code>TRUE</code>, then individuals will consume pesticide in each movement bout when they arrive to a new landscape cell.</td>
+<td>If <code>TRUE</code>, then individuals will consume pesticide in
+each movement bout when they arrive to a new landscape cell.</td>
 </tr>
 <tr class="even">
 <td><code>mortality_type</code></td>
-<td>This determines how mortality is enacted in the simulation. Currently there is only one mortality type possible; mortality occurs if individuals exceed their maximum age, do not consume enough food, or consume too much pesticide.</td>
+<td>This determines how mortality is enacted in the simulation.
+Currently there is only one mortality type possible; mortality occurs if
+individuals exceed their maximum age, do not consume enough food, or
+consume too much pesticide.</td>
 </tr>
 <tr class="odd">
 <td><code>age_food_threshold</code></td>
-<td>This is the age at which mortality associated with feeding is enacted, so an individual younger than this age will not die if they have not yet consumed sufficient food to satisfy <code>food_needed_surv</code>.</td>
+<td>This is the age at which mortality associated with feeding is
+enacted, so an individual younger than this age will not die if they
+have not yet consumed sufficient food to satisfy
+<code>food_needed_surv</code>.</td>
 </tr>
 <tr class="even">
 <td><code>age_pesticide_threshold</code></td>
-<td>This is the age at which mortality associated with pesticide consumption is enacted, so an individual younger than this age will not die even if they have exceeded their pesticide threshold.</td>
+<td>This is the age at which mortality associated with pesticide
+consumption is enacted, so an individual younger than this age will not
+die even if they have exceeded their pesticide threshold.</td>
 </tr>
 <tr class="odd">
 <td><code>farms</code></td>
-<td>This is the number of farms to be placed on the landscape. Farms are placed in blocks of roughly equal sizes using a shortest splitline algorithm. Farms operate independently in terms of what crops they grow and pesticides they apply.</td>
+<td>This is the number of farms to be placed on the landscape. Farms are
+placed in blocks of roughly equal sizes using a shortest splitline
+algorithm. Farms operate independently in terms of what crops they grow
+and pesticides they apply.</td>
 </tr>
 <tr class="even">
 <td><code>time_steps</code></td>
-<td>This is the number of time steps that a simulation will run. Simulations will be terminated before this number if extinction occurs.</td>
+<td>This is the number of time steps that a simulation will run.
+Simulations will be terminated before this number if extinction
+occurs.</td>
 </tr>
 <tr class="odd">
 <td><code>mutation_pr</code></td>
-<td>This is the probability of mutation occurring at any locus of a newly produced offspring.</td>
+<td>This is the probability of mutation occurring at any locus of a
+newly produced offspring.</td>
 </tr>
 <tr class="even">
 <td><code>crossover_pr</code></td>
-<td>This is the probability of crossover between two homologous loci. This only applies for diploid genomes.</td>
+<td>This is the probability of crossover between two homologous loci.
+This only applies for diploid genomes.</td>
 </tr>
 <tr class="odd">
 <td><code>mutation_type</code></td>
-<td>This determines how mutation is modelled. If 0, then a completely new allele value is drawn from a normal distribution with a mean of <code>mutation_direction</code> and a standard deviation of 1 (or 1 / sqrt(2) for diploids, so that the expected standard devation of the sum of both allele values is 1). If 1, then a new value is drawn from a normal distribution with mean <code>mutation_direction</code> and standard deviation of 1, and this new value is then added to the existing allele value.</td>
+<td>This determines how mutation is modelled. If 0, then a completely
+new allele value is drawn from a normal distribution with a mean of
+<code>mutation_direction</code> and a standard deviation of 1 (or 1 /
+sqrt(2) for diploids, so that the expected standard devation of the sum
+of both allele values is 1). If 1, then a new value is drawn from a
+normal distribution with mean <code>mutation_direction</code> and
+standard deviation of 1, and this new value is then added to the
+existing allele value.</td>
 </tr>
 <tr class="even">
 <td><code>net_mu_layers</code></td>
-<td>This is the proportion of the genome that can evolve. If 0, then only loci values (green circles in Figure 1) can mutate. If 1, then loci and the first column of arrows (green circles to first column of blue squares in Figure 1) can mutate. If 2, then the first two columns of arrows in Figure 1 can mutate, and so forth. Fewer mutation layers will constrain the covariance among traits, while more mutation layers will allow the covariance structure to evolve more readily.</td>
+<td>This is the proportion of the genome that can evolve. If 0, then
+only loci values (green circles in Figure 1) can mutate. If 1, then loci
+and the first column of arrows (green circles to first column of blue
+squares in Figure 1) can mutate. If 2, then the first two columns of
+arrows in Figure 1 can mutate, and so forth. Fewer mutation layers will
+constrain the covariance among traits, while more mutation layers will
+allow the covariance structure to evolve more readily.</td>
 </tr>
 <tr class="odd">
 <td><code>net_mu_dir</code></td>
-<td>The direction along the network in which <code>net_mu_layers</code> applies (not loci, green circles in Figure 1, can always mutate). If 1, then <code>net_mu_layers</code> applies in the direction from loci to traits. If 0, then the direction applies from traits to loci (i.e., <code>net_mu_dir = 0</code> and <code>net_mu_layers = 1</code> would mean that only the arrow values between the last hidden layer and traits in Figure 1 could mutate).</td>
+<td>The direction along the network in which <code>net_mu_layers</code>
+applies (not loci, green circles in Figure 1, can always mutate). If 1,
+then <code>net_mu_layers</code> applies in the direction from loci to
+traits. If 0, then the direction applies from traits to loci (i.e.,
+<code>net_mu_dir = 0</code> and <code>net_mu_layers = 1</code> would
+mean that only the arrow values between the last hidden layer and traits
+in Figure 1 could mutate).</td>
 </tr>
 <tr class="even">
 <td><code>mutation_direction</code></td>
-<td>This allows mutations to be biased in one direction. A default value of 0 makes positive or negative allele values equally likely.</td>
+<td>This allows mutations to be biased in one direction. A default value
+of 0 makes positive or negative allele values equally likely.</td>
 </tr>
 <tr class="odd">
 <td><code>crop_rotation_type</code></td>
-<td>This determines how crop types are rotated across the landscape. A value of 1 means that crops will never rotate, while a value of 2 means that a new crop type will be randomly chosen every <code>crop_rotation_time</code> time steps.</td>
+<td>This determines how crop types are rotated across the landscape. A
+value of 1 means that crops will never rotate, while a value of 2 means
+that a new crop type will be randomly chosen every
+<code>crop_rotation_time</code> time steps.</td>
 </tr>
 <tr class="even">
 <td><code>crop_rotation_time</code></td>
-<td>This determines how many time steps a crop is left before being refreshed and potentially changed. Note that even if the crop type does not change, this value still has the effect of determining how often crops are replenished (if some have been eaten since the last time they were replenished).</td>
+<td>This determines how many time steps a crop is left before being
+refreshed and potentially changed. Note that even if the crop type does
+not change, this value still has the effect of determining how often
+crops are replenished (if some have been eaten since the last time they
+were replenished).</td>
 </tr>
 <tr class="odd">
 <td><code>pesticide_rotation_type</code></td>
-<td>This determines how pesticide types are rotated across the landscape. A value of 1 means that pesticides never rotate, while a value of 2 means that a new pesticide type will randomly chosen every <code>pesticide_rotation_time</code> time steps.</td>
+<td>This determines how pesticide types are rotated across the
+landscape. A value of 1 means that pesticides never rotate, while a
+value of 2 means that a new pesticide type will randomly chosen every
+<code>pesticide_rotation_time</code> time steps.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_rotation_time</code></td>
-<td>This determines how many time steps a pesticide is left before being replenished and potentially changed. Note that unlike crops, pesticide levels do not decrease on the landscape over time (e.g., with consumption).</td>
+<td>This determines how many time steps a pesticide is left before being
+replenished and potentially changed. Note that unlike crops, pesticide
+levels do not decrease on the landscape over time (e.g., with
+consumption).</td>
 </tr>
 <tr class="odd">
 <td><code>crop_per_cell</code></td>
-<td>This determines the expected amount of crop that is placed on a single landscape cell. The more crop on a cell, the more that can be potentially consumed by individuals.</td>
+<td>This determines the expected amount of crop that is placed on a
+single landscape cell. The more crop on a cell, the more that can be
+potentially consumed by individuals.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_per_cell</code></td>
-<td>This determines how much pesticide is placed on a single landscape cell. The higher concentration of pesticide per cell, the more that individuals on the cell will imbibe and potentially be affected by.</td>
+<td>This determines how much pesticide is placed on a single landscape
+cell. The higher concentration of pesticide per cell, the more that
+individuals on the cell will imbibe and potentially be affected by.</td>
 </tr>
 <tr class="odd">
 <td><code>crop_sd</code></td>
-<td>This is the standard deviation of crop number placed on landscape cells. A default value of 0 assumes that all cells have the same amount of crop.</td>
+<td>This is the standard deviation of crop number placed on landscape
+cells. A default value of 0 assumes that all cells have the same amount
+of crop.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_sd</code></td>
-<td>This is the standard deviation of pesticide applied to each landscape cell. A default value of 0 assumes that each cell has the same concentration of pesticide applied.</td>
+<td>This is the standard deviation of pesticide applied to each
+landscape cell. A default value of 0 assumes that each cell has the same
+concentration of pesticide applied.</td>
 </tr>
 <tr class="odd">
 <td><code>crop_min</code></td>
-<td>This is the minimum amount of crop that is possible to have on a single cell (i.e., crop values will never be initialised to be lower than this value).</td>
+<td>This is the minimum amount of crop that is possible to have on a
+single cell (i.e., crop values will never be initialised to be lower
+than this value).</td>
 </tr>
 <tr class="even">
 <td><code>crop_max</code></td>
-<td>This is the maximum amount of crop that is possible to have on a single cell (i.e., crop values will never be initialised to be higher than this value).</td>
+<td>This is the maximum amount of crop that is possible to have on a
+single cell (i.e., crop values will never be initialised to be higher
+than this value).</td>
 </tr>
 <tr class="odd">
 <td><code>pesticide_min</code></td>
-<td>This is the minimum concentration of pesticide that is possible to have on a single cell (i.e., pesticide values will never be initialised to be lower than this value).</td>
+<td>This is the minimum concentration of pesticide that is possible to
+have on a single cell (i.e., pesticide values will never be initialised
+to be lower than this value).</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_max</code></td>
-<td>This is the maximum concentration of pesticide that is possible to have on a single cell (i.e., pesticide values will never be initialised to be higher than this value).</td>
+<td>This is the maximum concentration of pesticide that is possible to
+have on a single cell (i.e., pesticide values will never be initialised
+to be higher than this value).</td>
 </tr>
 <tr class="odd">
 <td><code>crop_number</code></td>
-<td>This is the number of unique crops that can exist on the landscape during the course of a simulation. The maximum number of possible crops is 10.</td>
+<td>This is the number of unique crops that can exist on the landscape
+during the course of a simulation. The maximum number of possible crops
+is 10.</td>
 </tr>
 <tr class="even">
 <td><code>pesticide_number</code></td>
-<td>This is the number of unique pesticides that can exist on the landscape during the course of a simulation. The maximum number of possible pesticides is 10.</td>
+<td>This is the number of unique pesticides that can exist on the
+landscape during the course of a simulation. The maximum number of
+possible pesticides is 10.</td>
 </tr>
 <tr class="odd">
 <td><code>print_inds</code></td>
-<td>If <code>TRUE</code>, a CSV file will print in the working directory with every individual and all of their characteristics (i.e., locations, traits, genomes) in every time step. By default, this is set to <code>FALSE</code> and should only be set to <code>TRUE</code> with <strong>extreme caution</strong>, as large populations persisting over long periods of time can produce extremely large CSV files.</td>
+<td>If <code>TRUE</code>, a CSV file will print in the working directory
+with every individual and all of their characteristics (i.e., locations,
+traits, genomes) in every time step. By default, this is set to
+<code>FALSE</code> and should only be set to <code>TRUE</code> with
+<strong>extreme caution</strong>, as large populations persisting over
+long periods of time can produce extremely large CSV files.</td>
 </tr>
 <tr class="even">
 <td><code>print_gens</code></td>
-<td>If <code>TRUE</code>, the time step and the population size will be printed to the R console as the simulation is running.</td>
+<td>If <code>TRUE</code>, the time step and the population size will be
+printed to the R console as the simulation is running.</td>
 </tr>
 <tr class="odd">
 <td><code>print_last</code></td>
-<td>If <code>TRUE</code>, a CSV file will print in the working directory with every individual and all of their characteristics (i.e., locations, traits, genomes) in only the last time step. Note that for large populations, the file size generated can be very large (10s to 100s of GBs).</td>
+<td>If <code>TRUE</code>, a CSV file will print in the working directory
+with every individual and all of their characteristics (i.e., locations,
+traits, genomes) in only the last time step. Note that for large
+populations, the file size generated can be very large (10s to 100s of
+GBs).</td>
 </tr>
 <tr class="even">
 <td><code>K_on_birth</code></td>
-<td>This is a carrying capacity applied to new individuals across the entire landscape. If the total number of offspring in a time step exceeds this value, then offspring are removed at random until the total number of new offspring equals <code>K_on_birth</code>. In practice, this can help speed up simulations by avoiding the unnecessary production of individuals when most will perish.</td>
+<td>This is a carrying capacity applied to new individuals across the
+entire landscape. If the total number of offspring in a time step
+exceeds this value, then offspring are removed at random until the total
+number of new offspring equals <code>K_on_birth</code>. In practice,
+this can help speed up simulations by avoiding the unnecessary
+production of individuals when most will perish.</td>
 </tr>
 <tr class="odd">
 <td><code>pesticide_start</code></td>
-<td>This is the time step at which pesticide begins to be applied. No pesticide will be applied prior to this start time, so individuals will not experience any effects of pesticide. This can be useful as a tool to burn in the population prior to introducing pesticide.</td>
+<td>This is the time step at which pesticide begins to be applied. No
+pesticide will be applied prior to this start time, so individuals will
+not experience any effects of pesticide. This can be useful as a tool to
+burn in the population prior to introducing pesticide.</td>
 </tr>
 <tr class="even">
 <td><code>immigration_rate</code></td>
-<td>This is the number of immigrant individuals arriving in the landscape in each time step. Immigrants are initialised in random locations with the same network structure (Figure 1) as individuals initialised at the start of the simulation, and with allele values randomly drawn from a standard normal distribution.</td>
+<td>This is the number of immigrant individuals arriving in the
+landscape in each time step. Immigrants are initialised in random
+locations with the same network structure (Figure 1) as individuals
+initialised at the start of the simulation, and with allele values
+randomly drawn from a standard normal distribution.</td>
 </tr>
 <tr class="odd">
 <td><code>get_f_coef</code></td>
-<td>This determines whether or not inbreeding coefficients will be calculated for sexual populations and printed off in CSV files. Because this can add some computation time, it is best to set to <code>FALSE</code> unless it is needed.</td>
+<td>This determines whether or not inbreeding coefficients will be
+calculated for sexual populations and printed off in CSV files. Because
+this can add some computation time, it is best to set to
+<code>FALSE</code> unless it is needed.</td>
 </tr>
 <tr class="even">
 <td><code>get_stats</code></td>
-<td>If <code>TRUE</code>, a CSV file will print in the working directory with summary statistics for each time step. This is set to <code>TRUE</code> by default.</td>
+<td>If <code>TRUE</code>, a CSV file will print in the working directory
+with summary statistics for each time step. This is set to
+<code>TRUE</code> by default.</td>
 </tr>
 <tr class="odd">
 <td><code>metabolism</code></td>
-<td>This determines the rate at which food consumed in previous time steps is lost in subsequent time steps, which can be especially relevant if food consumed determines survival or reproductive output. Values of 0 mean that stored gains will always persist throughout an individual’s lifetime, while very high values will model the gains of one time step being wiped out in subsequent time steps (if, e.g., the objective is to model individuals needing to consume food successfully in each time step to survive or reproduce, as opposed to having a feeding life history stage followed by a mating and reproduction stage).</td>
+<td>This determines the rate at which food consumed in previous time
+steps is lost in subsequent time steps, which can be especially relevant
+if food consumed determines survival or reproductive output. Values of 0
+mean that stored gains will always persist throughout an individual’s
+lifetime, while very high values will model the gains of one time step
+being wiped out in subsequent time steps (if, e.g., the objective is to
+model individuals needing to consume food successfully in each time step
+to survive or reproduce, as opposed to having a feeding life history
+stage followed by a mating and reproduction stage).</td>
 </tr>
 <tr class="even">
 <td><code>baseline_metabolism</code></td>
-<td>This fixes a baseline metabolic rate at which food consumed in previous time steps is lost in subsequent steps. This fixed value is always added to <code>metabolism</code> for each individual. By default, this value is 0.</td>
+<td>This fixes a baseline metabolic rate at which food consumed in
+previous time steps is lost in subsequent steps. This fixed value is
+always added to <code>metabolism</code> for each individual. By default,
+this value is 0.</td>
 </tr>
 <tr class="odd">
 <td><code>min_age_metabolism</code></td>
-<td>This determines the minimum age at which losses of food consumed in previous time steps enacted by <code>metabolism</code> and <code>baseline_metabolsim</code> can occur.</td>
+<td>This determines the minimum age at which losses of food consumed in
+previous time steps enacted by <code>metabolism</code> and
+<code>baseline_metabolsim</code> can occur.</td>
 </tr>
 <tr class="even">
 <td><code>max_age_metabolism</code></td>
-<td>This determines the maximum age at which losses of food consumed in previous time steps enacted by <code>metabolism</code> and <code>baseline_metabolsim</code> can occur.</td>
+<td>This determines the maximum age at which losses of food consumed in
+previous time steps enacted by <code>metabolism</code> and
+<code>baseline_metabolsim</code> can occur.</td>
 </tr>
 </tbody>
 </table>
-<p>This large list of potential inputs can make setting up simulations challenging, but the options are intended to give a high degree of flexibility in the type of biological system being modelled.</p>
+<p>This large list of potential inputs can make setting up simulations
+challenging, but the options are intended to give a high degree of
+flexibility in the type of biological system being modelled.</p>
 </div>
-<div id="example-uses-of-run_farm_sim" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-uses-of-run_farm_sim" class="anchor"></a><a name="example">Example uses of <code>run_farm_sim</code></a>
-</h2>
-<p>To model a species with non-overlapping generations that moves around the landscape and has a reproductive success that is determined by their food consumption, parameters could be set with a <code>max_age</code> of one, high <code>movement_bouts</code>, and no age related threshold of feeding, reproducing, or pesticide consumption. Below shows a hypothetical set of parameter combinations that might fulfil this criteria (note that maximum age thresholds for feeding, reproducing, or pesticide consumption are 9 by default).</p>
+<div class="section level3">
+<h3 id="example-uses-of-run_farm_sim">
+<a name="example">Example uses of
+<code>run_farm_sim</code></a><a class="anchor" aria-label="anchor" href="#example-uses-of-run_farm_sim"></a>
+</h3>
+<p>To model a species with non-overlapping generations that moves around
+the landscape and has a reproductive success that is determined by their
+food consumption, parameters could be set with a <code>max_age</code> of
+one, high <code>movement_bouts</code>, and no age related threshold of
+feeding, reproducing, or pesticide consumption. Below shows a
+hypothetical set of parameter combinations that might fulfil this
+criteria (note that maximum age thresholds for feeding, reproducing, or
+pesticide consumption are 9 by default).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg_v1</span>, N <span class="op">=</span> <span class="fl">1000</span>, neutral_loci  <span class="op">=</span> <span class="fl">1000</span>, 
                     xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>, repro <span class="op">=</span> <span class="st">"sexual"</span>, max_age <span class="op">=</span> <span class="fl">1</span>,
-                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,
-                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>,
+                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,
+                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>,
                     food_needed_repr <span class="op">=</span> <span class="fl">2</span>, reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>,
                     pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_rotation_type <span class="op">=</span> <span class="fl">2</span>,
                     crop_rotation_type <span class="op">=</span> <span class="fl">2</span>, min_age_reproduce <span class="op">=</span> <span class="fl">0</span>,
@@ -657,12 +1027,19 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
                     mating_distance <span class="op">=</span> <span class="fl">2</span>, immigration_rate <span class="op">=</span> <span class="fl">0</span>, metabolism <span class="op">=</span> <span class="fl">0</span>,
                     baseline_metabolism <span class="op">=</span> <span class="fl">0</span>, movement_bouts <span class="op">=</span> <span class="fl">4</span>,
                     feed_while_moving <span class="op">=</span> <span class="cn">TRUE</span>, pesticide_while_moving <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>;</code></pre></div>
-<p>To model a similar system with overlapping generations, parameters could be set with <code>max_age &gt; 1</code> and a very high <code>baseline_metabolism</code> (i.e., high enough so that food consumption gains can only apply to the current time step), and otherwise identical parameters. The function above has been modified slightly to fulfil this criteria by increasing <code>max_age</code> to 4 and setting <code>baseline_metabolism = 10000</code>, but otherwise keeping the same arguments.</p>
+<p>To model a similar system with overlapping generations, parameters
+could be set with <code>max_age &gt; 1</code> and a very high
+<code>baseline_metabolism</code> (i.e., high enough so that food
+consumption gains can only apply to the current time step), and
+otherwise identical parameters. The function above has been modified
+slightly to fulfil this criteria by increasing <code>max_age</code> to 4
+and setting <code>baseline_metabolism = 10000</code>, but otherwise
+keeping the same arguments.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg_v1</span>, N <span class="op">=</span> <span class="fl">1000</span>, neutral_loci  <span class="op">=</span> <span class="fl">1000</span>, 
                     xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>, repro <span class="op">=</span> <span class="st">"sexual"</span>, max_age <span class="op">=</span> <span class="fl">4</span>,
-                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,
-                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>,
+                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,
+                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>,
                     food_needed_repr <span class="op">=</span> <span class="fl">2</span>, reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>,
                     pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_rotation_type <span class="op">=</span> <span class="fl">2</span>,
                     crop_rotation_type <span class="op">=</span> <span class="fl">2</span>, min_age_reproduce <span class="op">=</span> <span class="fl">0</span>,
@@ -677,12 +1054,20 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
                     mating_distance <span class="op">=</span> <span class="fl">2</span>, immigration_rate <span class="op">=</span> <span class="fl">0</span>, metabolism <span class="op">=</span> <span class="fl">0</span>,
                     baseline_metabolism <span class="op">=</span> <span class="fl">10000</span>, movement_bouts <span class="op">=</span> <span class="fl">4</span>,
                     feed_while_moving <span class="op">=</span> <span class="cn">TRUE</span>, pesticide_while_moving <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>;</code></pre></div>
-<p>To model a system in which individuals develop in a sedentary life history stage that persists until a final stage of movement and reproduction (e.g., an insect with a larval and pupal stage), parameters could be set with min and max ages of feeding and pesticide consumption from 0 to 3, with min and max ages of movement and reproduction set at 4, <code>max_age = 4</code>, and <code>baseline_metabolism = 0</code>. Hence, food or pesticide consumption accrued in early life history stages would affect reproductive output in a later life history stage.</p>
+<p>To model a system in which individuals develop in a sedentary life
+history stage that persists until a final stage of movement and
+reproduction (e.g., an insect with a larval and pupal stage), parameters
+could be set with min and max ages of feeding and pesticide consumption
+from 0 to 3, with min and max ages of movement and reproduction set at
+4, <code>max_age = 4</code>, and <code>baseline_metabolism = 0</code>.
+Hence, food or pesticide consumption accrued in early life history
+stages would affect reproductive output in a later life history
+stage.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg_v1</span>, N <span class="op">=</span> <span class="fl">1000</span>, neutral_loci <span class="op">=</span> <span class="fl">1000</span>, 
                     xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>, repro <span class="op">=</span> <span class="st">"asexual"</span>, max_age <span class="op">=</span> <span class="fl">4</span>, 
-                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, 
-                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>, 
+                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, 
+                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, food_needed_surv <span class="op">=</span> <span class="fl">1</span>, 
                     food_needed_repr <span class="op">=</span> <span class="fl">1</span>, reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>, 
                     pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_rotation_type  <span class="op">=</span> <span class="fl">2</span>,
                     crop_rotation_type <span class="op">=</span> <span class="fl">2</span>, min_age_reproduce <span class="op">=</span> <span class="fl">4</span>,
@@ -694,14 +1079,44 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
                     age_food_threshold <span class="op">=</span> <span class="fl">3</span>, min_age_feed <span class="op">=</span> <span class="fl">1</span>, 
                     pesticide_start <span class="op">=</span> <span class="fl">100</span>, print_last <span class="op">=</span> <span class="cn">TRUE</span>, 
                     mating_distance <span class="op">=</span> <span class="fl">2</span>, metabolism <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>;</code></pre></div>
-<p>It might often be useful to think of <code>crop_rotation_time</code> and <code>pesticide_rotation_time</code> as defining the length of a season, with minimum and maximum ages for individuals defining the relative length of their life history processes. It is important to emphasise that crops are not replenished in each time step, so if, e.g., half of the food on a cell is eaten in a time step, then the amount of food will not be replenished until the next rotation occurs regardless of whether or not the crop type will change. Note that non-crop and pesticide free land can be created by creating more crops or pesticides than can be consumed (e.g., in the above simulation, by setting <code>crop_number = 3</code> and <code>pesticide_number = 3</code>, areas of the landscape would be generated with effectively no crops or pesticides because the default <code>food_consume</code> and <code>pesticide_consume</code> for the third crop and pesticide would be zero).</p>
+<p>It might often be useful to think of <code>crop_rotation_time</code>
+and <code>pesticide_rotation_time</code> as defining the length of a
+season, with minimum and maximum ages for individuals defining the
+relative length of their life history processes. It is important to
+emphasise that crops are not replenished in each time step, so if, e.g.,
+half of the food on a cell is eaten in a time step, then the amount of
+food will not be replenished until the next rotation occurs regardless
+of whether or not the crop type will change. Note that non-crop and
+pesticide free land can be created by creating more crops or pesticides
+than can be consumed (e.g., in the above simulation, by setting
+<code>crop_number = 3</code> and <code>pesticide_number = 3</code>,
+areas of the landscape would be generated with effectively no crops or
+pesticides because the default <code>food_consume</code> and
+<code>pesticide_consume</code> for the third crop and pesticide would be
+zero).</p>
 </div>
-<div id="output-of-run_farm_sim" class="section level2">
-<h2 class="hasAnchor">
-<a href="#output-of-run_farm_sim" class="anchor"></a><a name="output">Output of <code>run_farm_sim</code></a>
-</h2>
-<p>The output of <code>run_farm_sim</code> to the console is a list of two elements. The first element is just a list of parameter values run in the model, and the second element is a three dimensional array of the landscape. The most useful output will be some combination of three CSV files printed off when the simulation is run. The first file is ‘population_data.csv,’ which will provide a large table of population level statistics for each time step in the simulation. This is the smallest and often most useful file. Column names in the file provide information about the data.</p>
-<p>The second file is ‘last_time_step.csv,’ which will provide a very large able that includes the characteristics (columns) of all individuals (rows) in the last time step of the simulation. This file can be used to make inferences about individual-level variation in the population (e.g., spatial distribution of individuals, correlations between traits and fitness). The number of columns will vary based on simulation parameters, and column names are not currently printed. Nevertheless, a few relevant column numbers are consistent in the information that they provide about an individual:</p>
+<div class="section level3">
+<h3 id="output-of-run_farm_sim">
+<a name="output">Output of <code>run_farm_sim</code></a><a class="anchor" aria-label="anchor" href="#output-of-run_farm_sim"></a>
+</h3>
+<p>The output of <code>run_farm_sim</code> to the console is a list of
+two elements. The first element is just a list of parameter values run
+in the model, and the second element is a three dimensional array of the
+landscape. The most useful output will be some combination of three CSV
+files printed off when the simulation is run. The first file is
+‘population_data.csv’, which will provide a large table of population
+level statistics for each time step in the simulation. This is the
+smallest and often most useful file. Column names in the file provide
+information about the data.</p>
+<p>The second file is ‘last_time_step.csv’, which will provide a very
+large able that includes the characteristics (columns) of all
+individuals (rows) in the last time step of the simulation. This file
+can be used to make inferences about individual-level variation in the
+population (e.g., spatial distribution of individuals, correlations
+between traits and fitness). The number of columns will vary based on
+simulation parameters, and column names are not currently printed.
+Nevertheless, a few relevant column numbers are consistent in the
+information that they provide about an individual:</p>
 <ul>
 <li>Col 1. Time step</li>
 <li>Col 2. Individual ID</li>
@@ -715,19 +1130,51 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
 <li>Col 12. Offspring produced</li>
 <li>Col 102. Start of trait values</li>
 </ul>
-<p>The trait value columns continue for as many traits as are specified by the <code>mine_gmatrix</code> output (<code>mine_output</code> argument in <code>run_farm_sim</code>). This ‘last_time_step.csv’ should be printed out with some care; since the entire genomes of each individual are included, large populations can produce very large file sizes.</p>
-<p>The third file is ‘individuals.csv,’ which will provide an extremely large table with every individual in the simulation and all of their characteristics (i.e., the same contents as are in ‘last_time_step.csv,’ but for all time steps). This file should not be made unless a trial simulation has been run with a small number of time steps first to ensure that the CSV file will not become too large to store.</p>
+<p>The trait value columns continue for as many traits as are specified
+by the <code>mine_gmatrix</code> output (<code>mine_output</code>
+argument in <code>run_farm_sim</code>). This ‘last_time_step.csv’ should
+be printed out with some care; since the entire genomes of each
+individual are included, large populations can produce very large file
+sizes.</p>
+<p>The third file is ‘individuals.csv’, which will provide an extremely
+large table with every individual in the simulation and all of their
+characteristics (i.e., the same contents as are in ‘last_time_step.csv’,
+but for all time steps). This file should not be made unless a trial
+simulation has been run with a small number of time steps first to
+ensure that the CSV file will not become too large to store.</p>
 </div>
-<div id="use-of-evolving-traits-in-run_farm_sim" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use-of-evolving-traits-in-run_farm_sim" class="anchor"></a><a name="traits">Use of evolving traits in <code>run_farm_sim</code></a>
-</h2>
-<p>In all of the <a href="#example">examples used</a> above, values were hard coded into the <code>run_farm_sim</code> function, so the four traits mined in <code>mg_v1</code> were not actually used. The resevol package allows evolving traits to be substituted for the following individual characteristics set in the arguments of <code>run_farm_sim</code>: <code>move_distance</code>, <code>food_needed_surv</code>, <code>pesticide_tolerated_surv</code>, <code>food_needed_repr</code>, <code>pesticide_tolerated_repr</code>, <code>mating_distance</code>, <code>lambda_value</code>, <code>movement_bouts</code>, <code>metabolism</code>, <code>food_consume</code> (up to 10 elements), and <code>pesticide_consume</code> (up to 10 elements). When a trait is substituted for the argument, an individual’s value for the argument is determined by the trait (e.g., the food needed to survive can be determined by a trait unique to each individual rather than set as a numerical value that applies to all individuals). Setting an argument to the trait is done by placing “T[n]” in quotes where [n] is the number of the trait (corresponding to the n row and column of the pre-specified trait covariance matrix). Below shows the last <a href="#example">example used above</a>, but with <code>food_consume = c(2, 2)</code> and <code>pesticide_consume = c(0, 0)</code> replaced with evolving traits.</p>
+<div class="section level3">
+<h3 id="use-of-evolving-traits-in-run_farm_sim">
+<a name="traits">Use of evolving traits in
+<code>run_farm_sim</code></a><a class="anchor" aria-label="anchor" href="#use-of-evolving-traits-in-run_farm_sim"></a>
+</h3>
+<p>In all of the <a href="#example">examples used</a> above, values were
+hard coded into the <code>run_farm_sim</code> function, so the four
+traits mined in <code>mg_v1</code> were not actually used. The resevol
+package allows evolving traits to be substituted for the following
+individual characteristics set in the arguments of
+<code>run_farm_sim</code>: <code>move_distance</code>,
+<code>food_needed_surv</code>, <code>pesticide_tolerated_surv</code>,
+<code>food_needed_repr</code>, <code>pesticide_tolerated_repr</code>,
+<code>mating_distance</code>, <code>lambda_value</code>,
+<code>movement_bouts</code>, <code>metabolism</code>,
+<code>food_consume</code> (up to 10 elements), and
+<code>pesticide_consume</code> (up to 10 elements). When a trait is
+substituted for the argument, an individual’s value for the argument is
+determined by the trait (e.g., the food needed to survive can be
+determined by a trait unique to each individual rather than set as a
+numerical value that applies to all individuals). Setting an argument to
+the trait is done by placing “T[n]” in quotes where [n] is the number of
+the trait (corresponding to the n row and column of the pre-specified
+trait covariance matrix). Below shows the last <a href="#example">example used above</a>, but with
+<code>food_consume = c(2, 2)</code> and
+<code>pesticide_consume = c(0, 0)</code> replaced with evolving
+traits.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg_v1</span>, N <span class="op">=</span> <span class="fl">1000</span>, neutral_loci <span class="op">=</span> <span class="fl">1000</span>, 
                     xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>, repro <span class="op">=</span> <span class="st">"asexual"</span>, max_age <span class="op">=</span> <span class="fl">4</span>, 
-                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span>, 
-                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"T3"</span>, <span class="st">"T4"</span><span class="op">)</span>, 
+                    selfing <span class="op">=</span> <span class="cn">TRUE</span>, food_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span>, 
+                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T3"</span>, <span class="st">"T4"</span><span class="op">)</span>, 
                     food_needed_surv <span class="op">=</span> <span class="fl">1</span>, food_needed_repr <span class="op">=</span> <span class="fl">1</span>, 
                     reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>, 
                     pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_rotation_type  <span class="op">=</span> <span class="fl">2</span>,
@@ -740,28 +1187,40 @@ Gen: 6   Stress: -0.763571   Min: -0.763572</code></pre>
                     age_food_threshold <span class="op">=</span> <span class="fl">3</span>, min_age_feed <span class="op">=</span> <span class="fl">1</span>, 
                     pesticide_start <span class="op">=</span> <span class="fl">100</span>, print_last <span class="op">=</span> <span class="cn">TRUE</span>, 
                     mating_distance <span class="op">=</span> <span class="fl">2</span>, metabolism <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>;</code></pre></div>
-<p>The <code>run_farm_sim</code> will recognise now that traits 1 and 2 will determine the amount of consumed on a landscape cell, while traits 3 and 4 will determine the amount of pesticide consumed.</p>
+<p>The <code>run_farm_sim</code> will recognise now that traits 1 and 2
+will determine the amount of consumed on a landscape cell, while traits
+3 and 4 will determine the amount of pesticide consumed.</p>
 </div>
 </div>
-<div id="additional-guidance" class="section level1">
-<h1 class="hasAnchor">
-<a href="#additional-guidance" class="anchor"></a><a name="additional">Additional guidance</a>
-</h1>
-<p>Additional guidance can be found in the <a href="https://bradduthie.github.io/resevol/notebook/index.html">package notes</a> on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the <a href="https://github.com/bradduthie/resevol/issues">GitHub issues page</a> or emailed to the package maintainer Brad Duthie (see email address in the <a href="https://github.com/bradduthie/resevol/blob/master/DESCRIPTION">package DESCRIPTION</a>). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.</p>
+<div class="section level2">
+<h2 id="additional-guidance">
+<a name="additional">Additional guidance</a><a class="anchor" aria-label="anchor" href="#additional-guidance"></a>
+</h2>
+<p>Additional guidance can be found in the <a href="https://bradduthie.github.io/resevol/notebook/index.html" class="external-link">package
+notes</a> on GitHub and the package documentation. Any queries
+concerning guidance for setting up and running simulations can be posted
+on the <a href="https://github.com/bradduthie/resevol/issues" class="external-link">GitHub
+issues page</a> or emailed to the package maintainer Brad Duthie (see
+email address in the <a href="https://github.com/bradduthie/resevol/blob/master/DESCRIPTION" class="external-link">package
+DESCRIPTION</a>). This package has mainly been developed to facilitate
+ongoing modelling work at the University of Stirling, but it is open
+source and free to use. Comments and questions are welcome.</p>
 </div>
-<div id="literature-cited" class="section level1">
-<h1 class="hasAnchor">
-<a href="#literature-cited" class="anchor"></a><a name="lit">Literature Cited</a>
-</h1>
-<pre><code>## Warning in par(oldpar): graphical parameter "cin" cannot be set</code></pre>
-<pre><code>## Warning in par(oldpar): graphical parameter "cra" cannot be set</code></pre>
-<pre><code>## Warning in par(oldpar): graphical parameter "csi" cannot be set</code></pre>
-<pre><code>## Warning in par(oldpar): graphical parameter "cxy" cannot be set</code></pre>
-<pre><code>## Warning in par(oldpar): graphical parameter "din" cannot be set</code></pre>
-<pre><code>## Warning in par(oldpar): graphical parameter "page" cannot be set</code></pre>
+<div class="section level2">
+<h2 id="literature-cited">
+<a name="lit">Literature Cited</a><a class="anchor" aria-label="anchor" href="#literature-cited"></a>
+</h2>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cin" cannot be set</span></code></pre>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cra" cannot be set</span></code></pre>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "csi" cannot be set</span></code></pre>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cxy" cannot be set</span></code></pre>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "din" cannot be set</span></code></pre>
+<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "page" cannot be set</span></code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Hamblin2013" class="csl-entry">
-Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical usage of genetic algorithms in ecology and evolution</span>.”</span> <em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000">https://doi.org/10.1111/2041-210X.12000</a>.
+Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical
+usage of genetic algorithms in ecology and evolution</span>.”</span>
+<em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000" class="external-link">https://doi.org/10.1111/2041-210X.12000</a>.
 </div>
 </div>
 </div>
@@ -778,11 +1237,13 @@ Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical usage of g
 
 
       <footer><div class="copyright">
-  <p>Developed by A. Bradley Duthie, Rose McKeon.</p>
+  <p></p>
+<p>Developed by A. Bradley Duthie, Rose McKeon.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -790,6 +1251,8 @@ Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical usage of g
 
   
 
+
+  
 
   </body>
 </html>

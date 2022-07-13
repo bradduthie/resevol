@@ -28,6 +28,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -40,18 +42,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/resevol.html">Get started</a>
 </li>
@@ -59,7 +55,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -76,10 +72,10 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://bradduthie.github.io/resevol/notebook/">Lab notebook</a>
+  <a href="https://bradduthie.github.io/resevol/notebook/" class="external-link">Lab notebook</a>
 </li>
 <li>
-  <a href="https://github.com/bradduthie/resevol">
+  <a href="https://github.com/bradduthie/resevol" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
@@ -98,31 +94,31 @@
   <div class="contents col-md-9">
 
 <p><img src="https://raw.githubusercontent.com/bradduthie/resevol/6b5f68620fb1f45f0bfdc5aa4e853a8305d04bf5/notebook/images/resevol_logo.png"></p>
-<p><a href="https://cran.r-project.org/package=resevol"><img src="http://www.r-pkg.org/badges/version/resevol?color=yellowgreen"></a> <a href="https://cranlogs.r-pkg.org:443/badges/grand-total/resevol"><img src="https://cranlogs.r-pkg.org:443/badges/grand-total/resevol?color=yellowgreen"></a> <a href="https://cranlogs.r-pkg.org:443/badges/last-month/resevol"><img src="https://cranlogs.r-pkg.org:443/badges/last-month/resevol?color=yellowgreen"></a></p>
-<div id="resistance-evolution-resevol-simulation-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#resistance-evolution-resevol-simulation-package" class="anchor"></a>Resistance Evolution (resevol) simulation package</h2>
+<p><a href="https://cran.r-project.org/package=resevol" class="external-link"><img src="http://www.r-pkg.org/badges/version/resevol?color=yellowgreen"></a> <a href="https://cranlogs.r-pkg.org:443/badges/grand-total/resevol" class="external-link"><img src="https://cranlogs.r-pkg.org:443/badges/grand-total/resevol?color=yellowgreen"></a> <a href="https://cranlogs.r-pkg.org:443/badges/last-month/resevol" class="external-link"><img src="https://cranlogs.r-pkg.org:443/badges/last-month/resevol?color=yellowgreen"></a></p>
+<div class="section level2">
+<h2 id="resistance-evolution-resevol-simulation-package">Resistance Evolution (resevol) simulation package<a class="anchor" aria-label="anchor" href="#resistance-evolution-resevol-simulation-package"></a>
+</h2>
 <p><strong>The resevol R package is a tool for simulating social-ecological individual-based models (IBMs) for the ecology and evolution of agricultural pest species. Simulations model a spatially explicit landscape broken down into one or more independent farms on which one of up to 10 crops can be grown and one of up to 10 pesticides can be applied. Crop and pesticide application can be rotated during a simulation at different spatial and temporal scales to simulate the effects of heterogeneity of pest environment. Haploid or diploid pest genomes are modelled explicitly with an arbitrary number of loci that map to any number of traits. This mapping of loci to traits can be set with a pre-specified trait correlation structure, which is found using an evolutionary algorithm run using the mine_gmatrix() function. Individual pest traits can affect movement, reproduction, feeding, pesticide tolerance, metabolism, and other individual characteristics. Simulations of pest populations dynamics run with the run_sim_farm() function can track individual pest locations, pedigree, behaviour, and trait evolution.</strong></p>
 <hr>
-<p><em>This software was developed as part of the project for <a href="https://gtr.ukri.org/projects?ref=BB%2FS018956%2F1">Enhancing Diversity to Overcome Resistance Evolution</a> (ENDORSE) led by <a href="https://lucbussiere.com/">Dr Luc Bussière</a>, <a href="https://www.fcav.unesp.br/#!/docentes/ricardo-antonio-polanczyk/">Dr Ricardo Polanczyk</a>, and <a href="https://www.stir.ac.uk/people/256411">Dr Matthew Tinsley</a> (Co-Investigators: <a href="https://www.stir.ac.uk/people/257162">Nils Bunnefeld</a>, <a href="https://www.cabi.org/cabi-people/yelitza-colmenarez/">Yelitza Colmenarez</a>, <a href="https://www.cabi.org/cabi-people/natalia-corniani/">Natália Corniani</a>, <a href="https://bv.fapesp.br/en/pesquisador/46301/renata-de-lima/">Renata de Lima</a>, <a href="https://bradduthie.github.io">Brad Duthie</a>, <a href="https://www.cabi.org/cabi-people/steven-edgington/">Steve Edgington</a>, <a href="https://bv.fapesp.br/en/pesquisador/3059/leonardo-fernandes-fraceto/">Leonardo Fraceto</a>, <a href="https://www.cabi.org/cabi-people/belinda-luke/">Belinda Luke</a>, and <a href="https://sites.google.com/site/rosemarygmangan/home">Rosie Mangan</a>). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the São Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. ENDORSE is a partnership among Universidade Estadual Paulista (UNESP), the University of Stirling (UoS), and the Centre for Agricultural and Biosciences International (CABI). This software package is authored by <a href="https://github.com/bradduthie">Brad Duthie</a> and <a href="https://github.com/rosemckeon">Rose McKeon</a>, and is maintained by <a href="https://github.com/bradduthie">Brad Duthie</a>.</em></p>
+<p><em>This software was developed as part of the project for <a href="https://gtr.ukri.org/projects?ref=BB%2FS018956%2F1" class="external-link">Enhancing Diversity to Overcome Resistance Evolution</a> (ENDORSE) led by <a href="https://lucbussiere.com/" class="external-link">Dr Luc Bussière</a>, <a href="https://www.fcav.unesp.br/#!/docentes/ricardo-antonio-polanczyk/" class="external-link">Dr Ricardo Polanczyk</a>, and <a href="https://www.stir.ac.uk/people/256411" class="external-link">Dr Matthew Tinsley</a> (Co-Investigators: <a href="https://www.stir.ac.uk/people/257162" class="external-link">Nils Bunnefeld</a>, <a href="https://www.cabi.org/cabi-people/yelitza-colmenarez/" class="external-link">Yelitza Colmenarez</a>, <a href="https://www.cabi.org/cabi-people/natalia-corniani/" class="external-link">Natália Corniani</a>, <a href="https://bv.fapesp.br/en/pesquisador/46301/renata-de-lima/" class="external-link">Renata de Lima</a>, <a href="https://bradduthie.github.io" class="external-link">Brad Duthie</a>, <a href="https://www.cabi.org/cabi-people/steven-edgington/" class="external-link">Steve Edgington</a>, <a href="https://bv.fapesp.br/en/pesquisador/3059/leonardo-fernandes-fraceto/" class="external-link">Leonardo Fraceto</a>, <a href="https://www.cabi.org/cabi-people/belinda-luke/" class="external-link">Belinda Luke</a>, and <a href="https://sites.google.com/site/rosemarygmangan/home" class="external-link">Rosie Mangan</a>). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the São Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. ENDORSE is a partnership among Universidade Estadual Paulista (UNESP), the University of Stirling (UoS), and the Centre for Agricultural and Biosciences International (CABI). This software package is authored by <a href="https://github.com/bradduthie" class="external-link">Brad Duthie</a> and <a href="https://github.com/rosemckeon" class="external-link">Rose McKeon</a>, and is maintained by <a href="https://github.com/bradduthie" class="external-link">Brad Duthie</a>.</em></p>
 <hr>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p><strong>Install from CRAN</strong></p>
-<p>To install <a href="https://CRAN.R-project.org/package=resevol">this package</a> from CRAN.</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("resevol")</a></code></pre>
+<p>To install <a href="https://CRAN.R-project.org/package=resevol" class="external-link">this package</a> from CRAN.</p>
+<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"resevol"</span><span class="op">)</span></code></pre>
 <p><strong>Install with GitHub</strong></p>
 <p>To install this package from GitHub, make sure that the <code>devtools</code> library is installed.</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools")
-library(devtools)</a></code></pre>
+<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></code></pre>
 <p>Use <code>install_github</code> to install using <code>devtools</code>.</p>
-<pre><code>install_github("bradduthie/resevol")</code></pre>
+<pre><code><span class="fu"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bradduthie/resevol"</span><span class="op">)</span></code></pre>
 </div>
-<div id="documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#documentation" class="anchor"></a>Documentation</h2>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
 <p>To get started with the resevol package, we strongly recommend first reading through the <strong>Get Started</strong> vignette.</p>
 </div>
 
@@ -130,41 +126,52 @@ library(devtools)</a></code></pre>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=resevol">https://​cloud.r-project.org/​package=resevol</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/bradduthie/resevol/">https://​github.com/​bradduthie/​resevol/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/bradduthie/resevol/issues">https://​github.com/​bradduthie/​resevol/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=resevol" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/bradduthie/resevol/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/bradduthie/resevol/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>GPL (&gt;=2)</li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>A. Bradley Duthie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-8343-4995" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Rose McKeon <br><small class="roles"> Author, contributor </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing resevol</a></li>
 </ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>A. Bradley Duthie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-8343-4995" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Rose McKeon <br><small class="roles"> Author, contractor </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+
 
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by A. Bradley Duthie, Rose McKeon.</p>
+  <p></p>
+<p>Developed by A. Bradley Duthie, Rose McKeon.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -172,6 +179,8 @@ library(devtools)</a></code></pre>
 
   
 
+
+  
 
   </body>
 </html>
