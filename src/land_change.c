@@ -306,12 +306,8 @@ void change_crop_choice(double **C_init, double **C_change, double *paras){
 void land_change(double ***land, double *paras, int ts, double **C_init,
                  double **C_change, double **P_init, double **P_change){
   
-  int i, j, min_own, max_own, own_layer, xdim, ydim, own_val;
   int rotate_crops, rotate_pesticide, start_pesticide;
-  
-  xdim              = (int) paras[103];
-  ydim              = (int) paras[104];
-  own_layer         = (int) paras[155];
+ 
   rotate_crops      = (int) paras[143];
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];

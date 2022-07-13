@@ -23,35 +23,68 @@ mine_gmatrix(
 )
 }
 \arguments{
-\item{loci}{The number of loci that individuals in the model will have}
+\item{loci}{The number of loci for an individual. Simulations can allow for 
+both haploid and diploid individuals. Allele values at each loci affect trait
+values through a network of intermediary nodes.}
 
-\item{layers}{The number of layers in the network from loci to traits}
+\item{layers}{The number of hidden layers in the network linking loci to 
+traits.}
 
-\item{indivs}{The number of individuals to test the covariance matrix}
+\item{indivs}{The number of individuals initialised in each generation of the 
+evolutionary algorithm to test among-individual trait correlations. 
+Individuals are initialised with allele values drawn from a standard normal 
+distribution.}
 
-\item{npsize}{The size of the network population in the evolutionary algorithm}
+\item{npsize}{The size of the population of networks in each generation of the
+evolutionary algorithm. Each network is a discrete individual in the 
+population.}
 
-\item{mu_pr}{The probability of a network value to mutate}
+\item{mu_pr}{The probability that a value in the network will mutate in a 
+generation. Mutation events change the existing value by adding a new value 
+drawn from a normal distribution with a mean of 0 and standard deviation of
+mu_sd.}
 
-\item{mu_sd}{The standard deviation of mutation effect size}
+\item{mu_sd}{The standard deviation of the random normal value mean centered 
+at 0 that is added to the existing value of the network when a mutation event
+occurs.}
 
-\item{max_gen}{The maximum number of generations of the evolutionary algorithm}
+\item{max_gen}{The maximum number of generations that the evolutionary 
+algorithm is allowed to run before terminating (regardless of how well the 
+evolved covariance structure matches the pre-specified gmatrix).}
 
-\item{pr_cross}{The probability of a crossover occurring for a network}
+\item{pr_cross}{The probability that a focal network in the population will 
+initiate a crossover of a subset of its values with a randomly selected 
+second network (note that any given network might therefore be included in 
+more than one crossover event in a generation). The size of the subset is 
+determined randomly.}
 
-\item{sampleK}{Number of networks sampled to take part in tournament selection}
+\item{sampleK}{During a round of selection, the number of random networks 
+chosen to compete in a tournament. A single generation will include as many 
+tournaments as necessary to create a new network population of size npsize.}
 
-\item{chooseK}{Number of winners in tournament selection}
+\item{chooseK}{During a round of selection tournament, the number of networks 
+within the sampleK random subset of the tournament that have the highest 
+fitness will be selected to populate the next generation of networks}
 
-\item{term_cri}{Stress criteria (ln) for evolutionary algorithm terminating}
+\item{term_cri}{The criteria for terminating the evolutionary algorithm. The 
+algorithm will terminate if a network is found in which the mean squared 
+deviation of the covariance matrix elements from gmatrix is less than 
+exp(term_crit).}
 
-\item{sd_ini}{StDev of initialised networked values}
+\item{sd_ini}{The standard deviation of initialised network values at the 
+start of the evolutionary algorithm. All network values are initialised by 
+randomly sampling from a normal distribution with a mean of 0 and a 
+standard deviation of sd_ini}
 
-\item{use_cor}{Compare correlation matrix rather than the covariance matrix}
+\item{use_cor}{Should the gmatrix be treated as a correlation matrix rather 
+than a covariance matrix when calculating fitness?}
 
-\item{prnt_out}{Print out progress showing stress for each generation}
+\item{prnt_out}{Should the function print out progress showing the stress for 
+each generation}
 
-\item{gmatrix}{G-matrix that the evolutionary algorithm will match}
+\item{gmatrix}{The pre-specified trait covariance matrix. This will define
+what the covariance will be between each trait when allele values are drawn 
+from a standard normal distribution.}
 }
 \value{
 A list of eight elements that includes the following: (1) A vector of
