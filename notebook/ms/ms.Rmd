@@ -86,45 +86,6 @@ This is useful because it allows genomes to model potentially evolving physiolog
 Since multiple networks can potentially map loci to the same trait covariance structure, it is possible to replicate evolution with differently randomised genetic architectures.
 This approach to modelling individual genomes and traits thereby increases the complexity of questions that can be addressed for simulating evolution in agricultural pests.
 
-Conceptually, the relationship between individual genotypes and traits is defined by a network connecting loci to traits through a set of hidden internal nodes (Figure \@ref(fig:network)). 
-Values for loci are randomly drawn from a standard normal distribution $\mathcal{N}\left(0, 1\right)$. 
-Links between loci, internal nodes, and traits, can take any real value and are represented by black arrows in Figure \@ref(fig:network). 
-Traits can take any real value, and are calculated as the summed effects of all preceding nodes (i.e., the blue squares immediately to the left of the traits in Figure \@ref(fig:network)).
-Mathematically, loci are represented by row a vector of length $L$.
-Effects of loci on the first layer of internal nodes (black arrows emanating from loci in Figure \@ref(fig:network)) are represented by an $L \times T$ matrix, and transitions between internal nodes, and between the last set of internal nodes and the final traits, are represented by $T \times T$ matrices.
-For the example in Figure \@ref(fig:network), 
-
-$$
-\begin{pmatrix}
-  0.1, & -0.1, & 0.2 \\
-\end{pmatrix} 
-\begin{pmatrix}
-  0.4, &  0.1 \\
- -1.2, & -0.6 \\
-  0.2, &  2.2 \\
-\end{pmatrix}
-\begin{pmatrix}
-   1.3, & -0.5 \\
-  -0.1  &  0.0 \\
-\end{pmatrix}
-\begin{pmatrix}
-   2.2, &  0.9 \\
-   1.6  &  0.8 \\
-\end{pmatrix} = 
-\begin{pmatrix}
-  0.2998, & 0.1081 \\
-\end{pmatrix}.
-$$
-
-Values mapping loci to traits become part of an individual's genome, so the genome for the individual represented by Figure \@ref(fig:network) is stored in the model as below:
-
-```
-0.1, -0.1, -0.2, 0.4, 0.1, -1.2, -0.6, 0.2, 2.2, 1.3, -0.5, -0.1, 0.0, 2.2, 0.9, 1.6, 0.8
-```
-
-Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome. 
-Individuals can be haploid (as in Figure \@ref(fig:network)) or diploid (in which case, allele values are summed at a locus). 
-
 ```{r network, echo = FALSE, fig.width = 6, fig.height = 4, fig.cap = "Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the mine_gmatrix function. Individual genomes in the resevol R package consist of standard random normal values for at loci, real values for black arrows linking nodes, and real values of traits. Values shown for loci and arrows are an example for illustration."}
 par(mar = c(0.2, 0.2, 0, 0.2));
 plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
@@ -181,6 +142,45 @@ Hdn3  <- matrix(data = c(2.2, 1.6, 0.9, 0.8), nrow = 2, ncol = 2);
 Tvals <- Loci %*% Hdn1 %*% Hdn2 %*% Hdn3;
 text(x = Tx, y = Ty, labels = rev(Tvals), cex = 0.8);
 ```
+
+Conceptually, the relationship between individual genotypes and traits is defined by a network connecting loci to traits through a set of hidden internal nodes (Figure \@ref(fig:network)). 
+Values for loci are randomly drawn from a standard normal distribution $\mathcal{N}\left(0, 1\right)$. 
+Links between loci, internal nodes, and traits, can take any real value and are represented by black arrows in Figure \@ref(fig:network). 
+Traits can take any real value, and are calculated as the summed effects of all preceding nodes (i.e., the blue squares immediately to the left of the traits in Figure \@ref(fig:network)).
+Mathematically, loci are represented by row a vector of length $L$.
+Effects of loci on the first layer of internal nodes (black arrows emanating from loci in Figure \@ref(fig:network)) are represented by an $L \times T$ matrix, and transitions between internal nodes, and between the last set of internal nodes and the final traits, are represented by $T \times T$ matrices.
+For the example in Figure \@ref(fig:network), 
+
+$$
+\begin{pmatrix}
+  0.1, & -0.1, & 0.2 \\
+\end{pmatrix} 
+\begin{pmatrix}
+  0.4, &  0.1 \\
+ -1.2, & -0.6 \\
+  0.2, &  2.2 \\
+\end{pmatrix}
+\begin{pmatrix}
+   1.3, & -0.5 \\
+  -0.1  &  0.0 \\
+\end{pmatrix}
+\begin{pmatrix}
+   2.2, &  0.9 \\
+   1.6  &  0.8 \\
+\end{pmatrix} = 
+\begin{pmatrix}
+  0.2998, & 0.1081 \\
+\end{pmatrix}.
+$$
+
+Values mapping loci to traits become part of an individual's genome, so the genome for the individual represented by Figure \@ref(fig:network) is stored in the model as below:
+
+```
+0.1, -0.1, -0.2, 0.4, 0.1, -1.2, -0.6, 0.2, 2.2, 1.3, -0.5, -0.1, 0.0, 2.2, 0.9, 1.6, 0.8
+```
+
+Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome. 
+Individuals can be haploid (as in Figure \@ref(fig:network)) or diploid (in which case, allele values are summed at a locus). 
 
 An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information for details). 
 Evolutionary algorithms are heuristic tools can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
@@ -239,8 +239,19 @@ Each value defines a unique farm, but values do not need to be contiguous.
 These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see below).
 This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
 
-Each farm can hold one pesticide and one crop type at any time step, and up to 10 pesticides and 10 crop types are available.
+Each farm can hold one pesticide and one crop type at any time step.
+The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
+Initialisation can be random for each farm with equal probability, or can be set using a vector of length `farms` in which vector elements define the initialised crop or pesticide number.
+After initialisation, crops and pesticides rotate once ever `crop_rotation_time` and `pesticide_rotation_time` time steps, respectively.
+Each of these rotation time arguments can take either an integer value from 1-3, or a matrix.
+Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in order.
+Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
+Hence, any possible Markov chain can be used to transition between crop or pesticide types on farms.
 
+Pest ecology
+---------------------------------------------------
+
+Individual pests can be modelled to have several reproductive systems and life histories.
 
 
 
@@ -251,8 +262,9 @@ Each farm can hold one pesticide and one crop type at any time step, and up to 1
 - Options for 10 crops and 10 pesticides simultaneously, and rotation
 - Function `run_farm_sim` runs simulations. Note unusual timing structure
 
-Integrating traits into simulations
-===================================================
+Pest evolution
+---------------------------------------------------
+
 
 Example of individual-based simulations
 ===================================================
