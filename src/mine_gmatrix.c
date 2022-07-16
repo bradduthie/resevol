@@ -1022,7 +1022,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       
       /* Add print of highest fitness found */
       if(prnt_out > 0){
-          Rprintf("Gen: %d\t Stress: %f\t Highest: %f\n", 
+          Rprintf("Gen: %d\t Stress: %f\t Lowest: %f\n", 
                   gen, estress, high_fitness[0]);
       }
       gen++;
