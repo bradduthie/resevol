@@ -7,9 +7,10 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   Biological and Environmental Sciences 3A149 University of Stirling Stirling, FK9
   4LA, UK'
 output:
-  pdf_document:
+  bookdown::pdf_document2:
     citation_package: natbib
     fig_caption: yes
+    toc: false
   html_document: default
   word_document: default
 header-includes:
@@ -39,7 +40,7 @@ biblio-style: apalike
 --->
 
 
-Abstract
+Abstract {-}
 ===================================================
 
 1. Pesticide resistance is a serious problem.
@@ -58,23 +59,200 @@ Introduction
 - The resevol R package addresses two problems: genetic architecture and landscape selection
 - The R package can facilitate general questions and targetted ones
 
+```{r, echo = FALSE}
+library("resevol");
+```
+
+
+The resevol package uses individual-based modelling and a quantitative genetics approach to simulate the evolution of a pest population on a changing landscape. 
+A focal goal of the software is to model traits with a pre-specified, but potentially evolving, covariance structure. 
+To achieve this goal, each individual has a genome with $L$ loci that underlie a set of $T$ potentially evolving traits. 
+Pleiotropic loci can vary in their effects on the direction and magnitude of polygenic trait, causing population-wide trait covariance to arise mechanistically from the underlying genetic architecture of individuals. 
+To achieve this, two separate steps are necessary.
+First, a genetic algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
+Values used to map loci to traits are incorporated into individual genomes.
+Second, a population of asexual or sexual individuals is initialised and simulated on a spatially explicit landscape separated into distinct units (e.g., farms).
+Land units can apply one of up to 10 pesticides, and one of up to 10 crops; pesticides and crops rotate independently in a pre-specified way over time.
+The resevol package can thereby model complex and evolving traits in agricultural pests over realistic landscapes that undergo different pesticide use and crop regimes.
 
 Covarying pest quantitative traits
 ===================================================
 
-- The issue is that we want mechanistic, not phenomenological, trait covariances
-- Solution is to use a genetic algorithm to find genome structures [@Hamblin2013]
-- Genomes include values that then define a network from alleles to traits
-- Example using the `mine_gmatrix` function, and its various arguments
+The first step of simulation with the resevol package is building individual genomes. 
+This step is separate because building genomes is often time-consuming, and genomes that are built might need to be saved or inspected before actual simulation.
+High computation time is due to the mechanistic nature of how genomes and covarying traits are modelled.
+Instead of imposing a trait covariance structure directly, the objective is to use an evolutionary algorithm to find a network that maps standard random normal values (loci) to covarying values (traits).
+This is useful because it allows genomes to model potentially evolving physiological constraints, and trade-offs among traits, from the bottom up.
+Since multiple networks can potentially map loci to the same trait covariance structure, it is possible to replicate evolution with differently randomised genetic architectures.
+This approach to modelling individual genomes and traits thereby increases the complexity of questions that can be addressed for simulating evolution in agricultural pests.
+
+Conceptually, the relationship between individual genotypes and traits is defined by a network connecting loci to traits through a set of hidden internal nodes (Figure \@ref(fig:network)). 
+Values for loci are randomly drawn from a standard normal distribution $\mathcal{N}\left(0, 1\right)$. 
+Links between loci, internal nodes, and traits, can take any real value and are represented by black arrows in Figure \@ref(fig:network). 
+Traits can take any real value, and are calculated as the summed effects of all preceding nodes (i.e., the blue squares immediately to the left of the traits in Figure \@ref(fig:network)).
+Mathematically, loci are represented by row a vector of length $L$.
+Effects of loci on the first layer of internal nodes (black arrows emanating from loci in Figure \@ref(fig:network)) are represented by an $L \times T$ matrix, and transitions between internal nodes, and between the last set of internal nodes and the final traits, are represented by $T \times T$ matrices.
+For the example in Figure \@ref(fig:network), 
+
+$$
+\begin{pmatrix}
+  0.1, & -0.1, & 0.2 \\
+\end{pmatrix} 
+\begin{pmatrix}
+  0.4, &  0.1 \\
+ -1.2, & -0.6 \\
+  0.2, &  2.2 \\
+\end{pmatrix}
+\begin{pmatrix}
+   1.3, & -0.5 \\
+  -0.1  &  0.0 \\
+\end{pmatrix}
+\begin{pmatrix}
+   2.2, &  0.9 \\
+   1.6  &  0.8 \\
+\end{pmatrix} = 
+\begin{pmatrix}
+  0.2998, & 0.1081 \\
+\end{pmatrix}.
+$$
+
+Values mapping loci to traits become part of an individual's genome, so the genome for the individual represented by Figure \@ref(fig:network) is stored in the model as below:
+
+```
+0.1, -0.1, -0.2, 0.4, 0.1, -1.2, -0.6, 0.2, 2.2, 1.3, -0.5, -0.1, 0.0, 2.2, 0.9, 1.6, 0.8
+```
+
+Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome. 
+Individuals can be haploid (as in Figure \@ref(fig:network)) or diploid (in which case, allele values are summed at a locus). 
+
+```{r network, echo = FALSE, fig.width = 6, fig.height = 4, fig.cap = "Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the mine_gmatrix function. Individual genomes in the resevol R package consist of standard random normal values for at loci, real values for black arrows linking nodes, and real values of traits. Values shown for loci and arrows are an example for illustration."}
+par(mar = c(0.2, 0.2, 0, 0.2));
+plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
+     xaxt = "n", yaxt = "n", bty = "n", xlab = "", ylab = "");
+mtext(side = 1, text = "Internal nodes", cex = 1.25, col = "blue", line = -3);
+mtext(side = 2, text = "Loci", cex = 1.25, col = "darkgreen", line = -2);
+mtext(side = 4, text = "Traits", cex = 1.25, col = "red", line = -2);
+Lx  <- rep(x = 100, times = 3);
+Ly  <- seq(from = 250, to = 750, length = 3);
+points(x = Lx, y = Ly, pch = 20, cex = 8, col = "darkgreen");
+H1x <- rep(x = 400, times = 2);
+H1y <- seq(from = 250, to = 750, length = 2);
+points(x = H1x, y = H1y, pch = 15, cex = 8, col = "blue");
+H2x <- rep(x = 600, times = 2);
+H2y <- seq(from = 250, to = 750, length = 2);
+points(x = H2x, y = H2y, pch = 15, cex = 8, col = "blue");
+Tx  <- rep(x = 900, times = 2);
+Ty  <- seq(from = 250, to = 750, length = 2);
+points(x = Tx, y = Ty, pch = 18, cex = 10, col = "red");
+sep_L_points <- c(-50, 0, 50);
+sep_N_points <- c(-30, 30);
+arrows(x0 = Lx + 38, x1 = H1x[1] - 58, y0 = Ly, y1 = H1y[1] + sep_L_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H1x + 52, x1 = H2x[1] - 58, y0 = H1y, y1 = H2y[1] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H2x + 52, x1 = Tx[1] - 58, y0 = H2y, y1 = Ty[1] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = Lx + 38, x1 = H1x[2] - 58, y0 = Ly, y1 = H1y[2] + sep_L_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H1x + 52, x1 = H2x[2] - 58, y0 = H1y, y1 = H2y[2] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H2x + 52, x1 = Tx[2] - 58, y0 = H2y, y1 = Ty[2] + sep_N_points, 
+       length = 0.08, lwd = 3);
+srnm <- c(0.2, -0.1, 0.1);
+text(x = Lx, y = Ly, labels = srnm, col = "white", cex = 0.9);
+text(x = 200, y = 790, labels = "0.4", srt = 10, cex = 0.8);
+text(x = 200, y = 660, labels = "-1.2", srt = -58, cex = 0.8);
+text(x = 270, y = 695, labels = "0.2", srt = 46, cex = 0.8);
+text(x = 180, y = 480, labels = "0.1", srt = -40, cex = 0.8);
+text(x = 160, y = 340, labels = "-0.6", srt = 54, cex = 0.8);
+text(x = 220, y = 255, labels = "2.2", srt = -12, cex = 0.8);
+text(x = 490, y = 790, labels = "1.3", srt = 10, cex = 0.8);
+text(x = 538, y = 410, labels = "-0.5", srt = -76, cex = 0.8);
+text(x = 460, y = 390, labels = "-0.1", srt = 72, cex = 0.8);
+text(x = 495, y = 260, labels = "0.0", srt = -12, cex = 0.8);
+text(x = 720, y = 790, labels = "2.2", srt = 8, cex = 0.8);
+text(x = 720, y = 630, labels = "0.9", srt = -58, cex = 0.8);
+text(x = 690, y = 400, labels = "1.6", srt = 54, cex = 0.8);
+text(x = 740, y = 260, labels = "0.8", srt = -8, cex = 0.8);
+Loci  <- matrix(data = c(0.1, -0.1, 0.2), nrow = 1);
+Hdn1  <- matrix(data = c(0.4, -1.2, 0.2, 0.1, -0.6, 2.2), nrow = 3, ncol = 2);
+Hdn2  <- matrix(data = c(1.3, -0.1, -0.5, 0.0), nrow = 2, ncol = 2);
+Hdn3  <- matrix(data = c(2.2, 1.6, 0.9, 0.8), nrow = 2, ncol = 2);
+Tvals <- Loci %*% Hdn1 %*% Hdn2 %*% Hdn3;
+text(x = Tx, y = Ty, labels = rev(Tvals), cex = 0.8);
+```
+
+An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information for details). 
+Evolutionary algorithms are heuristic tools can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
+In the resevol package, the `mine_gmatrix` function runs an evolutionary algorithm, and requires the argument `gmatrix`, which specifies the desired trait covariance matrix.
+The function runs a genetic algorithm that initialises a population of `npsize` networks (Figure \@ref(fig:network)), and this population evolves until some maximum generation number (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
+In a single generation of the algorithm, network values crossover and mutate.
+Next, trait covariances produced for each network are estimated by initalising `indivs` individuals with loci sampled from a standard normal distribution.
+Network stress is calculated as the logged mean squared deviation between estimated covariances and those in `gmatrix`. 
+Tournament selection [@Hamblin2013] is then used to determine the networks for the next generation of the algorithm.
+Networks with the lowest estimated stress have the highest fitness, so these networks are disproportionately represented in the next generation.
+Throughout the evolutionary algorithm, the lowest stress network is saved and output upon network termination.
+The robustness of this network's stress to sets of individuals with different loci values can be tested using the `stress_test` function.
+
+An example run of `mine_gmatrix` with the same number of loci and internal nodes is shown below with traits that do not covary:
+
+```{r, eval = FALSE}
+trait_covs  <- matrix(data = c(1, -0.4, -0.4, 1), nrow = 2, ncol = 2);
+new_network <- mine_gmatrix(loci = 3, layers = 2, gmatrix = trait_covs, 
+                            max_gen = 1000, term_cri = -6.0, prnt_out = FALSE);
+```
+
+
+```{r, echo = FALSE}
+trait_covs  <- matrix(data = c(1, -0.4, -0.4, 1), nrow = 2, ncol = 2);
+load("new_network.rda");
+```
+
+The code above found a genome that produced the following expected trait covariances:
+
+```{r, echo = FALSE}
+print(new_network[[6]]);
+```
+
+The mean deviation between elements of the above matrix and the identity matrix provided by `trait_covs` is `r mean((new_network[[6]] - new_network[[2]])^2)`. 
+Lower values of `term_cri` and higher values of `max_gen` will result in a lower stress, but this will require more computation time, especially if the number of traits is high.
+Similarly, higher values of `indivs` will result in more accurate estimations of true stress, but this also requires more computation time.
+Additional arguments to `mine_gmatrix` can also be used to improve the performance of the evolutionary algorithm (see Supporting Information).
+
+
 
 Simulating landscape-level pesticide resistance
 ===================================================
+
+The full output of `mine_gmatrix` is passed to the `run_farm_sim` function, which initialises and simulates an evolving population of pests on a changing landscape.
+In this section, we explain the landscape, pest ecology, and evolving pest traits.
+
+Landscape
+---------------------------------------------------
+
+Landscapes are spatially explicit and initialised in `run_farm_sim` in one of two ways. 
+First, a landscapes can be built from the arguments `xdim`, `ydim`, and `farms`. 
+These arguments specify the dimensions of the landscape and the number of farms on it.
+Contiguous rectangular farms of roughly equal size are generated on the landscape using a splitline algorithm.
+Second, a custom landscapes can be input using the `terrain` argument, which takes a matrix with elements that includes integers 1 to `farms`.
+Each value defines a unique farm, but values do not need to be contiguous.
+These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see below).
+This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
+
+Each farm can hold one pesticide and one crop type at any time step, and up to 10 pesticides and 10 crop types are available.
+
+
+
+
 
 - We want to model evolution of pesticide resistance across heterogenous landscape
 - Track entire genomes, traits, and yield over time and across space
 - Use covarying traits from `mine_gmatrix` to make evolving pests
 - Options for 10 crops and 10 pesticides simultaneously, and rotation
 - Function `run_farm_sim` runs simulations. Note unusual timing structure
+
+Integrating traits into simulations
+===================================================
 
 Example of individual-based simulations
 ===================================================
