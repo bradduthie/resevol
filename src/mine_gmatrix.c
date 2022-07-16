@@ -1001,7 +1001,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         Rprintf("===============================================\n");
     }
     high_fitness[0] = estress;
-    while(gen < max_gen && high_fitness[0] > term_cri){
+    while(gen < max_gen && estress > term_cri){
       /* First crossover and mutate the loci to network layer */
       crossover_ltn(ltnpop, npsize, loci, traits, paras); 
       mutation_ltn(ltnpop, npsize, loci, traits, paras); 
@@ -1022,7 +1022,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       
       /* Add print of highest fitness found */
       if(prnt_out > 0){
-          Rprintf("Gen: %d\t Stress: %f\t Min: %f\n", 
+          Rprintf("Gen: %d\t Stress: %f\t Highest: %f\n", 
                   gen, estress, high_fitness[0]);
       }
       gen++;
