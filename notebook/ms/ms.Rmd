@@ -1,17 +1,19 @@
 ---
-title: 'resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes'
+title: 'resevol: an R package for spatially explicit models of pesticide resistance
+  given evolving pest genomes'
 author: |
-        | A. Bradley Duthie&#xb9;&#xb2;, et al.
+  | A. Bradley Duthie&#xb9;&#xb2;, et al.
 date: '[1] Biological and Environmental Sciences, University of Stirling, Stirling,
-  UK [2]  alexander.duthie@stir.ac.uk,
-  Biological and Environmental Sciences 3A149 University of Stirling Stirling, FK9
-  4LA, UK'
+  UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
+  University of Stirling Stirling, FK9 4LA, UK'
 output:
+  pdf_document:
+    toc: no
+  html_document: default
   bookdown::pdf_document2:
     citation_package: natbib
     fig_caption: yes
-    toc: false
-  html_document: default
+    toc: no
   word_document: default
 header-includes:
 - \usepackage{fancyhdr}
@@ -224,7 +226,7 @@ Additional arguments to `mine_gmatrix` can also be used to improve the performan
 Simulating landscape-level pesticide resistance
 ===================================================
 
-The full output of `mine_gmatrix` is passed to the `run_farm_sim` function, which initialises and simulates an evolving population of pests on a changing landscape.
+The full output of `mine_gmatrix` is passed to the `run_farm_sim` function, which initialises and simulates an evolving population of pests on a changing landscape for a natural number of time steps (`time_steps`).
 In this section, we explain the landscape, pest ecology, and evolving pest traits.
 
 Landscape
@@ -252,8 +254,88 @@ Pest ecology
 ---------------------------------------------------
 
 Individual pests can be modelled to have several reproductive systems and life histories.
+Pest reproductive system can be specified in the `run_farm_sim` function using the `repro` argument, which accepts arguments "asexual" (haploid), "sexual" (monoecious), and "biparental" (dioecious).
+For "sexual" pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
+At the start of a simulation, pests are initialised in a random location.
+Initialised pests are age of zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
+Following initialisation, a single time step proceeds with landscape change (see above), pest aging, feeding, pesticide consumption, movement, reproduction, mortality, and immigration.
+Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
+Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
+Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
+The option to set minimum and maximum ages events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
 
+```{r, echo=FALSE, fig.height=1.75, fig.width=6, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4)."}
+mbox <- function(x0, x1, y0, y1){
+    xx <- seq(from=x0, to=x1, length.out = 100);
+    yy <- seq(from=y0, to=y1, length.out = 100);
+    xd <- c(rep(x0, 100), xx, rep(x1,100), rev(xx));
+    yd <- c(yy, rep(y1,100), rev(yy), rep(y0, 100));
+    return(list(x=xd, y=yd));
+}
+par(mar=c(0,0,0,0));
+# ===============================================================
+plot(x=0, y=0, type="n", xlim=c(0,100), ylim=c(50,95), xaxt="n", yaxt="n",
+     xlab="",ylab="");
+ibox <- mbox(x0 = 0,  x1 = 10, y0 = 88, y1 = 72);
+polygon(x = ibox$x, y = ibox$y, lwd = 3, border = "black", col = "white");
+cbox <- mbox(x0 = 15, x1 = 25, y0 = 88, y1 = 72);
+polygon(x = cbox$x, y = cbox$y, lwd = 3, border = "black", col = "white");
+ubox <- mbox(x0 = 30, x1 = 40, y0 = 88, y1 = 72);
+polygon(x = ubox$x, y = ubox$y, lwd = 3, border = "black", col = "white");
+nbox <- mbox(x0 = 45, x1 = 55, y0 = 88, y1 = 72);
+polygon(x = nbox$x, y = nbox$y, lwd = 3, border = "black", col = "white");
+fbox <- mbox(x0 = 60, x1 = 70, y0 = 88, y1 = 72);
+polygon(x = fbox$x, y = fbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 75, x1 = 85, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 90, x1 = 100, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+text(x=5,  y=84, labels="Initialise", col="black", cex = 0.5);
+text(x=5,  y=80, labels="pests and", col="black", cex = 0.5);
+text(x=5,  y=76, labels="landscape", col="black", cex = 0.5);
+text(x=20, y=84, labels="Rotate", col="black", cex = 0.5);
+text(x=20, y=80, labels="crops and", col="black", cex = 0.5);
+text(x=20, y=76, labels="pesticides", col="black", cex = 0.5);
 
+text(x=35, y=80, labels="Mutation", col="black", cex = 0.5);
+
+text(x=35, y=80, labels="Mutation", col="black", cex = 0.5);
+text(x=50, y=82, labels="Fitness", col="black", cex = 0.5);
+text(x=50, y=78, labels="evaluation", col="black", cex = 0.5);
+text(x=65, y=82, labels="Tournament", col="black", cex = 0.5);
+text(x=65, y=78, labels="selection", col="black", cex = 0.5);
+text(x=80, y=80, labels="Replacement", col="black", cex = 0.5);
+arrows(x0=10, x1=14, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=25, x1=29, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=40, x1=44, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=55, x1=59, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=70, x1=74, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=85, x1=89, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0 = 80, x1 = 80, y0 = 72, y1 = 68, lwd = 2, length = 0);
+arrows(x0 = 80, x1 = 20, y0 = 65, y1 = 65, lwd = 2, length = 0);
+arrows(x0 = 20, x1 = 20, y0 = 65, y1 = 72, lwd = 2, length = 0.05);
+text(x=73, y=63, labels="No", col="black", cex = 0.5);
+rbox <- mbox(x0 = 75, x1 = 85, y0 = 62, y1 = 68);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=80, y=65, labels="Termination?", col="white", cex = 0.5);
+fbox <- mbox(x0 = 60, x1 = 70, y0 = 62, y1 = 50);
+polygon(x = fbox$x, y = fbox$y, lwd = 3, border = "black", col = "white");
+text(x=65, y=57, labels="Individual", col="black", cex = 0.5);
+text(x=65, y=53, labels="network", col="black", cex = 0.5);
+arrows(x0 = 80, x1 = 80, y0 = 62, y1 = 55, lwd = 2, length = 0);
+arrows(x0 = 80, x1 = 70, y0 = 55, y1 = 55, lwd = 2, length = 0.05);
+text(x=73, y=53, labels="Yes", col="black", cex = 0.5);
+```
+
+Pests feed by
+
+Pesticide is consumed during feeding
+
+Movement is modelled by
+
+Pests reproduce by
+
+Immigration occurs.
 
 
 - We want to model evolution of pesticide resistance across heterogenous landscape
