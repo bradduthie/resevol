@@ -278,10 +278,10 @@
 #' 0.
 #'@param min_age_metabolism This determines the minimum age at which losses of 
 #' food consumed in previous time steps enacted by metabolism and 
-#' baseline_metabolsim can occur.
+#' baseline_metabolism can occur.
 #'@param max_age_metabolism This determines the maximum age at which losses of 
 #' food consumed in previous time steps enacted by metabolism and 
-#' baseline_metabolsim can occur.
+#' baseline_metabolism can occur.
 #'@param terrain Insert a custom terrain of different farms, which takes the
 #' form of a matrix that includes a sequence of natural numbers in all matrix
 #' elements. For example, if there are 4 farms, then all matrix elements must
