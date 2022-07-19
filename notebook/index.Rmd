@@ -42,6 +42,7 @@ library("resevol");
 
  - **2022**
  
+   - **JUL** [19](#u-19-JUL-2022)
    - **JUN** [13](#u-13-JUN-2022), [28](#u-28-JUN-2022)
    - **JAN** [06](#u-06-JAN-2022)
 
@@ -70,6 +71,70 @@ library("resevol");
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-19-JUL-2022">Update: 19 JUL 2022</a>
+
+Version 0.3.0.1 has been submitted to CRAN and is passing [all checks](https://cran.r-project.org/web/checks/check_results_resevol.html). I am now a bit under halfway through writing a first draft of the software note. This note be submitted as a pre-print, and for publication, and will explain how to use the package. It will also replace the current [Get Started](https://bradduthie.github.io/resevol/articles/resevol.html) article and [CRAN vignette](https://cran.r-project.org/web/packages/resevol/vignettes/resevol.html). The structure of the publication introduces some key background, the `mine_gmatrix` function and its underlying logic, the ecology and evolution of pests in the model, and a simple example. I think that two supporting information documents are also in order. The first will explain the evolutionary algorithm in more detail and basically be a version of the [current vignette](https://bradduthie.github.io/resevol/articles/evolutionary_algorithm.html) with maybe some minor revisions. The second will be a more advanced example with complex dynamics and traits, presenting simulations like the ones shown in this journal on [26 AUG 2021](#u-26-AUG-2021). My hope is that this plus the documentation is sufficient for anyone to start using the package.
+
+Having submitted version 0.3.0.1, I almost immediately discovered the need for an update that is now version 0.3.1.0. I will hold off on submitting this one to CRAN just yet, as the update is quite minor. The cause was that the `mine_gmatrix` function kept giving a discrepancy between the stress threshold that caused it to terminate and the actual predicted stress of the network it found. The reason for this was that the algorithm was terminating due to finding unusually low stress caused sampling error for the standard random normal loci. In other words, a luck draw for random loci often caused networks to look better at producing desired trait covariances than they actually were. I've addressed this now by first using the mean stress for a whole population of networks to test the termination criteria (`term_cri`) in the `mine_gmatrix` function, rather than the *best* stress out of all networks in the population. But the `mine_gmatrix` function still returns the network that produces the lowest found stress.
+
+Second, I have introduced a new diagnostic function to give the distribution of stress predicted from loci.
+
+```{r, eval = FALSE}
+stress_test <- function(mine_output, indivs = 1000, reps = 10){
+    
+    target_VCV     <- mine_output[[2]];
+    Loci_to_Traits <- mine_output[[5]];
+    loci           <- mine_output[[1]][1];
+    
+    Ln_stress <- rep(x = NA, times = reps);
+    while(reps > 0){
+        sim_loci        <- rnorm(n = indivs * loci);
+        individuals     <- matrix(data = sim_loci, nrow = indivs, ncol = loci);
+        trait_vals      <- individuals %*% Loci_to_Traits;
+        VCV             <- cov(trait_vals);
+        stress          <- mean((target_VCV - VCV) * (target_VCV - VCV));
+        Ln_stress[reps] <- log(stress);
+        reps            <- reps - 1;
+    }
+    
+    return(Ln_stress);
+}
+```
+
+
+This simple function now forms part of the package itself, so users can run the output of `mine_gmatrix` and get a better overall picture on how the chosen network performs. The example used in the documentation is below (I've increased the replicates using the argument `reps = 1000`; the default is 10).
+
+```{r}
+gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
+diag(gmt) <- 1;
+mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 3, indivs = 100, 
+                          npsize = 100, max_gen = 2, prnt_out = FALSE);
+stresses  <- stress_test(mine_output = mg, reps = 1000);
+```
+
+The output `stresses` is just a vector of stresses for some number (`indivs`) of initialised genomes. The histogram below shows the distribution for the above example.
+
+```{r, echo = FALSE}
+hist(stresses, xlab = "Stress values for initialised genomes", 
+     main = "", breaks = 20);
+```
+
+This should at least make it easier for users to decide if they do or do not like the output of `mine_gmatrix` for use in a new set of simulations. The above example shows stress that is quite consistent, but if we let the simulation run for longer to find a better solution, the stress variance seems to increase (note that now `max_gen = 400` below).
+
+```{r}
+gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
+diag(gmt) <- 1;
+mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 3, indivs = 100, 
+                          npsize = 100, max_gen = 400, prnt_out = FALSE);
+stresses  <- stress_test(mine_output = mg, reps = 1000);
+hist(stresses, xlab = "Stress values for initialised genomes", 
+     main = "", breaks = 20);
+```
+
+
+It might be good to recommend this kind of diagnostic for users, particularly when simulating very complex individuals. I think that I will do this for the supporting information showing an advanced example.
 
 
 > <a name="u-28-JUN-2022">Update: 28 JUN 2022</a>

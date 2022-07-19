@@ -262,7 +262,7 @@ Following initialisation, a single time step proceeds with landscape change (see
 Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
 Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
 Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
-The option to set minimum and maximum ages events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
+The option to set minimum and maximum ages for events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
 
 ```{r, echo=FALSE, fig.height=1.75, fig.width=6, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4)."}
 mbox <- function(x0, x1, y0, y1){
