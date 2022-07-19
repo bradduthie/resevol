@@ -264,7 +264,7 @@ Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, mov
 Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
 The option to set minimum and maximum ages for events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
 
-```{r, echo=FALSE, fig.height=1.75, fig.width=6, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4)."}
+```{r, echo=FALSE, fig.height=3, fig.width=8, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed in a CSV file."}
 mbox <- function(x0, x1, y0, y1){
     xx <- seq(from=x0, to=x1, length.out = 100);
     yy <- seq(from=y0, to=y1, length.out = 100);
@@ -274,57 +274,85 @@ mbox <- function(x0, x1, y0, y1){
 }
 par(mar=c(0,0,0,0));
 # ===============================================================
-plot(x=0, y=0, type="n", xlim=c(0,100), ylim=c(50,95), xaxt="n", yaxt="n",
+plot(x=0, y=0, type="n", xlim=c(0,100), ylim=c(40,95), xaxt="n", yaxt="n",
      xlab="",ylab="");
-ibox <- mbox(x0 = 0,  x1 = 10, y0 = 88, y1 = 72);
-polygon(x = ibox$x, y = ibox$y, lwd = 3, border = "black", col = "white");
-cbox <- mbox(x0 = 15, x1 = 25, y0 = 88, y1 = 72);
+ibox <- mbox(x0 = 0,  x1 = 10, y0 = 63, y1 = 47);
+polygon(x = ibox$x, y = ibox$y, lwd = 5, border = "black", col = "white");
+cbox <- mbox(x0 = 0, x1 = 10, y0 = 88, y1 = 72);
 polygon(x = cbox$x, y = cbox$y, lwd = 3, border = "black", col = "white");
-ubox <- mbox(x0 = 30, x1 = 40, y0 = 88, y1 = 72);
+ubox <- mbox(x0 = 15, x1 = 25, y0 = 88, y1 = 72);
 polygon(x = ubox$x, y = ubox$y, lwd = 3, border = "black", col = "white");
-nbox <- mbox(x0 = 45, x1 = 55, y0 = 88, y1 = 72);
+nbox <- mbox(x0 = 30, x1 = 40, y0 = 88, y1 = 72);
 polygon(x = nbox$x, y = nbox$y, lwd = 3, border = "black", col = "white");
-fbox <- mbox(x0 = 60, x1 = 70, y0 = 88, y1 = 72);
+fbox <- mbox(x0 = 45, x1 = 55, y0 = 88, y1 = 72);
 polygon(x = fbox$x, y = fbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 60, x1 = 70, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
 tbox <- mbox(x0 = 75, x1 = 85, y0 = 88, y1 = 72);
 polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
 tbox <- mbox(x0 = 90, x1 = 100, y0 = 88, y1 = 72);
 polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
-text(x=5,  y=84, labels="Initialise", col="black", cex = 0.5);
-text(x=5,  y=80, labels="pests and", col="black", cex = 0.5);
-text(x=5,  y=76, labels="landscape", col="black", cex = 0.5);
-text(x=20, y=84, labels="Rotate", col="black", cex = 0.5);
-text(x=20, y=80, labels="crops and", col="black", cex = 0.5);
-text(x=20, y=76, labels="pesticides", col="black", cex = 0.5);
-
-text(x=35, y=80, labels="Mutation", col="black", cex = 0.5);
-
-text(x=35, y=80, labels="Mutation", col="black", cex = 0.5);
-text(x=50, y=82, labels="Fitness", col="black", cex = 0.5);
-text(x=50, y=78, labels="evaluation", col="black", cex = 0.5);
-text(x=65, y=82, labels="Tournament", col="black", cex = 0.5);
-text(x=65, y=78, labels="selection", col="black", cex = 0.5);
-text(x=80, y=80, labels="Replacement", col="black", cex = 0.5);
-arrows(x0=10, x1=14, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0=25, x1=29, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0=40, x1=44, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0=55, x1=59, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0=70, x1=74, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0=85, x1=89, y0=80, y1=80, lwd=2, length=0.10);
-arrows(x0 = 80, x1 = 80, y0 = 72, y1 = 68, lwd = 2, length = 0);
-arrows(x0 = 80, x1 = 20, y0 = 65, y1 = 65, lwd = 2, length = 0);
-arrows(x0 = 20, x1 = 20, y0 = 65, y1 = 72, lwd = 2, length = 0.05);
-text(x=73, y=63, labels="No", col="black", cex = 0.5);
-rbox <- mbox(x0 = 75, x1 = 85, y0 = 62, y1 = 68);
+ibox <- mbox(x0 = 90,  x1 = 100, y0 = 63, y1 = 47);
+polygon(x = ibox$x, y = ibox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 75, x1 = 85, y0 = 63, y1 = 47);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+text(x=5,  y=58, labels="Initialise", col="black", cex = 0.75);
+text(x=5,  y=54, labels="pests and", col="black", cex = 0.75);
+text(x=5,  y=50, labels="landscape", col="black", cex = 0.75);
+text(x=5, y=84, labels="Crops and", col="black", cex = 0.75);
+text(x=5, y=80, labels="pesticides", col="black", cex = 0.75);
+text(x=5, y=76, labels="rotated?", col="black", cex = 0.75);
+text(x=20, y=82, labels="Pests", col="black", cex = 0.75);
+text(x=20, y=78, labels="metabolise", col="black", cex = 0.75);
+text(x=35, y=82, labels="Pests", col="black", cex = 0.75);
+text(x=35, y=78, labels="feed", col="black", cex = 0.75);
+text(x=50, y=82, labels="Pesticide", col="black", cex = 0.75);
+text(x=50, y=78, labels="consumed", col="black", cex = 0.75);
+text(x=65, y=82, labels="Pests", col="black", cex = 0.75);
+text(x=65, y=78, labels="move", col="black", cex = 0.75);
+text(x=80, y=82, labels="Pests", col="black", cex = 0.75);
+text(x=80, y=78, labels="reproduce", col="black", cex = 0.75);
+text(x=95, y=82, labels="Pest", col="black", cex = 0.75);
+text(x=95, y=78, labels="mortality", col="black", cex = 0.75);
+text(x=95,  y=58, labels="Pests", col="black", cex = 0.75);
+text(x=95,  y=54, labels="immigrate", col="black", cex = 0.75);
+text(x=80,  y=59, labels="Collect", col="black", cex = 0.75);
+text(x=80,  y=55, labels="statistics", col="black", cex = 0.75);
+text(x=80,  y=51, labels="as CSV", col="black", cex = 0.75);
+arrows(x0=2, x1=2,   y0=63, y1=71.5, lwd=2, length=0.10);
+arrows(x0=10, x1=14.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=25, x1=29.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=40, x1=44.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=55, x1=59.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=70, x1=74.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=85, x1=89.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=95, x1=95,   y0=72, y1=63.5, lwd=2, length=0.10);
+arrows(x0=90, x1=85.5, y0=55, y1=55, lwd=2, length=0.10);
+arrows(x0=75, x1=70.5, y0=60, y1=60, lwd=2, length=0.10);
+arrows(x0=60, x1=55.5, y0=60, y1=60, lwd=2, length=0.10);
+rbox <- mbox(x0 = 60, x1 = 70, y0 = 57, y1 = 63);
 polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
-text(x=80, y=65, labels="Termination?", col="white", cex = 0.5);
-fbox <- mbox(x0 = 60, x1 = 70, y0 = 62, y1 = 50);
-polygon(x = fbox$x, y = fbox$y, lwd = 3, border = "black", col = "white");
-text(x=65, y=57, labels="Individual", col="black", cex = 0.5);
-text(x=65, y=53, labels="network", col="black", cex = 0.5);
-arrows(x0 = 80, x1 = 80, y0 = 62, y1 = 55, lwd = 2, length = 0);
-arrows(x0 = 80, x1 = 70, y0 = 55, y1 = 55, lwd = 2, length = 0.05);
-text(x=73, y=53, labels="Yes", col="black", cex = 0.5);
+text(x=65, y=60, labels="Extinction?", col="white", cex = 0.75);
+rbox <- mbox(x0 = 45, x1 = 55, y0 = 57, y1 = 63);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=50, y=60, labels="Max. time?", col="white", cex = 0.75);
+text(x = 58.5, y = 58.5, labels = "No", col = "black", cex = 0.75);
+text(x = 43.5, y = 58.5, labels = "No", col = "black", cex = 0.75);
+text(x = 68, y = 54, labels = "Yes", col = "black", cex = 0.75);
+text(x = 53, y = 54, labels = "Yes", col = "black", cex = 0.75);
+arrows(x0=66, x1=66, y0=57, y1=50, lwd=2, length=0.0);
+arrows(x0=51, x1=51, y0=57, y1=50, lwd=2, length=0.0);
+rbox <- mbox(x0 = 30, x1 = 40, y0 = 47, y1 = 53);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=35, y=50, labels="STOP", col="white", cex = 1);
+rbox <- mbox(x0 = 10, x1 = 16, y0 = 47, y1 = 63);
+polygon(x = rbox$x, y = rbox$y, lwd = 5, border = "black", col = "black");
+text(x=13, y=55, labels="START", col="white", cex = 1, srt = 90);
+arrows(x0=66, x1=40.5, y0=50, y1=50, lwd=2, length=0.10);
+arrows(x0=45, x1=35, y0=60, y1=60, lwd=2, length=0.0);
+arrows(x0=35, x1=35, y0=60, y1=67, lwd=2, length=0.0);
+arrows(x0=35, x1=7, y0=67, y1=67, lwd=2, length=0.0);
+arrows(x0=7, x1=7, y0=67, y1=71.5, lwd=2, length=0.1);
 ```
 
 Pests feed by
