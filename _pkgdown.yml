@@ -3,6 +3,7 @@ reference:
       contents:
       - mine_gmatrix
       - run_farm_sim
+      - stress_test
 
 navbar:
     right:

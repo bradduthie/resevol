@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">A Bradley
 Duthie</h4>
             
-            <h4 data-toc-skip class="date">2022-07-13</h4>
+            <h4 data-toc-skip class="date">2022-07-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/evolutionary_algorithm.Rmd" class="external-link"><code>vignettes/evolutionary_algorithm.Rmd</code></a></small>
       <div class="hidden name"><code>evolutionary_algorithm.Rmd</code></div>
@@ -178,19 +178,19 @@ in the evolutionary algorithm.</p>
 <code class="sourceCode R"><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##              [,1]        [,2]        [,3]        [,4]</span>
-<span class="co">##  [1,]  0.05698042  0.02590225 -0.12289019 -0.11316370</span>
-<span class="co">##  [2,]  0.12729649 -0.11302408 -0.03980942 -0.01891423</span>
-<span class="co">##  [3,]  0.12282015 -0.16875032  0.23792286 -0.03206648</span>
-<span class="co">##  [4,]  0.04831312 -0.13567296 -0.17671416  0.17787365</span>
-<span class="co">##  [5,]  0.04188201  0.09246799 -0.01880231 -0.02065964</span>
-<span class="co">##  [6,] -0.14331591 -0.14778448  0.13162601  0.03680986</span>
-<span class="co">##  [7,] -0.01484444 -0.07465251 -0.03079191  0.12276533</span>
-<span class="co">##  [8,] -0.12226521 -0.01191729  0.07915243  0.05987963</span>
-<span class="co">##  [9,]  0.09660273  0.18203948  0.10647034  0.00866045</span>
-<span class="co">## [10,] -0.03838483 -0.02746418  0.03196694 -0.02324069</span>
-<span class="co">## [11,] -0.08925193 -0.23584200  0.03312530  0.05514303</span>
-<span class="co">## [12,]  0.05442209  0.09497002  0.06323152  0.02059102</span></code></pre>
+<pre><code><span class="co">##                [,1]         [,2]         [,3]        [,4]</span>
+<span class="co">##  [1,]  0.0883250537 -0.002432697 -0.004659590  0.12500699</span>
+<span class="co">##  [2,] -0.0112950514  0.147788949  0.017426558  0.21294608</span>
+<span class="co">##  [3,] -0.0200114350  0.157498149  0.008025413  0.08420020</span>
+<span class="co">##  [4,]  0.0140337166 -0.086349469 -0.051330488  0.08627901</span>
+<span class="co">##  [5,]  0.0294936740  0.064373902  0.149175172  0.12463833</span>
+<span class="co">##  [6,]  0.0313675581  0.165632243  0.079396651 -0.10294951</span>
+<span class="co">##  [7,]  0.1321207800  0.286245661 -0.068692360 -0.01382283</span>
+<span class="co">##  [8,] -0.0129501072  0.046281885 -0.076013822  0.11442518</span>
+<span class="co">##  [9,] -0.1083887933 -0.025796518  0.121248337 -0.08837585</span>
+<span class="co">## [10,] -0.0005372933  0.109696713  0.084825558 -0.07199621</span>
+<span class="co">## [11,]  0.0041527537  0.065339337  0.076982481 -0.02378765</span>
+<span class="co">## [12,]  0.0098883887 -0.076545426 -0.101169427  0.06119005</span></code></pre>
 <p>We can initialise 12 allele values, one for each locus.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</code></pre></div>
@@ -199,8 +199,8 @@ in the evolutionary algorithm.</p>
 multiplication.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##             [,1]        [,2]      [,3]      [,4]</span>
-<span class="co">## [1,] -0.09834159 -0.03098483 0.3526664 0.3749428</span></code></pre>
+<pre><code><span class="co">##            [,1]       [,2]      [,3]      [,4]</span>
+<span class="co">## [1,] -0.5330373 -0.7371591 0.2043608 -0.712829</span></code></pre>
 <p>We can likewise use a 4 by 4 square matrix to represent the values of
 the arrows from the first column of four hidden layer nodes to the
 second column of hidden layer nodes.</p>
@@ -208,17 +208,17 @@ second column of hidden layer nodes.</p>
 <code class="sourceCode R"><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_2_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##              [,1]        [,2]        [,3]        [,4]</span>
-<span class="co">## [1,]  0.009053021  0.01546451  0.12875180 -0.06566558</span>
-<span class="co">## [2,]  0.026007369 -0.01278763 -0.07394504  0.16470707</span>
-<span class="co">## [3,]  0.017601901  0.04076240  0.03857528 -0.16633273</span>
-<span class="co">## [4,] -0.011672334  0.09877044 -0.04931854  0.08631637</span></code></pre>
+<pre><code><span class="co">##            [,1]         [,2]        [,3]        [,4]</span>
+<span class="co">## [1,]  0.1760442  0.019528482 -0.03623649 -0.12586060</span>
+<span class="co">## [2,] -0.2513203  0.007913973  0.09963485 -0.03950766</span>
+<span class="co">## [3,]  0.1047757 -0.058773027 -0.01047914  0.03281008</span>
+<span class="co">## [4,]  0.1052525 -0.174843254 -0.04470953  0.10369766</span></code></pre>
 <p>We can then use matrix multiplication to map the 12 allele values to
 the values of the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##              [,1]       [,2]        [,3]        [,4]</span>
-<span class="co">## [1,] 0.0001350178 0.05028422 -0.01525791 -0.02494202</span></code></pre>
+<pre><code><span class="co">##            [,1]       [,2]        [,3]       [,4]</span>
+<span class="co">## [1,] 0.03780992 0.09637917 -0.02440261 0.02899822</span></code></pre>
 <p>This pattern can continue, with 4 by 4 square matrices representing
 the value of arrows between columns of hidden layer nodes, and between
 the last hidden layer column and traits (note that the number of hidden
