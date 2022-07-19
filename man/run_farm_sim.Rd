@@ -399,11 +399,11 @@ is always added to metabolism for each individual. By default, this value is
 
 \item{min_age_metabolism}{This determines the minimum age at which losses of 
 food consumed in previous time steps enacted by metabolism and 
-baseline_metabolsim can occur.}
+baseline_metabolism can occur.}
 
 \item{max_age_metabolism}{This determines the maximum age at which losses of 
 food consumed in previous time steps enacted by metabolism and 
-baseline_metabolsim can occur.}
+baseline_metabolism can occur.}
 
 \item{terrain}{Insert a custom terrain of different farms, which takes the
 form of a matrix that includes a sequence of natural numbers in all matrix
