@@ -121,7 +121,7 @@ initialise_inds <- function(mine_output,
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.");
   }
   if(repro == "sexual" | repro == "biparental"){
-    inds      <- build_sexual(mine_output, N, neutral_loci);
+    inds <- build_sexual(mine_output, N, neutral_loci);
   }else{
     inds <- build_asexual(mine_output, N, neutral_loci);
   }
