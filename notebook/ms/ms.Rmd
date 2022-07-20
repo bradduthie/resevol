@@ -252,6 +252,7 @@ Integer values specify (1) no rotation, (2) random transition from one type to a
 Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
 Hence, any possible Markov chain can be used to transition between crop or pesticide types on farms.
 
+
 Pest ecology
 ---------------------------------------------------
 
@@ -260,13 +261,13 @@ Pest reproductive system can be specified in the `run_farm_sim` function using t
 For `"sexual"` pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
 At the start of a simulation, pests are initialised in a random location.
 Initialised pests are age of zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
-Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration.
+Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration (Figure \@ref(fig:flowchart)).
 Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
 Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
 Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
 The option to set minimum and maximum ages for events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
 
-```{r, echo=FALSE, fig.height=3, fig.width=8, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed in a CSV file."}
+```{r flowchart, echo=FALSE, fig.height=3, fig.width=8, fig.cap = "Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed in a CSV file."}
 mbox <- function(x0, x1, y0, y1){
     xx <- seq(from=x0, to=x1, length.out = 100);
     yy <- seq(from=y0, to=y1, length.out = 100);
@@ -380,7 +381,7 @@ The latter requires specifying a real value for `food_needed_repr`, which is the
 For food-based reproduction, the total amount of food consumed is divided by `food_needed_repr`, then floored to determine offspring number.
 Sexual reproduction requires a mate of reproductive age that is either monoecious or male, and within range of the reproducing focal pest (potential including the focal pest, if `selfing = TRUE`).
 A potential mate is within range if it is within an integer number of cells from the focal pest, as defined by `mating_distance` (e.g., if `mating_distance = 0`, then mates must share a landscape cell).
-All available potential mates sire offspring with equal probability, and reproducing pests are assumed to mate multiply (i.e., paternity is a fair raffle for all offspring). <!--- XXX CHECK THIS --->
+All available potential mates sire offspring with equal probability, and reproducing pests are assumed to mate multiply (i.e., paternity is a fair raffle for all offspring).
 If a carrying capacity on birth is set (`K_on_birth > 0`) and total offspring number in the population exceeds this capacity, then offspring are removed at random until they are  within carrying capacity.
 An real value `immigration_rate` specifies the rate parameter for Poisson random sampling of the number of immigrants added to the population at the end of a time step.
 Immigrants are initialised in the same way as pests were at the start of the simulation.
@@ -391,17 +392,47 @@ Pest evolution
 ---------------------------------------------------
 
 Pest genomes evolve in a complex and highly mechanistic way.
-Offspring inherit genome values from their parent(s) with the possibility for mutation and recombination; offspring traits are then calculated from their newly created genomes.
-For asexual pests, genomes are haploid and mutation .
+Offspring inherit genome values from their parent(s) with the possibility for mutation and recombination; offspring traits are then calculated from their newly initialised genomes.
+For asexually and sexually reproducing pests, genomes are haploid and diploid, respectively. 
+Asexually reproducing pests receive the full genomes of their parent, while sexually reproducing pests receive half of their alleles from each parent.
+Each diploid parent contributes one half of their genome, effectively modelling a genome with a single paired chromosome.
+Crossover occurs at each position of the genome with a probability of `crossover_pr`, so complete recombination is also possible if `crossover_pr = 0.5`.
+For both haploids and diploids, each genome value then mutates independently with a probability of `mutation_pr`, which can be set to any real number between 0 and 1.
+If a genome value mutates, then a new value is randomly sampled from a standard normal distribution.
+If `mutation_type = 0`, then this new value replaces the old value, and if `mutation_type = 1`, then the new value is added to the old value.
+After mutation, genome values are used to calculate trait values.
+
+Evolution of the genetic architecture linking loci to traits can be constrained by disabling mutation genome values linking loci, internal nodes, and traits (i.e., 'network values' represented by arrows in Figure \@ref(fig:network)).
+While mutation at loci (green circles in Figure \@ref(fig:network)) is always possible as long as `mutation_pr > 0`, the number of intermediary layers for which network values can mutate is constrained by `net_mu_layers`. 
+If `net_mu_layers = 0`, then no network values can mutate, but higher integer values cause mutation to occur at network value layers from loci to traits (if `net_mu_dir = 1`) or traits to loci (if `net_mu_dir = 0`).
+For example, if `net_mu_layers = 2` and `net_mu_dir = 1`, then the network values linking loci to the first internal node, and the first internal node to the second, can mutate (i.e., first two columns of arrows in \@ref(fig:network), but not those linking the second internal node to traits).
+This allows pest traits to evolve with varying degrees of constraint on the covariance between traits.
+Low `net_mu_layers` values model strong genetic constraints, while high values model high evolvability of trait covariances.
+
+Finally, evolving and covarying traits can be used in place of fixed parameters described in pest ecology.
+This is done by substituting `"Tj"` as argument input in place of a numeric value, where `j` represents the trait number.
+For example, the argument `move_distance = "T1"` will make Trait 1 the movement distance for individuals. 
+The argument `food_consume = c("T2", "T3")` will set Traits 2 and 3 to define the amount of food of types 1 and 2 that can be consumed by a pest, respectively.
+Parameters that can be replaced include `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume`, and `pesticide_consume`.
+The resevol package can thereby simulate agricultural pests with complex and co-evolving traits, and potentially evolving trait covariances, under a range of possible pest life histories.
+
+Simulation output
+===================================================
+
+Simulation output can be large, so output is printed in two CSV files, both of which are created in the working directory.
+The first file "population_data.csv" prints population level data over time, including population size, mean age, sex ratio, mean food and pesticide consumed of each type, mortality rate, and mean trait values. 
+The second file "individuals.csv" prints all information, including full genomes and traits (columns), for every individual (rows) in the population.
+The printing of individual level data is disabled by default.
+It can be turned on for all time steps by setting `print_inds = TRUE`, but this should be done with caution because it can create extremely large files.
+Instead, individual level data can be printed for only the final time step by setting `print_last = TRUE`.
+Output produced by `run_farm_sim` is a list of two elements, which includes a vector of parameter values used in the simulation and the final state of the landscape as an array.
 
 
 Example of individual-based simulations
 ===================================================
 
-- Example of evolving species with different crop and pesticide applications
+Here we demonstrate a simple simulation of resevol with asexually reproducing pests that have three loci and two traits (Figure \@ref(fig:network)).
 
-Conclusions
-===================================================
 
 
 Availability
