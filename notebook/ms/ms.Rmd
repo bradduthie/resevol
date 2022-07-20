@@ -7,18 +7,19 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
   University of Stirling Stirling, FK9 4LA, UK'
 output:
-  pdf_document:
-    toc: no
-  html_document: default
   bookdown::pdf_document2:
     citation_package: natbib
     fig_caption: yes
     toc: no
   word_document: default
+  html_document: default
 header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
 - \fancyhead[R]{RESEVOL, AN R PACKAGE}
+- \usepackage{lineno}
+- \linenumbers
+- \modulolinenumbers[2]
 linestretch: 1
 link-citations: yes
 linkcolor: blue
@@ -97,30 +98,30 @@ mtext(side = 2, text = "Loci", cex = 1.25, col = "darkgreen", line = -2);
 mtext(side = 4, text = "Traits", cex = 1.25, col = "red", line = -2);
 Lx  <- rep(x = 100, times = 3);
 Ly  <- seq(from = 250, to = 750, length = 3);
-points(x = Lx, y = Ly, pch = 20, cex = 8, col = "darkgreen");
 H1x <- rep(x = 400, times = 2);
 H1y <- seq(from = 250, to = 750, length = 2);
-points(x = H1x, y = H1y, pch = 15, cex = 8, col = "blue");
 H2x <- rep(x = 600, times = 2);
 H2y <- seq(from = 250, to = 750, length = 2);
-points(x = H2x, y = H2y, pch = 15, cex = 8, col = "blue");
 Tx  <- rep(x = 900, times = 2);
 Ty  <- seq(from = 250, to = 750, length = 2);
-points(x = Tx, y = Ty, pch = 18, cex = 10, col = "red");
+points(x = Tx, y = Ty, pch = 23, cex = 8, bg = "red", lwd = 2);
 sep_L_points <- c(-50, 0, 50);
 sep_N_points <- c(-30, 30);
-arrows(x0 = Lx + 38, x1 = H1x[1] - 58, y0 = Ly, y1 = H1y[1] + sep_L_points, 
-       length = 0.08, lwd = 3);
-arrows(x0 = H1x + 52, x1 = H2x[1] - 58, y0 = H1y, y1 = H2y[1] + sep_N_points, 
-       length = 0.08, lwd = 3);
 arrows(x0 = H2x + 52, x1 = Tx[1] - 58, y0 = H2y, y1 = Ty[1] + sep_N_points, 
-       length = 0.08, lwd = 3);
-arrows(x0 = Lx + 38, x1 = H1x[2] - 58, y0 = Ly, y1 = H1y[2] + sep_L_points, 
-       length = 0.08, lwd = 3);
-arrows(x0 = H1x + 52, x1 = H2x[2] - 58, y0 = H1y, y1 = H2y[2] + sep_N_points, 
        length = 0.08, lwd = 3);
 arrows(x0 = H2x + 52, x1 = Tx[2] - 58, y0 = H2y, y1 = Ty[2] + sep_N_points, 
        length = 0.08, lwd = 3);
+arrows(x0 = Lx + 38, x1 = H1x[1] - 58, y0 = Ly, y1 = H1y[1] + sep_L_points, 
+       length = 0.08, lwd = 3);
+points(x = H2x, y = H2y, pch = 22, cex = 9, bg = "blue", lwd = 2);
+arrows(x0 = H1x + 52, x1 = H2x[1] - 58, y0 = H1y, y1 = H2y[1] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H1x + 52, x1 = H2x[2] - 58, y0 = H1y, y1 = H2y[2] + sep_N_points, 
+       length = 0.08, lwd = 3);
+points(x = H1x, y = H1y, pch = 22, cex = 9, bg = "blue", lwd = 2);
+arrows(x0 = Lx + 38, x1 = H1x[2] - 58, y0 = Ly, y1 = H1y[2] + sep_L_points, 
+       length = 0.08, lwd = 3);
+points(x = Lx, y = Ly, pch = 21, cex = 6, bg = "darkgreen", lwd = 2);
 srnm <- c(0.2, -0.1, 0.1);
 text(x = Lx, y = Ly, labels = srnm, col = "white", cex = 0.9);
 text(x = 200, y = 790, labels = "0.4", srt = 10, cex = 0.8);
@@ -240,6 +241,7 @@ Second, a custom landscapes can be input using the `terrain` argument, which tak
 Each value defines a unique farm, but values do not need to be contiguous.
 These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see below).
 This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
+Landscapes are assumed to be a torus, so pests that move off of one edge return on the opposite side of the landscape.
 
 Each farm can hold one pesticide and one crop type at any time step.
 The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
@@ -254,11 +256,11 @@ Pest ecology
 ---------------------------------------------------
 
 Individual pests can be modelled to have several reproductive systems and life histories.
-Pest reproductive system can be specified in the `run_farm_sim` function using the `repro` argument, which accepts arguments "asexual" (haploid), "sexual" (monoecious), and "biparental" (dioecious).
-For "sexual" pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
+Pest reproductive system can be specified in the `run_farm_sim` function using the `repro` argument, which accepts arguments `"asexual"` (haploid), `"sexual"` (monoecious), and `"biparental"` (dioecious).
+For `"sexual"` pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
 At the start of a simulation, pests are initialised in a random location.
 Initialised pests are age of zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
-Following initialisation, a single time step proceeds with landscape change (see above), pest aging, feeding, pesticide consumption, movement, reproduction, mortality, and immigration.
+Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration.
 Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
 Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
 Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
@@ -276,7 +278,7 @@ par(mar=c(0,0,0,0));
 # ===============================================================
 plot(x=0, y=0, type="n", xlim=c(0,100), ylim=c(40,95), xaxt="n", yaxt="n",
      xlab="",ylab="");
-ibox <- mbox(x0 = 0,  x1 = 10, y0 = 63, y1 = 47);
+ibox <- mbox(x0 = 0,  x1 = 14, y0 = 63, y1 = 47);
 polygon(x = ibox$x, y = ibox$y, lwd = 5, border = "black", col = "white");
 cbox <- mbox(x0 = 0, x1 = 10, y0 = 88, y1 = 72);
 polygon(x = cbox$x, y = cbox$y, lwd = 3, border = "black", col = "white");
@@ -296,29 +298,29 @@ ibox <- mbox(x0 = 90,  x1 = 100, y0 = 63, y1 = 47);
 polygon(x = ibox$x, y = ibox$y, lwd = 3, border = "black", col = "white");
 tbox <- mbox(x0 = 75, x1 = 85, y0 = 63, y1 = 47);
 polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
-text(x=5,  y=58, labels="Initialise", col="black", cex = 0.75);
-text(x=5,  y=54, labels="pests and", col="black", cex = 0.75);
-text(x=5,  y=50, labels="landscape", col="black", cex = 0.75);
-text(x=5, y=84, labels="Crops and", col="black", cex = 0.75);
-text(x=5, y=80, labels="pesticides", col="black", cex = 0.75);
-text(x=5, y=76, labels="rotated?", col="black", cex = 0.75);
-text(x=20, y=82, labels="Pests", col="black", cex = 0.75);
-text(x=20, y=78, labels="metabolise", col="black", cex = 0.75);
-text(x=35, y=82, labels="Pests", col="black", cex = 0.75);
-text(x=35, y=78, labels="feed", col="black", cex = 0.75);
-text(x=50, y=82, labels="Pesticide", col="black", cex = 0.75);
-text(x=50, y=78, labels="consumed", col="black", cex = 0.75);
-text(x=65, y=82, labels="Pests", col="black", cex = 0.75);
-text(x=65, y=78, labels="move", col="black", cex = 0.75);
-text(x=80, y=82, labels="Pests", col="black", cex = 0.75);
-text(x=80, y=78, labels="reproduce", col="black", cex = 0.75);
-text(x=95, y=82, labels="Pest", col="black", cex = 0.75);
-text(x=95, y=78, labels="mortality", col="black", cex = 0.75);
-text(x=95,  y=58, labels="Pests", col="black", cex = 0.75);
-text(x=95,  y=54, labels="immigrate", col="black", cex = 0.75);
-text(x=80,  y=59, labels="Collect", col="black", cex = 0.75);
-text(x=80,  y=55, labels="statistics", col="black", cex = 0.75);
-text(x=80,  y=51, labels="as CSV", col="black", cex = 0.75);
+text(x=7,  y=59, labels="Initialise", col="black", cex = 0.8);
+text(x=7,  y=55, labels="pests and", col="black", cex = 0.8);
+text(x=7,  y=51, labels="landscape", col="black", cex = 0.8);
+text(x=5, y=84, labels="Crops and", col="black", cex = 0.8);
+text(x=5, y=80, labels="pesticides", col="black", cex = 0.8);
+text(x=5, y=76, labels="rotated?", col="black", cex = 0.8);
+text(x=20, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=20, y=78, labels="metabolise", col="black", cex = 0.8);
+text(x=35, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=35, y=78, labels="feed", col="black", cex = 0.8);
+text(x=50, y=82, labels="Pesticide", col="black", cex = 0.8);
+text(x=50, y=78, labels="consumed", col="black", cex = 0.8);
+text(x=65, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=65, y=78, labels="move", col="black", cex = 0.8);
+text(x=80, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=80, y=78, labels="reproduce", col="black", cex = 0.8);
+text(x=95, y=82, labels="Pest", col="black", cex = 0.8);
+text(x=95, y=78, labels="mortality", col="black", cex = 0.8);
+text(x=95,  y=57, labels="Pests", col="black", cex = 0.8);
+text(x=95,  y=53, labels="immigrate", col="black", cex = 0.8);
+text(x=80,  y=59, labels="Collect", col="black", cex = 0.8);
+text(x=80,  y=55, labels="statistics", col="black", cex = 0.8);
+text(x=80,  y=51, labels="as CSV", col="black", cex = 0.8);
 arrows(x0=2, x1=2,   y0=63, y1=71.5, lwd=2, length=0.10);
 arrows(x0=10, x1=14.5, y0=80, y1=80, lwd=2, length=0.10);
 arrows(x0=25, x1=29.5, y0=80, y1=80, lwd=2, length=0.10);
@@ -345,9 +347,9 @@ arrows(x0=51, x1=51, y0=57, y1=50, lwd=2, length=0.0);
 rbox <- mbox(x0 = 30, x1 = 40, y0 = 47, y1 = 53);
 polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
 text(x=35, y=50, labels="STOP", col="white", cex = 1);
-rbox <- mbox(x0 = 10, x1 = 16, y0 = 47, y1 = 63);
+rbox <- mbox(x0 = 14, x1 = 20, y0 = 47, y1 = 63);
 polygon(x = rbox$x, y = rbox$y, lwd = 5, border = "black", col = "black");
-text(x=13, y=55, labels="START", col="white", cex = 1, srt = 90);
+text(x=17, y=55, labels="START", col="white", cex = 1, srt = 90);
 arrows(x0=66, x1=40.5, y0=50, y1=50, lwd=2, length=0.10);
 arrows(x0=45, x1=35, y0=60, y1=60, lwd=2, length=0.0);
 arrows(x0=35, x1=35, y0=60, y1=67, lwd=2, length=0.0);
@@ -355,25 +357,42 @@ arrows(x0=35, x1=7, y0=67, y1=67, lwd=2, length=0.0);
 arrows(x0=7, x1=7, y0=67, y1=71.5, lwd=2, length=0.1);
 ```
 
-Pests feed by
+In each time step, pests feed in a random order, consuming the crop on their landscape cell.  Pests consume a maximum amount of the crop as specified by the `food_consume` argument, which takes a vector with as many elements as their are crops (i.e., if `crop_number = 2`, then `food_consume` has two elements, the first and second defining consumption of crops 1 and 2, respectively).
+If crop amount on the landscape cell exceeds pest consumption ability, then pests consume their maximum amount, and this amount is removed from the landscape cell.
+If crop amount is less than pest consumption ability, then pests consume whatever crop is left and crop amount is reduced to zero.
+Pesticide consumption works identically to crop consumption, except that the amount of pesticide on a landscape cell is not decreased.
+Pests simply consume an amount of pesticide as specified by the `pesticide_consume` argument, which also takes a vector with as many elements as their are pesticides.
+Hence, each pest can potentially feed and be affected by the pesticide of their focal landscape cell. 
 
-Pesticide is consumed during feeding
+After interacting with their landscape cell, pests can move. 
+Each pest visits a number of cells during movement, as is specified by the parameter `movement_bouts`. 
+Individual movement bouts occur in a random order across pests.
+During a movement bout, a pest can travel to any cell within a value defined by `movement_distance` from their current location, which could include their current location (i.e., moving zero distance).
+Upon arrival to a cell, a pest can feed if they are of an appropriate feeding age and `feed_while_moving = TRUE`.
+The pest also consumes pesticide if they are of the appropriate age and `pesticide_while_moving = TRUE`.
+Having pests feed and consume pesticide in a random order while moving among landscape cells can model a population competing for food and encountering pesticides on a shorter time scale than an individual time step.
 
-Movement is modelled by
+After all pests are done moving, pests reproduce.
+Offspring production is possible for asexual, monoecious, or female pests.
+Pest expected offspring number is defined by a fixed parameter if `reproduction_type = "lambda"`, or is calculated from the amount of food consumed if  `reproduction_type = "food_based"`.
+The former requires specifying `lambda_value`, which becomes the rate parameter for sampling offspring number from a Poisson distribution.
+The latter requires specifying a real value for `food_needed_repr`, which is the amount of food needed to produce one offspring.
+For food-based reproduction, the total amount of food consumed is divided by `food_needed_repr`, then floored to determine offspring number.
+Sexual reproduction requires a mate of reproductive age that is either monoecious or male, and within range of the reproducing focal pest (potential including the focal pest, if `selfing = TRUE`).
+A potential mate is within range if it is within an integer number of cells from the focal pest, as defined by `mating_distance` (e.g., if `mating_distance = 0`, then mates must share a landscape cell).
+All available potential mates sire offspring with equal probability, and reproducing pests are assumed to mate multiply (i.e., paternity is a fair raffle for all offspring). <!--- XXX CHECK THIS --->
+If a carrying capacity on birth is set (`K_on_birth > 0`) and total offspring number in the population exceeds this capacity, then offspring are removed at random until they are  within carrying capacity.
+An real value `immigration_rate` specifies the rate parameter for Poisson random sampling of the number of immigrants added to the population at the end of a time step.
+Immigrants are initialised in the same way as pests were at the start of the simulation.
+Hence, any spatial structure or evolution that occurs during the simulation does not affect immigrant locations, genomes, or traits.
 
-Pests reproduce by
-
-Immigration occurs.
-
-
-- We want to model evolution of pesticide resistance across heterogenous landscape
-- Track entire genomes, traits, and yield over time and across space
-- Use covarying traits from `mine_gmatrix` to make evolving pests
-- Options for 10 crops and 10 pesticides simultaneously, and rotation
-- Function `run_farm_sim` runs simulations. Note unusual timing structure
 
 Pest evolution
 ---------------------------------------------------
+
+Pest genomes evolve in a complex and highly mechanistic way.
+Offspring inherit genome values from their parent(s) with the possibility for mutation and recombination; offspring traits are then calculated from their newly created genomes.
+For asexual pests, genomes are haploid and mutation .
 
 
 Example of individual-based simulations
