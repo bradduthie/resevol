@@ -49,7 +49,7 @@ void print_all_pests(double **pests, double *paras, int ts){
 
 
 /* =============================================================================
- * Prints population level statistics in the pet population
+ * Prints population level statistics in the pest population
  *     pests:           The array holding the parent's information
  *     paras:           The paras vector that holds global information
  * ========================================================================== */
