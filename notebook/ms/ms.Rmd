@@ -186,7 +186,7 @@ Values mapping loci to traits become part of an individual's genome, so the geno
 Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome. 
 Individuals can be haploid (as in Figure \@ref(fig:network)) or diploid (in which case, allele values are summed at a locus). 
 
-An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information for details). 
+An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information 1 for details). 
 Evolutionary algorithms are heuristic tools can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
 In the resevol package, the `mine_gmatrix` function runs an evolutionary algorithm, and requires the argument `gmatrix`, which specifies the desired trait covariance matrix.
 The function runs a genetic algorithm that initialises a population of `npsize` networks (Figure \@ref(fig:network)), and this population evolves until some maximum generation number (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
@@ -221,7 +221,7 @@ print(new_network[[6]]);
 The mean deviation between elements of the above matrix and the identity matrix provided by `trait_covs` is `r mean((new_network[[6]] - new_network[[2]])^2)`. 
 Lower values of `term_cri` and higher values of `max_gen` will result in a lower stress, but this will require more computation time, especially if the number of traits is high.
 Similarly, higher values of `indivs` will result in more accurate estimations of true stress, but this also requires more computation time.
-Additional arguments to `mine_gmatrix` can also be used to improve the performance of the evolutionary algorithm (see Supporting Information).
+Additional arguments to `mine_gmatrix` can also be used to improve the performance of the evolutionary algorithm (see Supporting Information 1).
 
 
 
@@ -433,7 +433,7 @@ Example of individual-based simulations {#simulation}
 ===================================================
 
 In resevol v0.3, the `run_farm_sim` function includes 68 arguments, which specify a wide range of possible simulation conditions affecting landscape and pest characteristics.
-These arguments are explained the package documentation, and in supporting information that demonstrates an advanced case study with a custom landscape and complex pest genomes and life history.
+These arguments are explained the package documentation, and Supporting Information 2, which demonstrates an advanced case study with a custom landscape and complex pest genomes and life history.
 Here we focus on a simple simulation with asexually reproducing pests that have three loci and two traits (Figure \@ref(fig:network)).
 We use the the genome generated in `new_network` from [Section 2](#mine_gmatrix), in which traits 1 and 2 have variances of `r new_network[[6]][1,1]` and `r new_network[[6]][2,2]`, respectively, with a covariance of `r new_network[[6]][1,2]`.
 
@@ -469,7 +469,7 @@ sim <- run_farm_sim(mine_output = new_network, repro = "asexual",
 
 
 Any arguments to `run_farm_sim` not included above are set to default values.
-[Output files](#outputs) can be used to plot ecological and evolutionary dynamics of pests. 
+[Output files](#output) can be used to plot ecological and evolutionary dynamics of pests. 
 Figure \@ref(fig:overtime)a shows the pest population change both over and within seasons.
 Due to the specific parameter values chosen, clear patterns reflecting pest cohort emerge.
 At the start of a season when the most crop is available, pests eat and abundance increases.
@@ -477,6 +477,9 @@ As less crop becomes available in a season, pest abundance decreases.
 Mean food consumed varies over the course of a season caused by the varying frequency of pests in different life history stages (Figure \@ref(fig:overtime)c).
 In the first 50 time steps, there is some consumption of pesticides 1 and 2 (Figure \@ref(fig:overtime)b), but both traits rapidly evolve to negative values making both pesticides ineffective (Figure \@ref(fig:overtime)d).
 In this case, the trade-off between pesticide consumption is not strong enough to maintain susceptibility to either pesticide in the population.
+Figure \@ref(fig:landscape) shows the location of pests on the landscape in the last time of the simulation (left panel), and how different pesticides are being applied on the landscape (right panel).
+Because the number of crops and pesticides, the number and nature of traits, and the size of pest genomes all vary depending on simulation parameters, no plotting functions are introduced in the resevol package.
+Instead, methods and code for producing plots such as those in Figures \@ref(fig:overtime) and \@ref(fig:landscape) are explained in Supporting Information 2.
 
 
 ```{r overtime, echo=FALSE, fig.width=8, fig.cap = "Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c) mean food consumed per pest, and (d) mean values of evolving traits 1 and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2, respectively, a pest will consume. White and grey vertical stripes indicate seasons of a single crop and pesticide application."}
@@ -570,10 +573,9 @@ text(x = 5, y = -0.82, labels = "d", cex = 2);
 box();
 ```
 
-Figure 4 shows the location of pests on the landscape
 
 
-```{r landscape, echo=FALSE, fig.width=6, fig.height=6, fig.cap = "Last time step"}
+```{r landscape, echo=FALSE, fig.width=6.4, fig.height=3, fig.cap = "Locations of pests (black) across a landscape that includes nine farms (coloured blocks) in the last time step of a simulation using the resevol R package (left panel). The right panel shows which farms apply pesticide 1 (dark grey) and 2 (light grey)."}
 last_time_step <- read.csv("last_time_step.csv", header = FALSE);
 landscape      <- sim[[2]][,,1];
 landscape_vals <- unique(as.vector(landscape));
@@ -591,7 +593,13 @@ for(i in 1:dim(last_time_step)[1]){
     landscape[xloc, yloc] <- 10;
 }
 land_cols      <- c(hcl.colors(9, "YlOrRd", rev = TRUE), "#000000");
+par(mfrow = c(1, 2), mar = c(0, 0.1, 0, 0.1));
 image(landscape, xaxt = "n", yaxt = "n", col = land_cols);
+box();
+pesticide_position <- sim[[2]][,,12];
+pesticide_cols     <- c("grey20", "grey60");
+image(pesticide_position, xaxt = "n", yaxt = "n", col = pesticide_cols);
+box();
 ```
 
 
