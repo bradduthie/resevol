@@ -11,8 +11,10 @@ output:
     citation_package: natbib
     fig_caption: yes
     toc: no
-  word_document: default
+  pdf_document:
+    toc: no
   html_document: default
+  word_document: default
 header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
@@ -54,13 +56,12 @@ Abstract {-}
 
 **Key words:** *pest management*, *food security*, *ecological modelling*
 
-Introduction
+Introduction {#introduction}
 ===================================================
 
-- Pest resistance to pesticide is a serious wicked problem that affects food security.
-- A quantitative genetic approach to pesticide resistance to maintaining resistance.
-- The resevol R package addresses two problems: genetic architecture and landscape selection
-- The R package can facilitate general questions and targetted ones
+- Pest resistance to pesticide is a serious wicked problem that affects food security (I have some references for this, but am probably missing several).
+- A quantitative genetic approach to pesticide resistance to maintaining resistance (has this been done at all?).
+
 
 ```{r, echo = FALSE}
 library("resevol");
@@ -78,7 +79,7 @@ Second, a population of asexual or sexual individuals is initialised and simulat
 Land units can apply one of up to 10 pesticides, and one of up to 10 crops; pesticides and crops rotate independently in a pre-specified way over time.
 The resevol package can thereby model complex and evolving traits in agricultural pests over realistic landscapes that undergo different pesticide use and crop regimes.
 
-Covarying pest quantitative traits
+Covarying pest quantitative traits {#mine_gmatrix}
 ===================================================
 
 The first step of simulation with the resevol package is building individual genomes. 
@@ -224,13 +225,13 @@ Additional arguments to `mine_gmatrix` can also be used to improve the performan
 
 
 
-Simulating landscape-level pesticide resistance
+Simulating landscape-level pesticide resistance {#simulating}
 ===================================================
 
 The full output of `mine_gmatrix` is passed to the `run_farm_sim` function, which initialises and simulates an evolving population of pests on a changing landscape for a natural number of time steps (`time_steps`).
 In this section, we explain the landscape, pest ecology, and evolving pest traits.
 
-Landscape
+Landscape {#landscape}
 ---------------------------------------------------
 
 Landscapes are spatially explicit and initialised in `run_farm_sim` in one of two ways. 
@@ -253,7 +254,7 @@ Square matrices can be used to define the probability that a given crop or pesti
 Hence, any possible Markov chain can be used to transition between crop or pesticide types on farms.
 
 
-Pest ecology
+Pest ecology {#ecology}
 ---------------------------------------------------
 
 Individual pests can be modelled to have several reproductive systems and life histories.
@@ -388,7 +389,7 @@ Immigrants are initialised in the same way as pests were at the start of the sim
 Hence, any spatial structure or evolution that occurs during the simulation does not affect immigrant locations, genomes, or traits.
 
 
-Pest evolution
+Pest evolution {#evolution}
 ---------------------------------------------------
 
 Pest genomes evolve in a complex and highly mechanistic way.
@@ -416,10 +417,10 @@ The argument `food_consume = c("T2", "T3")` will set Traits 2 and 3 to define th
 Parameters that can be replaced include `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume`, and `pesticide_consume`.
 The resevol package can thereby simulate agricultural pests with complex and co-evolving traits, and potentially evolving trait covariances, under a range of possible pest life histories.
 
-Simulation output
+Simulation output {#output}
 ===================================================
 
-Simulation output can be large, so output is printed in two CSV files, both of which are created in the working directory.
+Simulation output is large, so output is printed in two CSV files, both of which are created in the working directory.
 The first file "population_data.csv" prints population level data over time, including population size, mean age, sex ratio, mean food and pesticide consumed of each type, mortality rate, and mean trait values. 
 The second file "individuals.csv" prints all information, including full genomes and traits (columns), for every individual (rows) in the population.
 The printing of individual level data is disabled by default.
@@ -428,29 +429,188 @@ Instead, individual level data can be printed for only the final time step by se
 Output produced by `run_farm_sim` is a list of two elements, which includes a vector of parameter values used in the simulation and the final state of the landscape as an array.
 
 
-Example of individual-based simulations
+Example of individual-based simulations {#simulation}
 ===================================================
 
-Here we demonstrate a simple simulation of resevol with asexually reproducing pests that have three loci and two traits (Figure \@ref(fig:network)).
+In resevol v0.3, the `run_farm_sim` function includes 68 arguments, which specify a wide range of possible simulation conditions affecting landscape and pest characteristics.
+These arguments are explained the package documentation, and in supporting information that demonstrates an advanced case study with a custom landscape and complex pest genomes and life history.
+Here we focus on a simple simulation with asexually reproducing pests that have three loci and two traits (Figure \@ref(fig:network)).
+We use the the genome generated in `new_network` from [Section 2](#mine_gmatrix), in which traits 1 and 2 have variances of `r new_network[[6]][1,1]` and `r new_network[[6]][2,2]`, respectively, with a covariance of `r new_network[[6]][1,2]`.
+
+Traits 1 and 2 will define the rate at which pests consume two separate pesticides, so we model a system in which there is a trade-off for pesticide susceptibility.
+We use a simple $64 \times 64$ cell landscape with nine farms. 
+Each farm grows the same crop and uses one of two randomly intialised pesticides, which are rotated every 16 time steps.
+Hence, we can conceptualise 16 time steps as a single growing season.
+
+In our example, each cell holds four crop units, all of which can potentially be consumed. 
+Pests consume up to one unit of crop on their landscape cell per time step. 
+Pest survival and reproduction is food-based, and pests need to consume one unit of crop by age two to survive and reproduce. 
+Pests initialised at the start of the simulation are randomly assigned an age from 0-4 with equal probabilities.
+Pests have a maximum age of four, and they feed in ages 0-2, move up to two cells in age three and four, and reproduce in age four.
+Pests can consume pesticides in ages 0-2, and if they consume any pesticide, then they will die.
+In each time step, 10 immigrants arrive.
+We simulate 160 time steps (10 growing seasons) using the function below.
+
+```{r, eval = TRUE}
+sim <- run_farm_sim(mine_output = new_network, repro = "asexual", 
+                    pesticide_number = 2, pesticide_init = "random", 
+                    pesticide_consume = c("T1", "T2"), farms = 9,
+                    pesticide_rotation_time = 16, pesticide_rotation_type = 3,
+                    pesticide_tolerated_surv = 0, pesticide_per_cell = 1,
+                    crop_rotation_time = 16, crop_number = 1, crop_per_cell = 4, 
+                    food_consume = 1, reproduction_type = "food_based", 
+                    food_needed_surv = 1, food_needed_repr = 1, max_age = 4, 
+                    min_age_feed = 0, max_age_feed = 2, min_age_move = 3, 
+                    max_age_move = 4, min_age_reproduce = 4, print_gens = FALSE,
+                    max_age_reproduce = 4, age_pesticide_threshold = 2, 
+                    rand_age = TRUE, move_distance = 2, immigration_rate = 10, 
+                    time_steps = 160, print_last = TRUE, xdim = 64, ydim = 64);
+```
 
 
+Any arguments to `run_farm_sim` not included above are set to default values.
+[Output files](#outputs) can be used to plot ecological and evolutionary dynamics of pests. 
+Figure \@ref(fig:overtime)a shows the pest population change both over and within seasons.
+Due to the specific parameter values chosen, clear patterns reflecting pest cohort emerge.
+At the start of a season when the most crop is available, pests eat and abundance increases.
+As less crop becomes available in a season, pest abundance decreases.
+Mean food consumed varies over the course of a season caused by the varying frequency of pests in different life history stages (Figure \@ref(fig:overtime)c).
+In the first 50 time steps, there is some consumption of pesticides 1 and 2 (Figure \@ref(fig:overtime)b), but both traits rapidly evolve to negative values making both pesticides ineffective (Figure \@ref(fig:overtime)d).
+In this case, the trade-off between pesticide consumption is not strong enough to maintain susceptibility to either pesticide in the population.
 
-Availability
+
+```{r overtime, echo=FALSE, fig.width=8, fig.cap = "Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c) mean food consumed per pest, and (d) mean values of evolving traits 1 and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2, respectively, a pest will consume. White and grey vertical stripes indicate seasons of a single crop and pesticide application."}
+mbox <- function(x0, x1, y0, y1){
+    xx <- seq(from=x0, to=x1, length.out = 100);
+    yy <- seq(from=y0, to=y1, length.out = 100);
+    xd <- c(rep(x0, 100), xx, rep(x1,100), rev(xx));
+    yd <- c(yy, rep(y1,100), rev(yy), rep(y0, 100));
+    return(list(x=xd, y=yd));
+}
+population_data <- read.csv("population_data.csv");
+row_number      <- 161; # dim(population_data)[1];
+time_step       <- population_data[["time_step"]][2:row_number];
+population_size <- population_data[["population_size"]][2:row_number];
+food_consumed   <- population_data[["mean_food_consumed"]][2:row_number];
+p1_consumed     <- population_data[["mean_pesticide1_consumed"]][2:row_number];
+p2_consumed     <- population_data[["mean_pesticide2_consumed"]][2:row_number];
+trait1          <- population_data[["trait1_mean_value"]][2:row_number];
+trait2          <- population_data[["trait2_mean_value"]][2:row_number];
+season          <- seq(from = 0, to = 160, by = 16);
+blocks          <- length(season) - 1;
+par(mfrow = c(2, 2), mar = c(1, 5, 3, 1));
+# Pest abundance plot
+plot(x = time_step, y = population_size, type = "l", lwd = 2, xaxt = "n",
+     xlab = "", ylab = "Pest abundance", cex.lab = 1, ylim = c(0, 4600),
+     cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1000, y1 = 6000);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+text(x = 5, y = 4300, labels = "a", cex = 2);
+points(x = time_step, y = population_size, type = "l", lwd = 2);
+box();
+# Pesticide consumed
+plot(x = time_step, y = p1_consumed, type = "n", lwd = 2, xlab = "", xaxt = "n",
+     ylab = "Mean pesticide consumed", cex.lab = 1, ylim = c(0, 0.35),
+     cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+points(x = time_step, y = p1_consumed, type = "l", lwd = 2);
+points(x = time_step, y = p2_consumed, type = "l", lwd = 2, col = "red",
+       lty = "dashed");
+legend(x = 158, y = 0.35, col = c("black", "red"), lty = c("solid", "dashed"),
+       legend = c("Pesticide 1", "Pesticide 2"), cex = 1, lwd = 2, bg = "white",
+       xjust = 1);
+text(x = 5, y = 0.32, labels = "b", cex = 2);
+box();
+par(mar = c(4, 5, 0, 1));
+# Pest food consumption plot
+plot(x = time_step, y = food_consumed, type = "n", lwd = 2, xlab = "Time step",
+     ylab = "Mean food consumed", cex.lab = 1, ylim = c(0, 2),
+     yaxt = "n");
+axis(side = 2, at = c(0, 0.5, 1, 1.5), cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+      polygon(x = rbox$x, y = rbox$y, lwd = 2, border = NA, 
+              col = "grey90");
+    }
+}
+points(x = time_step, y = food_consumed, type = "l", lwd = 2);
+text(x = 5, y = 0.2, labels = "c", cex = 2);
+box();
+# Pesticide traits
+plot(x = time_step, y = trait1, type = "n", lwd = 2, xlab = "Time step",
+     ylab = "Mean trait value", cex.lab = 1, ylim = c(-0.9, 0),
+     yaxt = "n");
+axis(side = 2, at = c(-0.8, -0.6, -0.4, -0.2), cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+points(x = time_step, y = trait1, type = "l", lwd = 2);
+points(x = time_step, y = trait2, type = "l", lwd = 2, col = "red",
+       lty = "dashed");
+legend(x = 158, y = 0, col = c("black", "red"), lty = c("solid", "dashed"),
+       legend = c("Trait 1", "Trait 2"), cex = 1, lwd = 2, xjust = 1, 
+       bg = "white");
+text(x = 5, y = -0.82, labels = "d", cex = 2);
+box();
+```
+
+Figure 4 shows the location of pests on the landscape
+
+
+```{r landscape, echo=FALSE, fig.width=6, fig.height=6, fig.cap = "Last time step"}
+last_time_step <- read.csv("last_time_step.csv", header = FALSE);
+landscape      <- sim[[2]][,,1];
+landscape_vals <- unique(as.vector(landscape));
+reord_land     <- sample(landscape_vals, size = length(landscape_vals));
+for(i in 1:dim(landscape)[1]){
+    for(j in 1:dim(landscape)[2]){
+        old_val         <- landscape[i, j];
+        new_val         <- reord_land[old_val];
+        landscape[i, j] <- new_val;
+    }
+}
+for(i in 1:dim(last_time_step)[1]){
+    xloc <- last_time_step[i, 3] + 1;
+    yloc <- last_time_step[i, 4] + 1;
+    landscape[xloc, yloc] <- 10;
+}
+land_cols      <- c(hcl.colors(9, "YlOrRd", rev = TRUE), "#000000");
+image(landscape, xaxt = "n", yaxt = "n", col = land_cols);
+```
+
+
+Availability {#availability}
 ===================================================
 
 The resevol R package can be downloaded from CRAN (https://cran.r-project.org/package=resevol) or GitHub (https://bradduthie.github.io/resevol/). The package is open source under GNU Public License.
 
-Conclusions
+Conclusions {#conclusions}
 ===================================================
 
 
 
-Acknowledgements
+Acknowledgements {#acknowledgements}
 ===================================================
 
 This software was developed as part of the project for Enhancing Diversity to Overcome Resistance Evolution (ENDORSE). The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the S&#xE3;o Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. ENDORSE is a partnership among Universidade Estadual Paulista (UNESP), the University of Stirling (UoS), and the Centre for Agricultural and Biosciences International (CABI).
 
-References
+References {#references}
 ===================================================
 
 
