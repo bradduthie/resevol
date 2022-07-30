@@ -7,14 +7,15 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
   University of Stirling Stirling, FK9 4LA, UK'
 output:
-  word_document: default
+  word_document:
+    reference_docx: docx_template.docx
   pdf_document:
     toc: no
+  html_document: default
   bookdown::pdf_document2:
     citation_package: natbib
     fig_caption: yes
     toc: no
-  html_document: default
 header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
@@ -424,7 +425,8 @@ Finally, evolving and covarying traits can be used in place of fixed parameters 
 This is done by substituting `"Tj"` as an argument input in place of a numeric value, where `j` represents the trait number.
 For example, the argument `move_distance = "T1"` will make Trait 1 the movement distance for individuals. 
 The argument `food_consume = c("T2", "T3")` will set Traits 2 and 3 to define the amount of food of types 1 and 2 that can be consumed by a pest, respectively.
-Parameters that can be replaced with evolving traits include `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume`, and `pesticide_consume`.
+Up to 10 of the following parameters can be replaced with evolving traits: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume`, and `pesticide_consume`.
+Mean values of traits can be set using the argument `trait_means`, which accepts a vector of the same length as the number of evolving traits such that indices correspond to trait numbers.
 The resevol package can thereby simulate agricultural pests with complex and co-evolving traits, and potentially evolving trait covariances, under a range of possible pest life histories.
 
 Simulation output {#output}
@@ -474,7 +476,8 @@ sim <- run_farm_sim(mine_output = new_network, repro = "asexual",
                     max_age_move = 4, min_age_reproduce = 4, print_gens = FALSE,
                     max_age_reproduce = 4, age_pesticide_threshold = 2, 
                     rand_age = TRUE, move_distance = 2, immigration_rate = 10, 
-                    time_steps = 160, print_last = TRUE, xdim = 64, ydim = 64);
+                    time_steps = 160, print_last = TRUE, xdim = 64, ydim = 64,
+                    trait_means = c(0.1, 0.1));
 ```
 
 
@@ -528,7 +531,7 @@ points(x = time_step, y = population_size, type = "l", lwd = 2);
 box();
 # Pesticide consumed
 plot(x = time_step, y = p1_consumed, type = "n", lwd = 2, xlab = "", xaxt = "n",
-     ylab = "Mean pesticide consumed", cex.lab = 1, ylim = c(0, 0.35),
+     ylab = "Mean pesticide consumed", cex.lab = 1, ylim = c(0, 0.4),
      cex.axis = 1);
 for(i in 1:blocks){
     rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
@@ -540,10 +543,10 @@ for(i in 1:blocks){
 points(x = time_step, y = p1_consumed, type = "l", lwd = 2);
 points(x = time_step, y = p2_consumed, type = "l", lwd = 2, col = "red",
        lty = "dashed");
-legend(x = 158, y = 0.35, col = c("black", "red"), lty = c("solid", "dashed"),
+legend(x = 158, y = 0.4, col = c("black", "red"), lty = c("solid", "dashed"),
        legend = c("Pesticide 1", "Pesticide 2"), cex = 1, lwd = 2, bg = "white",
        xjust = 1);
-text(x = 5, y = 0.32, labels = "b", cex = 2);
+text(x = 5, y = 0.37, labels = "b", cex = 2);
 box();
 par(mar = c(4, 5, 0, 1));
 # Pest food consumption plot
@@ -563,9 +566,9 @@ text(x = 5, y = 0.2, labels = "c", cex = 2);
 box();
 # Pesticide traits
 plot(x = time_step, y = trait1, type = "n", lwd = 2, xlab = "Time step",
-     ylab = "Mean trait value", cex.lab = 1, ylim = c(-0.9, 0),
+     ylab = "Mean trait value", cex.lab = 1, ylim = c(-0.9, 0.1),
      yaxt = "n");
-axis(side = 2, at = c(-0.8, -0.6, -0.4, -0.2), cex.axis = 1);
+axis(side = 2, at = c(-0.8, -0.6, -0.4, -0.2, 0.0), cex.axis = 1);
 for(i in 1:blocks){
     rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
     if(i %% 2 == 0){
@@ -576,7 +579,7 @@ for(i in 1:blocks){
 points(x = time_step, y = trait1, type = "l", lwd = 2);
 points(x = time_step, y = trait2, type = "l", lwd = 2, col = "red",
        lty = "dashed");
-legend(x = 158, y = 0, col = c("black", "red"), lty = c("solid", "dashed"),
+legend(x = 158, y = 0.1, col = c("black", "red"), lty = c("solid", "dashed"),
        legend = c("Trait 1", "Trait 2"), cex = 1, lwd = 2, xjust = 1, 
        bg = "white");
 text(x = 5, y = -0.82, labels = "d", cex = 2);

@@ -8,6 +8,9 @@ vignette: >
   %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{The evolutionary algorithm}
   %\usepackage[UTF-8]{inputenc}
+link-citations: yes
+linkcolor: blue
+biblio-style: apalike
 ---
 
 

@@ -1,421 +1,628 @@
 ---
-title: "Get Started"
+title: "resevol: an R package for spatially explicit models of pesticide resistance
+  given evolving pest genomes"
 author: "A Bradley Duthie"
 date: "`r Sys.Date()`"
-bibliography: '`r system.file("refs.bib", package = "resevol")`'
+bibliography: '`r system.file("resevol.bib", package = "resevol")`'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{Get Started}
   %\usepackage[UTF-8]{inputenc}
+link-citations: yes
+linkcolor: blue
+biblio-style: apalike
 ---
 
+******************************
 
-- [Introduction](#introduction)
-- [The `mine_gmatrix` function](#mine_gmatrix)
-- [The `run_farm_sim` function](#run_farm_sim)
-    - [Inputs for `run_farm_sim`](#inputs)
-    - [Example uses of `run_farm_sim`](#example)
-    - [Output of `run_farm_sim`](#output)
-    - [Use of evolving traits in `run_farm_sim`](#traits)
-- [Additional guidance](#additional)
-- [Literature cited](#lit)
+
+Abstract {-}
+===================================================
+
+1. The evolution of pesticide resistance is a widespread problem with potentially severe consequences for global food security.
+2. We introduce the resevol R package, which simulates individual-based models of pests with evolving genomes that produce complex, polygenic, and covarying traits affecting pest life history and pesticide resistance.
+3. Simulations are modelled on a spatially-explicit and highly customisable landscape in which crop and pesticide application and rotation can vary, making the package a highly flexible tool for both general and targetted models of pest management and resistance evolution.
+4. We present the key features of the resevol package and demonstrate its use for a simple example simulating pests with two covarying traits.
+5. The resevol R package is open source under GNU Public License. All source code and documentation are available on GitHub.
+
+**Key words:** *pest management*, *food security*, *ecological modelling*, *pesticide*, *resistance evolution*
+
+Introduction {#introduction}
+===================================================
+
+
 
 ```{r, echo = FALSE}
-oldpar <- par();
+library("resevol");
 ```
 
-<a name = "introduction">Introduction</a>
-================================================================================
 
-The resevol R package is used to simulate individual-based models of agricultural production, pesticide application, and the evolution of pesticide resistance on a spatially explicit landscape. Individual pests are modelled with any number of quantitative traits that have a customisable covariance structure. Covarying trait values are underlied by a pre-specified number of loci and a complex network mapping loci to traits, all of which are specified at the individual level in explicit pest genomes. Simulation requires two steps, each carried out by a separate R function. Step one is run with the `mine_gmatrix` function; it finds individual genomes that produce appropriately covarying traits given allele values that are drawn from a standard normal distribution. Step two is run with the `run_farm_sim` function; it initialises individuals with the `mine_gmatrix` output, then simulates agricultural management in the presence of evolving pests. Here we demonstrate the use of these two functions and offer tips for doing so most effectively.
+Insect resistance to pesticides is a wicked and widespread problem [@Gould2018]. 
+Predicting, identifying, and ultimately delaying the evolution of insecticide resistance is therefore critical for ensuring sustainable global food security [@Hawkins2019; @Lykogianni2021]. 
+To manage pesticide resistance, various strategies have been proposed to disrupt or weaken selection.
+These strategies often focus on varying the location and timing of pesticide application, and therefore varying the strength of selection for pesticide resistance, so that pest susceptibility to one or more pesticides is maintained [@Ives2002; @Liang2013; @Carriere2016; @Liang2018; @South2018; @Sudo2018; @Saikai2021].
+Pesticide resistance management has mostly been associated with the effect of single genes. 
+In such cases, resistance alleles have binary effects on phenotype, enabling resistant phenotypes to arise from genetic changes at single or a small number of loci [@Raymond2001; @Ffrench-Constant2004; @Ffrench-Constant2013].
+Nevertheless, resistance attributable to polygenic effects is also well-established [@Via1986; @Firko1990; @Busi2013; @Haridas2018; @Green2020].
+And the relevance of polygenic resistance is likely to further increase given a rising interest in biological controls for sustainable crop protection [e.g., @Green2020; @Elnahal2022]. 
+Developing strategies to maximise the efficacy of these tools is critical, and such strategies should be well-informed by predictions made from detailed, quantitative genetic models.
+Here we introduce the resevol R package as a tool for building such models and simulating pest management.
 
-<a name = "mine_gmatrix">The `mine_gmatrix` function</a>
-================================================================================
+The resevol package applies individual-based modelling and a quantitative genetics approach to simulate the evolution of a pest population on a changing landscape. 
+A focal goal of the software is to model traits with a pre-specified, but potentially evolving, covariance structure. 
+To achieve this goal, each individual has a genome with $L$ loci that underlie a set of $T$ potentially evolving traits. 
+Pleiotropic loci can vary in their effects on the direction and magnitude of polygenic traits, causing population-wide trait covariance to arise mechanistically from the underlying genetic architecture of individuals. 
+To achieve this, two separate steps are necessary.
+First, a genetic algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
+Values used to map loci to traits are incorporated into individual genomes.
+Second, a population of asexual or sexual individuals is initialised and simulated on a spatially explicit landscape separated into distinct units (e.g., farms).
+Land units can apply one of up to 10 pesticides, and one of up to 10 crops at a given time.
+Pesticides and crops rotate independently within farms over time in a pre-specified way.
+The resevol package can thereby model complex and evolving agricultural pest traits over realistic landscapes that undergo different pesticide use and crop regimes.
 
-The goal of the `mine_gmatrix` function is to map a set of random standard normal (mean = 0, stdev = 1) values to a set of covarying values using a network of hidden layers. The set of random standard normal values in this case are allele values for a positive integer value of loci. The set of covarying values are the traits that take a pre-specified covariance structure, which is represented by a square variance covariance matrix. An example below includes 12 loci (green circles) and four traits (red diamonds), which are linked through three hidden layers of nodes (blue squares).
+Covarying pest quantitative traits {#mine_gmatrix}
+===================================================
 
-```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function"}
+The first step of simulation is building individual genomes. 
+This step is separate because it is computationally intensive, and genomes that are built might need to be inspected and stored.
+High computation time is due to the mechanistic nature of how genomes and covarying traits are modelled.
+Instead of imposing a trait covariance structure directly, an evolutionary algorithm is used to find a network that maps standard random normal values (loci) to covarying values (traits).
+This is useful because it allows genomes to model potentially evolving physiological constraints, and trade-offs among traits, from the bottom up.
+Since multiple networks can potentially map loci to the same trait covariance structure, it is possible to replicate evolution with different randomly generated genetic architectures.
+This approach to modelling individual genomes and traits thereby increases the complexity of questions that can be addressed for simulating evolution in agricultural pests.
+
+```{r network, echo = FALSE, fig.width = 6, fig.height = 4, fig.cap = "**Figure 1**. *Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the `mine_gmatrix` function. Individual genomes in the resevol R package consist of standard random normal values for loci, real values for black arrows linking nodes, and real values for traits. Values shown for loci and arrows are an example for illustration.*"}
 par(mar = c(0.2, 0.2, 0, 0.2));
 plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
      xaxt = "n", yaxt = "n", bty = "n", xlab = "", ylab = "");
-mtext(side = 1, text = "Hidden layers", cex = 2, col = "blue", line = -1);
-mtext(side = 2, text = "Loci", cex = 2, col = "darkgreen", line = -2);
-mtext(side = 4, text = "Traits", cex = 2, col = "red", line = -1);
-Lx  <- rep(x = 100, times = 12);
-Ly  <- seq(from = 100, to = 900, length = 12);
-points(x = Lx, y = Ly, pch = 20, cex = 6, col = "darkgreen");
-H1x <- rep(x = 300, times = 4);
-H1y <- seq(from = 100, to = 900, length = 4);
-points(x = H1x, y = H1y, pch = 15, cex = 6, col = "blue");
-H2x <- rep(x = 500, times = 4);
-H2y <- seq(from = 100, to = 900, length = 4);
-points(x = H2x, y = H2y, pch = 15, cex = 6, col = "blue");
-H3x <- rep(x = 700, times = 4);
-H3y <- seq(from = 100, to = 900, length = 4);
-points(x = H3x, y = H3y, pch = 15, cex = 6, col = "blue");
-Tx  <- rep(x = 900, times = 4);
-Ty  <- seq(from = 100, to = 900, length = 4);
-points(x = Tx, y = Ty, pch = 18, cex = 8, col = "red");
-for(i in 1:4){
-    e1 <- seq(from = -36, to = 36, length = 4);
-    arrows(x0 = Lx + 26, x1 = H1x[i] - 40, y0 = Ly, y1 = H1y[i] + e1, 
-           length = 0.08);
-    arrows(x0 = H1x + 36, x1 = H2x[i] - 38, y0 = H1y, y1 = H2y[i] + e1, 
-           length = 0.08);
-    arrows(x0 = H2x + 36, x1 = H3x[i] - 38, y0 = H2y, y1 = H3y[i] + e1, 
-           length = 0.08);
-    e2 <- seq(from = -12, to = 12, length = 4)
-    arrows(x0 = H3x + 36, x1 = Tx[i] - 38, y0 = H3y, y1 = Ty[i] + e2, 
-           length = 0.08);
+mtext(side = 1, text = "Internal nodes", cex = 1.25, col = "blue", line = -3);
+mtext(side = 2, text = "Loci", cex = 1.25, col = "darkgreen", line = -2);
+mtext(side = 4, text = "Traits", cex = 1.25, col = "red", line = -2);
+Lx  <- rep(x = 100, times = 3);
+Ly  <- seq(from = 250, to = 750, length = 3);
+H1x <- rep(x = 400, times = 2);
+H1y <- seq(from = 250, to = 750, length = 2);
+H2x <- rep(x = 600, times = 2);
+H2y <- seq(from = 250, to = 750, length = 2);
+Tx  <- rep(x = 900, times = 2);
+Ty  <- seq(from = 250, to = 750, length = 2);
+points(x = Tx, y = Ty, pch = 23, cex = 8, bg = "red", lwd = 2);
+sep_L_points <- c(-50, 0, 50);
+sep_N_points <- c(-30, 30);
+arrows(x0 = H2x + 52, x1 = Tx[1] - 58, y0 = H2y, y1 = Ty[1] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H2x + 52, x1 = Tx[2] - 58, y0 = H2y, y1 = Ty[2] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = Lx + 38, x1 = H1x[1] - 58, y0 = Ly, y1 = H1y[1] + sep_L_points, 
+       length = 0.08, lwd = 3);
+points(x = H2x, y = H2y, pch = 22, cex = 9, bg = "blue", lwd = 2);
+arrows(x0 = H1x + 52, x1 = H2x[1] - 58, y0 = H1y, y1 = H2y[1] + sep_N_points, 
+       length = 0.08, lwd = 3);
+arrows(x0 = H1x + 52, x1 = H2x[2] - 58, y0 = H1y, y1 = H2y[2] + sep_N_points, 
+       length = 0.08, lwd = 3);
+points(x = H1x, y = H1y, pch = 22, cex = 9, bg = "blue", lwd = 2);
+arrows(x0 = Lx + 38, x1 = H1x[2] - 58, y0 = Ly, y1 = H1y[2] + sep_L_points, 
+       length = 0.08, lwd = 3);
+points(x = Lx, y = Ly, pch = 21, cex = 6, bg = "darkgreen", lwd = 2);
+srnm <- c(0.2, -0.1, 0.1);
+text(x = Lx, y = Ly, labels = srnm, col = "white", cex = 0.9);
+text(x = 200, y = 790, labels = "0.4", srt = 10, cex = 0.8);
+text(x = 200, y = 660, labels = "-1.2", srt = -58, cex = 0.8);
+text(x = 270, y = 695, labels = "0.2", srt = 46, cex = 0.8);
+text(x = 180, y = 480, labels = "0.1", srt = -40, cex = 0.8);
+text(x = 160, y = 340, labels = "-0.6", srt = 54, cex = 0.8);
+text(x = 220, y = 255, labels = "2.2", srt = -12, cex = 0.8);
+text(x = 490, y = 790, labels = "1.3", srt = 10, cex = 0.8);
+text(x = 538, y = 410, labels = "-0.5", srt = -76, cex = 0.8);
+text(x = 460, y = 390, labels = "-0.1", srt = 72, cex = 0.8);
+text(x = 495, y = 260, labels = "0.0", srt = -12, cex = 0.8);
+text(x = 720, y = 790, labels = "2.2", srt = 8, cex = 0.8);
+text(x = 720, y = 630, labels = "0.9", srt = -58, cex = 0.8);
+text(x = 690, y = 400, labels = "1.6", srt = 54, cex = 0.8);
+text(x = 740, y = 260, labels = "0.8", srt = -8, cex = 0.8);
+Loci  <- matrix(data = c(0.1, -0.1, 0.2), nrow = 1);
+Hdn1  <- matrix(data = c(0.4, -1.2, 0.2, 0.1, -0.6, 2.2), nrow = 3, ncol = 2);
+Hdn2  <- matrix(data = c(1.3, -0.1, -0.5, 0.0), nrow = 2, ncol = 2);
+Hdn3  <- matrix(data = c(2.2, 1.6, 0.9, 0.8), nrow = 2, ncol = 2);
+Tvals <- Loci %*% Hdn1 %*% Hdn2 %*% Hdn3;
+text(x = Tx, y = Ty, labels = rev(Tvals), cex = 0.8);
+```
+
+Conceptually, the relationship between individual genotypes and traits is defined by a network connecting loci to traits through a set of hidden internal nodes (Figure 1). 
+Values for loci are randomly drawn from a standard normal distribution, $\mathcal{N}\left(0, 1\right)$. 
+Links between loci, internal nodes, and traits, can take any real value and are represented by black arrows in Figure 1. 
+Traits can take any real value, and are calculated as the summed effects of all preceding nodes (i.e., the blue squares immediately to the left of the traits in Figure 1).
+Mathematically, loci are represented by a row vector of length $L$.
+Effects of loci on the first layer of internal nodes (black arrows emanating from loci in Figure 1) are represented by an $L \times T$ matrix, and transitions between internal nodes, and between the last set of internal nodes and the final traits, are represented by $T \times T$ matrices.
+For the example in Figure 1, 
+
+$$
+\begin{pmatrix}
+  0.1, & -0.1, & 0.2 \\
+\end{pmatrix} 
+\begin{pmatrix}
+  0.4, &  0.1 \\
+ -1.2, & -0.6 \\
+  0.2, &  2.2 \\
+\end{pmatrix}
+\begin{pmatrix}
+   1.3, & -0.5 \\
+  -0.1  &  0.0 \\
+\end{pmatrix}
+\begin{pmatrix}
+   2.2, &  0.9 \\
+   1.6  &  0.8 \\
+\end{pmatrix} = 
+\begin{pmatrix}
+  0.2998, & 0.1081 \\
+\end{pmatrix}.
+$$
+
+Values mapping loci to traits become part of an individual's genome, so the genome for the individual represented by Figure 1 is stored in the model as shown below:
+
+```
+0.1, -0.1, -0.2, 0.4, 0.1, -1.2, -0.6, 0.2, 2.2, 1.3, -0.5, -0.1, 0.0, 2.2, 0.9, 1.6, 0.8
+```
+
+Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome. 
+Individuals can be haploid (as in Figure 1) or diploid (in which case, allele values are summed at homologous loci). 
+
+An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information 1 for details). 
+Evolutionary algorithms are heuristic tools that can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
+In the resevol package, the `mine_gmatrix` function runs an evolutionary algorithm and requires the argument `gmatrix`, which specifies the desired trait covariance matrix.
+The function initialises a population of `npsize` networks (Figure 1), and this population evolves until some maximum generation (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
+In a single generation of the algorithm, values crossover between networks and mutate.
+Next, trait covariances produced for each network are estimated by initalising `indivs` individuals with loci sampled from a standard normal distribution.
+Network stress is calculated as the logged mean squared deviation between estimated covariances and those in `gmatrix`. 
+Tournament selection [@Hamblin2013] is then used to determine the networks for the next generation of the algorithm.
+Networks with the lowest estimated stress have the highest fitness, so these networks are disproportionately represented in the next generation.
+Throughout the evolutionary algorithm, the lowest stress network is saved and returned upon network termination.
+The robustness of this network's stress to sets of individuals with different loci values can be tested using the `stress_test` function.
+
+An example run of `mine_gmatrix` with the same number of loci and internal nodes as in Figure 1 is shown below for traits that have an intended covariance of -0.4:
+
+```{r, eval = FALSE}
+trait_covs  <- matrix(data = c(1, -0.4, -0.4, 1), nrow = 2, ncol = 2);
+new_network <- mine_gmatrix(loci = 3, layers = 2, gmatrix = trait_covs, 
+                            max_gen = 1000, term_cri = -6.0, prnt_out = FALSE);
+```
+
+
+```{r, echo = FALSE}
+trait_covs  <- matrix(data = c(1, -0.4, -0.4, 1), nrow = 2, ncol = 2);
+load(system.file("new_network.rda", package = "resevol"));
+```
+
+The code above found a genome that produced the following expected trait covariances:
+
+```{r, echo = FALSE}
+print(new_network[[6]]);
+```
+
+The mean deviation between elements of the above matrix and the identity matrix provided by `trait_covs` is `r mean((new_network[[6]] - new_network[[2]])^2)`. 
+Lower values of `term_cri` and higher values of `max_gen` will result in a lower stress, but this will require more computation time, especially if the number of traits is high.
+Similarly, higher values of `indivs` will result in more accurate estimations of true stress, but this also requires more computation time.
+Additional arguments to `mine_gmatrix` can also be used to improve the performance of the evolutionary algorithm (see Supporting Information 1).
+
+
+
+Simulating landscape-level pesticide resistance {#simulating}
+===================================================
+
+The full output of `mine_gmatrix` is passed to the `run_farm_sim` function, which initialises and simulates an evolving population of pests on a changing landscape for any natural number of time steps (`time_steps`).
+In this section, we explain the landscape, pest ecology, and evolving pest traits.
+
+Landscape {#landscape}
+---------------------------------------------------
+
+Landscapes are spatially explicit and initialised in one of two ways. 
+First, a landscape can be built from the arguments `xdim`, `ydim`, and `farms`. 
+These arguments specify the dimensions of the landscape and the number of farms on it.
+Contiguous rectangular farms of roughly equal size are generated on the landscape using a splitline algorithm.
+Second, a custom landscape can be input using the `terrain` argument, which takes a matrix with elements that include integers 1 to `farms`.
+Each value defines a unique farm, but values do not need to be contiguous.
+These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see Supporting Information 2).
+This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
+Landscapes are assumed to be a torus, so pests that move off of one edge return on the opposite side of the landscape.
+
+Each farm can hold one pesticide and one crop type in any time step.
+The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
+Initialisation can be random for each farm with equal probability, or it can be set using a vector of length `farms` in which vector elements define the initialised crop or pesticide number.
+After initialisation, crops and pesticides rotate once ever `crop_rotation_time` and `pesticide_rotation_time` time steps, respectively.
+Each of these rotation time arguments can take either an integer value from 1-3, or a matrix.
+Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
+Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
+Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms.
+
+
+Pest ecology {#ecology}
+---------------------------------------------------
+
+Individual pests can be modelled to have several reproductive systems and life histories.
+Pest reproductive system can be specified using the `repro` argument, which accepts `"asexual"` (haploid), `"sexual"` (monoecious), and `"biparental"` (dioecious).
+For `"sexual"` pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
+At the start of a simulation, pests are initialised in a random location.
+Initialised pests are age of zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
+Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration (Figure 2).
+Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
+Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
+Food accumulated is lost during aging if `baseline_metabolism > 0` and pest age is within `min_age_metabolism` and `max_age_metabolism`.
+The option to set minimum and maximum ages for events makes it possible to model pests with much different life histories [e.g., @Sudo2018].
+
+```{r flowchart, echo=FALSE, fig.height=3, fig.width=8, fig.cap = "**Figure 2**. *Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed to a CSV file.*"}
+mbox <- function(x0, x1, y0, y1){
+    xx <- seq(from=x0, to=x1, length.out = 100);
+    yy <- seq(from=y0, to=y1, length.out = 100);
+    xd <- c(rep(x0, 100), xx, rep(x1,100), rev(xx));
+    yd <- c(yy, rep(y1,100), rev(yy), rep(y0, 100));
+    return(list(x=xd, y=yd));
 }
+par(mar=c(0,0,0,0));
+# ===============================================================
+plot(x=0, y=0, type="n", xlim=c(0,100), ylim=c(40,95), xaxt="n", yaxt="n",
+     xlab="",ylab="");
+ibox <- mbox(x0 = 0,  x1 = 14, y0 = 63, y1 = 47);
+polygon(x = ibox$x, y = ibox$y, lwd = 5, border = "black", col = "white");
+cbox <- mbox(x0 = 0, x1 = 10, y0 = 88, y1 = 72);
+polygon(x = cbox$x, y = cbox$y, lwd = 3, border = "black", col = "white");
+ubox <- mbox(x0 = 15, x1 = 25, y0 = 88, y1 = 72);
+polygon(x = ubox$x, y = ubox$y, lwd = 3, border = "black", col = "white");
+nbox <- mbox(x0 = 30, x1 = 40, y0 = 88, y1 = 72);
+polygon(x = nbox$x, y = nbox$y, lwd = 3, border = "black", col = "white");
+fbox <- mbox(x0 = 45, x1 = 55, y0 = 88, y1 = 72);
+polygon(x = fbox$x, y = fbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 60, x1 = 70, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 75, x1 = 85, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 90, x1 = 100, y0 = 88, y1 = 72);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+ibox <- mbox(x0 = 90,  x1 = 100, y0 = 63, y1 = 47);
+polygon(x = ibox$x, y = ibox$y, lwd = 3, border = "black", col = "white");
+tbox <- mbox(x0 = 75, x1 = 85, y0 = 63, y1 = 47);
+polygon(x = tbox$x, y = tbox$y, lwd = 3, border = "black", col = "white");
+text(x=7,  y=59, labels="Initialise", col="black", cex = 0.8);
+text(x=7,  y=55, labels="pests and", col="black", cex = 0.8);
+text(x=7,  y=51, labels="landscape", col="black", cex = 0.8);
+text(x=5, y=84, labels="Crops and", col="black", cex = 0.8);
+text(x=5, y=80, labels="pesticides", col="black", cex = 0.8);
+text(x=5, y=76, labels="rotated?", col="black", cex = 0.8);
+text(x=20, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=20, y=78, labels="metabolise", col="black", cex = 0.8);
+text(x=35, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=35, y=78, labels="feed", col="black", cex = 0.8);
+text(x=50, y=82, labels="Pesticide", col="black", cex = 0.8);
+text(x=50, y=78, labels="consumed", col="black", cex = 0.8);
+text(x=65, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=65, y=78, labels="move", col="black", cex = 0.8);
+text(x=80, y=82, labels="Pests", col="black", cex = 0.8);
+text(x=80, y=78, labels="reproduce", col="black", cex = 0.8);
+text(x=95, y=82, labels="Pest", col="black", cex = 0.8);
+text(x=95, y=78, labels="mortality", col="black", cex = 0.8);
+text(x=95,  y=57, labels="Pests", col="black", cex = 0.8);
+text(x=95,  y=53, labels="immigrate", col="black", cex = 0.8);
+text(x=80,  y=59, labels="Collect", col="black", cex = 0.8);
+text(x=80,  y=55, labels="statistics", col="black", cex = 0.8);
+text(x=80,  y=51, labels="as CSV", col="black", cex = 0.8);
+arrows(x0=2, x1=2,   y0=63, y1=71.5, lwd=2, length=0.10);
+arrows(x0=10, x1=14.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=25, x1=29.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=40, x1=44.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=55, x1=59.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=70, x1=74.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=85, x1=89.5, y0=80, y1=80, lwd=2, length=0.10);
+arrows(x0=95, x1=95,   y0=72, y1=63.5, lwd=2, length=0.10);
+arrows(x0=90, x1=85.5, y0=55, y1=55, lwd=2, length=0.10);
+arrows(x0=75, x1=70.5, y0=60, y1=60, lwd=2, length=0.10);
+arrows(x0=60, x1=55.5, y0=60, y1=60, lwd=2, length=0.10);
+rbox <- mbox(x0 = 60, x1 = 70, y0 = 57, y1 = 63);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=65, y=60, labels="Extinction?", col="white", cex = 0.75);
+rbox <- mbox(x0 = 45, x1 = 55, y0 = 57, y1 = 63);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=50, y=60, labels="Max. time?", col="white", cex = 0.75);
+text(x = 58.5, y = 58.5, labels = "No", col = "black", cex = 0.75);
+text(x = 43.5, y = 58.5, labels = "No", col = "black", cex = 0.75);
+text(x = 68, y = 54, labels = "Yes", col = "black", cex = 0.75);
+text(x = 53, y = 54, labels = "Yes", col = "black", cex = 0.75);
+arrows(x0=66, x1=66, y0=57, y1=50, lwd=2, length=0.0);
+arrows(x0=51, x1=51, y0=57, y1=50, lwd=2, length=0.0);
+rbox <- mbox(x0 = 30, x1 = 40, y0 = 47, y1 = 53);
+polygon(x = rbox$x, y = rbox$y, lwd = 3, border = "black", col = "black");
+text(x=35, y=50, labels="STOP", col="white", cex = 1);
+rbox <- mbox(x0 = 14, x1 = 20, y0 = 47, y1 = 63);
+polygon(x = rbox$x, y = rbox$y, lwd = 5, border = "black", col = "black");
+text(x=17, y=55, labels="START", col="white", cex = 1, srt = 90);
+arrows(x0=66, x1=40.5, y0=50, y1=50, lwd=2, length=0.10);
+arrows(x0=45, x1=35, y0=60, y1=60, lwd=2, length=0.0);
+arrows(x0=35, x1=35, y0=60, y1=67, lwd=2, length=0.0);
+arrows(x0=35, x1=7, y0=67, y1=67, lwd=2, length=0.0);
+arrows(x0=7, x1=7, y0=67, y1=71.5, lwd=2, length=0.1);
 ```
 
-Each arrow in the figure above is initialised as a number in the `mine_gmatrix` function. An evolutionary algorithm is then used to find a set of arrow values that produces traits with the pre-specified covariance structure given a set of randomly drawn standard normal allele values at loci. The details of this evolutionary algorithm are explained in a separate vignette, but the general idea is that a large set of random networks (i.e., arrow values in the diagram above) are initialised, and the networks that produce traits with a covariance structure most similar to the pre-specified one produce a new generation of networks with some degree of mutation and recombination. Generations continue to evolve until either the maximum number of allowed generations is reached or the network produces traits with a covariance structure that is sufficiently close to the pre-specified one. As an example, we can consider the covariance matrix below.
+In each time step, pests feed in a random order, consuming the crop on their landscape cell.  Pests consume an amount of the crop as specified by the `food_consume` argument, which takes a vector with as many elements as their are crops (i.e., if `crop_number = 2`, then `food_consume` has two elements, the first and second defining consumption of crops 1 and 2, respectively).
+If crop amount on the landscape cell exceeds pest consumption ability, then pests consume their maximum amount, and this amount is removed from the landscape cell.
+If crop amount is less than pest consumption ability, then pests consume whatever crop is left and crop amount is reduced to zero.
+Pesticide consumption works identically to crop consumption, except that the amount of pesticide on a landscape cell is not decreased.
+Pests simply consume an amount of pesticide as specified by the `pesticide_consume` argument, which also takes a vector with as many elements as their are pesticides.
+Hence, each pest can potentially feed and be affected by the pesticide of their focal landscape cell. 
 
-```{r, echo = FALSE}
-gmt <- matrix(data = 0, nrow = 4, ncol = 4);
-diag(gmt) <- 1;
-gmt[1, 2] <-  -0.5;
-gmt[2, 1] <-  -0.5;
-gmt[1, 3] <-  0.2;
-gmt[1, 4] <-  0.2;
-gmt[3, 1] <-  0.2;
-gmt[4, 1] <-  0.2;
-gmt[2, 3] <-  0.2;
-gmt[2, 4] <-  0.2;
-gmt[3, 2] <-  0.2;
-gmt[4, 2] <-  0.2;
-gmt[3, 4] <- -0.5;
-gmt[4, 3] <- -0.5;
-gmt[3, 3] <-  1.0;
-gmt[4, 4] <-  1.0;
-print(gmt);
-```
+After interacting with their landscape cell, pests can move. 
+Each pest visits a number of cells during movement, as is specified by the parameter `movement_bouts`.
+Individual movement bouts occur in a random order across pests.
+During a movement bout, a pest can travel to any cell within a value defined by `movement_distance` from their current location, which could include their current location (i.e., moving zero distance).
+Upon arrival to a cell, a pest can feed if they are of an appropriate feeding age and `feed_while_moving = TRUE`.
+The pest also consumes pesticide if they are of the appropriate age and `pesticide_while_moving = TRUE`.
+Having pests feed and consume pesticide in a random order while moving among landscape cells can model a population competing for food and encountering pesticides on a shorter time scale than an individual time step.
 
-This matrix models the pre-specified covariance among four traits. We can assign it as `gmt` and use it in the `mine_gmatrix` function to find a network that will produce traits with this covariance structure given random standard normal allele values at each loci. 
+After all pests finish moving, pests reproduce.
+Offspring production is possible for asexual, monoecious, or female pests.
+Pest expected offspring number is defined by a fixed parameter if `reproduction_type = "lambda"`, or is calculated from the amount of food consumed if  `reproduction_type = "food_based"`.
+The former requires specifying `lambda_value`, which becomes the rate parameter for sampling offspring number from a Poisson distribution.
+The latter requires specifying a real value for `food_needed_repr`, which is the amount of food needed to produce one offspring.
+For food-based reproduction, the total amount of food consumed is divided by `food_needed_repr`, then floored to determine offspring number.
+Sexual reproduction requires a mate of reproductive age that is either monoecious or male, and within range of the reproducing focal pest (potential including the focal pest, if `selfing = TRUE`).
+A potential mate is within range if it is within an integer number of cells from the focal pest, as defined by `mating_distance` (e.g., if `mating_distance = 0`, then mates must share a landscape cell).
+All available potential mates sire offspring with equal probability, and reproducing pests are assumed to mate multiply (i.e., paternity is a fair raffle for all offspring).
+If a carrying capacity at birth is set (`K_on_birth > 0`) and total offspring number in the population exceeds this capacity, then offspring are removed at random until they are  within carrying capacity.
+A real value `immigration_rate` specifies the rate parameter for Poisson random sampling of the number of immigrants added to the population at the end of a time step.
+Immigrants are initialised in the same way as pests are at the start of the simulation.
+Hence, any spatial structure or evolution that occurs during the simulation does not affect immigrant locations, genomes, or traits.
+
+
+Pest evolution {#evolution}
+---------------------------------------------------
+
+Pest genomes evolve in a complex and highly mechanistic way.
+Offspring inherit genome values from their parent(s) with the possibility for mutation and recombination; offspring traits are then calculated from their newly initialised genomes.
+For asexually and sexually reproducing pests, genomes are haploid and diploid, respectively. 
+Asexually reproducing pests receive the full genomes of their parent, while sexually reproducing pests receive half of their alleles from each parent.
+Each diploid parent contributes one half of their genome, effectively modelling a genome with a single chromosome.
+Crossover occurs at each position of the genome with a probability of `crossover_pr`, so complete recombination is also possible if `crossover_pr = 0.5`.
+For both haploids and diploids, each genome value then mutates independently with a probability of `mutation_pr`, which can be set to any real number from 0-1.
+If a genome value mutates, then a new value is randomly sampled from a standard normal distribution.
+If `mutation_type = 0`, then this new value replaces the old value, and if `mutation_type = 1`, then the new value is added to the old value.
+After mutation, genome values are used to calculate trait values.
+
+Evolution of the genetic architecture linking loci to traits can be constrained by disabling mutation in genome values linking loci, internal nodes, and traits (i.e., 'network values' represented by arrows in Figure 1).
+While mutation at loci (green circles in Figure 1) is always possible as long as `mutation_pr > 0`, the number of intermediary layers for which network values can mutate is constrained by `net_mu_layers`. 
+If `net_mu_layers = 0`, then no network values can mutate, but higher integer values cause mutation to occur at network value layers from loci to traits (if `net_mu_dir = 1`) or traits to loci (if `net_mu_dir = 0`).
+For example, if `net_mu_layers = 2` and `net_mu_dir = 1`, then the network values linking loci to the first internal node, and the first internal node to the second, can mutate (i.e., first two columns of arrows in 1, but not those linking the second internal node to traits).
+This allows pest traits to evolve with varying degrees of constraint on the covariance between traits.
+Low `net_mu_layers` values model strong genetic constraints, while high values model high evolvability of trait covariances.
+
+Finally, evolving and covarying traits can be used in place of fixed parameters described in pest ecology.
+This is done by substituting `"Tj"` as an argument input in place of a numeric value, where `j` represents the trait number.
+For example, the argument `move_distance = "T1"` will make Trait 1 the movement distance for individuals. 
+The argument `food_consume = c("T2", "T3")` will set Traits 2 and 3 to define the amount of food of types 1 and 2 that can be consumed by a pest, respectively.
+Up to 10 of the following parameters can be replaced with evolving traits: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume`, and `pesticide_consume`.
+Mean values of traits can be set using the argument `trait_means`, which accepts a vector of the same length as the number of evolving traits such that indices correspond to trait numbers.
+The resevol package can thereby simulate agricultural pests with complex and co-evolving traits, and potentially evolving trait covariances, under a range of possible pest life histories.
+
+Simulation output {#output}
+===================================================
+
+Simulation output is typically large, so output is printed in two CSV files, both of which are created in the working directory.
+The first file "population_data.csv" prints population level data over time, including population size, mean age, sex ratio, mean food and pesticide consumed of each type, mortality rate, and mean trait values. 
+The second file "individuals.csv" prints all information, including full genomes and traits (columns), for every individual (rows) in the population.
+The printing of individual level data is disabled by default.
+It can be turned on for all time steps by setting `print_inds = TRUE`, but this should be done with caution because it can create extremely large files.
+Instead, individual level data can be printed for only the final time step by setting `print_last = TRUE`.
+Output produced by `run_farm_sim` is a list of two elements, which includes a vector of parameter values used in the simulation and the final state of the landscape as an array.
+
+
+Example of individual-based simulations {#simulation}
+===================================================
+
+In resevol v0.3, the `run_farm_sim` function includes 68 arguments, which specify a wide range of possible simulation conditions affecting landscape and pest characteristics.
+These arguments are explained the package documentation, and in Supporting Information 2, which demonstrates an advanced case study with a custom landscape and complex pest genomes and life history.
+Here we focus on a simple simulation with asexually reproducing pests that have three loci and two traits (Figure 1).
+We use the the genome generated in `new_network` from [Section 2](#mine_gmatrix), in which traits 1 and 2 have variances of `r new_network[[6]][1,1]` and `r new_network[[6]][2,2]`, respectively, with a covariance of `r new_network[[6]][1,2]`.
+
+Traits 1 and 2 will define the rate at which pests consume two separate pesticides, so we model a system in which there is a potential trade-off for pesticide susceptibility.
+We use a simple $64 \times 64$ cell landscape with nine farms. 
+Each farm grows the same crop and uses one of two randomly intialised pesticides, which are rotated every 16 time steps.
+Hence, we can conceptualise 16 time steps as a single growing season.
+
+In our example, each cell produces four crop units, all of which can potentially be consumed. 
+Pests consume up to one unit of crop on their landscape cell per time step. 
+Pest survival and reproduction is food-based, and pests need to consume one unit of crop by age two to survive and reproduce. 
+Pests initialised at the start of the simulation are randomly assigned an age from 0-4 with equal probability.
+Pests have a maximum age of four, and they feed in ages 0-2, move up to two cells in ages 3-4, and reproduce in age four.
+Pests can consume pesticides in ages 0-2, and if they consume any pesticide, then they will die.
+In each time step, a mean of 10 immigrants arrive.
+We simulate 160 time steps (10 growing seasons) using the function below:
 
 ```{r, eval = FALSE}
-mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000, 
-                    max_gen = 1200, sampleK = 1200, chooseK = 6, layers = 6,
-                    mu_pr = 0.05, mu_sd = 0.01, pr_cross = 0.05,
-                    term_cri = -5.3, sd_ini = 0.1, use_cor = FALSE);
+sim <- run_farm_sim(mine_output = new_network, repro = "asexual", 
+                    pesticide_number = 2, pesticide_init = "random", 
+                    pesticide_consume = c("T1", "T2"), farms = 9,
+                    pesticide_rotation_time = 16, pesticide_rotation_type = 3,
+                    pesticide_tolerated_surv = 0, pesticide_per_cell = 1,
+                    crop_rotation_time = 16, crop_number = 1, crop_per_cell = 4, 
+                    food_consume = 1, reproduction_type = "food_based", 
+                    food_needed_surv = 1, food_needed_repr = 1, max_age = 4, 
+                    min_age_feed = 0, max_age_feed = 2, min_age_move = 3, 
+                    max_age_move = 4, min_age_reproduce = 4, print_gens = FALSE,
+                    max_age_reproduce = 4, age_pesticide_threshold = 2, 
+                    rand_age = TRUE, move_distance = 2, immigration_rate = 10, 
+                    time_steps = 160, print_last = TRUE, xdim = 64, ydim = 64,
+                    trait_means = c(0.1, 0.1));
 ```
 
 
-The above use of `mine_gmatrix` includes arguments that specify the details of the evolutionary algorithm. 
+Any arguments to `run_farm_sim` not included above are set to default values.
+[Output files](#output) can be used to plot ecological and evolutionary dynamics of pests. 
+Figure 3a shows the pest population change both across and within seasons.
+Due to the specific parameter values chosen, clear patterns reflecting pest cohorts emerge.
+At the start of a season when the most crop is available, pests eat and abundance increases.
+As less crop remains in a season, pest abundance decreases.
+Mean food consumed varies over the course of a season caused by the varying frequency of pests in different life history stages (Figure 3c).
+In the first 50 time steps, there is some consumption of pesticides 1 and 2 (Figure 3b), but both traits rapidly evolve to negative values making both pesticides ineffective (Figure 3d).
+In this case, the trade-off in pesticide consumption is not strong enough to maintain susceptibility to either pesticide in the population.
+Figure 4 shows the location of pests on the landscape in the last time of the simulation (left panel), and how different pesticides are currently being applied on the landscape (right panel).
+Because the number of crops and pesticides, the number and nature of traits, and the size of pest genomes all vary depending on simulation parameters, no plotting functions are introduced in the resevol package.
+Instead, methods and code for producing plots such as those in Figures 3 and 4 are explained in Supporting Information 2.
 
-
-| Argument   | Description                                                    |
-|------------|----------------------------------------------------------------|
-| `gmatrix`  | The pre-specified trait covariance matrix. This will define what the covariance will be between each trait when allele values are drawn from a standard normal distribution. |
-| `loci`     | The number of loci for an individual (green circles in Figure 1). Simulations can allow for both haploid and diploid individuals. Allele values at each loci affect trait values (red squares in Figure 1) through a network of intermediary nodes (blue squares in Figure 1). |
-| `indivs`   | The number of individuals initialised in each generation of the evolutionary algorithm to test among-individual trait correlations. Individuals are initialised with allele values (green circles in Figure 1) drawn from a standard normal distribution. |
-| `npsize`   | The size of the population of networks in each generation of the evolutionary algorithm. Each network (Figure 1) is a discrete individual in the population. |
-| `max_gen`  | The maximum number of generations that the evolutionary algorithm is allowed to run before terminating (regardless of how well the evolved covariance structure matches the pre-specified `gmatrix`). |
-| `sampleK` | During a round of selection, the number of random networks chosen to compete in a tournament. A single generation will include as many tournaments as necessary to create a new network population of size `npsize`. |
-| `chooseK` | During a round of selection tournament, the number of networks within the `sampleK` random subset of the tournament that have the highest fitness will be selected to populate the next generation of networks |
-| `layers`  | The number of hidden layers in the network linking loci to traits (blue squares in Figure 1) |
-| `mu_pr`  | The probability that a value in the network (black arrows in Figure 1) will mutate in a generation. Mutation events change the existing value by adding a new value drawn from a normal distribution with a mean of 0 and standard deviation of `mu_sd`.
-| `mu_sd`   | The standard deviation of the random normal value mean centered at 0 that is added to the existing value of the network (black arrows in Figure 1) when a mutation event occurs.
-| `pr_cross` | The probability that a focal network in the population will initiate a crossover of a subset of its values with a randomly selected second network (note that any given network might therefore be included in more than one crossover event in a generation). The size of the subset is determined randomly (conceptually equivalent to drawing a rectangle around arrows in Figure 1, with values within the rectangle then swapped between networks). |
-| `term_cri` | The criteria for terminating the evolutionary algorithm. The algorithm will terminate if a network is found in which the mean squared deviation of the covariance matrix elements from `gmatrix` is less than `exp(term_crit)` . |
-| `sd_ini`   | The standard deviation of initialised network values at the start of the evolutionary algorithm. All network values are initialised by randomly sampling from a normal distribution with a mean of 0 and a standard deviation of `sd_ini`. |
-| `use_cor`  | Should the `gmatrix` be treated as a correlation matrix rather than a covariance matrix when calculating fitness? |
-
-Table: Arguments taken by the `mine_gmatrix` function.
-
-Running the `mine_gmatrix` function can take several minutes to several hours (or longer) depending on the parameters used. The time required scales exponentially with the dimensions of `gmatrix` (i.e., the number of traits that need to be found). Default argument values are specified in attempt to be efficient across a wide range of conditions, but in practice it is often best to experiment with different values. As with any evolving population, selection is more effective in larger populations (i.e., high `npsize`), but large populations are also more time consuming to simulate. The `indivs` argument can be increased to give more precision when comparing the fitness of networks. Values of `sd_ini` are usually most effective when they are roughly an order of magnitude below that of the largest element value of `gmatrix`. Values of `sampleK`, `chooseK`, `mu_pr`, `mu_sd`, and `pr_cross` sometimes require a bit more experimentation to maximise the efficiency of the function in finding solutions. Note that `mu_pr` and `pr_cross` are often most effective at values much higher than would be expected in real biological organisms [@Hamblin2013]. 
-
-When `mine_gmatrix` is running, the generation number, mean stress (i.e., log mean squared deviation of the covariance matrix elements from `gmatrix`), and minimum stress will be printed in the console (this can be turned off by specifying `prnt_out = FALSE`). Below shows how the console output will appear.
-
-
-```
-===============================================
-Initialising gmatrix mining...                 
-===============================================
-Gen: 0	 Stress: -0.763570	 Min: -0.763570
-Gen: 1	 Stress: -0.763570	 Min: -0.763570
-Gen: 2	 Stress: -0.763570	 Min: -0.763570
-Gen: 3	 Stress: -0.763570	 Min: -0.763570
-Gen: 4	 Stress: -0.763570	 Min: -0.763571
-Gen: 5	 Stress: -0.763570	 Min: -0.763571
-Gen: 6	 Stress: -0.763571	 Min: -0.763572
-```
-
-As previously mentioned, finding a network can be time-consuming. The resevol package comes with some example pre-installed.
-
-```{r, eval = FALSE}
-data("gmatrices");
-```
-
-```{r, echo = FALSE}
-load("../data/gmatrices.rda");
-mg_v1[[1]][11] <- -5.3;
-```
-
-We can use `mg_v1` as an example of output from `mine_gmatrix`. In `mg_v1`, the pre-specified covariance matrix is the same as the `gmt` matrix used above. The output includes eight elements, the first of which includes all of the argument inputs to the `mine_gmatrix` function.
-
-```{r, echo = FALSE}
-print(mg_v1[[1]]);
-```
-
-Argument inputs in the elements above include (1) `loci`, (2) `layers`, (3) `indivs`, (4) `npsize`, (5) `mu_pr`, (6) `mu_sd`, (7) `max_gen`, (8) `pr_cross`, (9) `sampleK`, (10) `chooseK`, (11) `term_cri`, (12) `sd_ini`, (13) `use_cor`, and (14) `prnt_out`. The second element of `mine_gmatrix` output is the pre-specified covariance matrix `gmatrix`.
-
-```{r, echo = FALSE}
-print(mg_v1[[2]]);
-```
-
-The third element of `mine_gmatrix` output is a matrix with elements that specify the effect of each locus value (rows) on the first hidden layer (columns). Conceptually, these are the values of the Figure 1 arrows mapping the green circles to the first column of blue squares.
-
-```{r, echo = FALSE}
-print(mg_v1[[3]]);
-```
-
-The fourth element of `mine_gmatrix` output is a three dimensional array that specifies the effects between all hidden layers, and between the last hidden layer and the trait values (i.e., in Figure 1, all of the arrows to the right of the first column of blue squares). The third dimension of the array below separates the sets arrows between hidden layers (i.e., each matrix below corresponds to a map between hidden layers, or between the last hidden layer and the traits). Note that while Figure 1 includes only three hidden layers, there are six below.
-
-```{r, echo = FALSE}
-print(mg_v1[[4]]);
-```
-
-
-The fifth element of `mine_gmatrix` is a matrix that shows the marginal effect of each locus (rows) on each trait (columns) value. Note that this is this is the product of `mg_v1[[3]]` times each layer of `mg_v1[[4]]` in sequence (i.e., `mg_v1[[4]][,,1]` times `mg_v1[[4]][,,2]`, and so forth). Conceptually, this matrix isolates the effect of each locus on each trait if all other loci are held at a constant value.
-
-```{r, echo = FALSE}
-print(mg_v1[[5]]);
-```
-
-The sixth element of `mine_gmatrix` is a matrix of the observed covariance structure of traits given a set of `indivs` individuals with random standard normal values at each locus. This matrix can be compared to the pre-specified `gmatrix`. While there will always be small deviations that are minimised by the function, it might often be useful to check the difference between matrices manually.
-
-```{r, echo = FALSE}
-print(mg_v1[[6]]);
-```
-
-The seventh element of `mine_gmatrix` is a vectorisation of `mg_v1[[3]]` and `mg_v1[[4]]`. That is, a vector that includes all of the information needed to map a set of allele values to trait values (i.e., values for all arrows shown in Figure 1). This vector of network values is inserted into the genome of each individual during a simulation, so each individual's allele values can then be mapped to their appropriate trait values. Simulations can then be run in which these network values are static, or in which they may evolve at any number of paths from layer to layer (i.e., columns of arrows in Figure 1).
-
-```{r, echo = FALSE}
-print(mg_v1[[7]]);
-```
-
-The eighth and final element of `mine_gmatrix` reports the stress of the network produced. That is, the logged expected squared deviation of each element in the observed covariance matrix from the pre-specified covariance matrix (note, small deviations might arise between this value and the value obtained from manually comparing `mg_v1[[2]]` and `mg_v1[[6]]` due to a different set of `indivs` individuals being used to produce `mg_v1[[6]]` and calculate `mg_v1[[8]]` below).
-
-```{r, echo = FALSE}
-print(mg_v1[[8]]);
-```
-
-The output of `mine_gmatrix` is necessary for initialising new individuals in the individual-based model. The individual-based model is run using the `run_farm_sim` function, which is explained in the next section.
-
-<a name = "run_farm_sim">The `run_farm_sim` function</a>
-================================================================================
-
-Simulations are run using the `run_farm_sim` function, which initialises a spatially explicit landscape and individual pests, then simulates the population and evolutionary dynamics of those pests for a specific landscape management regime of crop use and pesticide application. The simulation terminates after a fixed number of time steps have passed, or if the population goes extinct. Because of the way that events occur within the simulation (e.g., demographic processes of individuals, changes in landscape properties), time steps do not have a fixed interpretation (e.g., one growing season or year). Instead, arguments to `run_farm_sim` must be carefully considered to effectively model the social-ecological system. Similarly, the order of events in the life-cycle of individuals is not inherently fixed, but is instead defined by the minimum and maximum age at which movement, reproduction, and feeding occur for individuals in the population. How this works is presented in more detail with the explanation of time steps in `run_farm_sim`. We first explain the inputs.
-
-<a name = "inputs">Inputs for `run_farm_sim`</a>
---------------------------------------------------------------------------------
-
-The `run_farm_sim` function takes arguments that specify simulation parameter values and produces simulation output mainly in the form of CSV files printed to the R working directory. Arguments to `run_farm_sim` are explained in the table below.
-
-| Argument                  | Description                                      |
-|---------------------------|--------------------------------------------------|  
-| `N`                       | The number of individuals that are initialised in a simulation. Individuals are initialised in a random location on the landscape, and at least two individuals are needed. |
-| `xdim`                    | The number of cells in the horizontal dimension of the landscape This value must be an integer greater than two. |
-| `ydim`                    | The number of cells in the vertical dimension of the landscape This value must be an integer greater than two. |
-| `repro`                   | The type of reproduction that individuals undergo in the simulation. There are three options: (1) "asexual", in which individuals reproduce clonally and offspring have haploid genomes and traits identical to their mother with the potential for mutation; (2) "sexual", in which individuals are monoecious (both female and male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination; (3) "biparental", in which individuals are dioecious (only female or male) and offspring have diploid genomes with alleles inherited from both parents with mutation and recombination. |
-| `neutral_loci`            | The number of loci that are completely neutral (i.e., have no effect on fitness). These loci can be used to monitor genetic drift or calculate inbreeding coefficients. |
-| `max_age`                 | This is the maximum number of time steps that an individual can survive. Individuals that are older than this age in a time step will always die. |
-| `min_age_move`            | This is the minimum age at which an individual can move. Individuals below this age will always remain on their current cell. |
-| `min_age_move`            | This is the maximum age at which an individual can move. Individuals above this age will always remain on their current cell. |
-| `min_age_reproduce`       | This is the minimum age at which an individual can be reproductively active. No individuals below this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals. |
-| `max_age_reproduce`       | This is the maximum age at which an individual can be reproductively active. No individuals above this age will engage in any reproductive activity, nor will they be recognised as potential mates by other individuals. |
-| `min_age_feed`            | This is the minimum age at which an individual can eat. No individuals below this age will be able to consume food on the landscape. |
-| `max_age_feed`            | This is the maximum age at which an individual can eat. No individuals above this age will be able to consume food on the landscape. |
-| `food_consume`            | This defines how much food an individual will consume from the cell on which it is feeding. Food consumption can take on any positive real value, and an individual will consume up to this amount if possible (if not, they will consume however much food is left within their landscape cell). |
-| `pesticide_consume`       | This defines how much pesticide an individual will consume from the cell on which it resides. Pesticide consumption can take on any positivie real value, and an individual will consume up to this amount if possible (if not, they will consume however much pesticide has been placed on the landscape cell). |
-| `rand_age`                | This argument determines whether individuals in the simulation will be initialised with a random age selected uniformly from zero to `max_age`. If `FALSE`, then all individuals will be initialised at age zero. |
-| `move_distance`           | This is the maximum number of cells that an individual can move, in any direction, on the landscape during one bout of movement. |
-| `food_needed_surv`         | This is the amount of food that an individual needs to consume to survive. If the individual has not consumed this amount of food before the age of `age_food_threshold`, then they will die in the time step. |
-| `pesticide_tolerated_surv` | This is the amount of pesticide that an individual can tolerate and still survive. If the individual has consumed more than this amount of pesticide on or after the age of `age_pesticide_threshold`, then they will die in the time step. |
-| `food_needed_repr`         | This is the amount of food that an individual needs to produce one offspring. The total number of offspring that an individual produces in a time step is the floor value of their food consumption divided by this value. |
-| `pesticide_tolerated_repr` | This is the amount of pesticide tolerated below which an individual can reproduce. Note that individuals above the threshold can still mate and sire offspring, |
-| `reproduction_type`        | This determines how individuals reproduce; the two options are "lambda" and "food_based". If "lambda", then the number of offspring an individual produces is sampled from a Poisson distribution with a fixed rate parameter `lambda_value` (potentially adjusted by other factors in the simulation). If "food_based", then the number of offspring produced is based on the amount of food consumed by the individual. |
-| `mating_distance`          | This is the distance in cells (any direction) away from a focal individual from which they can successfully find and identify a mate (e.g., if 0, then only individuals on the same cell are potential mates). |
-| `lambda_value`             | This is the rate parameter for the Poisson sampling of offspring number; it only applies when `reproduction_type` is set to "lambda". |
-| `movement_bouts`           | This is the number of times an individual can move in a single time step (i.e., the number of cells that it can potentially visit). Each time an individual visits a new cell, it can potentially feed or consume pesticide. |
-| `selfing`                  | This determines whether or not self-fertilisation is allowed when `repro` is set to 'sexual'. |
-| `feed_while_moving`        | If `TRUE`, then individuals will feed in each movement bout when they arrive to a new landscape cell. |
-| `pesticide_while_moving`        | If `TRUE`, then individuals will consume pesticide in each movement bout when they arrive to a new landscape cell. |
-| `mortality_type`           | This determines how mortality is enacted in the simulation. Currently there is only one mortality type possible; mortality occurs if individuals exceed their maximum age, do not consume enough food, or consume too much pesticide. |
-| `age_food_threshold`       | This is the age at which mortality associated with feeding is enacted, so an individual younger than this age will not die if they have not yet consumed sufficient food to satisfy `food_needed_surv`. |
-| `age_pesticide_threshold`  | This is the age at which mortality associated with pesticide consumption is enacted, so an individual younger than this age will not die even if they have exceeded their pesticide threshold. |
-| `farms`                    | This is the number of farms to be placed on the landscape. Farms are placed in blocks of roughly equal sizes using a shortest splitline algorithm. Farms operate independently in terms of what crops they grow and pesticides they apply. |
-| `time_steps`               | This is the number of time steps that a simulation will run. Simulations will be terminated before this number if extinction occurs. |
-| `mutation_pr`              | This is the probability of mutation occurring at any locus of a newly produced offspring. |
-| `crossover_pr`             | This is the probability of crossover between two homologous loci. This only applies for diploid genomes. |
-| `mutation_type`            | This determines how mutation is modelled. If 0, then a completely new allele value is drawn from a normal distribution with a mean of `mutation_direction` and a standard deviation of 1 (or 1 / sqrt(2) for diploids, so that the expected standard devation of the sum of both allele values is 1). If 1, then a new value is drawn from a normal distribution with mean `mutation_direction` and standard deviation of 1, and this new value is then added to the existing allele value. |
-| `net_mu_layers`           | This is the proportion of the genome that can evolve. If 0, then only loci values (green circles in Figure 1) can mutate. If 1, then loci and the first column of arrows (green circles to first column of blue squares in Figure 1) can mutate. If 2, then the first two columns of arrows in Figure 1 can mutate, and so forth. Fewer mutation layers will constrain the covariance among traits, while more mutation layers will allow the covariance structure to evolve more readily. |
-| `net_mu_dir`              | The direction along the network in which `net_mu_layers` applies (not loci, green circles in Figure 1, can always mutate). If 1, then `net_mu_layers` applies in the direction from loci to traits. If 0, then the direction applies from traits to loci (i.e., `net_mu_dir = 0` and `net_mu_layers = 1` would mean that only the arrow values between the last hidden layer and traits in Figure 1 could mutate).
-| `mutation_direction`      | This allows mutations to be biased in one direction. A default value of 0 makes positive or negative allele values equally likely. |
-| `crop_rotation_type`      | This determines how crop types are rotated across the landscape. A value of 1 means that crops will never rotate, while a value of 2 means that a new crop type will be randomly chosen every `crop_rotation_time` time steps. |
-| `crop_rotation_time`      | This determines how many time steps a crop is left before being refreshed and potentially changed. Note that even if the crop type does not change, this value still has the effect of determining how often crops are replenished (if some have been eaten since the last time they were replenished). |
-| `pesticide_rotation_type` | This determines how pesticide types are rotated across the landscape. A value of 1 means that pesticides never rotate, while a value of 2 means that a new pesticide type will randomly chosen every `pesticide_rotation_time` time steps. |
-| `pesticide_rotation_time` | This determines how many time steps a pesticide is left before being replenished and potentially changed. Note that unlike crops, pesticide levels do not decrease on the landscape over time (e.g., with consumption). |
-| `crop_per_cell`           | This determines the expected amount of crop that is placed on a single landscape cell. The more crop on a cell, the more that can be potentially consumed by individuals. |
-| `pesticide_per_cell`      | This determines how much pesticide is placed on a single landscape cell. The higher concentration of pesticide per cell, the more that individuals on the cell will imbibe and potentially be affected by. |
-| `crop_sd`                 | This is the standard deviation of crop number placed on landscape cells. A default value of 0 assumes that all cells have the same amount of crop. |
-| `pesticide_sd`            | This is the standard deviation of pesticide applied to each landscape cell. A default value of 0 assumes that each cell has the same concentration of pesticide applied. |
-| `crop_min`                | This is the minimum amount of crop that is possible to have on a single cell (i.e., crop values will never be initialised to be lower than this value). |
-| `crop_max`                | This is the maximum amount of crop that is possible to have on a single cell (i.e., crop values will never be initialised to be higher than this value). |
-| `pesticide_min`           | This is the minimum concentration of pesticide that is possible to have on a single cell (i.e., pesticide values will never be initialised to be lower than this value). |
-| `pesticide_max`           | This is the maximum concentration of pesticide that is possible to have on a single cell (i.e., pesticide values will never be initialised to be higher than this value). |
-| `crop_number`             | This is the number of unique crops that can exist on the landscape during the course of a simulation. The maximum number of possible crops is 10. |
-| `pesticide_number`        | This is the number of unique pesticides that can exist on the landscape during the course of a simulation. The maximum number of possible pesticides is 10. |
-| `print_inds`              | If `TRUE`, a CSV file will print in the working directory with every individual and all of their characteristics (i.e., locations, traits, genomes) in every time step. By default, this is set to `FALSE` and should only be set to `TRUE` with **extreme caution**, as large populations persisting over long periods of time can produce extremely large CSV files. |
-| `print_gens`              | If `TRUE`, the time step and the population size will be printed to the R console as the simulation is running.
-| `print_last`              | If `TRUE`, a CSV file will print in the working directory with every individual and all of their characteristics (i.e., locations, traits, genomes) in only the last time step. Note that for large populations, the file size generated can be very large (10s to 100s of GBs). |
-| `K_on_birth`              | This is a carrying capacity applied to new individuals across the entire landscape. If the total number of offspring in a time step exceeds this value, then offspring are removed at random until the total number of new offspring equals `K_on_birth`. In practice, this can help speed up simulations by avoiding the unnecessary production of individuals when most will perish. |
-| `pesticide_start`         | This is the time step at which pesticide begins to be applied. No pesticide will be applied prior to this start time, so individuals will not experience any effects of pesticide. This can be useful as a tool to burn in the population prior to introducing pesticide. |
-| `immigration_rate`        | This is the number of immigrant individuals arriving in the landscape in each time step. Immigrants are initialised in random locations with the same network structure (Figure 1) as individuals initialised at the start of the simulation, and with allele values randomly drawn from a standard normal distribution. |
-| `get_f_coef`              | This determines whether or not inbreeding coefficients will be calculated for sexual populations and printed off in CSV files. Because this can add some computation time, it is best to set to `FALSE` unless it is needed.
-| `get_stats`              | If `TRUE`, a CSV file will print in the working directory with summary statistics for each time step. This is set to `TRUE` by default.
-| `metabolism`             | This determines the rate at which food consumed in previous time steps is lost in subsequent time steps, which can be especially relevant if food consumed determines survival or reproductive output. Values of 0 mean that stored gains will always persist throughout an individual's lifetime, while very high values will model the gains of one time step being wiped out in subsequent time steps (if, e.g., the objective is to model individuals needing to consume food successfully in each time step to survive or reproduce, as opposed to having a feeding life history stage followed by a mating and reproduction stage). |
-| `baseline_metabolism`    | This fixes a baseline metabolic rate at which food consumed in previous time steps is lost in subsequent steps. This fixed value is always added to `metabolism` for each individual. By default, this value is 0. |
-| `min_age_metabolism`     | This determines the minimum age at which losses of food consumed in previous time steps enacted by `metabolism` and `baseline_metabolsim` can occur. |
-| `max_age_metabolism`     | This determines the maximum age at which losses of food consumed in previous time steps enacted by `metabolism` and `baseline_metabolsim` can occur. |
-
-This large list of potential inputs can make setting up simulations challenging, but the options are intended to give a high degree of flexibility in the type of biological system being modelled. 
-
-<a name = "example">Example uses of `run_farm_sim`</a>
---------------------------------------------------------------------------------
-
-To model a species with non-overlapping generations that moves around the landscape and has a reproductive success that is determined by their food consumption, parameters could be set with a `max_age` of one, high `movement_bouts`, and no age related threshold of feeding, reproducing, or pesticide consumption. Below shows a hypothetical set of parameter combinations that might fulfil this criteria (note that maximum age thresholds for feeding, reproducing, or pesticide consumption are 9 by default). 
-
-```{r, eval = FALSE}
-sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci  = 1000, 
-                    xdim = 64, ydim = 64, repro = "sexual", max_age = 1,
-                    selfing = TRUE, food_consume = c(2, 2),
-                    pesticide_consume = c(0, 0), food_needed_surv = 1,
-                    food_needed_repr = 2, reproduction_type = "food_based",
-                    pesticide_tolerated_surv = 0, pesticide_rotation_type = 2,
-                    crop_rotation_type = 2, min_age_reproduce = 0,
-                    farms = 24, time_steps = 40, mutation_pr = 0.001, 
-                    crossover_pr = 0.1, net_mu_layers = 0, 
-                    crop_rotation_time = 1, pesticide_rotation_time = 1,
-                    crop_per_cell = 1, pesticide_per_cell = 0.4,
-                    crop_number = 2, pesticide_number = 2, print_inds = FALSE,          
-                    K_on_birth = 1000000, min_age_move = 0, 
-                    age_food_threshold = 0, min_age_feed = 0, 
-                    pesticide_start = 20, print_last = TRUE, 
-                    mating_distance = 2, immigration_rate = 0, metabolism = 0,
-                    baseline_metabolism = 0, movement_bouts = 4,
-                    feed_while_moving = TRUE, pesticide_while_moving = TRUE);
+```{r overtime, echo=FALSE, fig.width=8, fig.cap = "**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c) mean food consumed per pest, and (d) mean values of evolving traits 1 and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2, respectively, a pest will consume. White and grey vertical stripes indicate seasons of a single crop and pesticide application.*"}
+mbox <- function(x0, x1, y0, y1){
+    xx <- seq(from=x0, to=x1, length.out = 100);
+    yy <- seq(from=y0, to=y1, length.out = 100);
+    xd <- c(rep(x0, 100), xx, rep(x1,100), rev(xx));
+    yd <- c(yy, rep(y1,100), rev(yy), rep(y0, 100));
+    return(list(x=xd, y=yd));
+}
+pop_dat_file    <- system.file("population_data.csv", package = "resevol");
+population_data <- read.csv(pop_dat_file);
+row_number      <- 161; # dim(population_data)[1];
+time_step       <- population_data[["time_step"]][2:row_number];
+population_size <- population_data[["population_size"]][2:row_number];
+food_consumed   <- population_data[["mean_food_consumed"]][2:row_number];
+p1_consumed     <- population_data[["mean_pesticide1_consumed"]][2:row_number];
+p2_consumed     <- population_data[["mean_pesticide2_consumed"]][2:row_number];
+trait1          <- population_data[["trait1_mean_value"]][2:row_number];
+trait2          <- population_data[["trait2_mean_value"]][2:row_number];
+season          <- seq(from = 0, to = 160, by = 16);
+blocks          <- length(season) - 1;
+par(mfrow = c(2, 2), mar = c(1, 5, 3, 1));
+# Pest abundance plot
+plot(x = time_step, y = population_size, type = "l", lwd = 2, xaxt = "n",
+     xlab = "", ylab = "Pest abundance", cex.lab = 1, ylim = c(0, 4600),
+     cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1000, y1 = 6000);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+text(x = 5, y = 4300, labels = "a", cex = 2);
+points(x = time_step, y = population_size, type = "l", lwd = 2);
+box();
+# Pesticide consumed
+plot(x = time_step, y = p1_consumed, type = "n", lwd = 2, xlab = "", xaxt = "n",
+     ylab = "Mean pesticide consumed", cex.lab = 1, ylim = c(0, 0.4),
+     cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+points(x = time_step, y = p1_consumed, type = "l", lwd = 2);
+points(x = time_step, y = p2_consumed, type = "l", lwd = 2, col = "red",
+       lty = "dashed");
+legend(x = 158, y = 0.4, col = c("black", "red"), lty = c("solid", "dashed"),
+       legend = c("Pesticide 1", "Pesticide 2"), cex = 1, lwd = 2, bg = "white",
+       xjust = 1);
+text(x = 5, y = 0.37, labels = "b", cex = 2);
+box();
+par(mar = c(4, 5, 0, 1));
+# Pest food consumption plot
+plot(x = time_step, y = food_consumed, type = "n", lwd = 2, xlab = "Time step",
+     ylab = "Mean food consumed", cex.lab = 1, ylim = c(0, 2),
+     yaxt = "n");
+axis(side = 2, at = c(0, 0.5, 1, 1.5), cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+      polygon(x = rbox$x, y = rbox$y, lwd = 2, border = NA, 
+              col = "grey90");
+    }
+}
+points(x = time_step, y = food_consumed, type = "l", lwd = 2);
+text(x = 5, y = 0.2, labels = "c", cex = 2);
+box();
+# Pesticide traits
+plot(x = time_step, y = trait1, type = "n", lwd = 2, xlab = "Time step",
+     ylab = "Mean trait value", cex.lab = 1, ylim = c(-0.9, 0.1),
+     yaxt = "n");
+axis(side = 2, at = c(-0.8, -0.6, -0.4, -0.2, 0.0), cex.axis = 1);
+for(i in 1:blocks){
+    rbox <- mbox(x0 = season[i], x1 = season[i + 1], y0 = -1, y1 = 3);
+    if(i %% 2 == 0){
+        polygon(x = rbox$x, y = rbox$y, lwd = 3, border = NA, 
+                col = "grey90");
+    }
+}
+points(x = time_step, y = trait1, type = "l", lwd = 2);
+points(x = time_step, y = trait2, type = "l", lwd = 2, col = "red",
+       lty = "dashed");
+legend(x = 158, y = 0.1, col = c("black", "red"), lty = c("solid", "dashed"),
+       legend = c("Trait 1", "Trait 2"), cex = 1, lwd = 2, xjust = 1, 
+       bg = "white");
+text(x = 5, y = -0.82, labels = "d", cex = 2);
+box();
 ```
 
-To model a similar system with overlapping generations, parameters could be set with `max_age > 1` and a very high `baseline_metabolism` (i.e., high enough so that food consumption gains can only apply to the current time step), and otherwise identical parameters. The function above has been modified slightly to fulfil this criteria by increasing `max_age` to 4 and setting `baseline_metabolism = 10000`, but otherwise keeping the same arguments.
 
-```{r, eval = FALSE}
-sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci  = 1000, 
-                    xdim = 64, ydim = 64, repro = "sexual", max_age = 4,
-                    selfing = TRUE, food_consume = c(2, 2),
-                    pesticide_consume = c(0, 0), food_needed_surv = 1,
-                    food_needed_repr = 2, reproduction_type = "food_based",
-                    pesticide_tolerated_surv = 0, pesticide_rotation_type = 2,
-                    crop_rotation_type = 2, min_age_reproduce = 0,
-                    max_age_feed = 1, farms = 24, time_steps = 40, 
-                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
-                    crop_rotation_time = 1, pesticide_rotation_time = 1,
-                    crop_per_cell = 1, pesticide_per_cell = 0.4,
-                    crop_number = 2, pesticide_number = 2, print_inds = FALSE,          
-                    K_on_birth = 1000000, min_age_move = 0, 
-                    age_food_threshold = 0, min_age_feed = 0, 
-                    pesticide_start = 20, print_last = TRUE, 
-                    mating_distance = 2, immigration_rate = 0, metabolism = 0,
-                    baseline_metabolism = 10000, movement_bouts = 4,
-                    feed_while_moving = TRUE, pesticide_while_moving = TRUE);
+
+```{r landscape, echo=FALSE, fig.width=6.4, fig.height=3, fig.cap = "**Figure 4**. *Locations of pests (black) across a landscape that includes nine farms (coloured blocks) in the last time step of a simulation using the resevol R package (left panel). The right panel shows which farms apply pesticide 1 (dark grey) and 2 (light grey).*"}
+load(system.file("sim.rda", package = "resevol"));
+last_time_file <- system.file("last_time_step.csv", package = "resevol");
+last_time_step <- read.csv(last_time_file, header = FALSE);
+landscape      <- sim[[2]][,,1];
+landscape_vals <- unique(as.vector(landscape));
+reord_land     <- sample(landscape_vals, size = length(landscape_vals));
+for(i in 1:dim(landscape)[1]){
+    for(j in 1:dim(landscape)[2]){
+        old_val         <- landscape[i, j];
+        new_val         <- reord_land[old_val];
+        landscape[i, j] <- new_val;
+    }
+}
+for(i in 1:dim(last_time_step)[1]){
+    xloc <- last_time_step[i, 1] + 1;
+    yloc <- last_time_step[i, 2] + 1;
+    landscape[xloc, yloc] <- 10;
+}
+land_cols      <- c(hcl.colors(9, "YlOrRd", rev = TRUE), "#000000");
+par(mfrow = c(1, 2), mar = c(0, 0.1, 0, 0.1));
+image(landscape, xaxt = "n", yaxt = "n", col = land_cols);
+box();
+pesticide_position <- sim[[2]][,,12];
+pesticide_cols     <- c("grey20", "grey60");
+image(pesticide_position, xaxt = "n", yaxt = "n", col = pesticide_cols);
+box();
 ```
 
-To model a system in which individuals develop in a sedentary life history stage that persists until a final stage of movement and reproduction (e.g., an insect with a larval and pupal stage), parameters could be set with min and max ages of feeding and pesticide consumption from 0 to 3, with min and max ages of movement and reproduction set at 4, `max_age = 4`, and `baseline_metabolism = 0`. Hence, food or pesticide consumption accrued in early life history stages would affect reproductive output in a later life history stage. 
-
-```{r, eval = FALSE}
-sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci = 1000, 
-                    xdim = 64, ydim = 64, repro = "asexual", max_age = 4, 
-                    selfing = TRUE, food_consume = c(2, 2), 
-                    pesticide_consume = c(0, 0), food_needed_surv = 1, 
-                    food_needed_repr = 1, reproduction_type = "food_based", 
-                    pesticide_tolerated_surv = 0, pesticide_rotation_type  = 2,
-                    crop_rotation_type = 2, min_age_reproduce = 4,
-                    max_age_feed = 3, farms = 24, time_steps = 48,
-                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
-                    crop_rotation_time = 12, pesticide_rotation_time = 12,
-                    crop_per_cell = 4, pesticide_per_cell = 0.4, 
-                    crop_number = 2, pesticide_number = 2, min_age_move = 4,
-                    age_food_threshold = 3, min_age_feed = 1, 
-                    pesticide_start = 100, print_last = TRUE, 
-                    mating_distance = 2, metabolism = 0);
-```
-
-It might often be useful to think of `crop_rotation_time` and `pesticide_rotation_time` as defining the length of a season, with minimum and maximum ages for individuals defining the relative length of their life history processes. It is important to emphasise that crops are not replenished in each time step, so if, e.g., half of the food on a cell is eaten in a time step, then the amount of food will not be replenished until the next rotation occurs regardless of whether or not the crop type will change. Note that non-crop and pesticide free land can be created by creating more crops or pesticides than can be consumed (e.g., in the above simulation, by setting `crop_number = 3` and `pesticide_number = 3`, areas of the landscape would be generated with effectively no crops or pesticides because the default `food_consume` and `pesticide_consume` for the third crop and pesticide would be zero).
-
-<a name = "output">Output of `run_farm_sim`</a>
---------------------------------------------------------------------------------
-
-The output of `run_farm_sim` to the console is a list of two elements. The first element is just a list of parameter values run in the model, and the second element is a three dimensional array of the landscape. The most useful output will be some combination of three CSV files printed off when the simulation is run. The first file is 'population_data.csv', which will provide a large table of population level statistics for each time step in the simulation. This is the smallest and often most useful file. Column names in the file provide information about the data.
-
-The second file is 'last_time_step.csv', which will provide a very large able that includes the characteristics (columns) of all individuals (rows) in the last time step of the simulation. This file can be used to make inferences about individual-level variation in the population (e.g., spatial distribution of individuals, correlations between traits and fitness). The number of columns will vary based on simulation parameters, and column names are not currently printed. Nevertheless, a few relevant column numbers are consistent in the information that they provide about an individual:
-
-- Col 1. Time step
-- Col 2. Individual ID
-- Col 3. x-location
-- Col 4. y-location
-- Col 5. Age
-- Col 6. Sex
-- Col 7. Movement distance
-- Col 8. Mother ID
-- Col 9. Father ID
-- Col 12. Offspring produced
-- Col 102. Start of trait values
-
-The trait value columns continue for as many traits as are specified by the `mine_gmatrix` output (`mine_output` argument in `run_farm_sim`). This 'last_time_step.csv' should be printed out with some care; since the entire genomes of each individual are included, large populations can produce very large file sizes. 
-
-The third file is 'individuals.csv', which will provide an extremely large table with every individual in the simulation and all of their characteristics (i.e., the same contents as are in 'last_time_step.csv', but for all time steps). This file should not be made unless a trial simulation has been run with a small number of time steps first to ensure that the CSV file will not become too large to store.
-
-<a name = "traits">Use of evolving traits in `run_farm_sim`</a>
---------------------------------------------------------------------------------
-
-In all of the [examples used](#example) above, values were hard coded into the `run_farm_sim` function, so the four traits mined in `mg_v1` were not actually used. The resevol package allows evolving traits to be substituted for the following individual characteristics set in the arguments of `run_farm_sim`: `move_distance`, `food_needed_surv`, `pesticide_tolerated_surv`, `food_needed_repr`, `pesticide_tolerated_repr`, `mating_distance`, `lambda_value`, `movement_bouts`, `metabolism`, `food_consume` (up to 10 elements), and `pesticide_consume` (up to 10 elements). When a trait is substituted for the argument, an individual's value for the argument is determined by the trait (e.g., the food needed to survive can be determined by a trait unique to each individual rather than set as a numerical value that applies to all individuals). Setting an argument to the trait is done by placing "T[n]" in quotes where [n] is the number of the trait (corresponding to the n row and column of the pre-specified trait covariance matrix). Below shows the last [example used above](#example), but with `food_consume = c(2, 2)` and `pesticide_consume = c(0, 0)` replaced with evolving traits.
-
-```{r, eval = FALSE}
-sim <- run_farm_sim(mine_output = mg_v1, N = 1000, neutral_loci = 1000, 
-                    xdim = 64, ydim = 64, repro = "asexual", max_age = 4, 
-                    selfing = TRUE, food_consume = c("T1", "T2"), 
-                    pesticide_consume = c("T3", "T4"), 
-                    food_needed_surv = 1, food_needed_repr = 1, 
-                    reproduction_type = "food_based", 
-                    pesticide_tolerated_surv = 0, pesticide_rotation_type  = 2,
-                    crop_rotation_type = 2, min_age_reproduce = 4,
-                    max_age_feed = 3, farms = 24, time_steps = 48,
-                    mutation_pr = 0.001, crossover_pr = 0.1, net_mu_layers = 0,
-                    crop_rotation_time = 12, pesticide_rotation_time = 12,
-                    crop_per_cell = 4, pesticide_per_cell = 0.4, 
-                    crop_number = 2, pesticide_number = 2, min_age_move = 4,
-                    age_food_threshold = 3, min_age_feed = 1, 
-                    pesticide_start = 100, print_last = TRUE, 
-                    mating_distance = 2, metabolism = 0);
-```
-
-The `run_farm_sim` will recognise now that traits 1 and 2 will determine the amount of consumed on a landscape cell, while traits 3 and 4 will determine the amount of pesticide consumed. 
 
 
-<a name = "additional">Additional guidance</a>
-================================================================================
+Conclusions {#conclusions}
+===================================================
 
-Additional guidance can be found in the [package notes](https://bradduthie.github.io/resevol/notebook/index.html) on GitHub and the package documentation. Any queries concerning guidance for setting up and running simulations can be posted on the [GitHub issues page](https://github.com/bradduthie/resevol/issues) or emailed to the package maintainer Brad Duthie (see email address in the [package DESCRIPTION](https://github.com/bradduthie/resevol/blob/master/DESCRIPTION)). This package has mainly been developed to facilitate ongoing modelling work at the University of Stirling, but it is open source and free to use. Comments and questions are welcome.
+Insecticide resistance to pesticides is a widespread problem that affects global food security [@Tabashnik2014; @Bradshaw2016; @Lykogianni2021]. 
+Many models have been developed to investigate the evolution of resistance under different ecological and evolutionary conditions [e.g., @Curtis1985; @Mani1985; @Ives2002; @Liang2013; @Liang2018; @Haridas2018;  @South2018; @Sudo2018; @Saikai2021].
+The resevol R package makes it possible to rapidly develop and simulate myriad individual-based models of resistance evolution.
+It also introduces a novel approach to modelling complex pest genetic architecture, using an evolutionary algorithm to generate haploid or diploid loci that map to pest traits with pre-specified covariances (Figure 1; Supporting Information 1).
+Agricultural landscapes and pest life histories are highly customisable, allowing targetted models that can simulate specific real-world case studies (Supporting Information 2).
+The breadth of possible models that can be simulated with resevol also makes it a useful tool for developing theory on pest management, and more even generally on the evolution and ecology of individuals with complex traits on a changing landscape.
 
 
-<a name = "lit">Literature Cited</a>
-================================================================================
+Acknowledgements {#acknowledgements}
+===================================================
+
+This software was developed as part of the project for Enhancing Diversity to Overcome Resistance Evolution (ENDORSE). 
+The ENDORSE project is a joint Newton funded international partnership between the Biotechnology and Biological Sciences Research Council (BBSRC) in the UK and the S&#xE3;o Paulo Research Foundation (FAPESP) in Brazil under BBSRC award reference BB/S018956/1 and FAPESP award reference 2018/21089-3. 
+ENDORSE is a partnership among Universidade Estadual Paulista (UNESP), the University of Stirling (UoS), and the Centre for Agricultural and Biosciences International (CABI).
+
+Authors contributions {#contributions}
+===================================================
+
+All authors contributed to planning software development and writing. 
+ABD wrote and maintains package code. 
+RM contributed code for data visualisation.
 
 
-```{r, echo = FALSE}
-par(oldpar);
-```
+Availability {#availability}
+===================================================
+
+The resevol R package can be downloaded from CRAN (https://cran.r-project.org/package=resevol) or GitHub (https://bradduthie.github.io/resevol/). 
+The package is open source under GNU Public License.
+
+References {#references}
+===================================================
+
 
