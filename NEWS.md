@@ -1,3 +1,9 @@
+# resevol 0.3.2.0
+
+## NEW FEATURES
+
+New argument allowing users to set initialised means for evolving traits
+
 # resevol 0.3.1.0
 
 ## MAJOR CHANGES
