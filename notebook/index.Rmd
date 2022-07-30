@@ -21,6 +21,7 @@ bibliography: references.bib
 library("shiny");
 library("rhandsontable");
 library("resevol");
+data(gmatrices);
 ```
 
 
@@ -42,7 +43,7 @@ library("resevol");
 
  - **2022**
  
-   - **JUL** [19](#u-19-JUL-2022)
+   - **JUL** [19](#u-19-JUL-2022), [30](#u-30-JUL-2022)
    - **JUN** [13](#u-13-JUN-2022), [28](#u-28-JUN-2022)
    - **JAN** [06](#u-06-JAN-2022)
 
@@ -71,6 +72,48 @@ library("resevol");
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-30-JUL-2022">Update: 30 JUL 2022</a>
+
+I don't know why I didn't think of this sooner, but there really should be a feature that allows users to set the initial mean values of traits. This is easy because trait means are of course independent of the covariance structure of the traits, so there just needs to be some specified increment to be added to each trait throughout the simulation. I have introduced this in a new version 0.3.2.0 with the `trait_means` argument, which simply takes a vector of the means for each customised trait. By default, values are set to zero (i.e., what they always were originally), but the argument can also take a vector of the same length as the number of traits, with each element position corresponding to the specific trait. That is, `trait_means[1]` is the mean value of `"T1"`, `trait_means[2]` is the mean value of `"T2"`, et cetera. An error is given if the user attempts to specify a `trait_means` vector that has a length different from the number of traits. Just to show this in action, I will use the resevol mine_gmatrix output `mg_v1`, which has the covariance structure below.
+
+```{r, echo = FALSE}
+print(mg_v1[[6]]);
+```
+
+We have four traits, which I will use to define consumption rate of crops 1 and 2 (`T1` and `T2`, respectively), and the consumption rates of pesticides 1 and 2 (`T3` and `T4`, respectively). I will set the trait means to T1 = 1, T2 = 2, T3 = 0.2, and T4 = 0.2 and run a simulation with the code below.
+
+```{r, eval = FALSE}
+sim       <- run_farm_sim(mine_output = mg_v1, N = 1000, xdim = 10, ydim = 10, 
+                          repro = "asexual", time_steps = 20, farms = 12,
+                          crop_number             = 2,
+                          crop_init               = "random",
+                          crop_rotation_type      = 2,
+                          pesticide_number        = 2,
+                          pesticide_init          = "random",
+                          pesticide_rotation_type = 2,
+                          food_consume            = c("T1", "T2"),
+                          pesticide_consume       = c("T3", "T4"),
+                          trait_means             = c(1, 2, 0.2, 0.2),
+                          food_needed_surv        = 1,
+                          food_needed_repr        = 3,
+                          print_last              = TRUE);
+```
+
+At the end of the simulation (after some evolution has occurred), we can look at the evolution of traits and final trait distributions to confirm that they are around what we expect. Here is the evolution of the different traits over time.
+
+![](images/2022_JUL_30/traits_over_time.png)
+
+Here are the distributions of each trait, individually.
+
+![](images/2022_JUL_30/trait_distributions.png)
+
+Finally, here is a pairs plot showing the trait correlations.
+
+![](images/2022_JUL_30/pairs.png)
+
+Overall, this is doing what we want it to. I have also written a new test into testthat for the package. New documentation for the `trait_means` argument has been written, and I will incorporate this option into the working manuscript.
 
 
 > <a name="u-19-JUL-2022">Update: 19 JUL 2022</a>
