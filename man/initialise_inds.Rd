@@ -39,7 +39,8 @@ initialise_inds(
   metabolism = 0,
   baseline_metabolism = 0,
   min_age_metabolism = 1,
-  max_age_metabolism = 9
+  max_age_metabolism = 9,
+  trait_means = NULL
 )
 }
 \arguments{
@@ -113,6 +114,8 @@ initialise_inds(
 \item{min_age_metabolism}{The minimum age affected by metabolism}
 
 \item{max_age_metabolism}{The maximum age affected by metabolism}
+
+\item{trait_means}{The means of the custom pest traits}
 }
 \value{
 A two-dimensional array of individuals for simulation

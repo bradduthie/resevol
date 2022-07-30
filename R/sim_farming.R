@@ -295,6 +295,14 @@
 #' pesticide rotation option, these cells could represent something like 
 #' diversionary feeding sites or even buildings or rivers. See vignettes and 
 #' other documentation for details.
+#'@param trait_means This provides the mean values of the evolving pest traits
+#' in the initialised pest population, which by default are zero. To change 
+#' mean trait values in the initialised population, the trait_means argument
+#' requires a vector of the same length as the number of evolving pest traits
+#' defined within the function (i.e., if there are two evolving traits in the
+#' simulation, "T1" and "T2", then trait_means should be a vector of length 2).
+#' Note that mean trait values may change as the population evolves, so the
+#' values in this vector define only the means of the initial population.
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -386,7 +394,8 @@ run_farm_sim <- function(mine_output,
                          baseline_metabolism = 0,
                          min_age_metabolism  = 1,
                          max_age_metabolism  = 9,
-                         terrain             = NA){
+                         terrain             = NA,
+                         trait_means         = NULL){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -529,7 +538,8 @@ run_farm_sim <- function(mine_output,
                             metabolism               = metab_rate,
                             baseline_metabolism      = baseline_metabolism,
                             min_age_metabolism       = min_age_metabolism,
-                            max_age_metabolism       = max_age_metabolism);
+                            max_age_metabolism       = max_age_metabolism,
+                            trait_means              = trait_means);
     
     sim_results <- sim_crops(pests                    = pest, 
                              land                     = land,
@@ -752,16 +762,16 @@ sim_crops <- function(pests,
               87.0,   # 87) pests column for baseline metabolic rate (fixed)
               88.0,   # 88) pests column for minimum age of metabolism effects
               89.0,   # 89) pests column for maximum age of metabolism effects
-              90.0,   # 90)
-              91.0,   # 91)
-              92.0,   # 92)
-              93.0,   # 93)
-              94.0,   # 94)
-              95.0,   # 95)
-              96.0,   # 96)
-              97.0,   # 97)
-              98.0,   # 98)
-              99.0,   # 99)
+              90.0,   # 90) pests column for mean of Trait 1
+              91.0,   # 91) pests column for mean of Trait 2
+              92.0,   # 92) pests column for mean of Trait 3
+              93.0,   # 93) pests column for mean of Trait 4
+              94.0,   # 94) pests column for mean of Trait 5
+              95.0,   # 95) pests column for mean of Trait 6
+              96.0,   # 96) pests column for mean of Trait 7
+              97.0,   # 97) pests column for mean of Trait 8
+              98.0,   # 98) pests column for mean of Trait 9
+              99.0,   # 99) pests column for mean of Trait 10
               100.0,  # 100)
               N,      # 101) Number of rows in the pest array
               0,      # 102) Torus landscape

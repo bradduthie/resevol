@@ -9,8 +9,9 @@
 void insert_diploid_traits(double **offspring, double *paras, int offspr){
     
     int i, k, vec_pos, row, col, layer, loci, traits, layers, net_vals;
-    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st;
-    double L1, L2, **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
+    int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, T_mean_pos;
+    double **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
+    double T_mean, L1, L2;
     
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
     trait_col  = (int) paras[12];  /* Column where the number of traits held  */
@@ -102,7 +103,9 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
 
     vec_pos = trait_st; /* Now put the traits back to offspring row */
     for(i = 0; i < traits; i++){
-        offspring[offspr][vec_pos] = T[0][i];
+        T_mean_pos                 = (int) paras[90 + i];
+        T_mean                     = offspring[offspr][T_mean_pos];
+        offspring[offspr][vec_pos] = T[0][i] + T_mean;
         vec_pos++;
     }
 
@@ -148,9 +151,9 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void insert_haploid_traits(double **offspring, double *paras, int offspr){
     
-    int i, k, vec_pos, row, col, layer, loci, traits, layers;
+    int i, k, vec_pos, row, col, layer, loci, traits, layers, T_mean_pos;
     int loci_col, trait_col, layer_col, trait_st, net_st, loci_st;
-    double **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
+    double T_mean, **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
 
     loci_col   = (int) paras[11];  /* Column where the number of loci is held */
     trait_col  = (int) paras[12];  /* Column where the number of traits held  */
@@ -234,7 +237,9 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
 
     vec_pos = trait_st; /* Now put the traits back to offspring row */
     for(i = 0; i < traits; i++){
-        offspring[offspr][vec_pos] = T[0][i];
+        T_mean_pos                 = (int) paras[90 + i];
+        T_mean                     = offspring[offspr][T_mean_pos];
+        offspring[offspr][vec_pos] = T[0][i] + T_mean;
         vec_pos++;
     }
     

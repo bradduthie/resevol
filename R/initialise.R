@@ -47,6 +47,7 @@
 #'@param baseline_metabolism A fixed baseline rate added to 'metabolism'+
 #'@param min_age_metabolism The minimum age affected by metabolism
 #'@param max_age_metabolism The maximum age affected by metabolism
+#'@param trait_means The means of the custom pest traits
 #'@return A two-dimensional array of individuals for simulation
 #'@examples
 #'gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
@@ -90,7 +91,8 @@ initialise_inds <- function(mine_output,
                             metabolism = 0,
                             baseline_metabolism = 0,
                             min_age_metabolism = 1,
-                            max_age_metabolism = 9){
+                            max_age_metabolism = 9,
+                            trait_means = NULL){
   
   food      <- rep(x = 0, times = 10);
   pesticide <- rep(x = 0, times = 10);
@@ -121,9 +123,9 @@ initialise_inds <- function(mine_output,
     stop("ERROR: Must specify 'repro' as asexual, sexual, or biparental.");
   }
   if(repro == "sexual" | repro == "biparental"){
-    inds <- build_sexual(mine_output, N, neutral_loci);
+    inds <- build_sexual(mine_output, N, neutral_loci, trait_means);
   }else{
-    inds <- build_asexual(mine_output, N, neutral_loci);
+    inds <- build_asexual(mine_output, N, neutral_loci, trait_means);
   }
   
   inds[, 1] <- 1:N; # Sample ID
@@ -149,71 +151,87 @@ initialise_inds <- function(mine_output,
     inds[, 29] <- 2;
     inds[, 30] <- neutral_loci;
   }
-  inds[, 6]  <-  move_distance; # Movement distance
-  inds[, 7]  <- -1; # Mother ID
-  inds[, 8]  <- -1; # Father ID
-  inds[, 9]  <- -1; # Mother row
-  inds[, 10] <- -1; # Father row
-  inds[, 11] <-  0; # Offspring produced
-  inds[, 12] <-  mine_output[[1]][1]; # loci;
-  inds[, 13] <-  dim(mine_output[[2]])[1]; # traits;
-  inds[, 14] <-  mine_output[[1]][2]; # layers;
-  inds[, 17] <-  food_needed_surv;
-  inds[, 18] <-  pesticide_tolerated_surv;
-  inds[, 19] <-  food_needed_repr;
-  inds[, 20] <-  pesticide_tolerated_repr;
+  inds[, 6]   <-  move_distance; # Movement distance
+  inds[, 7]   <- -1; # Mother ID
+  inds[, 8]   <- -1; # Father ID
+  inds[, 9]   <- -1; # Mother row
+  inds[, 10]  <- -1; # Father row
+  inds[, 11]  <-  0; # Offspring produced
+  inds[, 12]  <-  mine_output[[1]][1]; # loci;
+  inds[, 13]  <-  dim(mine_output[[2]])[1]; # traits;
+  inds[, 14]  <-  mine_output[[1]][2]; # layers;
+  inds[, 17]  <-  food_needed_surv;
+  inds[, 18]  <-  pesticide_tolerated_surv;
+  inds[, 19]  <-  food_needed_repr;
+  inds[, 20]  <-  pesticide_tolerated_repr;
   if(reproduction_type == "lambda"){
     inds[, 24] <- 0;
   }
   if(reproduction_type == "food_based"){
     inds[, 24] <- 1;
   }
-  inds[, 25] <-  mating_distance; # Mate distance requirement
-  inds[, 26] <-  lambda_value;    # Reproduction parameter
-  inds[, 27] <-  selfing;
-  inds[, 31] <-  movement_bouts; # Movement bouts
-  inds[, 32] <-  min_age_move;      # Min age of movement
-  inds[, 33] <-  max_age_move;      # Max age of movement
-  inds[, 34] <-  min_age_feed;      # Min age of feeding
-  inds[, 35] <-  max_age_feed;      # Max age of feeding
-  inds[, 36] <-  min_age_reproduce; # Min age of mating and reproduction
-  inds[, 37] <-  max_age_reproduce; # Max age of mating and reproduction
-  inds[, 38] <-  food[[1]];
-  inds[, 39] <-  food[[2]];
-  inds[, 40] <-  food[[3]];
-  inds[, 41] <-  food[[4]];
-  inds[, 42] <-  food[[5]];
-  inds[, 43] <-  food[[6]];
-  inds[, 44] <-  food[[7]];
-  inds[, 45] <-  food[[8]];
-  inds[, 46] <-  food[[9]];
-  inds[, 47] <-  food[[10]];
-  inds[, 48] <-  pesticide[[1]];
-  inds[, 49] <-  pesticide[[2]];
-  inds[, 50] <-  pesticide[[3]];
-  inds[, 51] <-  pesticide[[4]];
-  inds[, 52] <-  pesticide[[5]];
-  inds[, 53] <-  pesticide[[6]];
-  inds[, 54] <-  pesticide[[7]];
-  inds[, 55] <-  pesticide[[8]];
-  inds[, 56] <-  pesticide[[9]];
-  inds[, 57] <-  pesticide[[10]];
-  inds[, 58] <-  feed_while_moving; # Do not eat on a bout
-  inds[, 79] <-  pesticide_while_moving;
-  inds[, 80] <-  mortality_type;
-  inds[, 81] <-  max_age;
-  inds[, 83] <-  age_food_threshold;
-  inds[, 84] <-  age_pesticide_threshold;
-  inds[, 87] <-  metabolism;
-  inds[, 88] <-  baseline_metabolism;
-  inds[, 89] <-  min_age_metabolism;
-  inds[, 90] <-  max_age_metabolism;
+  inds[, 25]  <-  mating_distance; # Mate distance requirement
+  inds[, 26]  <-  lambda_value;    # Reproduction parameter
+  inds[, 27]  <-  selfing;
+  inds[, 31]  <-  movement_bouts; # Movement bouts
+  inds[, 32]  <-  min_age_move;      # Min age of movement
+  inds[, 33]  <-  max_age_move;      # Max age of movement
+  inds[, 34]  <-  min_age_feed;      # Min age of feeding
+  inds[, 35]  <-  max_age_feed;      # Max age of feeding
+  inds[, 36]  <-  min_age_reproduce; # Min age of mating and reproduction
+  inds[, 37]  <-  max_age_reproduce; # Max age of mating and reproduction
+  inds[, 38]  <-  food[[1]];
+  inds[, 39]  <-  food[[2]];
+  inds[, 40]  <-  food[[3]];
+  inds[, 41]  <-  food[[4]];
+  inds[, 42]  <-  food[[5]];
+  inds[, 43]  <-  food[[6]];
+  inds[, 44]  <-  food[[7]];
+  inds[, 45]  <-  food[[8]];
+  inds[, 46]  <-  food[[9]];
+  inds[, 47]  <-  food[[10]];
+  inds[, 48]  <-  pesticide[[1]];
+  inds[, 49]  <-  pesticide[[2]];
+  inds[, 50]  <-  pesticide[[3]];
+  inds[, 51]  <-  pesticide[[4]];
+  inds[, 52]  <-  pesticide[[5]];
+  inds[, 53]  <-  pesticide[[6]];
+  inds[, 54]  <-  pesticide[[7]];
+  inds[, 55]  <-  pesticide[[8]];
+  inds[, 56]  <-  pesticide[[9]];
+  inds[, 57]  <-  pesticide[[10]];
+  inds[, 58]  <-  feed_while_moving; # Do not eat on a bout
+  inds[, 79]  <-  pesticide_while_moving;
+  inds[, 80]  <-  mortality_type;
+  inds[, 81]  <-  max_age;
+  inds[, 83]  <-  age_food_threshold;
+  inds[, 84]  <-  age_pesticide_threshold;
+  inds[, 87]  <-  metabolism;
+  inds[, 88]  <-  baseline_metabolism;
+  inds[, 89]  <-  min_age_metabolism;
+  inds[, 90]  <-  max_age_metabolism;
+  inds[, 91]  <-  0;
+  inds[, 92]  <-  0;
+  inds[, 93]  <-  0;
+  inds[, 94]  <-  0;
+  inds[, 95]  <-  0;
+  inds[, 96]  <-  0;
+  inds[, 97]  <-  0;
+  inds[, 98]  <-  0;
+  inds[, 99]  <-  0;
+  inds[, 100] <-  0;
+  
+  if(is.null(trait_means) == FALSE){
+      for(i in 1:length(trait_means)){
+          inds[, 90 + i] <- trait_means[i];
+      }
+  }
   
   return(inds);
 }
 
 
-build_asexual <- function(mine_output, N, neutral_loci){
+build_asexual <- function(mine_output, N, neutral_loci, trait_means){
   
   loci       <- mine_output[[1]][1];
   layers     <- mine_output[[1]][2];
@@ -224,6 +242,18 @@ build_asexual <- function(mine_output, N, neutral_loci){
   ind_traits_mat  <- ind_loci_mat %*% mine_output[[5]];
   genome          <- mine_output[[7]];
   ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 100);
+  
+  if(is.null(trait_means) == FALSE){
+      if(length(trait_means) != traits){
+          stop("ERROR: trait_means must be same length as total trait number.");
+      }
+      if(length(trait_means) > 10){
+          stop("ERROR: More than 10 traits is not allowed.");
+      }
+      for(i in 1:traits){
+          ind_traits_mat[, i] <- ind_traits_mat[, i] + trait_means[i];
+      }
+  }
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;
@@ -256,7 +286,7 @@ build_asexual <- function(mine_output, N, neutral_loci){
 }
 
 
-build_sexual <- function(mine_output, N, neutral_loci){
+build_sexual <- function(mine_output, N, neutral_loci, trait_means){
   
   loci       <- mine_output[[1]][1];
   layers     <- mine_output[[1]][2];
@@ -271,6 +301,18 @@ build_sexual <- function(mine_output, N, neutral_loci){
   
   genome          <- 0.5 * mine_output[[7]];
   ind_first_cols  <- matrix(data = 0, nrow = N, ncol = 100);
+  
+  if(is.null(trait_means) == FALSE){
+      if(length(trait_means) != traits){
+          stop("ERROR: trait_means must be same length as total trait number.");
+      }
+      if(length(trait_means) > 10){
+          stop("ERROR: More than 10 traits is not allowed.");
+      }
+      for(i in 1:traits){
+          ind_traits_mat[, i] <- ind_traits_mat[, i] + trait_means[i];
+      }
+  }
   
   trait_start_col   <- dim(ind_first_cols)[2] + 1;
   layers_start_col  <- trait_start_col + traits;

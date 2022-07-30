@@ -72,7 +72,8 @@ run_farm_sim(
   baseline_metabolism = 0,
   min_age_metabolism = 1,
   max_age_metabolism = 9,
-  terrain = NA
+  terrain = NA,
+  trait_means = NULL
 )
 }
 \arguments{
@@ -418,6 +419,15 @@ not necessarily need to be farms. Through the use of a custom landscape and
 pesticide rotation option, these cells could represent something like 
 diversionary feeding sites or even buildings or rivers. See vignettes and 
 other documentation for details.}
+
+\item{trait_means}{This provides the mean values of the evolving pest traits
+in the initialised pest population, which by default are zero. To change 
+mean trait values in the initialised population, the trait_means argument
+requires a vector of the same length as the number of evolving pest traits
+defined within the function (i.e., if there are two evolving traits in the
+simulation, "T1" and "T2", then trait_means should be a vector of length 2).
+Note that mean trait values may change as the population evolves, so the
+values in this vector define only the means of the initial population.}
 }
 \value{
 The output in the R console is a list with two elements; the first 
