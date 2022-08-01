@@ -1,0 +1,87 @@
+---
+title: "Advanced techniques for resevol simulations"
+author: "A Bradley Duthie"
+date: "`r Sys.Date()`"
+bibliography: '`r system.file("refs.bib", package = "resevol")`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Advanced techniques}
+  %\usepackage[UTF-8]{inputenc}
+link-citations: yes
+linkcolor: blue
+biblio-style: apalike
+---
+
+
+- [Introduction](#introduction)
+- [Landscape](#land)
+- [Literature cited](#lit)
+
+```{r, echo = FALSE}
+oldpar <- par();
+```
+
+<a name = "introduction">Introduction</a>
+================================================================================
+
+
+<a name = "land">Landscape</a>
+================================================================================
+
+```{r, fig.width=7, fig.height=7, fig.cap = "**Figure 1**. *Caption*"}
+land_file <- system.file("landscape_eg.csv", package = "resevol")
+land_dat  <- read.csv(file = land_file, header = FALSE);
+land      <- t(as.matrix(land_dat));
+farm_cols <- c("#f4eadc", "#6a4b20", "#cea05f", "#e1c59d", "#a97833", "#cea05f",
+               "#f2e6d6", "#6a4b20", "#cc9c59", "#dfc197", "#a27331", "#f0e3d0",
+               "#5d421c", "#ca9852");
+land_cols <- c(farm_cols, "#00ab41", "#234F1E", "#2832C2");
+par(mar = c(0, 0, 0, 0));
+image(land, xaxt = "n", yaxt = "n", col = land_cols);
+points(x = 0.2, y = 0.05, cex = 9, pch = 20);
+text(x = 0.2, y = 0.05, labels = "1", cex = 2, col = "red");
+points(x = 0.4, y = 0.1, cex = 9, pch = 20);
+text(x = 0.4, y = 0.1, labels = "2", cex = 2, col = "red");
+points(x = 0.4, y = 0.1, cex = 9, pch = 20);
+text(x = 0.4, y = 0.1, labels = "2", cex = 2, col = "red");
+points(x = 0.25, y = 0.27, cex = 9, pch = 20);
+text(x = 0.25, y = 0.27, labels = "3", cex = 2, col = "red");
+points(x = 0.20, y = 0.43, cex = 9, pch = 20);
+text(x = 0.20, y = 0.43, labels = "4", cex = 2, col = "red");
+points(x = 0.42, y = 0.48, cex = 9, pch = 20);
+text(x = 0.42, y = 0.48, labels = "5", cex = 2, col = "red");
+points(x = 0.28, y = 0.58, cex = 9, pch = 20);
+text(x = 0.28, y = 0.58, labels = "6", cex = 2, col = "red");
+points(x = 0.1, y = 0.8, cex = 9, pch = 20);
+text(x = 0.1, y = 0.8, labels = "7", cex = 2, col = "red");
+points(x = 0.7, y = 0.05, cex = 9, pch = 20);
+text(x = 0.7, y = 0.05, labels = "8", cex = 2, col = "red");
+points(x = 0.9, y = 0.2, cex = 9, pch = 20);
+text(x = 0.9, y = 0.2, labels = "9", cex = 2, col = "red");
+points(x = 0.85, y = 0.4, cex = 9, pch = 20);
+text(x = 0.85, y = 0.4, labels = "10", cex = 2, col = "red");
+points(x = 0.92, y = 0.58, cex = 9, pch = 20);
+text(x = 0.92, y = 0.58, labels = "11", cex = 2, col = "red");
+points(x = 0.88, y = 0.76, cex = 9, pch = 20);
+text(x = 0.88, y = 0.76, labels = "12", cex = 2, col = "red");
+points(x = 0.86, y = 0.93, cex = 9, pch = 20);
+text(x = 0.86, y = 0.93, labels = "13", cex = 2, col = "red");
+points(x = 0.52, y = 0.91, cex = 9, pch = 20);
+text(x = 0.52, y = 0.91, labels = "14", cex = 2, col = "red");
+points(x = 0.05, y = 0.59, cex = 7, pch = 20);
+text(x = 0.05, y = 0.59, labels = "15", cex = 1.7, col = "white");
+points(x = 0.46, y = 0.28, cex = 7, pch = 20);
+text(x = 0.46, y = 0.28, labels = "16", cex = 1.7, col = "white");
+points(x = 0.62, y = 0.36, cex = 7, pch = 20);
+text(x = 0.62, y = 0.36, labels = "17", cex = 1.7, col = "white");
+```
+
+
+<a name = "lit">Literature Cited</a>
+================================================================================
+
+
+```{r, echo = FALSE}
+par(oldpar);
+```

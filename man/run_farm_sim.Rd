@@ -73,7 +73,8 @@ run_farm_sim(
   min_age_metabolism = 1,
   max_age_metabolism = 9,
   terrain = NA,
-  trait_means = NULL
+  trait_means = NULL,
+  land_edge = "torus"
 )
 }
 \arguments{
@@ -428,6 +429,14 @@ defined within the function (i.e., if there are two evolving traits in the
 simulation, "T1" and "T2", then trait_means should be a vector of length 2).
 Note that mean trait values may change as the population evolves, so the
 values in this vector define only the means of the initial population.}
+
+\item{land_edge}{This sets what happens at the edge of the landscape. Three 
+options are possible, including "torus", "leaky", and "reflect". A torus
+results in no edge, such that pests that leave one side of the landscape
+end up on the other side. A leaky edge causes pests to leave the landscape
+and the simulation entirely, so they are effectively no longer recorded. A 
+reflective edge causes pests to bounce at the edge back in the direction from
+which they came. The default and recommended edge is a torus.}
 }
 \value{
 The output in the R console is a list with two elements; the first 

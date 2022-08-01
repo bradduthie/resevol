@@ -224,7 +224,8 @@ Second, a custom landscape can be input using the `terrain` argument, which take
 Each value defines a unique farm, but values do not need to be contiguous.
 These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see Supporting Information 2).
 This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
-Landscapes are assumed to be a torus, so pests that move off of one edge return on the opposite side of the landscape.
+Edge effects are set using the `land_edge` argument.
+Edge options include `"leaky"` (pests disappear from the landscape), `"reflect"` (pests bounce off of the edge), `"sticky"` (pests stick to the edge), or `"torus"` (pests that move off of one edge return on the opposite side of the landscape). 
 
 Each farm can hold one pesticide and one crop type in any time step.
 The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
@@ -448,7 +449,7 @@ sim <- run_farm_sim(mine_output = new_network, repro = "asexual",
                     max_age_reproduce = 4, age_pesticide_threshold = 2, 
                     rand_age = TRUE, move_distance = 2, immigration_rate = 10, 
                     time_steps = 160, print_last = TRUE, xdim = 64, ydim = 64,
-                    trait_means = c(0.1, 0.1));
+                    trait_means = c(0.1, 0.1), land_edge = "torus");
 ```
 
 
