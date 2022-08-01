@@ -1,7 +1,7 @@
 #include "utilities.h"
 
 /* =============================================================================
- * Counts the number of offspring that a single individual should produce
+ * Checks to see if a potential mate is within range of individual in row
  *     pests:           The array holding the parent's information
  *     paras:           The paras vector that holds global information
  *     row:             The row of the individual making the offspring

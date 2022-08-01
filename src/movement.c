@@ -20,7 +20,28 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
                     pos = pos + edge_2;   
                 }
                 break;
-            default:
+            case 1: /* Leaky edge */
+                if(pos >= edge_2){
+                    pos = -1;
+                }
+                if(pos < edge_1){
+                    pos = -1;
+                }
+            case 2: /* Reflective edge */
+                if(pos >= edge_2){
+                    pos = edge_2 - (pos - edge_2) - 1;
+                }
+                if(pos < edge_1){
+                    pos = edge_1 - (pos - edge_1);
+                }
+            case 3: /* Sticky edge */
+                if(pos >= edge_2){
+                    pos = edge_2 - 1;
+                }
+                if(pos < edge_1){
+                    pos = edge_1;
+                }            
+            default: /* Torus landscape */
                 while(pos >= edge_2){
                     pos = pos - edge_2;   
                 }
@@ -43,14 +64,16 @@ void move(double **pests, double *paras, int ind){
   
   int age_col, move_dist_col, min_age_col, max_age_col, Xpos_col, Ypos_col;
   int move_dist, min_age, max_age, land_type, X_dim, Y_dim, disp_x, disp_y;
-  int Xpos, Ypos, new_xpos, new_ypos, age;
+  int Xpos, Ypos, new_xpos, new_ypos, age, mortality_col, max_rep_col, max_rep;
   
-  Xpos_col        = (int) paras[1];
-  Ypos_col        = (int) paras[2];
-  age_col         = (int) paras[3];
-  move_dist_col   = (int) paras[5];
-  min_age_col     = (int) paras[31];
-  max_age_col     = (int) paras[32];
+  Xpos_col         = (int) paras[1];
+  Ypos_col         = (int) paras[2];
+  age_col          = (int) paras[3];
+  move_dist_col    = (int) paras[5];
+  min_age_col      = (int) paras[31];
+  max_age_col      = (int) paras[32];
+  max_rep_col      = (int) paras[36];
+  mortality_col    = (int) paras[81];
   
   land_type = (int) paras[102];
   X_dim     = (int) paras[103];
@@ -61,6 +84,7 @@ void move(double **pests, double *paras, int ind){
   move_dist = (int) floor(pests[ind][move_dist_col]);
   min_age   = (int) pests[ind][min_age_col];
   max_age   = (int) pests[ind][max_age_col];
+  max_rep   = (int) pests[ind][max_rep_col];
   
   if(age >= min_age && age <= max_age){
       disp_x   = get_rand_int(Xpos - move_dist, Xpos + move_dist);
@@ -69,6 +93,11 @@ void move(double **pests, double *paras, int ind){
       new_ypos = edge_effect(disp_y, 0, Y_dim, land_type);
       pests[ind][Xpos_col] = new_xpos;
       pests[ind][Ypos_col] = new_ypos;
+      if(new_xpos < 0 || new_xpos >= X_dim || 
+         new_ypos < 0 || new_ypos >= Y_dim){
+          pests[ind][age_col]       = pests[ind][max_rep_col] + 1;
+          pests[ind][mortality_col] = 1;
+      }
   }
 }
 

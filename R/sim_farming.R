@@ -303,6 +303,13 @@
 #' simulation, "T1" and "T2", then trait_means should be a vector of length 2).
 #' Note that mean trait values may change as the population evolves, so the
 #' values in this vector define only the means of the initial population.
+#'@param land_edge This sets what happens at the edge of the landscape. Three 
+#' options are possible, including "torus", "leaky", and "reflect". A torus
+#' results in no edge, such that pests that leave one side of the landscape
+#' end up on the other side. A leaky edge causes pests to leave the landscape
+#' and the simulation entirely, so they are effectively no longer recorded. A 
+#' reflective edge causes pests to bounce at the edge back in the direction from
+#' which they came. The default and recommended edge is a torus.
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -395,7 +402,8 @@ run_farm_sim <- function(mine_output,
                          min_age_metabolism  = 1,
                          max_age_metabolism  = 9,
                          terrain             = NA,
-                         trait_means         = NULL){
+                         trait_means         = NULL,
+                         land_edge           = "torus"){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -585,7 +593,8 @@ run_farm_sim <- function(mine_output,
                              get_f_coef               = get_f_coef,
                              get_stats                = get_stats,
                              metabolism               = metabolism,
-                             farms                    = farms);
+                             farms                    = farms,
+                             land_edge                = land_edge);
   
     return(sim_results);
 }
@@ -634,9 +643,10 @@ sim_crops <- function(pests,
                       get_f_coef = FALSE,
                       get_stats  = TRUE,
                       metabolism = 0,
-                      farms = 4
+                      farms = 4,
+                      land_edge = "torus"
                       ){
-  
+    
   N    <- dim(pests)[1];
   W    <- dim(pests)[2];
   X    <- dim(land)[2];
@@ -671,6 +681,19 @@ sim_crops <- function(pests,
   immi <- immigration_rate;
   fcoe <- as.numeric(get_f_coef);
   sttt <- as.numeric(get_stats);
+  ledg <- 0;
+  if(land_edge == "leaky"){
+      ledg <- 1;
+  }
+  if(land_edge == "reflect"){
+      ledg <- 2;
+  }
+  if(land_edge == "sticky"){
+      ledg <- 3;
+  }
+  if(land_edge %in% c("torus", "leaky", "reflect", "sticky") == FALSE){
+      stop("ERROR: land_edge must be 'torus', 'leaky', 'reflect', or 'sticky'");
+  }
   
   paras  <- c( 0.0,   # 00) pests column for ID
                1.0,   # 01) pests column for xloc
@@ -774,7 +797,7 @@ sim_crops <- function(pests,
               99.0,   # 99) pests column for mean of Trait 10
               100.0,  # 100)
               N,      # 101) Number of rows in the pest array
-              0,      # 102) Torus landscape
+              ledg,   # 102) What happens at the landscape edge?
               X,      # 103) x dimension of the landscape
               Y,      # 104) y dimension of the landscape
               Z,      # 105) z dimension (depth) of the landscape
