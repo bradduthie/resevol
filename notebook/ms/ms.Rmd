@@ -7,14 +7,14 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
   University of Stirling Stirling, FK9 4LA, UK'
 output:
-  word_document:
-    reference_docx: docx_template.docx
   bookdown::pdf_document2:
     citation_package: natbib
     fig_caption: yes
     toc: no
   pdf_document:
     toc: no
+  word_document:
+    reference_docx: docx_template.docx
   html_document: default
 header-includes:
 - \usepackage{fancyhdr}
@@ -137,10 +137,10 @@ points(x = Lx, y = Ly, pch = 21, cex = 6, bg = "darkgreen", lwd = 2);
 srnm <- c(0.2, -0.1, 0.1);
 text(x = Lx, y = Ly, labels = srnm, col = "white", cex = 0.9);
 text(x = 200, y = 790, labels = "0.4", srt = 10, cex = 0.8);
-text(x = 200, y = 660, labels = "-1.2", srt = -58, cex = 0.8);
-text(x = 270, y = 695, labels = "0.2", srt = 46, cex = 0.8);
-text(x = 180, y = 480, labels = "0.1", srt = -40, cex = 0.8);
-text(x = 160, y = 340, labels = "-0.6", srt = 54, cex = 0.8);
+text(x = 200, y = 660, labels = "0.1", srt = -58, cex = 0.8);
+text(x = 270, y = 695, labels = "-1.2", srt = 46, cex = 0.8);
+text(x = 180, y = 480, labels = "-0.6", srt = -40, cex = 0.8);
+text(x = 160, y = 340, labels = "0.2", srt = 54, cex = 0.8);
 text(x = 220, y = 255, labels = "2.2", srt = -12, cex = 0.8);
 text(x = 490, y = 790, labels = "1.3", srt = 10, cex = 0.8);
 text(x = 538, y = 410, labels = "-0.5", srt = -76, cex = 0.8);
