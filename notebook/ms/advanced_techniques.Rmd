@@ -1,19 +1,35 @@
 ---
-title: "Advanced techniques"
-author: "A Bradley Duthie"
-date: "`r Sys.Date()`"
-bibliography: '`r system.file("refs.bib", package = "resevol")`'
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Advanced techniques}
-  %\usepackage[UTF-8]{inputenc}
+title: 'resevol: an R package for spatially explicit models of pesticide resistance
+  given evolving pest genomes'
+subtitle: Advanced techniques (Supporting Information 2)
+author: |
+  | A. Bradley Duthie&#xb9;&#xb2;, et al.
+date: '[1] Biological and Environmental Sciences, University of Stirling, Stirling,
+  UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
+  University of Stirling Stirling, FK9 4LA, UK'
+output:
+  bookdown::pdf_document2:
+    citation_package: natbib
+    fig_caption: yes
+    toc: no
+  word_document:
+    reference_docx: docx_template.docx
+  pdf_document:
+    toc: no
+  html_document: default
+header-includes:
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[R]{RESEVOL, AN R PACKAGE}
+- \usepackage{lineno}
+- \linenumbers
+- \modulolinenumbers[2]
+linestretch: 1
 link-citations: yes
 linkcolor: blue
+bibliography: resevol.bib
 biblio-style: apalike
 ---
-
-******************************
 
 
 <a name = "introduction">Introduction</a>
@@ -24,7 +40,7 @@ oldpar <- par();
 ```
 
 Here we focus on advanced techniques for simulating pest ecological and evolutionary dynamics using the resevol R package. 
-In the [main text](resevol.html), we provided a [simple example](resevol.html#simulation) of individual-based simulations to demonstrate how to get started.
+In the main text, we provided a simple example of individual-based simulations to demonstrate how to get started.
 This document focuses instead on demonstrating the more advanced options of the package and showcasing what it can do.
 The case study will focus on crop and pesticide rotation on a complex, customised landscape that includes farmland, grassland, forest, and water.
 The pest species will be sexually reproducing and obligately biparental, and its life history will include an egg and larval stage during which it feeds on crops and consumes pesticide, and a stage during which it moves, mates, and reproduces.
@@ -37,7 +53,7 @@ Below, we explain how to model this system in detail, including all of the neces
 
 First, we need to use the `mine_gmatrix` function to initialise pest genomes. 
 In our example, individuals will have four covarying traits resulting from 12 loci.
-There will be 6 internal nodes that map loci values to traits (see the [Evolutionary Algorithm](evolutionary_algorithm.html) explanation for details).
+There will be 6 internal nodes that map loci values to traits (see the Evolutionary Algorithm explanation for details).
 The trait covariance structure will be defined as below.
 
 ```{r}
@@ -90,7 +106,7 @@ The stress of `mg` (i.e., mean squared deviation of `mg` elements from `gmt` ele
 But this is only based on one population of `indivs = 2000` initialised pests. 
 We can use the `stress_test` function to see what the distribution of stress is over 1000 such initialised populations of 2000 individuals (Figure 1).
 
-```{r, fig.height = 6, fig.width = 6, fig.align = "left", fig.cap = "**Figure 1**. *Distribution of stress for initialised pest trait covariances in the resevol R package. Stress values are computed using genome values produced by the `mine_gmatrix` function for 1000 replicate populations of initialised pest loci values.*"}
+```{r, fig.height = 6, fig.width = 6, fig.align = "left", fig.cap = "Distribution of stress for initialised pest trait covariances in the resevol R package. Stress values are computed using genome values produced by the mine\\_gmatrix function for 1000 replicate populations of initialised pest loci values."}
 sim_stress <- stress_test(mine_output = mg, indivs = 2000, reps = 1000);
 hist(x = sim_stress, main = "", breaks = 20, xlab = "Initialised stress");
 ```
@@ -131,7 +147,7 @@ What is important is that the matrix elements only include natural numbers from 
 In the case of the above, numbers 1-7 all appear on the landscape, so the matrix will work.
 We can visualise the matrix more clearly by looking at it as an image (Figure 2).
 
-```{r, fig.width=5, fig.height=5, fig.align = "left", fig.cap = "**Figure 2**. *Image representing a simple landscape for the resevol package created from a 12 by 12 matrix of natural numbers from 1-7.*"}
+```{r, fig.width=5, fig.height=5, fig.align = "left", fig.cap = "Image representing a simple landscape for the resevol package created from a 12 by 12 matrix of natural numbers from 1-7."}
 par(mar = c(0, 0, 0, 0));
 image(t(simple_terrain), xaxt = "n", yaxt = "n", useRaster = TRUE);
 ```
@@ -147,7 +163,7 @@ The dimensions of the landscape modelled in `land_eg` is 128 by 128 cells, and t
 The code below produces an image that shows how these terrain types are distributed over the landscape (Figure 3).
 
 
-```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "**Figure 3**. *A complex landscape to be used in the resevol R package, including 14 separate farms, grassland, forest, and water. The image is represented in the code by a matrix in which element numbers correspond to different terrain colours (e.g., elements corresponding to water are numbered 17).*"}
+```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape to be used in the resevol R package, including 14 separate farms, grassland, forest, and water. The image is represented in the code by a matrix in which element numbers correspond to different terrain colours (e.g., elements corresponding to water are numbered 17)."}
 land_file <- system.file("landscape_eg.csv", package = "resevol");
 land_dat  <- read.csv(file = land_file, header = FALSE);
 land_eg   <- t(as.matrix(land_dat));
@@ -392,7 +408,7 @@ Here we include code for plotting population size, consumption of the two food t
 Note that because crop and pesticide 3 are dummy variables (not consumed at all), we do not need to plot these.
 Figure 4 shows how population density of pests changes over time.
 
-```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 4**. *Pest abundance over time in a population simulated using the resevol R package in which pesticides are not rotated over time. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line.*"}
+```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest abundance over time in a population simulated using the resevol R package in which pesticides are not rotated over time. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line."}
 mbox <- function(x0, x1, y0, y1){
     xx <- seq(from=x0, to=x1, length.out = 100);
     yy <- seq(from=y0, to=y1, length.out = 100);
@@ -421,7 +437,7 @@ box();
 
 Figure 5 shows how the mean consumption of different foods and pesticides changes over time.
 
-```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 5**. *Pest consumption over time in a population simulated using the resevol R package in which pesticides are not rotated over time. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100.*"}
+```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest consumption over time in a population simulated using the resevol R package in which pesticides are not rotated over time. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
 plot(x = population_data_sim1[["time_step"]], type = "n", ylim = c(0, 0.8),
      y = population_data_sim1[["mean_food1_consumed"]], cex.lab = 1.25, 
@@ -487,7 +503,7 @@ text(x = 5, y = 0.78, labels = "d", cex = 2);
 
 Similarly, we can visualise how all four traits evolve over time (Figure 6).
 
-```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 6**. *Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides are not rotated over time. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100.*"}
+```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides are not rotated over time. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
 plot(x = population_data_sim1[["time_step"]], type = "n", ylim = c(2, 3.6),
      y = population_data_sim1[["trait1_mean_value"]], cex.lab = 1.25, 
@@ -570,7 +586,7 @@ A new land colour for black `#000000` is then included, and the map is reproduce
 Figure 7 shows the same map as above, but with the numbering removed to make the pests (black points) more visible.
 
 
-```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "**Figure 7**. *A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time.*"}
+```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time."}
 par(mar = c(0, 0, 0, 0));
 landscape    <- land_eg;
 for(i in 1:dim(pop_last_time_step_sim1)[1]){
@@ -674,7 +690,7 @@ To avoid repetition, the code for plots will not be included for simulation 2.
 Figure 8 shows population abundance over time for simulation 2.
 
 
-```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 8**. *Pest abundance over time in a population simulated using the resevol R package in which pesticides rotates every 9 time steps. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line.*"}
+```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest abundance over time in a population simulated using the resevol R package in which pesticides rotates every 9 time steps. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line."}
 mbox <- function(x0, x1, y0, y1){
     xx <- seq(from=x0, to=x1, length.out = 100);
     yy <- seq(from=y0, to=y1, length.out = 100);
@@ -704,7 +720,7 @@ box();
 After pesticides are applied at time step 81, pest population size decreases and does not recover.
 Figure 9 shows crop and pesticide consumption over time.
 
-```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 9**. *Pest consumption over time in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100.*"}
+```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest consumption over time in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
 plot(x = population_data_sim2[["time_step"]], type = "n", ylim = c(0, 0.8),
      y = population_data_sim2[["mean_food1_consumed"]], cex.lab = 1.25, 
@@ -770,7 +786,7 @@ text(x = 5, y = 0.78, labels = "d", cex = 2);
 
 Figure 10 shows how pest traits evolve over time when pesticides are rotated.
 
-```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "**Figure 10**. *Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100.*"}
+```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
 plot(x = population_data_sim2[["time_step"]], type = "n", ylim = c(2, 3.6),
      y = population_data_sim2[["trait1_mean_value"]], cex.lab = 1.25, 
@@ -836,7 +852,7 @@ text(x = 5, y = 1.34, labels = "d", cex = 2);
 We can observe the spatial distribution of pests on the landscape in the final time step (Figure 11).
 
 
-```{r, echo = FALSE, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "**Figure 11**. *A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time.*"}
+```{r, echo = FALSE, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time."}
 last_time_step_file_sim2 <- system.file("last_time_step_sim2.csv", 
                                         package = "resevol");
 pop_last_time_step_sim2  <- read.csv(file = last_time_step_file_sim2);
@@ -854,8 +870,8 @@ image(landscape, xaxt = "n", yaxt = "n", col = land_cols);
 Finally, we can examine the trait covariances in the final time step below.
 
 ```{r, eval = TRUE, echo = FALSE}
-end_trait_covs <- cov(pop_last_time_step_sim2[,3:6]);
-print(end_trait_covs);
+end_trait_covs2 <- cov(pop_last_time_step_sim2[,3:6]);
+print(end_trait_covs2);
 ```
 
 
