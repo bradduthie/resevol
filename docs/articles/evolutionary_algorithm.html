@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
       </span>
     </div>
 
@@ -53,6 +53,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/advanced_techniques.html">Advanced techniques</a>
+    </li>
+    <li>
       <a href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a>
     </li>
   </ul>
@@ -88,7 +91,7 @@
                         <h4 data-toc-skip class="author">A Bradley
 Duthie</h4>
             
-            <h4 data-toc-skip class="date">2022-07-30</h4>
+            <h4 data-toc-skip class="date">2022-08-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/evolutionary_algorithm.Rmd" class="external-link"><code>vignettes/evolutionary_algorithm.Rmd</code></a></small>
       <div class="hidden name"><code>evolutionary_algorithm.Rmd</code></div>
@@ -97,24 +100,6 @@ Duthie</h4>
 
     
     
-<ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#structures">Key data structures used</a></li>
-<li>
-<a href="#overview">General overview of the evolutionary
-algorithm</a>
-<ul>
-<li><a href="#initialisation">Initialisation</a></li>
-<li><a href="#crossover">Crossover</a></li>
-<li><a href="#mutation">Mutation</a></li>
-<li><a href="#fitness">Fitness evaluation</a></li>
-<li><a href="#tournament">Tournament selection</a></li>
-<li><a href="#termination">Termination</a></li>
-</ul>
-</li>
-<li><a href="#ploidy">Haploid and diploid individuals</a></li>
-<li><a href="#lit">Literature cited</a></li>
-</ul>
 <div class="section level2">
 <h2 id="introduction">
 <a name="introduction">Introduction</a><a class="anchor" aria-label="anchor" href="#introduction"></a>
@@ -125,9 +110,9 @@ with an arbitrary pre-specified covariance structure. It does this by
 using a complex network mapping a path from the allele values at each
 loci to the covarying trait values of individuals.</p>
 <div class="figure">
-<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-2-1.png" alt="Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function" width="672"><p class="caption">
-Figure 1: Network mapping loci to traits through an intermediate set of
-hidden layers in the mine_gmatrix function
+<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-2-1.png" alt="**Figure 1:** *Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function*" width="672"><p class="caption">
+<strong>Figure 1:</strong> <em>Network mapping loci to traits through an
+intermediate set of hidden layers in the mine_gmatrix function</em>
 </p>
 </div>
 <p>The objective of the evolutionary algorithm in resevol is to find a
@@ -141,8 +126,8 @@ acceptable margin of error). The <code>mine_gmatrix</code> function uses
 an evolutionary algorithm for identifying sets of values that work. An
 evolutionary algorithm is an algorithm that works especially well for
 <em>I know it when I see it</em> problems <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span>.
-<span class="citation">Luke (<a href="#ref-Luke2015" role="doc-biblioref">2015</a>)</span> explains the idea behind these
-algorithms in more detail:</p>
+<span class="citation">(<a href="#ref-Luke2013" role="doc-biblioref"><strong>Luke2013?</strong></a>)</span> explains the
+idea behind these algorithms in more detail:</p>
 <blockquote>
 <p>They’re algorithms used to find answers to problems when you have
 very little to help you: you don’t know beforehand what the optimal
@@ -178,19 +163,19 @@ in the evolutionary algorithm.</p>
 <code class="sourceCode R"><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##              [,1]         [,2]         [,3]        [,4]</span>
-<span class="co">##  [1,] -0.19030285 -0.017860393 -0.009811160 -0.06015406</span>
-<span class="co">##  [2,] -0.01515857  0.108247063 -0.039663048  0.06555398</span>
-<span class="co">##  [3,]  0.14240775  0.161114057  0.086671432 -0.08062311</span>
-<span class="co">##  [4,] -0.12354545 -0.194843310  0.050621657  0.12492087</span>
-<span class="co">##  [5,] -0.10216163 -0.171388146 -0.018277034  0.03474690</span>
-<span class="co">##  [6,]  0.20946124 -0.105653275  0.025678321  0.09349014</span>
-<span class="co">##  [7,]  0.03989767  0.078630571 -0.104783815 -0.07705436</span>
-<span class="co">##  [8,]  0.02605387 -0.129107158 -0.004425084 -0.11942115</span>
-<span class="co">##  [9,] -0.01928113 -0.011751855 -0.279196715 -0.12387025</span>
-<span class="co">## [10,] -0.03847244  0.075337052  0.066070034  0.02726167</span>
-<span class="co">## [11,] -0.21739283 -0.003164102  0.130516315  0.08617227</span>
-<span class="co">## [12,] -0.05389142  0.001512074 -0.043746168  0.01182863</span></code></pre>
+<pre><code><span class="co">##                [,1]        [,2]        [,3]        [,4]</span>
+<span class="co">##  [1,]  0.0003277143 -0.03408052 -0.11692280 -0.06825578</span>
+<span class="co">##  [2,] -0.0737697730  0.06723038  0.12892672 -0.11187859</span>
+<span class="co">##  [3,] -0.0162023271 -0.16100400 -0.04348412  0.09571294</span>
+<span class="co">##  [4,] -0.0861108159  0.01116345  0.11719732 -0.08311591</span>
+<span class="co">##  [5,] -0.0602037037 -0.06569212 -0.03487500 -0.01067005</span>
+<span class="co">##  [6,] -0.0686480403  0.09811236 -0.16574428 -0.06683481</span>
+<span class="co">##  [7,] -0.0822685589  0.12333925 -0.10487344 -0.17472853</span>
+<span class="co">##  [8,] -0.1500826104  0.16107397 -0.10459460 -0.03889077</span>
+<span class="co">##  [9,] -0.0669002136 -0.23759714 -0.02202491 -0.13002782</span>
+<span class="co">## [10,] -0.0242402654  0.02923702  0.18502496 -0.06257679</span>
+<span class="co">## [11,] -0.0654545074  0.01634115 -0.06933677 -0.04474971</span>
+<span class="co">## [12,]  0.0986685726  0.07597312 -0.00218698  0.02209126</span></code></pre>
 <p>We can initialise 12 allele values, one for each locus.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</code></pre></div>
@@ -199,8 +184,8 @@ in the evolutionary algorithm.</p>
 multiplication.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##           [,1]      [,2]      [,3]      [,4]</span>
-<span class="co">## [1,] -0.721292 -0.549141 0.2063138 0.1686485</span></code></pre>
+<pre><code><span class="co">##           [,1]       [,2]     [,3]      [,4]</span>
+<span class="co">## [1,] 0.2381013 -0.2014246 0.484741 0.2779361</span></code></pre>
 <p>We can likewise use a 4 by 4 square matrix to represent the values of
 the arrows from the first column of four hidden layer nodes to the
 second column of hidden layer nodes.</p>
@@ -208,17 +193,17 @@ second column of hidden layer nodes.</p>
 <code class="sourceCode R"><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_2_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##             [,1]        [,2]         [,3]       [,4]</span>
-<span class="co">## [1,] -0.03341207 -0.09225620 -0.045509171 0.05019912</span>
-<span class="co">## [2,] -0.10176646 -0.02574551  0.001739263 0.13216948</span>
-<span class="co">## [3,] -0.05234105 -0.08782908  0.042269414 0.01729082</span>
-<span class="co">## [4,]  0.20755671 -0.02153617 -0.056014509 0.04515042</span></code></pre>
+<pre><code><span class="co">##             [,1]        [,2]        [,3]        [,4]</span>
+<span class="co">## [1,]  0.15673199 -0.05063023  0.12394409  0.07430438</span>
+<span class="co">## [2,] -0.04931442  0.20259677 -0.01037264  0.10107150</span>
+<span class="co">## [3,]  0.03334357  0.24177997 -0.13734470 -0.10907876</span>
+<span class="co">## [4,]  0.21698108  0.08374409  0.12697625  0.07157051</span></code></pre>
 <p>We can then use matrix multiplication to map the 12 allele values to
 the values of the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##           [,1]       [,2]      [,3]        [,4]</span>
-<span class="co">## [1,] 0.1041895 0.05892919 0.0311443 -0.09760602</span></code></pre>
+<pre><code><span class="co">##           [,1]       [,2]         [,3]        [,4]</span>
+<span class="co">## [1,] 0.1237211 0.08761306 0.0003152386 -0.03564923</span></code></pre>
 <p>This pattern can continue, with 4 by 4 square matrices representing
 the value of arrows between columns of hidden layer nodes, and between
 the last hidden layer column and traits (note that the number of hidden
@@ -364,11 +349,14 @@ generation of networks.</p>
 </h3>
 <p>Throughout the evolutionary algorithm, the network with the lowest
 overall stress (from any generation) is retained. The evolutionary
-algorithm terminates if either the logged stress of this network is less
-than or equal to <code>term_cri</code>, or if <code>max_gen</code>
-generations of the evolutionary algorithm have occurred. When the
-evolutionary algorithm terminates, only the network with the lowest
-overall stress is returned.</p>
+algorithm terminates if either the logged stress of the mean network is
+less than or equal to <code>term_cri</code>, or if <code>max_gen</code>
+generations of the evolutionary algorithm have occurred. The mean
+network stress is used instead of the lowest overall stress because
+error in randomly generated loci can result in unusually low stress
+values due to chance, which might not be replicated with a new random
+sample of loci. When the evolutionary algorithm terminates, only the
+network with the lowest overall stress is returned.</p>
 </div>
 </div>
 <div class="section level2">
@@ -393,15 +381,9 @@ homologous network values mapping allele values to traits are also
 summed, thereby producing the expected trait covariance structure.</p>
 </div>
 <div class="section level2">
-<h2 id="literature-cited">
+<h2 class="unnumbered" id="literature-cited">
 <a name="lit">Literature Cited</a><a class="anchor" aria-label="anchor" href="#literature-cited"></a>
 </h2>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cin" cannot be set</span></code></pre>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cra" cannot be set</span></code></pre>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "csi" cannot be set</span></code></pre>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "cxy" cannot be set</span></code></pre>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "din" cannot be set</span></code></pre>
-<pre><code><span class="co">## Warning in par(oldpar): graphical parameter "page" cannot be set</span></code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Duthie2018" class="csl-entry">
 Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen,
@@ -414,10 +396,6 @@ in Ecology and Evolution</em> 9: 2396–2401. <a href="https://doi.org/10.1101/2
 Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical
 usage of genetic algorithms in ecology and evolution</span>.”</span>
 <em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000" class="external-link">https://doi.org/10.1111/2041-210X.12000</a>.
-</div>
-<div id="ref-Luke2015" class="csl-entry">
-Luke, Sean. 2015. <em><span class="nocase">Essentials of
-Metaheuristics</span></em>. <a href="https://doi.org/10.1007/s10710-011-9139-0" class="external-link">https://doi.org/10.1007/s10710-011-9139-0</a>.
 </div>
 </div>
 </div>

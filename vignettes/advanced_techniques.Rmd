@@ -1,5 +1,5 @@
 ---
-title: "Advanced techniques for resevol simulations"
+title: "Advanced techniques"
 author: "A Bradley Duthie"
 date: "`r Sys.Date()`"
 bibliography: '`r system.file("refs.bib", package = "resevol")`'

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
       </span>
     </div>
 
@@ -53,6 +53,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/advanced_techniques.html">Advanced techniques</a>
+    </li>
+    <li>
       <a href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a>
     </li>
   </ul>
@@ -89,7 +92,7 @@ models of pesticide resistance given evolving pest genomes</h1>
                         <h4 data-toc-skip class="author">A Bradley
 Duthie</h4>
             
-            <h4 data-toc-skip class="date">2022-07-30</h4>
+            <h4 data-toc-skip class="date">2022-08-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/resevol.Rmd" class="external-link"><code>vignettes/resevol.Rmd</code></a></small>
       <div class="hidden name"><code>resevol.Rmd</code></div>
@@ -323,9 +326,13 @@ defines a unique farm, but values do not need to be contiguous. These
 pesticides and crops on them are invisible to pests (see Supporting
 Information 2). This <code>terrain</code> customisation therefore allows
 for a high degree of landscape detail, and offers the potential for
-modelling real-world landscapes from raster images. Landscapes are
-assumed to be a torus, so pests that move off of one edge return on the
-opposite side of the landscape.</p>
+modelling real-world landscapes from raster images. Edge effects are set
+using the <code>land_edge</code> argument. Edge options include
+<code>"leaky"</code> (pests disappear from the landscape),
+<code>"reflect"</code> (pests bounce off of the edge),
+<code>"sticky"</code> (pests stick to the edge), or <code>"torus"</code>
+(pests that move off of one edge return on the opposite side of the
+landscape).</p>
 <p>Each farm can hold one pesticide and one crop type in any time step.
 The <code>crop_init</code> and <code>pesticide_init</code> arguments
 initialise one of <code>crop_number</code> crops and one of
@@ -576,7 +583,7 @@ time step, a mean of 10 immigrants arrive. We simulate 160 time steps
                     max_age_reproduce <span class="op">=</span> <span class="fl">4</span>, age_pesticide_threshold <span class="op">=</span> <span class="fl">2</span>, 
                     rand_age <span class="op">=</span> <span class="cn">TRUE</span>, move_distance <span class="op">=</span> <span class="fl">2</span>, immigration_rate <span class="op">=</span> <span class="fl">10</span>, 
                     time_steps <span class="op">=</span> <span class="fl">160</span>, print_last <span class="op">=</span> <span class="cn">TRUE</span>, xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>,
-                    trait_means <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>;</code></pre></div>
+                    trait_means <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>, land_edge <span class="op">=</span> <span class="st">"torus"</span><span class="op">)</span>;</code></pre></div>
 <p>Any arguments to <code>run_farm_sim</code> not included above are set
 to default values. <a href="#output">Output files</a> can be used to
 plot ecological and evolutionary dynamics of pests. Figure 3a shows the

@@ -1,3 +1,9 @@
+# resevol 0.3.3.0
+
+## NEW FEATURES
+
+Vignettes included demonstrating advanced options for simulations
+
 # resevol 0.3.2.0
 
 ## NEW FEATURES

@@ -2,7 +2,8 @@ pandoc: 2.17.1.1
 pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
+  advanced_techniques: advanced_techniques.html
   evolutionary_algorithm: evolutionary_algorithm.html
   resevol: resevol.html
-last_built: 2022-07-30T13:14Z
+last_built: 2022-08-06T14:39Z
 
