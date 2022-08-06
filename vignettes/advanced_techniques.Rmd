@@ -854,10 +854,9 @@ image(landscape, xaxt = "n", yaxt = "n", col = land_cols);
 Finally, we can examine the trait covariances in the final time step below.
 
 ```{r, eval = TRUE, echo = FALSE}
-end_trait_covs <- cov(pop_last_time_step_sim2[,3:6]);
-print(end_trait_covs);
+end_trait_covs2 <- cov(pop_last_time_step_sim2[,3:6]);
+print(end_trait_covs2);
 ```
-
 
 We can use the outputs above to contrast the population dynamics of pests under a regime that lacks (simulation 1) or does not lack (simulation 2) the rotation of pesticide types.
 
