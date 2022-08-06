@@ -163,19 +163,19 @@ in the evolutionary algorithm.</p>
 <code class="sourceCode R"><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##              [,1]         [,2]         [,3]         [,4]</span>
-<span class="co">##  [1,]  0.21185864 -0.009946428 -0.074100765 -0.103092581</span>
-<span class="co">##  [2,] -0.20119923 -0.096693758 -0.033547450 -0.288121153</span>
-<span class="co">##  [3,] -0.02350664 -0.052484627  0.007202665 -0.126371193</span>
-<span class="co">##  [4,]  0.02917472  0.008164859  0.169020705 -0.177634674</span>
-<span class="co">##  [5,] -0.02830806 -0.153797775  0.093131947  0.100863578</span>
-<span class="co">##  [6,] -0.05619293  0.135638020 -0.082296514  0.036255725</span>
-<span class="co">##  [7,] -0.03652265 -0.070921151 -0.048583249 -0.084132847</span>
-<span class="co">##  [8,]  0.04295665  0.054632766 -0.046055971 -0.007624153</span>
-<span class="co">##  [9,]  0.01194735 -0.015259275  0.027318072  0.078467151</span>
-<span class="co">## [10,]  0.01304706  0.137133493 -0.024937753 -0.073888273</span>
-<span class="co">## [11,] -0.04726756 -0.156738790  0.133953544  0.007981460</span>
-<span class="co">## [12,]  0.06860982  0.109444179  0.049507578  0.112254339</span></code></pre>
+<pre><code><span class="co">##               [,1]        [,2]        [,3]        [,4]</span>
+<span class="co">##  [1,] -0.104833599 -0.07545709 -0.10141605  0.16313286</span>
+<span class="co">##  [2,] -0.069510810 -0.24544497 -0.01175281 -0.06496564</span>
+<span class="co">##  [3,]  0.060272152 -0.06175812 -0.11626682 -0.13108105</span>
+<span class="co">##  [4,] -0.080781218  0.08872257  0.08064091 -0.03484468</span>
+<span class="co">##  [5,]  0.002343874  0.06587413  0.07740792  0.06383423</span>
+<span class="co">##  [6,]  0.116954595  0.18528111  0.01549936 -0.09608914</span>
+<span class="co">##  [7,] -0.188640263 -0.07462143 -0.06583513 -0.16703052</span>
+<span class="co">##  [8,]  0.026066250 -0.02736835  0.16489325  0.05991207</span>
+<span class="co">##  [9,] -0.016309637 -0.08563117  0.17950418  0.02901753</span>
+<span class="co">## [10,]  0.068638760 -0.07764148  0.07132001  0.01296278</span>
+<span class="co">## [11,]  0.041385427  0.12845062 -0.14774113 -0.04481208</span>
+<span class="co">## [12,]  0.045238017 -0.13150830 -0.11206022 -0.07858655</span></code></pre>
 <p>We can initialise 12 allele values, one for each locus.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</code></pre></div>
@@ -184,8 +184,8 @@ in the evolutionary algorithm.</p>
 multiplication.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##           [,1]       [,2]     [,3]     [,4]</span>
-<span class="co">## [1,] 0.7438383 0.03804716 0.152168 1.068398</span></code></pre>
+<pre><code><span class="co">##           [,1]       [,2]       [,3]       [,4]</span>
+<span class="co">## [1,] 0.1608699 -0.2260294 -0.2684434 -0.1997279</span></code></pre>
 <p>We can likewise use a 4 by 4 square matrix to represent the values of
 the arrows from the first column of four hidden layer nodes to the
 second column of hidden layer nodes.</p>
@@ -193,17 +193,17 @@ second column of hidden layer nodes.</p>
 <code class="sourceCode R"><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;
 <span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_2_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##             [,1]        [,2]        [,3]         [,4]</span>
-<span class="co">## [1,]  0.14850145  0.12148830 -0.01981943  0.004627298</span>
-<span class="co">## [2,] -0.02453709  0.00388024 -0.01901571 -0.048715416</span>
-<span class="co">## [3,] -0.08947015 -0.23452600 -0.03745235  0.062022939</span>
-<span class="co">## [4,] -0.23470115  0.10935112 -0.10215789  0.108725607</span></code></pre>
+<pre><code><span class="co">##             [,1]        [,2]       [,3]        [,4]</span>
+<span class="co">## [1,] -0.07397176  0.13426874 -0.1274051  0.01582442</span>
+<span class="co">## [2,] -0.06788718  0.08209807 -0.1098817  0.02851001</span>
+<span class="co">## [3,]  0.06588791 -0.09766913  0.1901213 -0.01695542</span>
+<span class="co">## [4,] -0.03543068  0.11053433 -0.0289431  0.07890632</span></code></pre>
 <p>We can then use matrix multiplication to map the 12 allele values to
 the values of the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</code></pre></div>
-<pre><code><span class="co">##            [,1]      [,2]       [,3]      [,4]</span>
-<span class="co">## [1,] -0.1548412 0.1716584 -0.1303103 0.1271886</span></code></pre>
+<pre><code><span class="co">##              [,1]        [,2]        [,3]        [,4]</span>
+<span class="co">## [1,] -0.007166012 0.007185067 -0.04091524 -0.01510665</span></code></pre>
 <p>This pattern can continue, with 4 by 4 square matrices representing
 the value of arrows between columns of hidden layer nodes, and between
 the last hidden layer column and traits (note that the number of hidden
