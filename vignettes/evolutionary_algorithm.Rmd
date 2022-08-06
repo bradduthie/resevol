@@ -14,28 +14,16 @@ biblio-style: apalike
 ---
 
 
-- [Introduction](#introduction)
-- [Key data structures used](#structures)
-- [General overview of the evolutionary algorithm](#overview)
-    - [Initialisation](#initialisation)
-    - [Crossover](#crossover)
-    - [Mutation](#mutation)
-    - [Fitness evaluation](#fitness)
-    - [Tournament selection](#tournament)
-    - [Termination](#termination)
-- [Haploid and diploid individuals](#ploidy)
-- [Literature cited](#lit)
+<a name = "introduction">Introduction</a>
+================================================================================
 
 ```{r, echo = FALSE}
 oldpar <- par();
 ```
 
-<a name = "introduction">Introduction</a>
-================================================================================
-
 The resevol package models individuals with complex genomes that can include any number of haploid or diploid loci and any number of traits with an arbitrary pre-specified covariance structure. It does this by using a complex network mapping a path from the allele values at each loci to the covarying trait values of individuals.
 
-```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "Figure 1: Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function"}
+```{r, echo = FALSE, fig.width = 7, fig.height = 6, fig.cap = "**Figure 1:** *Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function*"}
 par(mar = c(0.2, 0.2, 0, 0.2));
 plot(x = 0, y = 0, type = "n", xlim = c(0, 1000), ylim = c(0, 1000), 
      xaxt = "n", yaxt = "n", bty = "n", xlab = "", ylab = "");
@@ -71,7 +59,7 @@ for(i in 1:4){
 }
 ```
 
-The objective of the evolutionary algorithm in resevol is to find a set of network values that produce traits (red diamonds above) with the pre-specified covariance structure given allele values (green circles above) that are sampled from a standard normal distribution (i.e., mean of zero and standard deviation of one). Conceptually, the problem is simple; we need to find values for the black arrows above that produce traits that covary in the way that we want them to covary (within some acceptable margin of error). The `mine_gmatrix` function uses an evolutionary algorithm for identifying sets of values that work. An evolutionary algorithm is an algorithm that works especially well for *I know it when I see it* problems [@Hamblin2013]. @Luke2015 explains the idea behind these algorithms in more detail:
+The objective of the evolutionary algorithm in resevol is to find a set of network values that produce traits (red diamonds above) with the pre-specified covariance structure given allele values (green circles above) that are sampled from a standard normal distribution (i.e., mean of zero and standard deviation of one). Conceptually, the problem is simple; we need to find values for the black arrows above that produce traits that covary in the way that we want them to covary (within some acceptable margin of error). The `mine_gmatrix` function uses an evolutionary algorithm for identifying sets of values that work. An evolutionary algorithm is an algorithm that works especially well for *I know it when I see it* problems [@Hamblin2013]. @Luke2013 explains the idea behind these algorithms in more detail:
 
 > They're algorithms used to find answers to problems when you have very little to help you: you don’t know beforehand what the optimal solution looks like, you don’t know how to go about finding it in a principled way, you have very little heuristic information to go on, and brute-force search is out of the question because the space is too large. But if you’re given a candidate solution to your problem, you can test it and assess how good it is. That is, you know a good one when you see it.
 
@@ -209,7 +197,7 @@ After fitness evaluation, networks in the population compete in a series of tour
 <a name = "termination">Termination</a>
 --------------------------------------------------------------------------------
 
-Throughout the evolutionary algorithm, the network with the lowest overall stress (from any generation) is retained. The evolutionary algorithm terminates if either the logged stress of this network is less than or equal to `term_cri`, or if `max_gen` generations of the evolutionary algorithm have occurred. When the evolutionary algorithm terminates, only the network with the lowest overall stress is returned.
+Throughout the evolutionary algorithm, the network with the lowest overall stress (from any generation) is retained. The evolutionary algorithm terminates if either the logged stress of the mean network is less than or equal to `term_cri`, or if `max_gen` generations of the evolutionary algorithm have occurred. The mean network stress is used instead of the lowest overall stress because error in randomly generated loci can result in unusually low stress values due to chance, which might not be replicated with a new random sample of loci. When the evolutionary algorithm terminates, only the network with the lowest overall stress is returned.
 
 
 <a name = "ploidy">Haploid and diploid individuals</a>
@@ -223,5 +211,5 @@ The evolutionary algorithm does not distinguish between haploid and diploid geno
 
 
 ```{r, echo = FALSE}
-par(oldpar);
+suppressWarnings(par(oldpar));
 ```
