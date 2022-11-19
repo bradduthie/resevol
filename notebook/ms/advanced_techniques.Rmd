@@ -3,7 +3,8 @@ title: 'resevol: an R package for spatially explicit models of pesticide resista
   given evolving pest genomes'
 subtitle: Advanced techniques (Supporting Information 2)
 author: |
-  | A. Bradley Duthie&#xb9;&#xb2;, et al.
+  | A. Bradley Duthie&#xb9; &#179;, Rosie Mangan&#xb9;, Chintamani Rose McKeon&#xb9;,
+  | Matthew C. Tinsley&#xb9;, and Luc F. Bussi&egrave;re&#xb2;
 date: '[1] Biological and Environmental Sciences, University of Stirling, Stirling,
   UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
   University of Stirling Stirling, FK9 4LA, UK'
