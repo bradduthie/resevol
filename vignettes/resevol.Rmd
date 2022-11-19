@@ -1,8 +1,12 @@
 ---
 title: "resevol: an R package for spatially explicit models of pesticide resistance
   given evolving pest genomes"
-author: "A Bradley Duthie"
-date: "`r Sys.Date()`"
+author: |
+  | A. Bradley Duthie$^{1,4}$, Rosie Mangan$^{1}$, C. Rose McKeon$^{1}$,
+  | Matthew C. Tinsley$^{1}$, and Luc F. Bussi&egrave;re$^{2,3}$
+date: '[1] Biological and Environmental Sciences, University of Stirling, Stirling,
+  UK [2]Biological and Environmental Sciences, University of Gothenburg, Gothenburg, Sweden [3] Gothenburgh Global Biodiversity Centre, Gothenburg, Sweden [4] alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
+  University of Stirling Stirling, FK9 4LA, UK'
 bibliography: '`r system.file("resevol.bib", package = "resevol")`'
 output: rmarkdown::html_vignette
 vignette: >
@@ -51,14 +55,17 @@ Developing strategies to maximise the efficacy of these tools is critical, and s
 Here we introduce the resevol R package as a tool for building such models and simulating pest management.
 
 The resevol package applies individual-based modelling and a quantitative genetics approach to simulate the evolution of a pest population on a changing landscape. 
-A focal goal of the software is to model traits with a pre-specified, but potentially evolving, covariance structure. 
+Multiple traits determine the overall fitness of any pest genotype. 
+For example, while alleles conferring resistance to a particular pesticide enhance fitness in the presence of that pesticide, they could also impose reproductive fitness costs.
+Such trade-offs can be quantified by the genetic covariance between traits.
+A focal goal of the software is to model traits with a pre-specified, but potentially evolving, genetic covariance structure. 
 To achieve this goal, each individual has a genome with $L$ loci that underlie a set of $T$ potentially evolving traits. 
 Pleiotropic loci can vary in their effects on the direction and magnitude of polygenic traits, causing population-wide trait covariance to arise mechanistically from the underlying genetic architecture of individuals. 
 To achieve this, two separate steps are necessary.
 First, a genetic algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
 Values used to map loci to traits are incorporated into individual genomes.
 Second, a population of asexual or sexual individuals is initialised and simulated on a spatially explicit landscape separated into distinct units (e.g., farms).
-Land units can apply one of up to 10 pesticides, and one of up to 10 crops at a given time.
+Land units can apply one of up to 10 pesticides, and one of up to 10 landscape types at a given time (for simplicity, here we interpret landscape types to be crop types).
 Pesticides and crops rotate independently within farms over time in a pre-specified way.
 The resevol package can thereby model complex and evolving agricultural pest traits over realistic landscapes that undergo different pesticide use and crop regimes.
 
@@ -172,12 +179,12 @@ Individuals can be haploid (as in Figure 1) or diploid (in which case, allele va
 An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see Supporting Information 1 for details). 
 Evolutionary algorithms are heuristic tools that can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
 In the resevol package, the `mine_gmatrix` function runs an evolutionary algorithm and requires the argument `gmatrix`, which specifies the desired trait covariance matrix.
-The function initialises a population of `npsize` networks (Figure 1), and this population evolves until some maximum generation (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
-In a single generation of the algorithm, values crossover between networks and mutate.
+The function initialises a population of `npsize` separate, and potentially unique, networks (i.e., `npsize` copies of a network like the one shown in Figure 1), and this population evolves until some maximum iteration (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
+In a single iteration of the algorithm, values mutate and crossover occurs between networks (i.e., some fo the `npsize` networks swap values with some probability).
 Next, trait covariances produced for each network are estimated by initalising `indivs` individuals with loci sampled from a standard normal distribution.
 Network stress is calculated as the logged mean squared deviation between estimated covariances and those in `gmatrix`. 
-Tournament selection [@Hamblin2013] is then used to determine the networks for the next generation of the algorithm.
-Networks with the lowest estimated stress have the highest fitness, so these networks are disproportionately represented in the next generation.
+Tournament selection [@Hamblin2013] is then used to determine the networks for the next iteration of the algorithm.
+Networks with the lowest estimated stress have the highest fitness, so these networks are disproportionately represented in the next iteration.
 Throughout the evolutionary algorithm, the lowest stress network is saved and returned upon network termination.
 The robustness of this network's stress to sets of individuals with different loci values can be tested using the `stress_test` function.
 
@@ -231,7 +238,7 @@ Edge options include `"leaky"` (pests disappear from the landscape), `"reflect"`
 Each farm can hold one pesticide and one crop type in any time step.
 The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
 Initialisation can be random for each farm with equal probability, or it can be set using a vector of length `farms` in which vector elements define the initialised crop or pesticide number.
-After initialisation, crops and pesticides rotate once ever `crop_rotation_time` and `pesticide_rotation_time` time steps, respectively.
+After initialisation, crops and pesticides rotate once every `crop_rotation_time` and `pesticide_rotation_time` time steps, respectively.
 Each of these rotation time arguments can take either an integer value from 1-3, or a matrix.
 Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
 Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
@@ -343,12 +350,13 @@ arrows(x0=35, x1=7, y0=67, y1=67, lwd=2, length=0.0);
 arrows(x0=7, x1=7, y0=67, y1=71.5, lwd=2, length=0.1);
 ```
 
-In each time step, pests feed in a random order, consuming the crop on their landscape cell.  Pests consume an amount of the crop as specified by the `food_consume` argument, which takes a vector with as many elements as their are crops (i.e., if `crop_number = 2`, then `food_consume` has two elements, the first and second defining consumption of crops 1 and 2, respectively).
+In each time step, pests feed in a random order, consuming the crop on their landscape cell.  Each pest consumes an amount of crop as specified by the `food_consume` argument, which takes a vector with as many elements as their are crops (i.e., if `crop_number = 2`, then `food_consume` has two elements, the first and second defining consumption of crops 1 and 2, respectively).
 If crop amount on the landscape cell exceeds pest consumption ability, then pests consume their maximum amount, and this amount is removed from the landscape cell.
 If crop amount is less than pest consumption ability, then pests consume whatever crop is left and crop amount is reduced to zero.
 Pesticide consumption works identically to crop consumption, except that the amount of pesticide on a landscape cell is not decreased.
-Pests simply consume an amount of pesticide as specified by the `pesticide_consume` argument, which also takes a vector with as many elements as their are pesticides.
 Hence, each pest can potentially feed and be affected by the pesticide of their focal landscape cell. 
+Pests simply consume an amount of pesticide as specified by the `pesticide_consume` argument, which also takes a vector with as many elements as their are pesticides.
+Pesticide consumption affects pest survival and reproduction using `pesticide_tolerated_surv` and `pesticide_tolerated_repr` arguments.
 
 After interacting with their landscape cell, pests can move. 
 Each pest visits a number of cells during movement, as is specified by the parameter `movement_bouts`.
@@ -381,7 +389,8 @@ Offspring inherit genome values from their parent(s) with the possibility for mu
 For asexually and sexually reproducing pests, genomes are haploid and diploid, respectively. 
 Asexually reproducing pests receive the full genomes of their parent, while sexually reproducing pests receive half of their alleles from each parent.
 Each diploid parent contributes one half of their genome, effectively modelling a genome with a single chromosome.
-Crossover occurs at each position of the genome with a probability of `crossover_pr`, so complete recombination is also possible if `crossover_pr = 0.5`.
+Crossover occurs at each position of the genome with a probability of `crossover_pr`.
+When a crossover event occurs, alleles are swapped between the two chromosomes, so complete recombination is also possible if `crossover_pr = 0.5`.
 For both haploids and diploids, each genome value then mutates independently with a probability of `mutation_pr`, which can be set to any real number from 0-1.
 If a genome value mutates, then a new value is randomly sampled from a standard normal distribution.
 If `mutation_type = 0`, then this new value replaces the old value, and if `mutation_type = 1`, then the new value is added to the old value.
@@ -422,7 +431,7 @@ These arguments are explained the package documentation, and in Supporting Infor
 Here we focus on a simple simulation with asexually reproducing pests that have three loci and two traits (Figure 1).
 We use the the genome generated in `new_network` from [Section 2](#mine_gmatrix), in which traits 1 and 2 have variances of `r new_network[[6]][1,1]` and `r new_network[[6]][2,2]`, respectively, with a covariance of `r new_network[[6]][1,2]`.
 
-Traits 1 and 2 will define the rate at which pests consume two separate pesticides, so we model a system in which there is a potential trade-off for pesticide susceptibility.
+Traits 1 and 2 will define the realised rate of uptake of the two separate pesticides, so we model a system in which there is a potential trade-off for pesticide susceptibility.
 We use a simple $64 \times 64$ cell landscape with nine farms. 
 Each farm grows the same crop and uses one of two randomly intialised pesticides, which are rotated every 16 time steps.
 Hence, we can conceptualise 16 time steps as a single growing season.
@@ -432,7 +441,7 @@ Pests consume up to one unit of crop on their landscape cell per time step.
 Pest survival and reproduction is food-based, and pests need to consume one unit of crop by age two to survive and reproduce. 
 Pests initialised at the start of the simulation are randomly assigned an age from 0-4 with equal probability.
 Pests have a maximum age of four, and they feed in ages 0-2, move up to two cells in ages 3-4, and reproduce in age four.
-Pests can consume pesticides in ages 0-2, and if they consume any pesticide, then they will die.
+Pests can uptake (i.e., 'consume') pesticides in ages 0-2, and if they consume any pesticide, then they will die.
 In each time step, a mean of 10 immigrants arrive.
 We simulate 160 time steps (10 growing seasons) using the function below:
 
@@ -467,7 +476,7 @@ Figure 4 shows the location of pests on the landscape in the last time of the si
 Because the number of crops and pesticides, the number and nature of traits, and the size of pest genomes all vary depending on simulation parameters, no plotting functions are introduced in the resevol package.
 Instead, methods and code for producing plots such as those in Figures 3 and 4 are explained in Supporting Information 2.
 
-```{r overtime, echo=FALSE, fig.width=8, fig.cap = "**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c) mean food consumed per pest, and (d) mean values of evolving traits 1 and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2, respectively, a pest will consume. White and grey vertical stripes indicate seasons of a single crop and pesticide application.*"}
+```{r overtime, echo=FALSE, fig.width=8, fig.cap = "**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken per pest, (c) mean food consumed per pest, and (d) mean value of evolving traits 1 and 2 underlying pest uptake over time. Note that only pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or 2, respectively. Pests with negative trait values will be unaffected by corresponding pesticides (i.e., pesticide consumption is a threshold trait), hence the difference between realised pesticide consumption (b) and the traits underlying it (d). White and grey vertical stripes indicate seasons of a single crop and pesticide application.*"}
 mbox <- function(x0, x1, y0, y1){
     xx <- seq(from=x0, to=x1, length.out = 100);
     yy <- seq(from=y0, to=y1, length.out = 100);
@@ -600,7 +609,7 @@ Many models have been developed to investigate the evolution of resistance under
 The resevol R package makes it possible to rapidly develop and simulate myriad individual-based models of resistance evolution.
 It also introduces a novel approach to modelling complex pest genetic architecture, using an evolutionary algorithm to generate haploid or diploid loci that map to pest traits with pre-specified covariances (Figure 1; Supporting Information 1).
 Agricultural landscapes and pest life histories are highly customisable, allowing targetted models that can simulate specific real-world case studies (Supporting Information 2).
-The breadth of possible models that can be simulated with resevol also makes it a useful tool for developing theory on pest management, and more even generally on the evolution and ecology of individuals with complex traits on a changing landscape.
+The breadth of possible models that can be simulated with resevol also makes it a useful tool for developing theory on pest management, and even more generally on the evolution and ecology of individuals with complex traits on a heterogeneous landscape.
 
 
 Acknowledgements {#acknowledgements}
@@ -615,7 +624,7 @@ Authors contributions {#contributions}
 
 All authors contributed to planning software development and writing. 
 ABD wrote and maintains package code. 
-RM contributed code for data visualisation.
+CRM contributed code for data visualisation.
 
 
 Availability {#availability}
