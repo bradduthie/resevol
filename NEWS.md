@@ -1,3 +1,9 @@
+# resevol 0.3.4.0
+
+## NEW FEATURES
+
+New argument to model crop growth over time within a season
+
 # resevol 0.3.3.0
 
 ## NEW FEATURES

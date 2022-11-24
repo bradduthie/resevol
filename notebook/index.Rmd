@@ -43,6 +43,7 @@ data(gmatrices);
 
  - **2022**
  
+   - **NOV** [24](#u-24-NOV-2022)
    - **JUL** [19](#u-19-JUL-2022), [30](#u-30-JUL-2022)
    - **JUN** [13](#u-13-JUN-2022), [28](#u-28-JUN-2022)
    - **JAN** [06](#u-06-JAN-2022)
@@ -73,6 +74,24 @@ data(gmatrices);
 <a name="updates">Project updates:</a>
 ================================================================================
 
+
+> <a name="u-24-NOV-2022">Update: 24 NOV 2022</a>
+
+During the revision process of the software note, Matt suggested another feature that I really should have thought of making earlier. In version 0.3.3.0, after crop rotation, landscape cell values are initialised with whatever value is used for `crop_per_cell`. This means that there is no way to simulate crop growth on a landscape in between crop rotations. In version 0.3.4.0, I have fixed this with two new arguments, `crop_growth` and `crop_growth_type`.
+
+The argument `crop_growth` indicates how much a cell value representing a given crop should change from one time step to the next (before the potential effects of feeding by pests). By default, this value is `crop_growth = 0`, meaning that all biomass on a cell will be initialised at the start of a new crop rotation. Nonzero values will affect the change of a cell's crop value in a way dependent up on `crop_growth_type`. Note that `crop_growth` can either take a single value, or a vector of the same length as `crop_number`. If, for example, there are two crops (`crop_number = 2`), then we could set `crop_growth = c(0.1, 0.4)`, meaning that crop 1 would increase by a value of 0.1 each time step, and crop 2 would increase by a value of 0.4 each time step. If we set a `crop_growth` to a single value (e.g., `crop_growth = 0.1`), then all crops grow at the same rate of `crop_growth`.
+
+The argument `crop_growth_type` specifies how growth is enacted (i.e., how the value on the landscape changes). The default option is `crop_growth_type = "none"`, in which case, no growth occurs. If `crop_growth_type = "geometric"`, then the value of `crop_growth` specifies the proportion by which the landscape value increases in a time step,
+
+$$value_{t+1} = value_{t} \left(1 + crop\_growth \right).$$
+
+So if we initialise a crop amount at 2 on the landscape cell, and `crop_growth = 0.1`, then in the next time step (unless some crop is eaten by pests), we can predict that the crop amount will be `r 2 * (1 + 0.1)` (i.e., an increase of 10 per cent).
+
+If `crop_growth_type = "linear"`, then the increment `crop_growth` is simply added to the existing cell value in each time step.
+
+$$value_{t+1} = value_{t} + crop\_growth.$$
+
+My hope is that these options will be useful for a lot of purposes, but there is plenty of room for expanding the package with different rules for crop growth.
 
 > <a name="u-30-JUL-2022">Update: 30 JUL 2022</a>
 
