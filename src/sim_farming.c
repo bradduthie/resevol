@@ -22,9 +22,10 @@
  *      PROT:    Pesticide rotation matrix
  *      CINIT:   Initial crop choice for each farmer
  *      PINIT:   Initial pesticide choice for each farmer
+ *      CGROW:   Rate of growth of each crop type
  * ===========================================================================*/
 SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
-                 SEXP CINIT, SEXP PINIT){
+                 SEXP CINIT, SEXP PINIT, SEXP CGROW){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
@@ -44,6 +45,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     int    immigrants;       /* Immigrants in a time step */
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
+    int    len_CGROW;        /* Length of the crop growth vector */
     int    print_gen;        /* Should the generations be printed */
     int    get_stats;        /* Should print a CSV with statistics */
     int    *dim_IND;         /* Dimensions of the individual array */
@@ -61,7 +63,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     double *PROT_ptr;
     double *CINIT_ptr;
     double *PINIT_ptr;
+    double *CGROW_ptr;
     double *paras;
+    double *grow;          /* Vector on crop growth per time step */
     double **pests;        /* The pests array */
     double **offspring;    /* The offspring of pests within a time step */
     double **new_pests;    /* The pest array at the end of a time step */
@@ -112,7 +116,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     protected_n++;
     PINIT_ptr = REAL(PINIT);
     
+    PROTECT( CGROW = AS_NUMERIC(CGROW) );
+    protected_n++;
+    CGROW_ptr = REAL(CGROW);
+    
     len_PARAS   = GET_LENGTH(PARAS);
+    len_CGROW   = GET_LENGTH(CGROW);
     dim_IND     = INTEGER( GET_DIM(IND) );
     dim_LAND    = INTEGER( GET_DIM(LAND) );
     dim_CROT    = INTEGER( GET_DIM(CROT) );
@@ -129,6 +138,13 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         paras[i] = paras_ptr[vec_pos];
         vec_pos++; 
     } /* The parameters vector is now copied into C */
+    
+    grow   = (double *) malloc(len_CGROW * sizeof(double));
+    vec_pos = 0;
+    for(i = 0; i < len_CGROW; i++){
+        grow[i] = CGROW_ptr[vec_pos];
+        vec_pos++; 
+    } /* The grow vector (crop growth) is now copied into C */
 
     /* Code below remakes the IND matrix for easier use */
     ind_number = dim_IND[0];
@@ -242,7 +258,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     
     while(ts < time_steps){
  
-        land_change(land, paras, ts, C_init, C_change, P_init, P_change); 
+        land_change(land, paras, ts, C_init, C_change, P_init, P_change, grow); 
       
         age_pests(pests, paras); 
         
@@ -408,6 +424,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     }
     free(pests);
     
+    free(grow);
     free(paras);
     
     return(OUTPUT);

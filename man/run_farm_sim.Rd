@@ -74,7 +74,9 @@ run_farm_sim(
   max_age_metabolism = 9,
   terrain = NA,
   trait_means = NULL,
-  land_edge = "torus"
+  land_edge = "torus",
+  crop_growth = 0,
+  crop_growth_type = "none"
 )
 }
 \arguments{
@@ -437,6 +439,21 @@ end up on the other side. A leaky edge causes pests to leave the landscape
 and the simulation entirely, so they are effectively no longer recorded. A 
 reflective edge causes pests to bounce at the edge back in the direction from
 which they came. The default and recommended edge is a torus.}
+
+\item{crop_growth}{This sets the amount by which landscape cell values
+increase for each crop from one time step to the next. This might be used to
+model the increase in biomass caused by plant growth on the landscape cell.
+The way in which growth is enacted is set by crop_growth_type. Values for
+crop_growth can either be a single number (in which case, the growth amount
+applies to all crop types) or a vector of the same length as crop_types (in
+which case, vector indices give the amount of growth for each crop number).}
+
+\item{crop_growth_type}{This clarifies whether crop growth should be 
+"none" (default), "geometric", or "linear". If geometric, then the value of a
+landscape cell increases to cell_value * (1 + crop_growth). If linear, then
+a fixed value crop_growth is added to the existing cell value. Note that for
+linear growth, this fixed value is only added if the existing cell value is
+greater than zero (else it is assumed that there is no crop to grow).}
 }
 \value{
 The output in the R console is a list with two elements; the first 

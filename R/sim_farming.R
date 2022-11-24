@@ -310,6 +310,19 @@
 #' and the simulation entirely, so they are effectively no longer recorded. A 
 #' reflective edge causes pests to bounce at the edge back in the direction from
 #' which they came. The default and recommended edge is a torus.
+#'@param crop_growth This sets the amount by which landscape cell values
+#' increase for each crop from one time step to the next. This might be used to
+#' model the increase in biomass caused by plant growth on the landscape cell.
+#' The way in which growth is enacted is set by crop_growth_type. Values for
+#' crop_growth can either be a single number (in which case, the growth amount
+#' applies to all crop types) or a vector of the same length as crop_types (in
+#' which case, vector indices give the amount of growth for each crop number).
+#'@param crop_growth_type This clarifies whether crop growth should be 
+#' "none" (default), "geometric", or "linear". If geometric, then the value of a
+#' landscape cell increases to cell_value * (1 + crop_growth). If linear, then
+#' a fixed value crop_growth is added to the existing cell value. Note that for
+#' linear growth, this fixed value is only added if the existing cell value is
+#' greater than zero (else it is assumed that there is no crop to grow).
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -403,7 +416,9 @@ run_farm_sim <- function(mine_output,
                          max_age_metabolism  = 9,
                          terrain             = NA,
                          trait_means         = NULL,
-                         land_edge           = "torus"){
+                         land_edge           = "torus",
+                         crop_growth         = 0,
+                         crop_growth_type    = "none"){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -488,6 +503,9 @@ run_farm_sim <- function(mine_output,
     }
     if(pesticide_number > 10){
         stop("Cannot have more than 10 pesticides");
+    }
+    if(length(crop_growth) != 1 & length(crop_growth) != crop_number){
+        stop("crop_growth must be of length 1 or 'crop_number'.")
     }
     
     food_consume <- as.list(food_consume);
@@ -594,7 +612,9 @@ run_farm_sim <- function(mine_output,
                              get_stats                = get_stats,
                              metabolism               = metabolism,
                              farms                    = farms,
-                             land_edge                = land_edge);
+                             land_edge                = land_edge,
+                             crop_growth              = crop_growth,
+                             crop_growth_type         = crop_growth_type);
   
     return(sim_results);
 }
@@ -644,7 +664,9 @@ sim_crops <- function(pests,
                       get_stats  = TRUE,
                       metabolism = 0,
                       farms = 4,
-                      land_edge = "torus"
+                      land_edge = "torus",
+                      crop_growth         = 0,
+                      crop_growth_type    = "geometric"
                       ){
     
   N    <- dim(pests)[1];
@@ -693,6 +715,19 @@ sim_crops <- function(pests,
   }
   if(land_edge %in% c("torus", "leaky", "reflect", "sticky") == FALSE){
       stop("ERROR: land_edge must be 'torus', 'leaky', 'reflect', or 'sticky'");
+  }
+  cgt  <- 0;
+  if(crop_growth_type == "geometric"){
+      cgt <- 1;
+  }
+  if(crop_growth_type == "linear"){
+      cgt <- 2;
+  }
+  if(crop_growth_type %in% c("none", "geometric", "linear") == FALSE){
+      stop("Crop growth type must be 'none', geometric' or 'linear'.");
+  }
+  if(is.numeric(crop_growth) == FALSE){
+      stop("Crop growth values must be numeric");
   }
   
   paras  <- c( 0.0,   # 00) pests column for ID
@@ -867,7 +902,8 @@ sim_crops <- function(pests,
               immi,   # 169) Average number of immigrants per time step
               0,      # 170) Realised number of immigrants
               fcoe,   # 171) Are inbreeding coefficients calculated?
-              sttt    # 172) Get a CSV printoff of statistics
+              sttt,   # 172) Get a CSV printoff of statistics
+              cgt     # 173) Crop growth type (geometric = 0 or linear = 1)
               );
 
   paras <- substitute_traits(paras, move_distance, food_needed_surv,
@@ -888,14 +924,18 @@ sim_crops <- function(pests,
   c_init       <- initialise_crops(crop_init, crpN, farms);
   p_init       <- initialise_pesticide(pesticide_init, pesN, farms); 
 
+  if(length(crop_growth) == 1){
+      crop_growth <- rep(x = crop_growth, times = crop_number);
+  }
+  
   SIM_RESULTS  <- run_farming_sim(pests, land, paras, c_rotate, p_rotate,
-                                  c_init, p_init);
+                                  c_init, p_init, crop_growth);
 
   return(SIM_RESULTS);
 }
 
-run_farming_sim <- function(IND, LAND, PARAS, CROT, PROT, CINIT, PINIT){
-  .Call("sim_farming", IND, LAND, PARAS, CROT, PROT, CINIT, PINIT);
+run_farming_sim <- function(IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW){
+  .Call("sim_farming", IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW);
 }
 
 substitute_traits <- function(paras, move_distance, food_needed_surv,

@@ -293,6 +293,102 @@ void change_crop_choice(double **C_init, double **C_change, double *paras){
     }
 }
 
+
+/* =============================================================================
+ * Grow the crop amount on each cell
+ *     land:  The landscape array to be adjusted
+ *     grow:  The vector defining how much growth per crop per time step
+ *     paras: The paras vector that holds global information
+ * ========================================================================== */
+void grow_crops(double ***land, double *grow, double *paras){
+    
+    int i, j, xdim, ydim, crop_change_type, crop_number;
+    int crop1_col, crop2_col, crop3_col, crop4_col, crop5_col, crop6_col;
+    int crop7_col, crop8_col, crop9_col, crop10_col;
+    double *grow_temp;
+    
+    grow_temp   = (double *) malloc(10 * sizeof(double));
+    
+    xdim             = (int) paras[103];
+    ydim             = (int) paras[104];
+    crop1_col        = (int) paras[118];
+    crop2_col        = (int) paras[119];
+    crop3_col        = (int) paras[120];
+    crop4_col        = (int) paras[121];
+    crop5_col        = (int) paras[122];
+    crop6_col        = (int) paras[123];
+    crop7_col        = (int) paras[124];
+    crop8_col        = (int) paras[125];
+    crop9_col        = (int) paras[126];
+    crop10_col       = (int) paras[127];
+    crop_number      = (int) paras[156];
+    crop_change_type = (int) paras[173];
+    
+    for(i = 0; i < 10; i++){
+        if(i < crop_number){
+            grow_temp[i] = grow[i];
+        }else{
+            grow_temp[i] = 0.0;
+        }
+    }
+    
+    if(crop_change_type == 1){
+        for(i = 0; i < xdim; i++){
+            for(j = 0; j < ydim; j++){
+                land[i][j][crop1_col]  *= (1 + grow_temp[0]);
+                land[i][j][crop2_col]  *= (1 + grow_temp[1]);
+                land[i][j][crop3_col]  *= (1 + grow_temp[2]);
+                land[i][j][crop4_col]  *= (1 + grow_temp[3]);
+                land[i][j][crop5_col]  *= (1 + grow_temp[4]);
+                land[i][j][crop6_col]  *= (1 + grow_temp[5]);
+                land[i][j][crop7_col]  *= (1 + grow_temp[6]);
+                land[i][j][crop8_col]  *= (1 + grow_temp[7]);
+                land[i][j][crop9_col]  *= (1 + grow_temp[8]);
+                land[i][j][crop10_col] *= (1 + grow_temp[9]);
+            }
+        }
+    }
+    
+    if(crop_change_type == 2){
+        for(i = 0; i < xdim; i++){
+            for(j = 0; j < ydim; j++){
+                if(land[i][j][crop1_col] > 0){
+                    land[i][j][crop1_col]  += grow_temp[0]; 
+                }
+                if(land[i][j][crop2_col] > 0){
+                    land[i][j][crop2_col]  += grow_temp[1]; 
+                }
+                if(land[i][j][crop3_col] > 0){
+                    land[i][j][crop3_col]  += grow_temp[2]; 
+                }
+                if(land[i][j][crop4_col] > 0){
+                    land[i][j][crop4_col]  += grow_temp[3]; 
+                }
+                if(land[i][j][crop5_col] > 0){
+                    land[i][j][crop5_col]  += grow_temp[4]; 
+                }
+                if(land[i][j][crop6_col] > 0){
+                    land[i][j][crop6_col]  += grow_temp[5]; 
+                }
+                if(land[i][j][crop7_col] > 0){
+                    land[i][j][crop7_col]  += grow_temp[6]; 
+                }
+                if(land[i][j][crop8_col] > 0){
+                    land[i][j][crop8_col]  += grow_temp[7]; 
+                }
+                if(land[i][j][crop9_col] > 0){
+                    land[i][j][crop9_col]  += grow_temp[8]; 
+                }
+                if(land[i][j][crop10_col] > 0){
+                    land[i][j][crop10_col]  += grow_temp[9]; 
+                }
+            }
+        }
+    }
+    
+    free(grow_temp);
+}
+
 /* =============================================================================
  * Increases the age of each pest by a single time step
  *     land:     The landscape array to be adjusted
@@ -302,9 +398,11 @@ void change_crop_choice(double **C_init, double **C_change, double *paras){
  *     C_change: The matrix describing how crop changes occur
  *     P_init:   The matrix for the initial (current) pesticide positions
  *     P_change: The matrix describing how pesticide changes occur
+ *     grow:     The vector defining how much growth per crop per time step
  * ========================================================================== */
 void land_change(double ***land, double *paras, int ts, double **C_init,
-                 double **C_change, double **P_init, double **P_change){
+                 double **C_change, double **P_init, double **P_change,
+                 double *grow){
   
   int rotate_crops, rotate_pesticide, start_pesticide;
  
@@ -312,6 +410,8 @@ void land_change(double ***land, double *paras, int ts, double **C_init,
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];
 
+  grow_crops(land, grow, paras);
+  
   if(ts % rotate_crops == 0){
       clean_crops(land, paras);
       change_crop_choice(C_init, C_change, paras);
