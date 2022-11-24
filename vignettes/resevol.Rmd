@@ -226,7 +226,7 @@ Landscape {#landscape}
 
 Landscapes are spatially explicit and initialised in one of two ways. 
 First, a landscape can be built from the arguments `xdim`, `ydim`, and `farms`. 
-These arguments specify the dimensions of the landscape and the number of farms on it.
+These arguments specify the cell dimensions and number of farms on the landscape.
 Contiguous rectangular farms of roughly equal size are generated on the landscape using a splitline algorithm.
 Second, a custom landscape can be input using the `terrain` argument, which takes a matrix with elements that include integers 1 to `farms`.
 Each value defines a unique farm, but values do not need to be contiguous.
@@ -243,6 +243,11 @@ Each of these rotation time arguments can take either an integer value from 1-3,
 Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
 Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
 Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms.
+Upon rotation, crop and pesticide values are reset on each farm.
+
+Values for `crop_per_cell` and `pesticide_per_cell` determine the quantity of crops and pesticides initialised per cell upon crop or pesticide rotation, respectively.
+Between crop rotations, crop values can increase each time step by a proportion or increment `crop_growth`, which depends on `crop_growth_type`.
+These arguments can be used to model crop growth over a season.
 
 
 Pest ecology {#ecology}
