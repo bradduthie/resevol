@@ -24,11 +24,11 @@ biblio-style: apalike
 Abstract {-}
 ===================================================
 
-1. The evolution of pesticide resistance is a widespread problem with potentially severe consequences for global food security.
-2. We introduce the resevol R package, which simulates individual-based models of pests with evolving genomes that produce complex, polygenic, and covarying traits affecting pest life history and pesticide resistance.
-3. Simulations are modelled on a spatially-explicit and highly customisable landscape in which crop and pesticide application and rotation can vary, making the package a highly flexible tool for both general and targetted models of pest management and resistance evolution.
-4. We present the key features of the resevol package and demonstrate its use for a simple example simulating pests with two covarying traits.
-5. The resevol R package is open source under GNU Public License. All source code and documentation are available on GitHub.
+The evolution of pesticide resistance is a widespread problem with potentially severe consequences for global food security.
+We introduce the resevol R package, which simulates individual-based models of pests with evolving genomes that produce complex, polygenic, and covarying traits affecting pest life history and pesticide resistance.
+Simulations are modelled on a spatially-explicit and highly customisable landscape in which crop and pesticide application and rotation can vary, making the package a highly flexible tool for both general and targetted models of pest management and resistance evolution.
+We present the key features of the resevol package and demonstrate its use for a simple example simulating pests with two covarying traits.
+The resevol R package is open source under GNU Public License. All source code and documentation are available on GitHub.
 
 **Key words:** *pest management*, *food security*, *ecological modelling*, *pesticide*, *resistance evolution*
 
@@ -58,11 +58,11 @@ The resevol package applies individual-based modelling and a quantitative geneti
 Multiple traits determine the overall fitness of any pest genotype. 
 For example, while alleles conferring resistance to a particular pesticide enhance fitness in the presence of that pesticide, they could also impose reproductive fitness costs.
 Such trade-offs can be quantified by the genetic covariance between traits.
-A focal goal of the software is to model traits with a pre-specified, but potentially evolving, genetic covariance structure. 
+A focal goal of the resevol package is to model traits with a pre-specified, but potentially evolving, genetic covariance structure. 
 To achieve this goal, each individual has a genome with $L$ loci that underlie a set of $T$ potentially evolving traits. 
 Pleiotropic loci can vary in their effects on the direction and magnitude of polygenic traits, causing population-wide trait covariance to arise mechanistically from the underlying genetic architecture of individuals. 
 To achieve this, two separate steps are necessary.
-First, a genetic algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
+First, an evolutionary algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
 Values used to map loci to traits are incorporated into individual genomes.
 Second, a population of asexual or sexual individuals is initialised and simulated on a spatially explicit landscape separated into distinct units (e.g., farms).
 Land units can apply one of up to 10 pesticides, and one of up to 10 landscape types at a given time (for simplicity, here we interpret landscape types to be crop types).
@@ -180,7 +180,7 @@ An evolutionary algorithm is used to find appropriate values that produce covary
 Evolutionary algorithms are heuristic tools that can simulate adaptive evolution to find solutions for a broad range of problems [@Hamblin2013; @Duthie2018]. 
 In the resevol package, the `mine_gmatrix` function runs an evolutionary algorithm and requires the argument `gmatrix`, which specifies the desired trait covariance matrix.
 The function initialises a population of `npsize` separate, and potentially unique, networks (i.e., `npsize` copies of a network like the one shown in Figure 1), and this population evolves until some maximum iteration (`max_gen`) or minimum expected network stress (`term_cri`) is met. 
-In a single iteration of the algorithm, values mutate and crossover occurs between networks (i.e., some fo the `npsize` networks swap values with some probability).
+In a single iteration of the algorithm, values mutate and crossover occurs between networks (i.e., some of the `npsize` networks swap values with some probability).
 Next, trait covariances produced for each network are estimated by initalising `indivs` individuals with loci sampled from a standard normal distribution.
 Network stress is calculated as the logged mean squared deviation between estimated covariances and those in `gmatrix`. 
 Tournament selection [@Hamblin2013] is then used to determine the networks for the next iteration of the algorithm.
@@ -239,7 +239,8 @@ Each farm can hold one pesticide and one crop type in any time step.
 The `crop_init` and `pesticide_init` arguments initialise one of `crop_number` crops and one of `pesticide_number` pesticides for each farm, respectively (maximum of 10 each).
 Initialisation can be random for each farm with equal probability, or it can be set using a vector of length `farms` in which vector elements define the initialised crop or pesticide number.
 After initialisation, crops and pesticides rotate once every `crop_rotation_time` and `pesticide_rotation_time` time steps, respectively.
-Each of these rotation time arguments can take either an integer value from 1-3, or a matrix.
+The arguments `crop_rotation_type` and `pesticide_rotation_type` specify how crops and pesticides are rotated, respectively.
+Each of these rotation type arguments can take either an integer value from 1-3, or a matrix.
 Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
 Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
 Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms.
@@ -257,7 +258,7 @@ Individual pests can be modelled to have several reproductive systems and life h
 Pest reproductive system can be specified using the `repro` argument, which accepts `"asexual"` (haploid), `"sexual"` (monoecious), and `"biparental"` (dioecious).
 For `"sexual"` pests, the `selfing` argument specifies if self-fertilisation is (`TRUE`) or is not (`FALSE`) allowed.
 At the start of a simulation, pests are initialised in a random location.
-Initialised pests are age of zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
+Initialised pests are of age zero if `rand_age = FALSE` or a random age from zero to `max_age` if `rand_age = TRUE`.
 Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration (Figure 2).
 Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
 Pests feed and consume pesticide from ages `min_age_feed` to `max_age_feed`, move from ages  `min_age_move` to `max_age_move`, and reproduce from ages `min_age_reproduce` to `max_age_reproduce` (all inclusive).
