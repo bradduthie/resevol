@@ -29,7 +29,7 @@ explanation for what this function is doing."><!-- mathjax --><script src="https
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
       </span>
     </div>
 
@@ -96,23 +96,23 @@ explanation for what this function is doing.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">mine_gmatrix</span><span class="op">(</span>
-  loci <span class="op">=</span> <span class="fl">18</span>,
-  layers <span class="op">=</span> <span class="fl">6</span>,
-  indivs <span class="op">=</span> <span class="fl">1000</span>,
-  npsize <span class="op">=</span> <span class="fl">2000</span>,
-  mu_pr <span class="op">=</span> <span class="fl">0.05</span>,
-  mu_sd <span class="op">=</span> <span class="fl">0.01</span>,
-  max_gen <span class="op">=</span> <span class="fl">1000</span>,
-  pr_cross <span class="op">=</span> <span class="fl">0.05</span>,
-  sampleK <span class="op">=</span> <span class="fl">40</span>,
-  chooseK <span class="op">=</span> <span class="fl">4</span>,
-  term_cri <span class="op">=</span> <span class="op">-</span><span class="fl">5.3</span>,
-  sd_ini <span class="op">=</span> <span class="fl">0.1</span>,
-  use_cor <span class="op">=</span> <span class="cn">FALSE</span>,
-  prnt_out <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">gmatrix</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mine_gmatrix</span><span class="op">(</span></span>
+<span>  loci <span class="op">=</span> <span class="fl">18</span>,</span>
+<span>  layers <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  indivs <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  npsize <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>  mu_pr <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  mu_sd <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  max_gen <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  pr_cross <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  sampleK <span class="op">=</span> <span class="fl">40</span>,</span>
+<span>  chooseK <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  term_cri <span class="op">=</span> <span class="op">-</span><span class="fl">5.3</span>,</span>
+<span>  sd_ini <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  use_cor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  prnt_out <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">gmatrix</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -121,69 +121,100 @@ explanation for what this function is doing.</p>
 <dd><p>The number of loci for an individual. Simulations can allow for 
 both haploid and diploid individuals. Allele values at each loci affect trait
 values through a network of intermediary nodes.</p></dd>
+
+
 <dt>layers</dt>
 <dd><p>The number of hidden layers in the network linking loci to 
 traits.</p></dd>
+
+
 <dt>indivs</dt>
 <dd><p>The number of individuals initialised in each generation of the 
 evolutionary algorithm to test among-individual trait correlations. 
 Individuals are initialised with allele values drawn from a standard normal 
 distribution.</p></dd>
+
+
 <dt>npsize</dt>
 <dd><p>The size of the population of networks in each generation of the
 evolutionary algorithm. Each network is a discrete individual in the 
 population.</p></dd>
+
+
 <dt>mu_pr</dt>
 <dd><p>The probability that a value in the network will mutate in a 
 generation. Mutation events change the existing value by adding a new value 
 drawn from a normal distribution with a mean of 0 and standard deviation of
 mu_sd.</p></dd>
+
+
 <dt>mu_sd</dt>
 <dd><p>The standard deviation of the random normal value mean centered 
 at 0 that is added to the existing value of the network when a mutation event
 occurs.</p></dd>
+
+
 <dt>max_gen</dt>
 <dd><p>The maximum number of generations that the evolutionary 
 algorithm is allowed to run before terminating (regardless of how well the 
 evolved covariance structure matches the pre-specified gmatrix).</p></dd>
+
+
 <dt>pr_cross</dt>
 <dd><p>The probability that a focal network in the population will 
 initiate a crossover of a subset of its values with a randomly selected 
 second network (note that any given network might therefore be included in 
 more than one crossover event in a generation). The size of the subset is 
 determined randomly.</p></dd>
+
+
 <dt>sampleK</dt>
 <dd><p>During a round of selection, the number of random networks 
 chosen to compete in a tournament. A single generation will include as many 
 tournaments as necessary to create a new network population of size npsize.</p></dd>
+
+
 <dt>chooseK</dt>
 <dd><p>During a round of selection tournament, the number of networks 
 within the sampleK random subset of the tournament that have the highest 
 fitness will be selected to populate the next generation of networks</p></dd>
+
+
 <dt>term_cri</dt>
 <dd><p>The criteria for terminating the evolutionary algorithm. The 
 algorithm will terminate if a network is found in which the mean squared 
 deviation of the covariance matrix elements from gmatrix is less than 
 exp(term_crit).</p></dd>
+
+
 <dt>sd_ini</dt>
 <dd><p>The standard deviation of initialised network values at the 
 start of the evolutionary algorithm. All network values are initialised by 
 randomly sampling from a normal distribution with a mean of 0 and a 
 standard deviation of sd_ini</p></dd>
+
+
 <dt>use_cor</dt>
 <dd><p>Should the gmatrix be treated as a correlation matrix rather 
 than a covariance matrix when calculating fitness?</p></dd>
+
+
 <dt>prnt_out</dt>
 <dd><p>Should the function print out progress showing the stress for 
 each generation</p></dd>
+
+
 <dt>gmatrix</dt>
 <dd><p>The pre-specified trait covariance matrix. This will define
 what the covariance will be between each trait when allele values are drawn 
 from a standard normal distribution.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of eight elements that includes the following: (1) A vector of
+    
+
+<p>A list of eight elements that includes the following: (1) A vector of
 input parameters, (2) the pre-specified covariance matrix, (3) matrix defining
 the effects of loci values on the first layer of the network, (4) a three
 dimensional array link the first network layer to trait values, (5) a matrix
@@ -194,10 +225,10 @@ structure, (7) all network values to be inserted into individual genomes, and
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span>
-<span class="r-in"><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu">mine_gmatrix</span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">3</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span>
-<span class="r-in">                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">2</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span></span>
+<span class="r-in"><span><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu">mine_gmatrix</span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">3</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span></span>
+<span class="r-in"><span>                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">2</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -212,7 +243,7 @@ structure, (7) all network values to be inserted into individual genomes, and
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

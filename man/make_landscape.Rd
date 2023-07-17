@@ -49,3 +49,4 @@ adds sections of land that are not farms, but this is not recommended.
 \examples{
 land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
 }
+\keyword{internal}

@@ -26,7 +26,7 @@ genome loci). See vignettes for a more detailed explanation."><!-- mathjax --><s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
       </span>
     </div>
 
@@ -90,134 +90,207 @@ genome loci). See vignettes for a more detailed explanation.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">initialise_inds</span><span class="op">(</span>
-  <span class="va">mine_output</span>,
-  N <span class="op">=</span> <span class="fl">1000</span>,
-  xdim <span class="op">=</span> <span class="fl">100</span>,
-  ydim <span class="op">=</span> <span class="fl">100</span>,
-  repro <span class="op">=</span> <span class="st">"sexual"</span>,
-  neutral_loci <span class="op">=</span> <span class="fl">10</span>,
-  max_age <span class="op">=</span> <span class="fl">9</span>,
-  min_age_move <span class="op">=</span> <span class="fl">0</span>,
-  max_age_move <span class="op">=</span> <span class="fl">9</span>,
-  min_age_reproduce <span class="op">=</span> <span class="fl">0</span>,
-  max_age_reproduce <span class="op">=</span> <span class="fl">9</span>,
-  min_age_feed <span class="op">=</span> <span class="fl">0</span>,
-  max_age_feed <span class="op">=</span> <span class="fl">9</span>,
-  food_consume <span class="op">=</span> <span class="fl">0.25</span>,
-  pesticide_consume <span class="op">=</span> <span class="fl">0.1</span>,
-  rand_age <span class="op">=</span> <span class="cn">FALSE</span>,
-  move_distance <span class="op">=</span> <span class="fl">1</span>,
-  food_needed_surv <span class="op">=</span> <span class="fl">0.25</span>,
-  pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0.1</span>,
-  food_needed_repr <span class="op">=</span> <span class="fl">0</span>,
-  pesticide_tolerated_repr <span class="op">=</span> <span class="fl">0</span>,
-  reproduction_type <span class="op">=</span> <span class="st">"lambda"</span>,
-  mating_distance <span class="op">=</span> <span class="fl">1</span>,
-  lambda_value <span class="op">=</span> <span class="fl">1</span>,
-  movement_bouts <span class="op">=</span> <span class="fl">1</span>,
-  selfing <span class="op">=</span> <span class="cn">TRUE</span>,
-  feed_while_moving <span class="op">=</span> <span class="cn">FALSE</span>,
-  pesticide_while_moving <span class="op">=</span> <span class="cn">FALSE</span>,
-  mortality_type <span class="op">=</span> <span class="fl">0</span>,
-  age_food_threshold <span class="op">=</span> <span class="cn">NA</span>,
-  age_pesticide_threshold <span class="op">=</span> <span class="cn">NA</span>,
-  metabolism <span class="op">=</span> <span class="fl">0</span>,
-  baseline_metabolism <span class="op">=</span> <span class="fl">0</span>,
-  min_age_metabolism <span class="op">=</span> <span class="fl">1</span>,
-  max_age_metabolism <span class="op">=</span> <span class="fl">9</span>,
-  trait_means <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">initialise_inds</span><span class="op">(</span></span>
+<span>  <span class="va">mine_output</span>,</span>
+<span>  N <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  xdim <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  ydim <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  repro <span class="op">=</span> <span class="st">"sexual"</span>,</span>
+<span>  neutral_loci <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  max_age <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  min_age_move <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  max_age_move <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  min_age_reproduce <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  max_age_reproduce <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  min_age_feed <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  max_age_feed <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  food_consume <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  pesticide_consume <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  rand_age <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  move_distance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  food_needed_surv <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  food_needed_repr <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pesticide_tolerated_repr <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  reproduction_type <span class="op">=</span> <span class="st">"lambda"</span>,</span>
+<span>  mating_distance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  lambda_value <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  movement_bouts <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  selfing <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  feed_while_moving <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pesticide_while_moving <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mortality_type <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  age_food_threshold <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  age_pesticide_threshold <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  metabolism <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  baseline_metabolism <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  min_age_metabolism <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  max_age_metabolism <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  trait_means <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mine_output</dt>
 <dd><p>The output from mine_gmatrix</p></dd>
+
+
 <dt>N</dt>
 <dd><p>Number of individuals to be initialised</p></dd>
+
+
 <dt>xdim</dt>
 <dd><p>Horizontal dimensions of the landscape</p></dd>
+
+
 <dt>ydim</dt>
 <dd><p>Vertical dimensions of the landscape</p></dd>
+
+
 <dt>repro</dt>
 <dd><p>Type of reproduction allowed: "asexual", "sexual", and
 "biparental". Note that if repro != "asexual", this causes a diploid genome.</p></dd>
+
+
 <dt>neutral_loci</dt>
 <dd><p>The number of neutral loci individuals have (must be &gt; 0)</p></dd>
+
+
 <dt>max_age</dt>
 <dd><p>The maximum age of an individual</p></dd>
+
+
 <dt>min_age_move</dt>
 <dd><p>The minimum age at which an individual can move</p></dd>
+
+
 <dt>max_age_move</dt>
 <dd><p>The maximum age at which an individual can move</p></dd>
+
+
 <dt>min_age_reproduce</dt>
 <dd><p>The minimum age which an individual can reproduce</p></dd>
+
+
 <dt>max_age_reproduce</dt>
 <dd><p>The maximum age which an individual can reproduce</p></dd>
+
+
 <dt>min_age_feed</dt>
 <dd><p>The minimum age at which an individual feeds</p></dd>
+
+
 <dt>max_age_feed</dt>
 <dd><p>The maximum age at which an individual feeds</p></dd>
+
+
 <dt>food_consume</dt>
 <dd><p>The amount of food consumed during feeding</p></dd>
+
+
 <dt>pesticide_consume</dt>
 <dd><p>Amount of pesticide consumed while on a cell</p></dd>
+
+
 <dt>rand_age</dt>
 <dd><p>Initialise individuals with a random age (TRUE/FALSE)</p></dd>
+
+
 <dt>move_distance</dt>
 <dd><p>Maximum cells moved in one bout of movement</p></dd>
+
+
 <dt>food_needed_surv</dt>
 <dd><p>Food needed to survive (if over min_age_feed)</p></dd>
+
+
 <dt>pesticide_tolerated_surv</dt>
 <dd><p>Pesticide tolerated by individual</p></dd>
+
+
 <dt>food_needed_repr</dt>
 <dd><p>Food needed to reproduce 1 offspring</p></dd>
+
+
 <dt>pesticide_tolerated_repr</dt>
 <dd><p>Pesticide tolerated to allow reproduction</p></dd>
+
+
 <dt>reproduction_type</dt>
 <dd><p>Poisson reproduction ("lambda") vs "food_based"</p></dd>
+
+
 <dt>mating_distance</dt>
 <dd><p>Distance in cells within which mate is available</p></dd>
+
+
 <dt>lambda_value</dt>
 <dd><p>individual value for poisson reproduction</p></dd>
+
+
 <dt>movement_bouts</dt>
 <dd><p>Number of bouts of movement per time step</p></dd>
+
+
 <dt>selfing</dt>
 <dd><p>If sexual reproduction, is selfing allowed? (TRUE/FALSE)</p></dd>
+
+
 <dt>feed_while_moving</dt>
 <dd><p>Do individuals feed after each movement bout?</p></dd>
+
+
 <dt>pesticide_while_moving</dt>
 <dd><p>Individuals consume pesticide after move bout?</p></dd>
+
+
 <dt>mortality_type</dt>
 <dd><p>Type of mortality (currently only one option)</p></dd>
+
+
 <dt>age_food_threshold</dt>
 <dd><p>Age at which food threshold is enacted</p></dd>
+
+
 <dt>age_pesticide_threshold</dt>
 <dd><p>Age at which pesticide threshold is enacted</p></dd>
+
+
 <dt>metabolism</dt>
 <dd><p>The amount of consumed food lost each time step</p></dd>
+
+
 <dt>baseline_metabolism</dt>
 <dd><p>A fixed baseline rate added to 'metabolism'+</p></dd>
+
+
 <dt>min_age_metabolism</dt>
 <dd><p>The minimum age affected by metabolism</p></dd>
+
+
 <dt>max_age_metabolism</dt>
 <dd><p>The maximum age affected by metabolism</p></dd>
+
+
 <dt>trait_means</dt>
 <dd><p>The means of the custom pest traits</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A two-dimensional array of individuals for simulation</p>
+    
+
+<p>A two-dimensional array of individuals for simulation</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span>
-<span class="r-in"><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu"><a href="mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">2</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span>
-<span class="r-in">                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">4</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">inds</span>      <span class="op">&lt;-</span> <span class="fu">initialise_inds</span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg</span>, N <span class="op">=</span> <span class="fl">40</span>, repro <span class="op">=</span> <span class="st">"asexual"</span><span class="op">)</span>;</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span></span>
+<span class="r-in"><span><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu"><a href="mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">2</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span></span>
+<span class="r-in"><span>                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">4</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">inds</span>      <span class="op">&lt;-</span> <span class="fu">initialise_inds</span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg</span>, N <span class="op">=</span> <span class="fl">40</span>, repro <span class="op">=</span> <span class="st">"asexual"</span><span class="op">)</span>;</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -232,7 +305,7 @@ genome loci). See vignettes for a more detailed explanation.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

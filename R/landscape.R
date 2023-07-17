@@ -25,6 +25,7 @@
 #'land <- make_landscape(rows = 10, cols = 10, depth = 2, farms = 4)
 #'@useDynLib resevol
 #'@importFrom stats rnorm rpois runif
+#'@keywords internal
 #'@export
 make_landscape <- function(terrain = NA, rows = NA, cols = NA, depth = 21, 
                            farms = 4, public_land = 0, farm_var = 0){

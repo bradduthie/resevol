@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
       </span>
     </div>
 
@@ -89,10 +89,18 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>resevol: an R package for spatially explicit
 models of pesticide resistance given evolving pest genomes</h1>
-                        <h4 data-toc-skip class="author">A Bradley
-Duthie</h4>
+                        <h4 data-toc-skip class="author"><div class="line-block">A. Bradley Duthie<span class="math inline">\(^{1,4}\)</span>, Rosie Mangan<span class="math inline">\(^{1}\)</span>, C. Rose McKeon<span class="math inline">\(^{1}\)</span>,<br>
+Matthew C. Tinsley<span class="math inline">\(^{1}\)</span>, and Luc F.
+Bussière<span class="math inline">\(^{2,3}\)</span>
+</div></h4>
             
-            <h4 data-toc-skip class="date">2022-08-06</h4>
+            <h4 data-toc-skip class="date">[1] Biological and
+Environmental Sciences, University of Stirling, Stirling, UK
+[2]Biological and Environmental Sciences, University of Gothenburg,
+Gothenburg, Sweden [3] Gothenburgh Global Biodiversity Centre,
+Gothenburg, Sweden [4] <a href="mailto:alexander.duthie@stir.ac.uk" class="email">alexander.duthie@stir.ac.uk</a>, Biological and
+Environmental Sciences 3A149 University of Stirling Stirling, FK9 4LA,
+UK</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/resevol.Rmd" class="external-link"><code>vignettes/resevol.Rmd</code></a></small>
       <div class="hidden name"><code>resevol.Rmd</code></div>
@@ -105,24 +113,19 @@ Duthie</h4>
 <div class="section level2">
 <h2 class="unnumbered" id="abstract">Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li>The evolution of pesticide resistance is a widespread problem with
-potentially severe consequences for global food security.</li>
-<li>We introduce the resevol R package, which simulates individual-based
-models of pests with evolving genomes that produce complex, polygenic,
-and covarying traits affecting pest life history and pesticide
-resistance.</li>
-<li>Simulations are modelled on a spatially-explicit and highly
-customisable landscape in which crop and pesticide application and
-rotation can vary, making the package a highly flexible tool for both
-general and targetted models of pest management and resistance
-evolution.</li>
-<li>We present the key features of the resevol package and demonstrate
-its use for a simple example simulating pests with two covarying
-traits.</li>
-<li>The resevol R package is open source under GNU Public License. All
-source code and documentation are available on GitHub.</li>
-</ol>
+<p>The evolution of pesticide resistance is a widespread problem with
+potentially severe consequences for global food security. We introduce
+the resevol R package, which simulates individual-based models of pests
+with evolving genomes that produce complex, polygenic, and covarying
+traits affecting pest life history and pesticide resistance. Simulations
+are modelled on a spatially-explicit and highly customisable landscape
+in which crop and pesticide application and rotation can vary, making
+the package a highly flexible tool for both general and targetted models
+of pest management and resistance evolution. We present the key features
+of the resevol package and demonstrate its use for a simple example
+simulating pests with two covarying traits. The resevol R package is
+open source under GNU Public License. All source code and documentation
+are available on GitHub.</p>
 <p><strong>Key words:</strong> <em>pest management</em>, <em>food
 security</em>, <em>ecological modelling</em>, <em>pesticide</em>,
 <em>resistance evolution</em></p>
@@ -150,38 +153,48 @@ cases, resistance alleles have binary effects on phenotype, enabling
 resistant phenotypes to arise from genetic changes at single or a small
 number of loci <span class="citation">(<a href="#ref-Raymond2001" role="doc-biblioref">Raymond et al. 2001</a>; <a href="#ref-Ffrench-Constant2004" role="doc-biblioref">Richard H.
 Ffrench-Constant, Daborn, and Le Goff 2004</a>; <a href="#ref-Ffrench-Constant2013" role="doc-biblioref">Richard H.
-Ffrench-Constant 2013</a>)</span>. Nevertheless, resistance attributable
-to polygenic effects is also well-established <span class="citation">(<a href="#ref-Via1986" role="doc-biblioref">Via 1986</a>; <a href="#ref-Firko1990" role="doc-biblioref">Firko and Hayes 1990</a>; <a href="#ref-Busi2013" role="doc-biblioref">Busi, Neve, and Powles
-2013</a>; <a href="#ref-Haridas2018" role="doc-biblioref">Haridas and
-Tenhumberg 2018</a>; <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>)</span>. And
+Ffrench-Constant 2013</a>; <a href="#ref-Mangan2023" role="doc-biblioref">Mangan et al. 2023</a>)</span>. Nevertheless,
+resistance attributable to polygenic effects is also well-established
+<span class="citation">(<a href="#ref-Via1986" role="doc-biblioref">Via
+1986</a>; <a href="#ref-Firko1990" role="doc-biblioref">Firko and Hayes
+1990</a>; <a href="#ref-Busi2013" role="doc-biblioref">Busi, Neve, and
+Powles 2013</a>; <a href="#ref-Haridas2018" role="doc-biblioref">Haridas
+and Tenhumberg 2018</a>; <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>)</span>. And
 the relevance of polygenic resistance is likely to further increase
 given a rising interest in biological controls for sustainable crop
-protection <span class="citation">(e.g., <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>; <a href="#ref-Elnahal2022" role="doc-biblioref">Elnahal et al.
-2022</a>)</span>. Developing strategies to maximise the efficacy of
+protection <span class="citation">(e.g., <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>; <a href="#ref-Elnahal2022" role="doc-biblioref">Elnahal et al. 2022</a>; <a href="#ref-Mangan2023" role="doc-biblioref">Mangan et al.
+2023</a>)</span>. Developing strategies to maximise the efficacy of
 these tools is critical, and such strategies should be well-informed by
 predictions made from detailed, quantitative genetic models. Here we
-introduce the resevol R package as a tool for building such models and
-simulating pest management.</p>
+introduce the resevol R package as a tool for building individual-based
+models and simulating pest management <span class="citation">(<a href="#ref-Daly2022" role="doc-biblioref">Daly et al.
+2022</a>)</span>.</p>
 <p>The resevol package applies individual-based modelling and a
 quantitative genetics approach to simulate the evolution of a pest
-population on a changing landscape. A focal goal of the software is to
-model traits with a pre-specified, but potentially evolving, covariance
+population on a changing landscape. Multiple traits determine the
+overall fitness of any pest genotype. For example, while alleles
+conferring resistance to a particular pesticide enhance fitness in the
+presence of that pesticide, they could also impose reproductive fitness
+costs. Such trade-offs can be quantified by the genetic covariance
+between traits. A focal goal of the resevol package is to model traits
+with a pre-specified, but potentially evolving, genetic covariance
 structure. To achieve this goal, each individual has a genome with <span class="math inline">\(L\)</span> loci that underlie a set of <span class="math inline">\(T\)</span> potentially evolving traits.
 Pleiotropic loci can vary in their effects on the direction and
 magnitude of polygenic traits, causing population-wide trait covariance
 to arise mechanistically from the underlying genetic architecture of
-individuals. To achieve this, two separate steps are necessary. First, a
-genetic algorithm is used to find a network of internal nodes that map
-standard random normal loci values to covarying traits. Values used to
-map loci to traits are incorporated into individual genomes. Second, a
-population of asexual or sexual individuals is initialised and simulated
-on a spatially explicit landscape separated into distinct units (e.g.,
-farms). Land units can apply one of up to 10 pesticides, and one of up
-to 10 crops at a given time. Pesticides and crops rotate independently
-within farms over time in a pre-specified way. The resevol package can
-thereby model complex and evolving agricultural pest traits over
-realistic landscapes that undergo different pesticide use and crop
-regimes.</p>
+individuals. To achieve this, two separate steps are necessary. First,
+an evolutionary algorithm is used to find a network of internal nodes
+that map standard random normal loci values to covarying traits. Values
+used to map loci to traits are incorporated into individual genomes.
+Second, a population of asexual or sexual individuals is initialised and
+simulated on a spatially explicit landscape separated into distinct
+units (e.g., farms). Land units can apply one of up to 10 pesticides,
+and one of up to 10 landscape types at a given time (for simplicity,
+here we interpret landscape types to be crop types). Pesticides and
+crops rotate independently within farms over time in a pre-specified
+way. The resevol package can thereby model complex and evolving
+agricultural pest traits over realistic landscapes that undergo
+different pesticide use and crop regimes.</p>
 </div>
 <div class="section level2">
 <h2 id="mine_gmatrix">Covarying pest quantitative traits<a class="anchor" aria-label="anchor" href="#mine_gmatrix"></a>
@@ -262,35 +275,37 @@ adaptive evolution to find solutions for a broad range of problems <span class="
 package, the <code>mine_gmatrix</code> function runs an evolutionary
 algorithm and requires the argument <code>gmatrix</code>, which
 specifies the desired trait covariance matrix. The function initialises
-a population of <code>npsize</code> networks (Figure 1), and this
-population evolves until some maximum generation (<code>max_gen</code>)
-or minimum expected network stress (<code>term_cri</code>) is met. In a
-single generation of the algorithm, values crossover between networks
-and mutate. Next, trait covariances produced for each network are
-estimated by initalising <code>indivs</code> individuals with loci
-sampled from a standard normal distribution. Network stress is
-calculated as the logged mean squared deviation between estimated
-covariances and those in <code>gmatrix</code>. Tournament selection
-<span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span> is then used to determine
-the networks for the next generation of the algorithm. Networks with the
-lowest estimated stress have the highest fitness, so these networks are
-disproportionately represented in the next generation. Throughout the
-evolutionary algorithm, the lowest stress network is saved and returned
-upon network termination. The robustness of this network’s stress to
-sets of individuals with different loci values can be tested using the
-<code>stress_test</code> function.</p>
+a population of <code>npsize</code> separate, and potentially unique,
+networks (i.e., <code>npsize</code> copies of a network like the one
+shown in Figure 1), and this population evolves until some maximum
+iteration (<code>max_gen</code>) or minimum expected network stress
+(<code>term_cri</code>) is met. In a single iteration of the algorithm,
+values mutate and crossover occurs between networks (i.e., some of the
+<code>npsize</code> networks swap values with some probability). Next,
+trait covariances produced for each network are estimated by initalising
+<code>indivs</code> individuals with loci sampled from a standard normal
+distribution. Network stress is calculated as the logged mean squared
+deviation between estimated covariances and those in
+<code>gmatrix</code>. Tournament selection <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span> is
+then used to determine the networks for the next iteration of the
+algorithm. Networks with the lowest estimated stress have the highest
+fitness, so these networks are disproportionately represented in the
+next iteration. Throughout the evolutionary algorithm, the lowest stress
+network is saved and returned upon network termination. The robustness
+of this network’s stress to sets of individuals with different loci
+values can be tested using the <code>stress_test</code> function.</p>
 <p>An example run of <code>mine_gmatrix</code> with the same number of
 loci and internal nodes as in Figure 1 is shown below for traits that
 have an intended covariance of -0.4:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">trait_covs</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>;
-<span class="va">new_network</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>loci <span class="op">=</span> <span class="fl">3</span>, layers <span class="op">=</span> <span class="fl">2</span>, gmatrix <span class="op">=</span> <span class="va">trait_covs</span>, 
-                            max_gen <span class="op">=</span> <span class="fl">1000</span>, term_cri <span class="op">=</span> <span class="op">-</span><span class="fl">6.0</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</code></pre></div>
+<code class="sourceCode R"><span><span class="va">trait_covs</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>;</span>
+<span><span class="va">new_network</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>loci <span class="op">=</span> <span class="fl">3</span>, layers <span class="op">=</span> <span class="fl">2</span>, gmatrix <span class="op">=</span> <span class="va">trait_covs</span>, </span>
+<span>                            max_gen <span class="op">=</span> <span class="fl">1000</span>, term_cri <span class="op">=</span> <span class="op">-</span><span class="fl">6.0</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span></code></pre></div>
 <p>The code above found a genome that produced the following expected
 trait covariances:</p>
-<pre><code><span class="co">##            [,1]       [,2]</span>
-<span class="co">## [1,]  1.0008181 -0.3925799</span>
-<span class="co">## [2,] -0.3925799  1.0271340</span></code></pre>
+<pre><code><span><span class="co">##            [,1]       [,2]</span></span>
+<span><span class="co">## [1,]  1.0008181 -0.3925799</span></span>
+<span><span class="co">## [2,] -0.3925799  1.0271340</span></span></code></pre>
 <p>The mean deviation between elements of the above matrix and the
 identity matrix provided by <code>trait_covs</code> is 2.1176024^{-4}.
 Lower values of <code>term_cri</code> and higher values of
@@ -316,7 +331,7 @@ explain the landscape, pest ecology, and evolving pest traits.</p>
 <p>Landscapes are spatially explicit and initialised in one of two ways.
 First, a landscape can be built from the arguments <code>xdim</code>,
 <code>ydim</code>, and <code>farms</code>. These arguments specify the
-dimensions of the landscape and the number of farms on it. Contiguous
+cell dimensions and number of farms on the landscape. Contiguous
 rectangular farms of roughly equal size are generated on the landscape
 using a splitline algorithm. Second, a custom landscape can be input
 using the <code>terrain</code> argument, which takes a matrix with
@@ -324,15 +339,17 @@ elements that include integers 1 to <code>farms</code>. Each value
 defines a unique farm, but values do not need to be contiguous. These
 ‘farms’ could even model non-farmland (e.g., water, roads), if
 pesticides and crops on them are invisible to pests (see Supporting
-Information 2). This <code>terrain</code> customisation therefore allows
-for a high degree of landscape detail, and offers the potential for
-modelling real-world landscapes from raster images. Edge effects are set
-using the <code>land_edge</code> argument. Edge options include
-<code>"leaky"</code> (pests disappear from the landscape),
-<code>"reflect"</code> (pests bounce off of the edge),
-<code>"sticky"</code> (pests stick to the edge), or <code>"torus"</code>
-(pests that move off of one edge return on the opposite side of the
-landscape).</p>
+Information 2), or they could more broadly be interpreted as
+heterogenous landscape properties across an arbitrary scale <span class="citation">(e.g., <a href="#ref-Newman2023" role="doc-biblioref">Newman et al. 2023</a>)</span>. This
+<code>terrain</code> customisation therefore allows for a high degree of
+landscape detail, and offers the potential for modelling real-world
+landscapes from raster images <span class="citation">(e.g., <a href="#ref-Millington2021" role="doc-biblioref">Millington et al.
+2021</a>)</span>. Edge effects are set using the <code>land_edge</code>
+argument. Edge options include <code>"leaky"</code> (pests disappear
+from the landscape), <code>"reflect"</code> (pests bounce off of the
+edge), <code>"sticky"</code> (pests stick to the edge), or
+<code>"torus"</code> (pests that move off of one edge return on the
+opposite side of the landscape).</p>
 <p>Each farm can hold one pesticide and one crop type in any time step.
 The <code>crop_init</code> and <code>pesticide_init</code> arguments
 initialise one of <code>crop_number</code> crops and one of
@@ -341,17 +358,29 @@ initialise one of <code>crop_number</code> crops and one of
 equal probability, or it can be set using a vector of length
 <code>farms</code> in which vector elements define the initialised crop
 or pesticide number. After initialisation, crops and pesticides rotate
-once ever <code>crop_rotation_time</code> and
-<code>pesticide_rotation_time</code> time steps, respectively. Each of
-these rotation time arguments can take either an integer value from 1-3,
-or a matrix. Integer values specify (1) no rotation, (2) random
-transition from one type to another, or (3) cycling through each
-available crop or pesticide in numeric order. Square matrices can be
-used to define the probability that a given crop or pesticide in row
-<span class="math inline">\(i\)</span> transitions to that in column
-<span class="math inline">\(j\)</span>. Hence, any possible Markov chain
-can be used to model transition between crop or pesticide types on
-farms.</p>
+once every <code>crop_rotation_time</code> and
+<code>pesticide_rotation_time</code> time steps, respectively. The
+arguments <code>crop_rotation_type</code> and
+<code>pesticide_rotation_type</code> specify how crops and pesticides
+are rotated, respectively. Each of these rotation type arguments can
+take either an integer value from 1-3, or a matrix. Integer values
+specify (1) no rotation, (2) random transition from one type to another,
+or (3) cycling through each available crop or pesticide in numeric
+order. Square matrices can be used to define the probability that a
+given crop or pesticide in row <span class="math inline">\(i\)</span>
+transitions to that in column <span class="math inline">\(j\)</span>.
+Hence, any possible Markov chain can be used to model transition between
+crop or pesticide types on farms, potentially integrating real crop use
+or pesticide use patterns <span class="citation">(<a href="#ref-Zhang2020" role="doc-biblioref">Zhang et al.
+2020</a>)</span>. Upon rotation, crop and pesticide values are reset on
+each farm.</p>
+<p>Values for <code>crop_per_cell</code> and
+<code>pesticide_per_cell</code> determine the quantity of crops and
+pesticides initialised per cell upon crop or pesticide rotation,
+respectively. Between crop rotations, crop values can increase each time
+step by a proportion or increment <code>crop_growth</code>, which
+depends on <code>crop_growth_type</code>. These arguments can be used to
+model crop growth over a season.</p>
 </div>
 <div class="section level3">
 <h3 id="ecology">Pest ecology<a class="anchor" aria-label="anchor" href="#ecology"></a>
@@ -364,7 +393,7 @@ and life histories. Pest reproductive system can be specified using the
 the <code>selfing</code> argument specifies if self-fertilisation is
 (<code>TRUE</code>) or is not (<code>FALSE</code>) allowed. At the start
 of a simulation, pests are initialised in a random location. Initialised
-pests are age of zero if <code>rand_age = FALSE</code> or a random age
+pests are of age zero if <code>rand_age = FALSE</code> or a random age
 from zero to <code>max_age</code> if <code>rand_age = TRUE</code>.
 Following initialisation, a single time step proceeds with landscape
 change (see above), pest aging and metabolism, feeding, pesticide
@@ -393,7 +422,7 @@ collected within a time step are printed to a CSV file.</em>
 </p>
 </div>
 <p>In each time step, pests feed in a random order, consuming the crop
-on their landscape cell. Pests consume an amount of the crop as
+on their landscape cell. Each pest consumes an amount of crop as
 specified by the <code>food_consume</code> argument, which takes a
 vector with as many elements as their are crops (i.e., if
 <code>crop_number = 2</code>, then <code>food_consume</code> has two
@@ -404,11 +433,14 @@ amount is removed from the landscape cell. If crop amount is less than
 pest consumption ability, then pests consume whatever crop is left and
 crop amount is reduced to zero. Pesticide consumption works identically
 to crop consumption, except that the amount of pesticide on a landscape
-cell is not decreased. Pests simply consume an amount of pesticide as
-specified by the <code>pesticide_consume</code> argument, which also
-takes a vector with as many elements as their are pesticides. Hence,
-each pest can potentially feed and be affected by the pesticide of their
-focal landscape cell.</p>
+cell is not decreased. Hence, each pest can potentially feed and be
+affected by the pesticide of their focal landscape cell. Pests simply
+consume an amount of pesticide as specified by the
+<code>pesticide_consume</code> argument, which also takes a vector with
+as many elements as their are pesticides. Pesticide consumption affects
+pest survival and reproduction using
+<code>pesticide_tolerated_surv</code> and
+<code>pesticide_tolerated_repr</code> arguments.</p>
 <p>After interacting with their landscape cell, pests can move. Each
 pest visits a number of cells during movement, as is specified by the
 parameter <code>movement_bouts</code>. Individual movement bouts occur
@@ -467,16 +499,17 @@ their parent, while sexually reproducing pests receive half of their
 alleles from each parent. Each diploid parent contributes one half of
 their genome, effectively modelling a genome with a single chromosome.
 Crossover occurs at each position of the genome with a probability of
-<code>crossover_pr</code>, so complete recombination is also possible if
-<code>crossover_pr = 0.5</code>. For both haploids and diploids, each
-genome value then mutates independently with a probability of
-<code>mutation_pr</code>, which can be set to any real number from 0-1.
-If a genome value mutates, then a new value is randomly sampled from a
-standard normal distribution. If <code>mutation_type = 0</code>, then
-this new value replaces the old value, and if
-<code>mutation_type = 1</code>, then the new value is added to the old
-value. After mutation, genome values are used to calculate trait
-values.</p>
+<code>crossover_pr</code>. When a crossover event occurs, alleles are
+swapped between the two chromosomes, so complete recombination is also
+possible if <code>crossover_pr = 0.5</code>. For both haploids and
+diploids, each genome value then mutates independently with a
+probability of <code>mutation_pr</code>, which can be set to any real
+number from 0-1. If a genome value mutates, then a new value is randomly
+sampled from a standard normal distribution. If
+<code>mutation_type = 0</code>, then this new value replaces the old
+value, and if <code>mutation_type = 1</code>, then the new value is
+added to the old value. After mutation, genome values are used to
+calculate trait values.</p>
 <p>Evolution of the genetic architecture linking loci to traits can be
 constrained by disabling mutation in genome values linking loci,
 internal nodes, and traits (i.e., ‘network values’ represented by arrows
@@ -552,7 +585,7 @@ traits (Figure 1). We use the the genome generated in
 <code>new_network</code> from <a href="#mine_gmatrix">Section 2</a>, in
 which traits 1 and 2 have variances of 1.0008181 and 1.027134,
 respectively, with a covariance of -0.3925799.</p>
-<p>Traits 1 and 2 will define the rate at which pests consume two
+<p>Traits 1 and 2 will define the realised rate of uptake of the two
 separate pesticides, so we model a system in which there is a potential
 trade-off for pesticide susceptibility. We use a simple <span class="math inline">\(64 \times 64\)</span> cell landscape with nine
 farms. Each farm grows the same crop and uses one of two randomly
@@ -565,25 +598,26 @@ food-based, and pests need to consume one unit of crop by age two to
 survive and reproduce. Pests initialised at the start of the simulation
 are randomly assigned an age from 0-4 with equal probability. Pests have
 a maximum age of four, and they feed in ages 0-2, move up to two cells
-in ages 3-4, and reproduce in age four. Pests can consume pesticides in
-ages 0-2, and if they consume any pesticide, then they will die. In each
-time step, a mean of 10 immigrants arrive. We simulate 160 time steps
-(10 growing seasons) using the function below:</p>
+in ages 3-4, and reproduce in age four. Pests can uptake (i.e.,
+‘consume’) pesticides in ages 0-2, and if they consume any pesticide,
+then they will die. In each time step, a mean of 10 immigrants arrive.
+We simulate 160 time steps (10 growing seasons) using the function
+below:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">new_network</span>, repro <span class="op">=</span> <span class="st">"asexual"</span>, 
-                    pesticide_number <span class="op">=</span> <span class="fl">2</span>, pesticide_init <span class="op">=</span> <span class="st">"random"</span>, 
-                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span>, farms <span class="op">=</span> <span class="fl">9</span>,
-                    pesticide_rotation_time <span class="op">=</span> <span class="fl">16</span>, pesticide_rotation_type <span class="op">=</span> <span class="fl">3</span>,
-                    pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_per_cell <span class="op">=</span> <span class="fl">1</span>,
-                    crop_rotation_time <span class="op">=</span> <span class="fl">16</span>, crop_number <span class="op">=</span> <span class="fl">1</span>, crop_per_cell <span class="op">=</span> <span class="fl">4</span>, 
-                    food_consume <span class="op">=</span> <span class="fl">1</span>, reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>, 
-                    food_needed_surv <span class="op">=</span> <span class="fl">1</span>, food_needed_repr <span class="op">=</span> <span class="fl">1</span>, max_age <span class="op">=</span> <span class="fl">4</span>, 
-                    min_age_feed <span class="op">=</span> <span class="fl">0</span>, max_age_feed <span class="op">=</span> <span class="fl">2</span>, min_age_move <span class="op">=</span> <span class="fl">3</span>, 
-                    max_age_move <span class="op">=</span> <span class="fl">4</span>, min_age_reproduce <span class="op">=</span> <span class="fl">4</span>, print_gens <span class="op">=</span> <span class="cn">FALSE</span>,
-                    max_age_reproduce <span class="op">=</span> <span class="fl">4</span>, age_pesticide_threshold <span class="op">=</span> <span class="fl">2</span>, 
-                    rand_age <span class="op">=</span> <span class="cn">TRUE</span>, move_distance <span class="op">=</span> <span class="fl">2</span>, immigration_rate <span class="op">=</span> <span class="fl">10</span>, 
-                    time_steps <span class="op">=</span> <span class="fl">160</span>, print_last <span class="op">=</span> <span class="cn">TRUE</span>, xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>,
-                    trait_means <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>, land_edge <span class="op">=</span> <span class="st">"torus"</span><span class="op">)</span>;</code></pre></div>
+<code class="sourceCode R"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_farm_sim.html">run_farm_sim</a></span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">new_network</span>, repro <span class="op">=</span> <span class="st">"asexual"</span>, </span>
+<span>                    pesticide_number <span class="op">=</span> <span class="fl">2</span>, pesticide_init <span class="op">=</span> <span class="st">"random"</span>, </span>
+<span>                    pesticide_consume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span>, farms <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>                    pesticide_rotation_time <span class="op">=</span> <span class="fl">16</span>, pesticide_rotation_type <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>                    pesticide_tolerated_surv <span class="op">=</span> <span class="fl">0</span>, pesticide_per_cell <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                    crop_rotation_time <span class="op">=</span> <span class="fl">16</span>, crop_number <span class="op">=</span> <span class="fl">1</span>, crop_per_cell <span class="op">=</span> <span class="fl">4</span>, </span>
+<span>                    food_consume <span class="op">=</span> <span class="fl">1</span>, reproduction_type <span class="op">=</span> <span class="st">"food_based"</span>, </span>
+<span>                    food_needed_surv <span class="op">=</span> <span class="fl">1</span>, food_needed_repr <span class="op">=</span> <span class="fl">1</span>, max_age <span class="op">=</span> <span class="fl">4</span>, </span>
+<span>                    min_age_feed <span class="op">=</span> <span class="fl">0</span>, max_age_feed <span class="op">=</span> <span class="fl">2</span>, min_age_move <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>                    max_age_move <span class="op">=</span> <span class="fl">4</span>, min_age_reproduce <span class="op">=</span> <span class="fl">4</span>, print_gens <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                    max_age_reproduce <span class="op">=</span> <span class="fl">4</span>, age_pesticide_threshold <span class="op">=</span> <span class="fl">2</span>, </span>
+<span>                    rand_age <span class="op">=</span> <span class="cn">TRUE</span>, move_distance <span class="op">=</span> <span class="fl">2</span>, immigration_rate <span class="op">=</span> <span class="fl">10</span>, </span>
+<span>                    time_steps <span class="op">=</span> <span class="fl">160</span>, print_last <span class="op">=</span> <span class="cn">TRUE</span>, xdim <span class="op">=</span> <span class="fl">64</span>, ydim <span class="op">=</span> <span class="fl">64</span>,</span>
+<span>                    trait_means <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>, land_edge <span class="op">=</span> <span class="st">"torus"</span><span class="op">)</span>;</span></code></pre></div>
 <p>Any arguments to <code>run_farm_sim</code> not included above are set
 to default values. <a href="#output">Output files</a> can be used to
 plot ecological and evolutionary dynamics of pests. Figure 3a shows the
@@ -607,14 +641,18 @@ plotting functions are introduced in the resevol package. Instead,
 methods and code for producing plots such as those in Figures 3 and 4
 are explained in Supporting Information 2.</p>
 <div class="figure">
-<img src="resevol_files/figure-html/overtime-1.png" alt="**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c) mean food consumed per pest, and (d) mean values of evolving traits 1 and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2, respectively, a pest will consume. White and grey vertical stripes indicate seasons of a single crop and pesticide application.*" width="768"><p class="caption">
+<img src="resevol_files/figure-html/overtime-1.png" alt="**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken per pest, (c) mean food consumed per pest, and (d) mean value of evolving traits 1 and 2 underlying pest uptake over time. Note that only pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or 2, respectively. Pests with negative trait values will be unaffected by corresponding pesticides (i.e., pesticide consumption is a threshold trait), hence the difference between realised pesticide consumption (b) and the traits underlying it (d). White and grey vertical stripes indicate seasons of a single crop and pesticide application.*" width="768"><p class="caption">
 <strong>Figure 3</strong>. <em>Agricultural pest ecological and
 evolutionary dynamics over 160 time steps from an individual-based
 simulation using the resevol R package. Panels show (a) pesticide
-abundance change, (b) mean of pesticides 1 and 2 consumed per pest, (c)
-mean food consumed per pest, and (d) mean values of evolving traits 1
-and 2 over time. Traits 1 and 2 define how much of pesticides 1 and 2,
-respectively, a pest will consume. White and grey vertical stripes
+abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken
+per pest, (c) mean food consumed per pest, and (d) mean value of
+evolving traits 1 and 2 underlying pest uptake over time. Note that only
+pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or
+2, respectively. Pests with negative trait values will be unaffected by
+corresponding pesticides (i.e., pesticide consumption is a threshold
+trait), hence the difference between realised pesticide consumption (b)
+and the traits underlying it (d). White and grey vertical stripes
 indicate seasons of a single crop and pesticide application.</em>
 </p>
 </div>
@@ -650,8 +688,9 @@ Agricultural landscapes and pest life histories are highly customisable,
 allowing targetted models that can simulate specific real-world case
 studies (Supporting Information 2). The breadth of possible models that
 can be simulated with resevol also makes it a useful tool for developing
-theory on pest management, and more even generally on the evolution and
-ecology of individuals with complex traits on a changing landscape.</p>
+theory on pest management, and even more generally on the evolution and
+ecology of individuals with complex traits on a heterogeneous
+landscape.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -670,7 +709,7 @@ Biosciences International (CABI).</p>
 <h2 id="contributions">Authors contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
 </h2>
 <p>All authors contributed to planning software development and writing.
-ABD wrote and maintains package code. RM contributed code for data
+ABD wrote and maintains package code. CRM contributed code for data
 visualisation.</p>
 </div>
 <div class="section level2">
@@ -708,6 +747,12 @@ Curtis, C. F. 1985. <span>“<span class="nocase">Theoretical models of
 the use of insecticide mixtures for the management of
 resistance</span>.”</span> <em>Bulletin of Entomological Research</em>
 75 (2): 259–66. <a href="https://doi.org/10.1017/S0007485300014346" class="external-link">https://doi.org/10.1017/S0007485300014346</a>.
+</div>
+<div id="ref-Daly2022" class="csl-entry">
+Daly, Aisling J., Lander De Visscher, Jan M. Baetens, and Bernard De
+Baets. 2022. <span>“<span class="nocase">Quo vadis, agent-based
+modelling tools?</span>”</span> <em>Environmental Modelling and
+Software</em> 157: 105514. <a href="https://doi.org/10.1016/j.envsoft.2022.105514" class="external-link">https://doi.org/10.1016/j.envsoft.2022.105514</a>.
 </div>
 <div id="ref-Duthie2018" class="csl-entry">
 Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen,
@@ -791,10 +836,31 @@ promote or hinder sustainability in agriculture? The challenge of
 sustainable use of pesticides in modern agriculture</span>.”</span>
 <em>Science of the Total Environment</em> 795: 148625. <a href="https://doi.org/10.1016/j.scitotenv.2021.148625" class="external-link">https://doi.org/10.1016/j.scitotenv.2021.148625</a>.
 </div>
+<div id="ref-Mangan2023" class="csl-entry">
+Mangan, Rosie, Luc F. Bussière, Ricardo Antônio Polanczyk, and Matthew
+C. Tinsley. 2023. <span>“<span class="nocase">Increasing ecological
+heterogeneity can constrain biopesticide resistance
+evolution</span>.”</span> <em>Trends in Ecology and Evolution</em> 38
+(7): 605–14. <a href="https://doi.org/10.1016/j.tree.2023.01.012" class="external-link">https://doi.org/10.1016/j.tree.2023.01.012</a>.
+</div>
 <div id="ref-Mani1985" class="csl-entry">
 Mani, G S. 1985. <span>“<span class="nocase">Evolution of resistance in
 the presence of two insecticides.</span>”</span> <em>Genetics</em> 109
 (4): 761–83. <a href="https://doi.org/10.1093/genetics/109.4.761" class="external-link">https://doi.org/10.1093/genetics/109.4.761</a>.
+</div>
+<div id="ref-Millington2021" class="csl-entry">
+Millington, James D. A., Valeri Katerinchuk, Ramon Felipe Bicudo da
+Silva, Daniel de Castro Victoria, and Mateus Batistella. 2021.
+<span>“<span class="nocase">Modelling drivers of Brazilian agricultural
+change in a telecoupled world</span>.”</span> <em>Environmental
+Modelling and Software</em> 139: 105024. <a href="https://doi.org/10.1016/j.envsoft.2021.105024" class="external-link">https://doi.org/10.1016/j.envsoft.2021.105024</a>.
+</div>
+<div id="ref-Newman2023" class="csl-entry">
+Newman, D. R., D. D. Saurette, J. M. H. Cockburn, Lucian Dragut, and J.
+B. Lindsay. 2023. <span>“<span class="nocase">Assessing spatially
+heterogeneous scale representation with applied digital soil
+mapping</span>.”</span> <em>Environmental Modelling and Software</em>
+160: 105612. <a href="https://doi.org/10.1016/j.envsoft.2022.105612" class="external-link">https://doi.org/10.1016/j.envsoft.2022.105612</a>.
 </div>
 <div id="ref-Raymond2001" class="csl-entry">
 Raymond, Michel, Claire Berticat, Mylene Weill, Nicole Pasteur, and
@@ -834,6 +900,13 @@ and the evolution of pesticide resistance</span>.”</span> In
 <em>Pesticide Resistance: Strategies and Tactics for Management</em>,
 222–35. Washington, DC: National Academy Press.
 </div>
+<div id="ref-Zhang2020" class="csl-entry">
+Zhang, Chen, Liping Di, Zhengwei Yang, Li Lin, and Pengyu Hao. 2020.
+<span>“<span class="nocase">AgKit4EE: A toolkit for agricultural land
+use modeling of the conterminous United States based on Google Earth
+Engine</span>.”</span> <em>Environmental Modelling and Software</em>
+129: 104694. <a href="https://doi.org/10.1016/j.envsoft.2020.104694" class="external-link">https://doi.org/10.1016/j.envsoft.2020.104694</a>.
+</div>
 </div>
 </div>
   </div>
@@ -855,7 +928,7 @@ and the evolution of pesticide resistance</span>.”</span> In
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

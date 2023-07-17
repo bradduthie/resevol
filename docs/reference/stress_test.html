@@ -23,7 +23,7 @@ number of times to produce a distribution of stress estimates."><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@ number of times to produce a distribution of stress estimates.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">stress_test</span><span class="op">(</span><span class="va">mine_output</span>, indivs <span class="op">=</span> <span class="fl">1000</span>, reps <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stress_test</span><span class="op">(</span><span class="va">mine_output</span>, indivs <span class="op">=</span> <span class="fl">1000</span>, reps <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,27 +92,34 @@ number of times to produce a distribution of stress estimates.</p>
     <dl><dt>mine_output</dt>
 <dd><p>The output from mine_gmatrix, which will be used to
 initialise the genomes and traits of pests.</p></dd>
+
+
 <dt>indivs</dt>
 <dd><p>The number of individuals to use in the stress test. Higher
 values produce a larger sample size for more accurate estimates of the true
 covariance structure produced by the network, and therefore the actual stress
 expected from it.</p></dd>
+
+
 <dt>reps</dt>
 <dd><p>The number of times a new set of individuals will be initialised
 for estimating the covariance between traits and calculating its stress.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of stress values the same length as 'reps'.</p>
+    
+
+<p>A vector of stress values the same length as 'reps'.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span>
-<span class="r-in"><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu"><a href="mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">3</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span>
-<span class="r-in">                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">2</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">stresses</span>  <span class="op">&lt;-</span> <span class="fu">stress_test</span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg</span><span class="op">)</span>;</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gmt</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">gmt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span>;</span></span>
+<span class="r-in"><span><span class="va">mg</span>        <span class="op">&lt;-</span> <span class="fu"><a href="mine_gmatrix.html">mine_gmatrix</a></span><span class="op">(</span>gmatrix <span class="op">=</span> <span class="va">gmt</span>, loci <span class="op">=</span> <span class="fl">4</span>, layers <span class="op">=</span> <span class="fl">3</span>, indivs <span class="op">=</span> <span class="fl">100</span>, </span></span>
+<span class="r-in"><span>                         npsize <span class="op">=</span> <span class="fl">100</span>, max_gen <span class="op">=</span> <span class="fl">2</span>, prnt_out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">stresses</span>  <span class="op">&lt;-</span> <span class="fu">stress_test</span><span class="op">(</span>mine_output <span class="op">=</span> <span class="va">mg</span><span class="op">)</span>;</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -127,7 +134,7 @@ for estimating the covariance between traits and calculating its stress.</p></dd
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

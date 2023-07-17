@@ -139,3 +139,4 @@ mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100,
                          npsize = 100, max_gen = 4, prnt_out = FALSE);
 inds      <- initialise_inds(mine_output = mg, N = 40, repro = "asexual");
 }
+\keyword{internal}

@@ -11,7 +11,7 @@ bibliography: '`r system.file("resevol.bib", package = "resevol")`'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Get Started}
+  %\VignetteIndexEntry{resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes}
   %\usepackage[UTF-8]{inputenc}
 link-citations: yes
 linkcolor: blue

@@ -15,4 +15,4 @@ Output from mine_gmatrix that maps random normals from 12 loci to four traits
 with a covariance structure including negative and positive values 
 (replicate 1)
 }
-\keyword{datasets}
+\keyword{internal}

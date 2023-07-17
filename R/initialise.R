@@ -56,6 +56,7 @@
 #'                          npsize = 100, max_gen = 4, prnt_out = FALSE);
 #'inds      <- initialise_inds(mine_output = mg, N = 40, repro = "asexual");
 #'@importFrom stats rnorm
+#'@keywords internal
 #'@export
 initialise_inds <- function(mine_output, 
                             N = 1000, 

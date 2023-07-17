@@ -14,4 +14,4 @@ mg_n4
 Output from mine_gmatrix that maps random normals from 12 loci to four traits
 with a covariance structure  of the identity matrix (replicate 4)
 }
-\keyword{datasets}
+\keyword{internal}
