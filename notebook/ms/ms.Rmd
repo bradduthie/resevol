@@ -21,7 +21,10 @@ header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
 - \fancyhead[R]{RESEVOL, AN R PACKAGE}
-linestretch: 1
+- \usepackage{lineno}
+- \linenumbers
+- \modulolinenumbers[2]
+linestretch: 2
 link-citations: yes
 linkcolor: blue
 bibliography: resevol.bib
