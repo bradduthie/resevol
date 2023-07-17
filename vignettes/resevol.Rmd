@@ -48,11 +48,11 @@ Predicting, identifying, and ultimately delaying the evolution of insecticide re
 To manage pesticide resistance, various strategies have been proposed to disrupt or weaken selection.
 These strategies often focus on varying the location and timing of pesticide application, and therefore varying the strength of selection for pesticide resistance, so that pest susceptibility to one or more pesticides is maintained [@Ives2002; @Liang2013; @Carriere2016; @Liang2018; @South2018; @Sudo2018; @Saikai2021].
 Pesticide resistance management has mostly been associated with the effect of single genes. 
-In such cases, resistance alleles have binary effects on phenotype, enabling resistant phenotypes to arise from genetic changes at single or a small number of loci [@Raymond2001; @Ffrench-Constant2004; @Ffrench-Constant2013].
+In such cases, resistance alleles have binary effects on phenotype, enabling resistant phenotypes to arise from genetic changes at single or a small number of loci [@Raymond2001; @Ffrench-Constant2004; @Ffrench-Constant2013; @Mangan2023].
 Nevertheless, resistance attributable to polygenic effects is also well-established [@Via1986; @Firko1990; @Busi2013; @Haridas2018; @Green2020].
-And the relevance of polygenic resistance is likely to further increase given a rising interest in biological controls for sustainable crop protection [e.g., @Green2020; @Elnahal2022]. 
+And the relevance of polygenic resistance is likely to further increase given a rising interest in biological controls for sustainable crop protection [e.g., @Green2020; @Elnahal2022; @Mangan2023]. 
 Developing strategies to maximise the efficacy of these tools is critical, and such strategies should be well-informed by predictions made from detailed, quantitative genetic models.
-Here we introduce the resevol R package as a tool for building such models and simulating pest management.
+Here we introduce the resevol R package as a tool for building individual-based models and simulating pest management [@Daly2022].
 
 The resevol package applies individual-based modelling and a quantitative genetics approach to simulate the evolution of a pest population on a changing landscape. 
 Multiple traits determine the overall fitness of any pest genotype. 
@@ -230,8 +230,8 @@ These arguments specify the cell dimensions and number of farms on the landscape
 Contiguous rectangular farms of roughly equal size are generated on the landscape using a splitline algorithm.
 Second, a custom landscape can be input using the `terrain` argument, which takes a matrix with elements that include integers 1 to `farms`.
 Each value defines a unique farm, but values do not need to be contiguous.
-These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see Supporting Information 2).
-This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images.
+These 'farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see Supporting Information 2), or they could more broadly be interpreted as heterogenous landscape properties across an arbitrary scale [e.g., @Newman2023].
+This `terrain` customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images [e.g., @Millington2021].
 Edge effects are set using the `land_edge` argument.
 Edge options include `"leaky"` (pests disappear from the landscape), `"reflect"` (pests bounce off of the edge), `"sticky"` (pests stick to the edge), or `"torus"` (pests that move off of one edge return on the opposite side of the landscape). 
 
@@ -243,7 +243,7 @@ The arguments `crop_rotation_type` and `pesticide_rotation_type` specify how cro
 Each of these rotation type arguments can take either an integer value from 1-3, or a matrix.
 Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
 Square matrices can be used to define the probability that a given crop or pesticide in row $i$ transitions to that in column $j$. 
-Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms.
+Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms, potentially integrating real crop use or pesticide use patterns [@Zhang2020].
 Upon rotation, crop and pesticide values are reset on each farm.
 
 Values for `crop_per_cell` and `pesticide_per_cell` determine the quantity of crops and pesticides initialised per cell upon crop or pesticide rotation, respectively.
