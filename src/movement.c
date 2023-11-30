@@ -64,7 +64,7 @@ void move(double **pests, double *paras, int ind){
   
   int age_col, move_dist_col, min_age_col, max_age_col, Xpos_col, Ypos_col;
   int move_dist, min_age, max_age, land_type, X_dim, Y_dim, disp_x, disp_y;
-  int Xpos, Ypos, new_xpos, new_ypos, age, mortality_col, max_rep_col, max_rep;
+  int Xpos, Ypos, new_xpos, new_ypos, age, mortality_col, max_rep_col;
   
   Xpos_col         = (int) paras[1];
   Ypos_col         = (int) paras[2];
@@ -84,8 +84,7 @@ void move(double **pests, double *paras, int ind){
   move_dist = (int) floor(pests[ind][move_dist_col]);
   min_age   = (int) pests[ind][min_age_col];
   max_age   = (int) pests[ind][max_age_col];
-  max_rep   = (int) pests[ind][max_rep_col];
-  
+
   if(age >= min_age && age <= max_age){
       disp_x   = get_rand_int(Xpos - move_dist, Xpos + move_dist);
       new_xpos = edge_effect(disp_x, 0, X_dim, land_type);
