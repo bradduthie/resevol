@@ -1,0 +1,704 @@
+% Template for PLoS
+% Version 3.6 Aug 2022
+%
+% % % % % % % % % % % % % % % % % % % % % %
+%
+% -- IMPORTANT NOTE
+%
+% This template contains comments intended 
+% to minimize problems and delays during our production 
+% process. Please follow the template instructions
+% whenever possible.
+%
+% % % % % % % % % % % % % % % % % % % % % % % 
+%
+% Once your paper is accepted for publication, 
+% PLEASE REMOVE ALL TRACKED CHANGES in this file 
+% and leave only the final text of your manuscript. 
+% PLOS recommends the use of latexdiff to track changes during review, as this will help to maintain a clean tex file.
+% Visit https://www.ctan.org/pkg/latexdiff?lang=en for info or contact us at latex@plos.org.
+%
+%
+% There are no restrictions on package use within the LaTeX files except that no packages listed in the template may be deleted.
+%
+% Please do not include colors or graphics in the text.
+%
+% The manuscript LaTeX source should be contained within a single file (do not use \input, \externaldocument, or similar commands).
+%
+% % % % % % % % % % % % % % % % % % % % % % %
+%
+% -- FIGURES AND TABLES
+%
+% Please include tables/figure captions directly after the paragraph where they are first cited in the text.
+%
+% DO NOT INCLUDE GRAPHICS IN YOUR MANUSCRIPT
+% - Figures should be uploaded separately from your manuscript file. 
+% - Figures generated using LaTeX should be extracted and removed from the PDF before submission. 
+% - Figures containing multiple panels/subfigures must be combined into one image file before submission.
+% For figure citations, please use "Fig" instead of "Figure".
+% See http://journals.plos.org/plosone/s/figures for PLOS figure guidelines.
+%
+% Tables should be cell-based and may not contain:
+% - spacing/line breaks within cells to alter layout or alignment
+% - do not nest tabular environments (no tabular environments within tabular environments)
+% - no graphics or colored text (cell background color/shading OK)
+% See http://journals.plos.org/plosone/s/tables for table guidelines.
+%
+% For tables that exceed the width of the text column, use the adjustwidth environment as illustrated in the example table in text below.
+%
+% % % % % % % % % % % % % % % % % % % % % % % %
+%
+% -- EQUATIONS, MATH SYMBOLS, SUBSCRIPTS, AND SUPERSCRIPTS
+%
+% IMPORTANT
+% Below are a few tips to help format your equations and other special characters according to our specifications. For more tips to help reduce the possibility of formatting errors during conversion, please see our LaTeX guidelines at http://journals.plos.org/plosone/s/latex
+%
+% For inline equations, please be sure to include all portions of an equation in the math environment.  For example, x$^2$ is incorrect; this should be formatted as $x^2$ (or $\mathrm{x}^2$ if the romanized font is desired).
+%
+% Do not include text that is not math in the math environment. For example, CO2 should be written as CO\textsubscript{2} instead of CO$_2$.
+%
+% Please add line breaks to long display equations when possible in order to fit size of the column. 
+%
+% For inline equations, please do not include punctuation (commas, etc) within the math environment unless this is part of the equation.
+%
+% When adding superscript or subscripts outside of brackets/braces, please group using {}.  For example, change "[U(D,E,\gamma)]^2" to "{[U(D,E,\gamma)]}^2". 
+%
+% Do not use \cal for caligraphic font.  Instead, use \mathcal{}
+%
+% % % % % % % % % % % % % % % % % % % % % % % % 
+%
+% Please contact latex@plos.org with any questions.
+%
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+\documentclass[10pt,letterpaper]{article}
+\usepackage[top=0.85in,left=2.75in,footskip=0.75in]{geometry}
+
+% amsmath and amssymb packages, useful for mathematical formulas and symbols
+\usepackage{amsmath,amssymb}
+%\usepackage{natbib}
+
+% Use adjustwidth environment to exceed column width (see example table in text)
+\usepackage{changepage}
+
+% textcomp package and marvosym package for additional characters
+\usepackage{textcomp,marvosym}
+
+% cite package, to clean up citations in the main text. Do not remove.
+\usepackage{cite}
+
+% Use nameref to cite supporting information files (see Supporting Information section for more info)
+\usepackage{nameref,hyperref}
+
+% line numbers
+\usepackage[right]{lineno}
+
+% ligatures disabled
+\usepackage[nopatch=eqnum]{microtype}
+\DisableLigatures[f]{encoding = *, family = * }
+
+% color can be used to apply background shading to table cells only
+\usepackage[table]{xcolor}
+
+% array package and thick rules for tables
+\usepackage{array}
+
+% create "+" rule type for thick vertical lines
+\newcolumntype{+}{!{\vrule width 2pt}}
+
+% create \thickcline for thick horizontal lines of variable length
+\newlength\savedwidth
+\newcommand\thickcline[1]{%
+  \noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+  \cline{#1}%
+  \noalign{\vskip\arrayrulewidth}%
+  \noalign{\global\arrayrulewidth\savedwidth}%
+}
+
+% \thickhline command for thick horizontal lines that span the table
+\newcommand\thickhline{\noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+\hline
+\noalign{\global\arrayrulewidth\savedwidth}}
+
+
+% Remove comment for double spacing
+%\usepackage{setspace} 
+%\doublespacing
+
+% Text layout
+\raggedright
+\setlength{\parindent}{0.5cm}
+\textwidth 5.25in 
+\textheight 8.75in
+
+% Bold the 'Figure #' in the caption and separate it from the title/caption with a period
+% Captions will be left justified
+\usepackage[aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off]{caption}
+\renewcommand{\figurename}{Fig}
+
+% Use the PLoS provided BiBTeX style
+\bibliographystyle{plos2015}
+
+% Remove brackets from numbering in List of References
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+
+
+% Header and Footer with logo
+\usepackage{lastpage,fancyhdr,graphicx}
+\usepackage{epstopdf}
+%\pagestyle{myheadings}
+\pagestyle{fancy}
+\fancyhf{}
+%\setlength{\headheight}{27.023pt}
+%\lhead{\includegraphics[width=2.0in]{PLOS-submission.eps}}
+\rfoot{\thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrule}{\hrule height 2pt \vspace{2mm}}
+\fancyheadoffset[L]{2.25in}
+\fancyfootoffset[L]{2.25in}
+\lfoot{\today}
+
+%% Include all macros below
+
+\newcommand{\lorem}{{\bf LOREM}}
+\newcommand{\ipsum}{{\bf IPSUM}}
+
+%% END MACROS SECTION
+
+
+\begin{document}
+\vspace*{0.2in}
+
+% Title must be 250 characters or less.
+\begin{flushleft}
+{\Large
+\textbf\newline{resevol: An R package for spatially explicit models of pesticide resistance given evolving pest genomes} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+}
+\newline
+% Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
+\\
+A. Bradley Duthie\textsuperscript{1*},
+Rosie Mangan\textsuperscript{1},
+C. Rose McKeon\textsuperscript{1},
+Matthew C. Tinsley\textsuperscript{1},
+Luc F. Bussi\`{e}re\textsuperscript{2,3}
+\\
+\bigskip
+\textbf{1} Biological and Environmental Sciences, University of Stirling, Stirling, UK
+\\
+\textbf{2} Biological and Environmental Sciences, University of Gothenburg, Gothenburg, Sweden
+\\
+\textbf{3} Gothenburgh Global Biodiversity Centre, Gothenburg, Sweden
+\\
+\bigskip
+
+% Insert additional author notes using the symbols described below. Insert symbol callouts after author names as necessary.
+% 
+% Remove or comment out the author notes below if they aren't used.
+%
+% Primary Equal Contribution Note
+%\Yinyang These authors contributed equally to this work.
+
+% Additional Equal Contribution Note
+% Also use this double-dagger symbol for special authorship notes, such as senior authorship.
+%\ddag These authors also contributed equally to this work.
+
+% Current address notes
+%\textcurrency Current Address: Dept/Program/Center, Institution Name, City, State, Country % change symbol to "\textcurrency a" if more than one current address note
+% \textcurrency b Insert second current address 
+% \textcurrency c Insert third current address
+
+% Deceased author note
+%\dag Deceased
+
+% Group/Consortium Author Note
+%\textpilcrow Membership list can be found in the Acknowledgments section.
+
+% Use the asterisk to denote corresponding authorship and provide email address in note below.
+* alexander.duthie@stir.ac.uk
+
+\end{flushleft}
+
+
+% Please keep the abstract below 300 words
+\section*{Abstract}
+The evolution of pesticide resistance is a widespread problem with potentially severe consequences for global food security.
+We introduce the resevol R package, which simulates individual-based models of pests with evolving genomes that produce complex, polygenic, and covarying traits affecting pest life history and pesticide resistance.
+Simulations are modelled on a spatially-explicit and highly customisable landscape in which crop and pesticide application and rotation can vary, making the package a highly flexible tool for both general and tactical models of pest management and resistance evolution.
+We present the key features of the resevol package and demonstrate its use for a simple example simulating pests with two covarying traits.
+The resevol R package is open source under GNU Public License. All source code and documentation are available on GitHub.
+
+
+% Please keep the Author Summary between 150 and 200 words
+% Use first person. PLOS ONE authors please skip this step. 
+% Author Summary not valid for PLOS ONE submissions.   
+%\section*{Author summary}
+%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Nullam sapien tellus, commodo id velit id, eleifend volutpat quam. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
+
+\linenumbers
+
+% Use "Eq" instead of "Equation" for equation citations.
+\section*{Introduction}
+Insect resistance to pesticides is a wicked and widespread problem {[}\protect\hyperlink{ref-Gould2018}{1}{]}.
+Predicting, identifying, and ultimately delaying the evolution of insecticide resistance is therefore critical for ensuring sustainable global food security {[}\protect\hyperlink{ref-Hawkins2019}{2},\protect\hyperlink{ref-Lykogianni2021}{3}{]}.
+To manage pesticide resistance, various strategies have been proposed to disrupt or weaken selection.
+These strategies often focus on varying the location and timing of pesticide application, and therefore varying the strength of selection for pesticide resistance, so that pest susceptibility to one or more pesticides is maintained {[}\protect\hyperlink{ref-Ives2002}{4}--\protect\hyperlink{ref-Saikai2021}{10}{]}.
+Pesticide resistance management has mostly been associated with the effect of single genes.
+In such cases, resistance alleles have binary effects on phenotype, enabling resistant phenotypes to arise from genetic changes at single or a small number of loci {[}\protect\hyperlink{ref-Raymond2001}{11}--\protect\hyperlink{ref-Ffrench-Constant2013}{13}{]}.
+Nevertheless, resistance attributable to polygenic effects is also well-established {[}\protect\hyperlink{ref-Via1986}{14}--\protect\hyperlink{ref-Mangan2023}{19}{]}.
+And the relevance of polygenic resistance is likely to further increase given a rising interest in biological controls for sustainable crop protection {[}e.g., \protect\hyperlink{ref-Green2020}{18},\protect\hyperlink{ref-Mangan2023}{19},\protect\hyperlink{ref-Elnahal2022}{20}{]}.
+Developing strategies to maximise the efficacy of these tools is critical, and such strategies should be well-informed by predictions made from detailed, quantitative genetic models.
+Here we introduce the resevol R package as a tool for building individual-based models and simulating pest management {[}\protect\hyperlink{ref-Daly2022}{21}{]}.
+
+The resevol package applies individual-based modelling and a quantitative genetics approach to simulate the evolution of a pest population on a changing landscape.
+Multiple traits determine the overall fitness of any pest genotype.
+For example, while alleles conferring resistance to a particular pesticide enhance fitness in the presence of that pesticide, they could also impose reproductive fitness costs.
+Such trade-offs can be quantified by the genetic covariance between traits.
+A focal goal of the resevol package is to model traits with a pre-specified, but potentially evolving, genetic covariance structure.
+To achieve this goal, each individual has a genome with \(L\) loci that underlie a set of \(T\) potentially evolving traits.
+Pleiotropic loci can vary in their effects on the direction and magnitude of polygenic traits, causing population-wide trait covariance to arise mechanistically from the underlying genetic architecture of individuals.
+To achieve this, two separate steps are necessary.
+First, an evolutionary algorithm is used to find a network of internal nodes that map standard random normal loci values to covarying traits.
+Values used to map loci to traits are incorporated into individual genomes.
+Second, a population of asexual or sexual individuals is initialised and simulated on a spatially explicit landscape separated into distinct units (e.g., farms).
+Land units can apply one of up to 10 pesticides, and one of up to 10 landscape types at a given time (for simplicity, here we interpret landscape types to be crop types).
+Pesticides and crops rotate independently within farms over time in a pre-specified way.
+The resevol package can thereby model complex and evolving agricultural pest traits over realistic landscapes that undergo different pesticide use and crop regimes.
+
+\hypertarget{design-and-implementation}{%
+\section{Design and Implementation}\label{design-and-implementation}}
+
+\hypertarget{mine_gmatrix}{%
+\subsection{Covarying pest quantitative traits}\label{mine_gmatrix}}
+
+The first step of simulation is building individual genomes.
+This step is separate because it is computationally intensive, and genomes that are built might need to be inspected and stored.
+High computation time is due to the mechanistic nature of how genomes and covarying traits are modelled.
+Instead of imposing a trait covariance structure directly, an evolutionary algorithm is used to find a network that maps standard random normal values (loci) to covarying values (traits).
+This is useful because it allows genomes to model potentially evolving physiological constraints, and trade-offs among traits, from the bottom up.
+Since multiple networks can potentially map loci to the same trait covariance structure, it is possible to replicate evolution with different randomly generated genetic architectures.
+This approach to modelling individual genomes and traits thereby increases the complexity of questions that can be addressed for simulating evolution in agricultural pests.
+
+Conceptually, the relationship between individual genotypes and traits is defined by a network connecting loci to traits through a set of hidden internal nodes (Fig \ref{fig:network}).
+Values for loci are randomly drawn from a standard normal distribution, \(\mathcal{N}\left(0, 1\right)\).
+Links between loci, internal nodes, and traits, can take any real value and are represented by black arrows in Fig \ref{fig:network}.
+Traits can take any real value, and are calculated as the summed effects of all preceding nodes (i.e., the blue squares immediately to the left of the traits in Fig \ref{fig:network}).
+Mathematically, loci are represented by a row vector of length \(L\).
+Effects of loci on the first layer of internal nodes (black arrows emanating from loci in Fig \ref{fig:network}) are represented by an \(L \times T\) matrix, and transitions between internal nodes, and between the last set of internal nodes and the final traits, are represented by \(T \times T\) matrices.
+For the example in Fig \ref{fig:network},
+
+\[
+\begin{pmatrix}
+  0.1, & -0.1, & 0.2 \\
+\end{pmatrix} 
+\begin{pmatrix}
+  0.4, &  0.1 \\
+ -1.2, & -0.6 \\
+  0.2, &  2.2 \\
+\end{pmatrix}
+\begin{pmatrix}
+   1.3, & -0.5 \\
+  -0.1  &  0.0 \\
+\end{pmatrix}
+\begin{pmatrix}
+   2.2, &  0.9 \\
+   1.6  &  0.8 \\
+\end{pmatrix} = 
+\begin{pmatrix}
+  0.2998, & 0.1081 \\
+\end{pmatrix}.
+\]
+
+
+Values mapping loci to traits become part of an individual's genome, so the genome for the individual represented by Fig \ref{fig:network} is stored in the model as shown below:
+
+\begin{verbatim}
+0.1, -0.1, -0.2, 0.4, 0.1, -1.2, -0.6, 0.2, 2.2, 1.3, -0.5, -0.1, 0.0, 
+2.2, 0.9, 1.6, 0.8
+\end{verbatim}
+
+Individuals with different loci can therefore have different covarying traits that are constrained by the network structure encoded in each genome.
+Individuals can be haploid (as in Fig \ref{fig:network}) or diploid (in which case, allele values are summed at homologous loci).
+
+\begin{figure}[!h]
+\caption{{\bf Example resevol network.}
+Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the \texttt{mine\_gmatrix} function. Individual genomes in the resevol R package consist of standard random normal values for loci, real values for black arrows linking nodes, and real values for traits. Values shown for loci and arrows are an example for illustration.}
+\label{fig:network}
+\end{figure}
+
+An evolutionary algorithm is used to find appropriate values that produce covarying traits from loci (see \nameref{S1_Text} for details).
+Evolutionary algorithms are heuristic tools that can simulate adaptive evolution to find solutions for a broad range of problems {[}\protect\hyperlink{ref-Hamblin2013}{22},\protect\hyperlink{ref-Duthie2018}{23}{]}.
+In the resevol package, the \texttt{mine\_gmatrix} function runs an evolutionary algorithm and requires the argument \texttt{gmatrix}, which specifies the desired trait covariance matrix.
+The function initialises a population of \texttt{npsize} separate, and potentially unique, networks (i.e., \texttt{npsize} copies of a network like the one shown in Fig \ref{fig:network}), and this population evolves until some maximum iteration (\texttt{max\_gen}) or minimum expected network stress (\texttt{term\_cri}) is met.
+In a single iteration of the algorithm, values mutate and crossover occurs between networks (i.e., some of the \texttt{npsize} networks swap values with some probability).
+Next, trait covariances produced for each network are estimated by initalising \texttt{indivs} individuals with loci sampled from a standard normal distribution.
+Network stress is calculated as the logged mean squared deviation between estimated covariances and those in \texttt{gmatrix}.
+Tournament selection {[}\protect\hyperlink{ref-Hamblin2013}{22}{]} is then used to determine the networks for the next iteration of the algorithm.
+Networks with the lowest estimated stress have the highest fitness, so these networks are disproportionately represented in the next iteration.
+Throughout the evolutionary algorithm, the lowest stress network is saved and returned upon network termination.
+The robustness of this network's stress to sets of individuals with different loci values can be tested using the \texttt{stress\_test} function.
+
+An example run of \texttt{mine\_gmatrix} with the same number of loci and internal nodes as in Fig \ref{fig:network} is shown below for traits that have an intended covariance of -0.4:
+
+\begin{verbatim}
+trait_covs  <- matrix(data = c(1, -0.4, -0.4, 1), nrow = 2, ncol = 2);
+new_network <- mine_gmatrix(loci = 3, layers = 2, gmatrix = trait_covs, 
+                            max_gen = 1000, term_cri = -6.0, 
+                            prnt_out = FALSE);
+\end{verbatim}
+
+
+The code above found a genome that produced the following expected trait covariances:
+
+\begin{verbatim}
+##            [,1]       [,2]
+## [1,]  1.0008181 -0.3925799
+## [2,] -0.3925799  1.0271340
+\end{verbatim}
+
+The mean deviation between elements of the above matrix and the identity matrix provided by \texttt{trait\_covs} is \ensuremath{2.1176024\times 10^{-4}}.
+Lower values of \texttt{term\_cri} and higher values of \texttt{max\_gen} will result in a lower stress, but this will require more computation time, especially if the number of traits is high.
+Similarly, higher values of \texttt{indivs} will result in more accurate estimations of true stress, but this also requires more computation time.
+Additional arguments to \texttt{mine\_gmatrix} can also be used to improve the performance of the evolutionary algorithm (see \nameref{S1_Text}).
+
+
+\hypertarget{simulating}{%
+\subsection{Simulating landscape-level pesticide resistance}\label{simulating}}
+
+The full output of \texttt{mine\_gmatrix} is passed to the \texttt{run\_farm\_sim} function, which initialises and simulates an evolving population of pests on a changing landscape for any natural number of time steps (\texttt{time\_steps}).
+In this section, we explain the landscape, pest ecology, and evolving pest traits.
+
+\hypertarget{landscape}{%
+\subsubsection{Landscape}\label{landscape}}
+
+Landscapes are spatially explicit and initialised in one of two ways.
+First, a landscape can be built from the arguments \texttt{xdim}, \texttt{ydim}, and \texttt{farms}.
+These arguments specify the cell dimensions and number of farms on the landscape.
+Contiguous rectangular farms of roughly equal size are generated on the landscape using a splitline algorithm.
+Second, a custom landscape can be input using the \texttt{terrain} argument, which takes a matrix with elements that include integers 1 to \texttt{farms}.
+Each value defines a unique farm, but values do not need to be contiguous.
+These `farms' could even model non-farmland (e.g., water, roads), if pesticides and crops on them are invisible to pests (see \nameref{S2_Text}), or they could more broadly be interpreted as heterogenous landscape properties across an arbitrary scale {[}e.g., \protect\hyperlink{ref-Newman2023}{24}{]}.
+This \texttt{terrain} customisation therefore allows for a high degree of landscape detail, and offers the potential for modelling real-world landscapes from raster images {[}e.g., \protect\hyperlink{ref-Millington2021}{25}{]}.
+Edge effects are set using the \texttt{land\_edge} argument.
+Edge options include \texttt{"leaky"} (pests disappear from the landscape), \texttt{"reflect"} (pests bounce off of the edge), \texttt{"sticky"} (pests stick to the edge), or \texttt{"torus"} (pests that move off of one edge return on the opposite side of the landscape).
+
+Each farm can hold one pesticide and one crop type in any time step.
+The \texttt{crop\_init} and \texttt{pesticide\_init} arguments initialise one of \texttt{crop\_number} crops and one of \texttt{pesticide\_number} pesticides for each farm, respectively (maximum of 10 each).
+Initialisation can be random for each farm with equal probability, or it can be set using a vector of length \texttt{farms} in which vector elements define the initialised crop or pesticide number.
+After initialisation, crops and pesticides rotate once every \texttt{crop\_rotation\_time} and \texttt{pesticide\_rotation\_time} time steps, respectively.
+The arguments \texttt{crop\_rotation\_type} and \texttt{pesticide\_rotation\_type} specify how crops and pesticides are rotated, respectively.
+Each of these rotation type arguments can take either an integer value from 1-3, or a matrix.
+Integer values specify (1) no rotation, (2) random transition from one type to another, or (3) cycling through each available crop or pesticide in numeric order.
+Square matrices can be used to define the probability that a given crop or pesticide in row \(i\) transitions to that in column \(j\).
+Hence, any possible Markov chain can be used to model transition between crop or pesticide types on farms, potentially integrating real crop use or pesticide use patterns {[}\protect\hyperlink{ref-Zhang2020}{26}{]}.
+Upon rotation, crop and pesticide values are reset on each farm.
+
+Values for \texttt{crop\_per\_cell} and \texttt{pesticide\_per\_cell} determine the quantity of crops and pesticides initialised per cell upon crop or pesticide rotation, respectively.
+Between crop rotations, crop values can increase each time step by a proportion or increment \texttt{crop\_growth}, which depends on \texttt{crop\_growth\_type}.
+These arguments can be used to model crop growth over a season.
+
+\hypertarget{ecology}{%
+\subsubsection{Pest ecology}\label{ecology}}
+
+Individual pests can be modelled to have several reproductive systems and life histories.
+Pest reproductive system can be specified using the \texttt{repro} argument, which accepts \texttt{"asexual"} (haploid), \texttt{"sexual"} (monoecious), and \texttt{"biparental"} (dioecious).
+For \texttt{"sexual"} pests, the \texttt{selfing} argument specifies if self-fertilisation is (\texttt{TRUE}) or is not (\texttt{FALSE}) allowed.
+At the start of a simulation, pests are initialised in a random location.
+Initialised pests are of age zero if \texttt{rand\_age\ =\ FALSE} or a random age from zero to \texttt{max\_age} if \texttt{rand\_age\ =\ TRUE}.
+Following initialisation, a single time step proceeds with landscape change (see above), pest aging and metabolism, feeding, pesticide consumption, movement, reproduction, mortality, and immigration (Fig \ref{fig:flowchart}).
+Feeding, pesticide consumption, movement, and reproduction all depend on pest age.
+Pests feed and consume pesticide from ages \texttt{min\_age\_feed} to \texttt{max\_age\_feed}, move from ages \texttt{min\_age\_move} to \texttt{max\_age\_move}, and reproduce from ages \texttt{min\_age\_reproduce} to \texttt{max\_age\_reproduce} (all inclusive).
+Food accumulated is lost during aging if \texttt{baseline\_metabolism\ \textgreater{}\ 0} and pest age is within \texttt{min\_age\_metabolism} and \texttt{max\_age\_metabolism}.
+The option to set minimum and maximum ages for events makes it possible to model pests with much different life histories {[}e.g., \protect\hyperlink{ref-Sudo2018}{9}{]}.
+
+\begin{figure}[!h]
+\caption{{\bf Overview of resevol events.}
+Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed to a CSV file.}
+\label{fig:flowchart}
+\end{figure}
+
+In each time step, pests feed in a random order, consuming the crop on their landscape cell. Each pest consumes an amount of crop as specified by the \texttt{food\_consume} argument, which takes a vector with as many elements as their are crops (i.e., if \texttt{crop\_number\ =\ 2}, then \texttt{food\_consume} has two elements, the first and second defining consumption of crops 1 and 2, respectively).
+If crop amount on the landscape cell exceeds pest consumption ability, then pests consume their maximum amount, and this amount is removed from the landscape cell.
+If crop amount is less than pest consumption ability, then pests consume whatever crop is left and crop amount is reduced to zero.
+Pesticide consumption works identically to crop consumption, except that the amount of pesticide on a landscape cell is not decreased.
+Hence, each pest can potentially feed and be affected by the pesticide of their focal landscape cell.
+Pests simply consume an amount of pesticide as specified by the \texttt{pesticide\_consume} argument, which also takes a vector with as many elements as their are pesticides.
+Pesticide consumption affects pest survival and reproduction using \texttt{pesticide\_tolerated\_surv} and \texttt{pesticide\_tolerated\_repr} arguments.
+
+After interacting with their landscape cell, pests can move.
+Each pest visits a number of cells during movement, as is specified by the parameter \texttt{movement\_bouts}.
+Individual movement bouts occur in a random order across pests.
+During a movement bout, a pest can travel to any cell within a value defined by \texttt{movement\_distance} from their current location, which could include their current location (i.e., moving zero distance).
+Upon arrival to a cell, a pest can feed if they are of an appropriate feeding age and \texttt{feed\_while\_moving\ =\ TRUE}.
+The pest also consumes pesticide if they are of the appropriate age and \texttt{pesticide\_while\_moving\ =\ TRUE}.
+Having pests feed and consume pesticide in a random order while moving among landscape cells can model a population competing for food and encountering pesticides on a shorter time scale than an individual time step.
+
+After all pests finish moving, pests reproduce.
+Offspring production is possible for asexual, monoecious, or female pests.
+Pest expected offspring number is defined by a fixed parameter if \texttt{reproduction\_type\ =\ "lambda"}, or is calculated from the amount of food consumed if \texttt{reproduction\_type\ =\ "food\_based"}.
+The former requires specifying \texttt{lambda\_value}, which becomes the rate parameter for sampling offspring number from a Poisson distribution.
+The latter requires specifying a real value for \texttt{food\_needed\_repr}, which is the amount of food needed to produce one offspring.
+For food-based reproduction, the total amount of food consumed is divided by \texttt{food\_needed\_repr}, then floored to determine offspring number.
+Sexual reproduction requires a mate of reproductive age that is either monoecious or male, and within range of the reproducing focal pest (potential including the focal pest, if \texttt{selfing\ =\ TRUE}).
+A potential mate is within range if it is within an integer number of cells from the focal pest, as defined by \texttt{mating\_distance} (e.g., if \texttt{mating\_distance\ =\ 0}, then mates must share a landscape cell).
+All available potential mates sire offspring with equal probability, and reproducing pests are assumed to mate multiply (i.e., paternity is a fair raffle for all offspring).
+If a carrying capacity at birth is set (\texttt{K\_on\_birth\ \textgreater{}\ 0}) and total offspring number in the population exceeds this capacity, then offspring are removed at random until they are within carrying capacity.
+A real value \texttt{immigration\_rate} specifies the rate parameter for Poisson random sampling of the number of immigrants added to the population at the end of a time step.
+Immigrants are initialised in the same way as pests are at the start of the simulation.
+Hence, any spatial structure or evolution that occurs during the simulation does not affect immigrant locations, genomes, or traits.
+
+
+\hypertarget{evolution}{%
+\subsubsection{Pest evolution}\label{evolution}}
+
+Pest genomes evolve in a complex and highly mechanistic way.
+Offspring inherit genome values from their parent(s) with the possibility for mutation and recombination; offspring traits are then calculated from their newly initialised genomes.
+For asexually and sexually reproducing pests, genomes are haploid and diploid, respectively.
+Asexually reproducing pests receive the full genomes of their parent, while sexually reproducing pests receive half of their alleles from each parent.
+Each diploid parent contributes one half of their genome, effectively modelling a genome with a single chromosome.
+Crossover occurs at each position of the genome with a probability of \texttt{crossover\_pr}.
+When a crossover event occurs, alleles are swapped between the two chromosomes, so complete recombination is also possible if \texttt{crossover\_pr\ =\ 0.5}.
+For both haploids and diploids, each genome value then mutates independently with a probability of \texttt{mutation\_pr}, which can be set to any real number from 0-1.
+If a genome value mutates, then a new value is randomly sampled from a standard normal distribution.
+If \texttt{mutation\_type\ =\ 0}, then this new value replaces the old value, and if \texttt{mutation\_type\ =\ 1}, then the new value is added to the old value.
+After mutation, genome values are used to calculate trait values.
+
+Evolution of the genetic architecture linking loci to traits can be constrained by disabling mutation in genome values linking loci, internal nodes, and traits (i.e., `network values' represented by arrows in Fig \ref{fig:network}).
+While mutation at loci (green circles in Fig \ref{fig:network}) is always possible as long as \texttt{mutation\_pr\ \textgreater{}\ 0}, the number of intermediary layers for which network values can mutate is constrained by \texttt{net\_mu\_layers}.
+If \texttt{net\_mu\_layers\ =\ 0}, then no network values can mutate, but higher integer values cause mutation to occur at network value layers from loci to traits (if \texttt{net\_mu\_dir\ =\ 1}) or traits to loci (if \texttt{net\_mu\_dir\ =\ 0}).
+For example, if \texttt{net\_mu\_layers\ =\ 2} and \texttt{net\_mu\_dir\ =\ 1}, then the network values linking loci to the first internal node, and the first internal node to the second, can mutate (i.e., first two columns of arrows in \ref{fig:network}, but not those linking the second internal node to traits).
+This allows pest traits to evolve with varying degrees of constraint on the covariance between traits.
+Low \texttt{net\_mu\_layers} values model strong genetic constraints, while high values model high evolvability of trait covariances.
+
+Finally, evolving and covarying traits can be used in place of fixed parameters described in pest ecology.
+This is done by substituting \texttt{"Tj"} as an argument input in place of a numeric value, where \texttt{j} represents the trait number.
+For example, the argument \texttt{move\_distance\ =\ "T1"} will make Trait 1 the movement distance for individuals.
+The argument \texttt{food\_consume\ =\ c("T2",\ "T3")} will set Traits 2 and 3 to define the amount of food of types 1 and 2 that can be consumed by a pest, respectively.
+Up to 10 of the following parameters can be replaced with evolving traits: \texttt{move\_distance}, \texttt{food\_needed\_surv}, \texttt{pesticide\_tolerated\_surv}, \texttt{food\_needed\_repr}, \texttt{pesticide\_tolerated\_repr}, \texttt{mating\_distance}, \texttt{lambda\_value}, \texttt{movement\_bouts}, \texttt{metabolism}, \texttt{food\_consume}, and \texttt{pesticide\_consume}.
+Mean values of traits can be set using the argument \texttt{trait\_means}, which accepts a vector of the same length as the number of evolving traits such that indices correspond to trait numbers.
+The resevol package can thereby simulate agricultural pests with complex and co-evolving traits, and potentially evolving trait covariances, under a range of possible pest life histories.
+
+
+\hypertarget{output}{%
+\subsection{Simulation output}\label{output}}
+
+Simulation output is typically large, so output is printed in two CSV files, both of which are created in the working directory.
+The first file ``population\_data.csv'' prints population level data over time, including population size, mean age, sex ratio, mean food and pesticide consumed of each type, mortality rate, and mean trait values.
+The second file ``individuals.csv'' prints all information, including full genomes and traits (columns), for every individual (rows) in the population.
+The printing of individual level data is disabled by default.
+It can be turned on for all time steps by setting \texttt{print\_inds\ =\ TRUE}, but this should be done with caution because it can create extremely large files.
+Instead, individual level data can be printed for only the final time step by setting \texttt{print\_last\ =\ TRUE}.
+Output produced by \texttt{run\_farm\_sim} is a list of two elements, which includes a vector of parameter values used in the simulation and the final state of the landscape as an array.
+
+\hypertarget{simulation}{%
+\section{Results}\label{simulation}}
+
+In resevol v0.3, the \texttt{run\_farm\_sim} function includes 68 arguments, which specify a wide range of possible simulation conditions affecting landscape and pest characteristics.
+These arguments are explained in the package documentation, and in \nameref{S2_Text}, which demonstrates an advanced case study with a custom landscape and complex pest genomes and life history.
+Here we focus on a simple simulation with asexually reproducing pests that have three loci and two traits (Fig \ref{fig:network}).
+We use the the genome generated in \texttt{new\_network} from \protect\hyperlink{mine_gmatrix}{Section 1.1}, in which traits 1 and 2 have variances of 1.0008181 and 1.027134, respectively, with a covariance of -0.3925799.
+
+Traits 1 and 2 will define the realised rate of uptake of the two separate pesticides, so we model a system in which there is a potential trade-off for pesticide susceptibility.
+We use a simple \(64 \times 64\) cell landscape with nine farms.
+Each farm grows the same crop and uses one of two randomly intialised pesticides, which are rotated every 16 time steps.
+Hence, we can conceptualise 16 time steps as a single growing season.
+
+In our example, each cell produces four crop units, all of which can potentially be consumed.
+Pests consume up to one unit of crop on their landscape cell per time step.
+Pest survival and reproduction is food-based, and pests need to consume one unit of crop by age two to survive and reproduce.
+Pests initialised at the start of the simulation are randomly assigned an age from 0-4 with equal probability.
+Pests have a maximum age of four, and they feed in ages 0-2, move up to two cells in ages 3-4, and reproduce in age four.
+Pests can uptake (i.e., `consume') pesticides in ages 0-2, and if they consume any pesticide, then they will die.
+In each time step, a mean of 10 immigrants arrive.
+We simulate 160 time steps (10 growing seasons) using the function below:
+
+\begin{verbatim}
+sim <- run_farm_sim(mine_output = new_network, repro = "asexual", 
+                    pesticide_number = 2, pesticide_init = "random", 
+                    pesticide_consume = c("T1", "T2"), farms = 9,
+                    pesticide_rotation_time = 16, 
+                    pesticide_rotation_type = 3,
+                    pesticide_tolerated_surv = 0, 
+                    pesticide_per_cell = 1,
+                    crop_rotation_time = 16, crop_number = 1, 
+                    crop_per_cell = 4, food_consume = 1, 
+                    reproduction_type = "food_based", 
+                    food_needed_surv = 1, food_needed_repr = 1, 
+                    max_age = 4, min_age_feed = 0, max_age_feed = 2, 
+                    min_age_move = 3, max_age_move = 4, 
+                    min_age_reproduce = 4, print_gens = FALSE,
+                    max_age_reproduce = 4, age_pesticide_threshold = 2, 
+                    rand_age = TRUE, move_distance = 2, 
+                    immigration_rate = 10, time_steps = 160, 
+                    print_last = TRUE, xdim = 64, ydim = 64,
+                    trait_means = c(0.1, 0.1), land_edge = "torus");
+\end{verbatim}
+
+
+Any arguments to \texttt{run\_farm\_sim} not included above are set to default values.
+\protect\hyperlink{output}{Output files} can be used to plot ecological and evolutionary dynamics of pests.
+Fig \ref{fig:overtime}a shows the pest population change both across and within seasons.
+Due to the specific parameter values chosen, clear patterns reflecting pest cohorts emerge.
+At the start of a season when the most crop is available, pests eat and abundance increases.
+As less crop remains in a season, pest abundance decreases.
+Mean food consumed varies over the course of a season caused by the varying frequency of pests in different life history stages (Fig \ref{fig:overtime}c).
+In the first 50 time steps, there is some consumption of pesticides 1 and 2 (Fig \ref{fig:overtime}b), but both traits rapidly evolve to negative values making both pesticides ineffective (Fig \ref{fig:overtime}d).
+In this case, the trade-off in pesticide consumption is not strong enough to maintain susceptibility to either pesticide in the population.
+Fig \ref{fig:landscape} shows the location of pests on the landscape in the last time of the simulation (left panel), and how different pesticides are currently being applied on the landscape (right panel).
+Because the number of crops and pesticides, the number and nature of traits, and the size of pest genomes all vary depending on simulation parameters, no plotting functions are introduced in the resevol package.
+Instead, methods and code for producing plots such as those in Fig \ref{fig:overtime} and \ref{fig:landscape} are explained in \nameref{S2_Text}.
+
+
+\begin{figure}[!h]
+\caption{{\bf Example resevol population dynamics.}
+Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken per pest, (c) mean food consumed per pest, and (d) mean value of evolving traits 1 and 2 underlying pest uptake over time. Note that only pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or 2, respectively. Pests with negative trait values will be unaffected by corresponding pesticides (i.e., pesticide consumption is a threshold trait), hence the difference between realised pesticide consumption (b) and the traits underlying it (d). White and grey vertical stripes indicate seasons of a single crop and pesticide application.}
+\label{fig:overtime}
+\end{figure}
+
+\begin{figure}[!h]
+\caption{{\bf Pest spatial distributions in resevol simulation.}
+Locations of pests (black) across a landscape that includes nine farms (coloured blocks) in the last time step of a simulation using the resevol R package (left panel). The right panel shows which farms apply pesticide 1 (dark grey) and 2 (light grey).}
+\label{fig:landscape}
+\end{figure}
+
+\hypertarget{conclusions}{%
+\section{Availability and Future Directions}\label{conclusions}}
+
+Insecticide resistance to pesticides is a widespread problem that affects global food security {[}\protect\hyperlink{ref-Lykogianni2021}{3},\protect\hyperlink{ref-Tabashnik2014}{27},\protect\hyperlink{ref-Bradshaw2016}{28}{]}.
+Many models have been developed to investigate the evolution of resistance under different ecological and evolutionary conditions {[}\protect\hyperlink{ref-Ives2002}{4},\protect\hyperlink{ref-Liang2013}{5},\protect\hyperlink{ref-Liang2018}{7}--\protect\hyperlink{ref-Saikai2021}{10},\protect\hyperlink{ref-Haridas2018}{17},e.g., \protect\hyperlink{ref-Curtis1985}{29},\protect\hyperlink{ref-Mani1985}{30}{]}.
+The resevol R package makes it possible to rapidly develop and simulate myriad individual-based models of resistance evolution.
+It also introduces a novel approach to modelling complex pest genetic architecture, using an evolutionary algorithm to generate haploid or diploid loci that map to pest traits with pre-specified covariances (Fig \ref{fig:network}; \nameref{S1_Text}).
+Agricultural landscapes and pest life histories are highly customisable, allowing targetted models that can simulate specific real-world case studies (\nameref{S2_Text}).
+The breadth of possible models that can be simulated with resevol also makes it a useful tool for developing theory on pest management, and even more generally on the evolution and ecology of individuals with complex traits on a heterogeneous landscape.
+
+
+
+
+
+\nolinenumbers
+
+% Either type in your references using
+% \begin{thebibliography}{}
+% \bibitem{}
+% Text
+% \end{thebibliography}
+%
+% or
+%
+% Compile your BiBTeX database using our plos2015.bst
+% style file and paste the contents of your .bbl file
+% here. See http://journals.plos.org/plosone/s/latex for 
+% step-by-step instructions.
+% 
+\begin{thebibliography}{30}
+
+\bibitem{ref-Gould2018}
+\hypertarget{ref-Gould2018}{Gould} F, Brown ZS, Kuzma J. {Wicked evolution: Can we address the sociobiological dilemma of pesticide resistance?} Science. 2018;360: 728--732. doi:\href{https://doi.org/10.1126/science.aar3780}{10.1126/science.aar3780}
+
+\bibitem{ref-Hawkins2019}
+\hypertarget{ref-Hawkins2019}{Hawkins} NJ, Bass C, Dixon A, Neve P. {The evolutionary origins of pesticide resistance}. Biological Reviews. 2019;94: 135--155. doi:\href{https://doi.org/10.1111/brv.12440}{10.1111/brv.12440}
+
+\bibitem{ref-Lykogianni2021}
+\hypertarget{ref-Lykogianni2021}{Lykogianni} M, Bempelou E, Karamaouna F, Aliferis KA. {Do pesticides promote or hinder sustainability in agriculture? The challenge of sustainable use of pesticides in modern agriculture}. Science of the Total Environment. 2021;795: 148625. doi:\href{https://doi.org/10.1016/j.scitotenv.2021.148625}{10.1016/j.scitotenv.2021.148625}
+
+\bibitem{ref-Ives2002}
+\hypertarget{ref-Ives2002}{Ives} AR, Andow DA. {Evolution of resistance to Bt crops: Directional selection in structured environments}. Ecology Letters. 2002;5: 792--801. doi:\href{https://doi.org/10.1046/j.1461-0248.2002.00392.x}{10.1046/j.1461-0248.2002.00392.x}
+
+\bibitem{ref-Liang2013}
+\hypertarget{ref-Liang2013}{Liang} J, Tang S, Nieto JJ, Cheke RA. {Analytical methods for detecting pesticide switches with evolution of pesticide resistance}. Mathematical Biosciences. 2013;245: 249--257. doi:\href{https://doi.org/10.1016/j.mbs.2013.07.008}{10.1016/j.mbs.2013.07.008}
+
+\bibitem{ref-Carriere2016}
+Carri\`{e}re Y, Fabrick JA, Tabashnik BE. {Can Pyramids and Seed Mixtures Delay Resistance to Bt Crops?} Trends in Biotechnology. 2016;34: 291--302. doi:\href{https://doi.org/10.1016/j.tibtech.2015.12.011}{10.1016/j.tibtech.2015.12.011}
+
+\bibitem{ref-Liang2018}
+\hypertarget{ref-Liang2018}{Liang} J, Tang S, Cheke RA. {A discrete host-parasitoid model with development of pesticide resistance and ipm strategies}. Journal of Biological Dynamics. 2018;12: 1059--1078. doi:\href{https://doi.org/10.1080/17513758.2018.1556351}{10.1080/17513758.2018.1556351}
+
+\bibitem{ref-South2018}
+8. South A, Hastings IM. {Insecticide resistance evolution with mixtures and sequences: A model-based explanation}. Malaria Journal. 2018;17: 1--20. doi:\href{https://doi.org/10.1186/s12936-018-2203-y}{10.1186/s12936-018-2203-y}
+
+\bibitem{ref-Sudo2018}
+\hypertarget{ref-Sudo2018}{Sudo} M, Takahashi D, Andow DA, Suzuki Y, Yamanaka T. {Optimal management strategy of insecticide resistance under various insect life histories: Heterogeneous timing of selection and interpatch dispersal}. Evolutionary Applications. 2018;11: 271--283. doi:\href{https://doi.org/10.1111/eva.12550}{10.1111/eva.12550}
+
+\bibitem{ref-Saikai2021}
+\hypertarget{ref-Saikai2021}{Saikai} Y, Hurley TM, Mitchell PD. {An agent-based model of insect resistance management and mitigation for Bt maize: a social science perspective}. Pest Management Science. 2021;77: 273--284. doi:\href{https://doi.org/10.1002/ps.6016}{10.1002/ps.6016}
+
+\bibitem{ref-Raymond2001}
+\hypertarget{ref-Raymond2001}{Raymond} M, Berticat C, Weill M, Pasteur N, Chevillon C. {Insecticide resistance in the mosquito \textit{Culex pipiens}: What have we learned about adaptation?} Genetica. 2001;103: 239--248. doi:\href{https://doi.org/10.1023/A}{10.1023/A}
+
+\bibitem{ref-Ffrench-Constant2004}
+Ffrench-Constant RH, Daborn PJ, Le Goff G. {The genetics and genomics of insecticide resistance}. Trends in Genetics. 2004;20: 163--170. doi:\href{https://doi.org/10.1016/j.tig.2004.01.003}{10.1016/j.tig.2004.01.003}
+
+\bibitem{ref-Ffrench-Constant2013}
+\hypertarget{ref-Ffrench-Constant2013}{Ffrench-Constant} RH. {The molecular genetics of insecticide resistance}. Genetics. 2013;194: 807--815. doi:\href{https://doi.org/10.1534/genetics.112.141895}{10.1534/genetics.112.141895}
+
+\bibitem{ref-Via1986}
+\hypertarget{ref-Via1986}{Via} S. {Quantitative genetic models and the evolution of pesticide resistance}. Pesticide resistance: Strategies and tactics for management. Washington, DC: National Academy Press; 1986. pp. 222--235.
+
+\bibitem{ref-Firko1990}
+Firko MJ, Hayes JL. {Quantitative genetic tools for insecticide resistance risk assessment: estimating the heritability of resistance}. Journal of Economic Entomology. 1990;83: 657--654.
+
+\bibitem{ref-Busi2013}
+Busi R, Neve P, Powles S. {Evolved polygenic herbicide resistance in \textit{Lolium rigidum} by low-dose herbicide selection within standing genetic variation}. Evolutionary Applications. 2013;6: 231--242. doi:\href{https://doi.org/10.1111/j.1752-4571.2012.00282.x}{10.1111/j.1752-4571.2012.00282.x}
+
+\bibitem{ref-Haridas2018}
+\hypertarget{ref-Haridas2018}{Haridas} CV, Tenhumberg B. {Modeling effects of ecological factors on evolution of polygenic pesticide resistance}. Journal of Theoretical Biology. 2018;456: 224--232. doi:\href{https://doi.org/10.1016/j.jtbi.2018.07.034}{10.1016/j.jtbi.2018.07.034}
+
+\bibitem{ref-Green2020}
+\hypertarget{ref-Green2020}{Green} KK, Stenberg JA, Lankinen Å. {Making sense of Integrated Pest Management (IPM) in the light of evolution}. Evolutionary Applications. 2020;13: 1791--1805. doi:\href{https://doi.org/10.1111/eva.13067}{10.1111/eva.13067}
+
+\bibitem{ref-Mangan2023}
+\hypertarget{ref-Mangan2023}{Mangan} R, Bussière LF, Polanczyk RA, Tinsley MC. {Increasing ecological heterogeneity can constrain biopesticide resistance evolution}. Trends in Ecology and Evolution. 2023;38: 605--614. doi:\href{https://doi.org/10.1016/j.tree.2023.01.012}{10.1016/j.tree.2023.01.012}
+
+\bibitem{ref-Elnahal2022}
+\hypertarget{ref-Elnahal2022}{Elnahal} AS, El-Saadony MT, Saad AM, Desoky ESM, El-Tahan AM, Rady MM, et al. {The use of microbial inoculants for biological control, plant growth promotion, and sustainable agriculture: A review}. Springer Netherlands; 2022. pp. 759--792. doi:\href{https://doi.org/10.1007/s10658-021-02393-7}{10.1007/s10658-021-02393-7}
+
+\bibitem{ref-Daly2022}
+\hypertarget{ref-Daly2022}{Daly} AJ, De Visscher L, Baetens JM, De Baets B. {Quo vadis, agent-based modelling tools?} Environmental Modelling and Software. 2022;157: 105514. doi:\href{https://doi.org/10.1016/j.envsoft.2022.105514}{10.1016/j.envsoft.2022.105514}
+
+\bibitem{ref-Hamblin2013}
+\hypertarget{ref-Hamblin2013}{Hamblin} S. {On the practical usage of genetic algorithms in ecology and evolution}. Methods in Ecology and Evolution. 2013;4: 184--194. doi:\href{https://doi.org/10.1111/2041-210X.12000}{10.1111/2041-210X.12000}
+
+\bibitem{ref-Duthie2018}
+\hypertarget{ref-Duthie2018}{Duthie} AB, Cusack JJ, Jones IL, Nilsen EB, Pozo RA, Rakotonarivo OS, et al. {GMSE: an R package for generalised management strategy evaluation}. Methods in Ecology and Evolution. 2018;9: 2396--2401. doi:\href{https://doi.org/10.1101/221432}{10.1101/221432}
+
+\bibitem{ref-Newman2023}
+\hypertarget{ref-Newman2023}{Newman} DR, Saurette DD, Cockburn JMH, Dragut L, Lindsay JB. {Assessing spatially heterogeneous scale representation with applied digital soil mapping}. Environmental Modelling and Software. 2023;160: 105612. doi:\href{https://doi.org/10.1016/j.envsoft.2022.105612}{10.1016/j.envsoft.2022.105612}
+
+\bibitem{ref-Millington2021}
+\hypertarget{ref-Millington2021}{Millington} JDA, Katerinchuk V, Silva RFB da, Victoria D de C, Batistella M. {Modelling drivers of Brazilian agricultural change in a telecoupled world}. Environmental Modelling and Software. 2021;139: 105024. doi:\href{https://doi.org/10.1016/j.envsoft.2021.105024}{10.1016/j.envsoft.2021.105024}
+
+\bibitem{ref-Zhang2020}
+\hypertarget{ref-Zhang2020}{Zhang} C, Di L, Yang Z, Lin L, Hao P. {AgKit4EE: A toolkit for agricultural land use modeling of the conterminous United States based on Google Earth Engine}. Environmental Modelling and Software. 2020;129: 104694. doi:\href{https://doi.org/10.1016/j.envsoft.2020.104694}{10.1016/j.envsoft.2020.104694}
+
+\bibitem{ref-Tabashnik2014}
+\hypertarget{ref-Tabashnik2014}{Tabashnik} BE, Mota-Sanchez D, Whalon ME, Hollingworth RM, Carri\`{e}re Y. {Defining terms for proactive management of resistance to Bt crops and pesticides}. Journal of Economic Entomology. 2014;107: 496--507. doi:\href{https://doi.org/10.1603/EC13458}{10.1603/EC13458}
+
+\bibitem{ref-Bradshaw2016}
+\hypertarget{ref-Bradshaw2016}{Bradshaw} CJA, Leroy B, Bellard C, Roiz D, Albert C, Fournier A, et al. {Massive yet grossly underestimated global costs of invasive insects}. Nature Communications. 2016;7: 12986. doi:\href{https://doi.org/10.1038/ncomms12986}{10.1038/ncomms12986}
+
+\bibitem{ref-Curtis1985}
+\hypertarget{ref-Curtis1985}{Curtis} CF. {Theoretical models of the use of insecticide mixtures for the management of resistance}. Bulletin of Entomological Research. 1985;75: 259--266. doi:\href{https://doi.org/10.1017/S0007485300014346}{10.1017/S0007485300014346}
+
+\bibitem{ref-Mani1985}
+\hypertarget{ref-Mani1985}{Mani} GS. {Evolution of resistance in the presence of two insecticides.} Genetics. 1985;109: 761--783. doi:\href{https://doi.org/10.1093/genetics/109.4.761}{10.1093/genetics/109.4.761}
+
+\end{thebibliography}
+
+
+\section*{Supporting information}
+
+% Include only the SI item label in the paragraph heading. Use the \nameref{label} command to cite SI items in the text.
+\paragraph*{S1 Text.}
+\label{S1_Text}
+{\bf The evolutionary algorithm} The evolutionary algorithm of the resevol R package, including key data structures used, a general overview of the evolutionary algorithm, and details concerning haploid and diploid individuals. (PDF)
+
+
+\paragraph*{S2 Text.}
+\label{S2_Text}
+{\bf Advanced techniques}  Advanced techniques for using the resevol R package, including initialising pest genomes and running simulations. (PDF)
+
+\end{document}
+

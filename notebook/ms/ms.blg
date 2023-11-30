@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2022)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: ms.aux
+The style file: acm.bst
+Database file #1: resevol.bib
+Warning--can't use both volume and number fields in Elnahal2022
+You've used 30 entries,
+            2253 wiz_defined-function locations,
+            752 strings with 10375 characters,
+and the built_in function-call counts, 11243 in all, are:
+= -- 1095
+> -- 610
+< -- 0
++ -- 250
+- -- 220
+* -- 1037
+:= -- 1868
+add.period$ -- 91
+call.type$ -- 30
+change.case$ -- 199
+chr.to.int$ -- 0
+cite$ -- 31
+duplicate$ -- 288
+empty$ -- 820
+format.name$ -- 220
+if$ -- 2241
+int.to.chr$ -- 0
+int.to.str$ -- 30
+missing$ -- 31
+newline$ -- 153
+num.names$ -- 60
+pop$ -- 148
+preamble$ -- 1
+purify$ -- 170
+quote$ -- 0
+skip$ -- 165
+stack$ -- 0
+substring$ -- 846
+swap$ -- 69
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 118
+warning$ -- 1
+while$ -- 113
+width$ -- 32
+write$ -- 306
+(There was 1 warning)

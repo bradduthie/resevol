@@ -10,7 +10,6 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   University of Stirling Stirling, FK9 4LA, UK'
 output:
   bookdown::pdf_document2:
-    citation_package: natbib
     fig_caption: yes
     toc: no
   word_document:
@@ -29,9 +28,11 @@ linestretch: 1
 link-citations: yes
 linkcolor: blue
 bibliography: resevol.bib
-biblio-style: apalike
+csl: plos-computational-biology.csl
+biblio-style: acm
 ---
 
+\renewcommand\thefigure{\Alph{figure}}
 
 <a name = "introduction">Introduction</a>
 ================================================================================
@@ -84,7 +85,7 @@ mg  <- mine_gmatrix(gmatrix = gmt, loci = 12, indivs = 2000, npsize = 12000,
 
 To save time, a genome `mg` produced from the code above has been saved into the resevol R package as `advanced_techniques_eg.rda`, which we can load.
 Note that running `mine_gmatrix` can be a time-consuming process, and will often require multiple attempts to get the above parameter settings to produce a desired network.
-See @Hamblin2013 for useful advice on parameter value selection for the evolutionary algorithm.
+See Hamblin @Hamblin2013 for useful advice on parameter value selection for the evolutionary algorithm.
 Time-sensitive parameter values specific to the resevol package include `indivs` and `layers`.
 Increasing values for both of these parameters can increase run time.
 
@@ -102,7 +103,7 @@ print(mg[[6]]);
 We can compare the above covariance structure with the one that we specified in `gmt`. 
 The stress of `mg` (i.e., mean squared deviation of `mg` elements from `gmt` elements) is `r mean((mg[[6]] - gmt)^2)`. 
 But this is only based on one population of `indivs = 2000` initialised pests. 
-We can use the `stress_test` function to see what the distribution of stress is over 1000 such initialised populations of 2000 individuals (Figure 1).
+We can use the `stress_test` function to see what the distribution of stress is over 1000 such initialised populations of 2000 individuals (Figure A).
 
 ```{r, fig.height = 6, fig.width = 6, fig.align = "left", fig.cap = "Distribution of stress for initialised pest trait covariances in the resevol R package. Stress values are computed using genome values produced by the mine\\_gmatrix function for 1000 replicate populations of initialised pest loci values."}
 sim_stress <- stress_test(mine_output = mg, indivs = 2000, reps = 1000);
@@ -142,14 +143,14 @@ print(simple_terrain)
 
 What is important is that the matrix elements only include natural numbers from 1 to the total number of farms (not skipping any numbers). 
 In the case of the above, numbers 1-7 all appear on the landscape, so the matrix will work.
-We can visualise the matrix more clearly by looking at it as an image (Figure 2).
+We can visualise the matrix more clearly by looking at it as an image (Figure B).
 
 ```{r, fig.width=5, fig.height=5, fig.align = "left", fig.cap = "Image representing a simple landscape for the resevol package created from a 12 by 12 matrix of natural numbers from 1-7."}
 par(mar = c(0, 0, 0, 0));
 image(t(simple_terrain), xaxt = "n", yaxt = "n", useRaster = TRUE);
 ```
 
-In Figure 2, each colour represents a unique farm, and colours correspond to the numbers within the matrix `simple_terrain` (note that the orientation differs between the matrix and the image).
+In Figure B, each colour represents a unique farm, and colours correspond to the numbers within the matrix `simple_terrain` (note that the orientation differs between the matrix and the image).
 This is a simple example, but matrices can be made large to model highly complex landscapes.
 Additionally, not every colour needs to represent a 'farm' per se. 
 We can represent other types of terrain such as grassland, woodland, or water with its own natural number.
@@ -157,7 +158,7 @@ The trick in this case is to have each of these other types of terrain grow a cr
 If terrain types have no effect on pests, then they can effectively model land that is not used for farming.
 We can show this using the matrix `land_eg`, which is also included in the resevol package.
 The dimensions of the landscape modelled in `land_eg` are 128 by 128 cells, and the landscape includes 14 farms (1-14), grassland (15), forest (16), and water (17).
-The code below produces an image that shows how these terrain types are distributed over the landscape (Figure 3).
+The code below produces an image that shows how these terrain types are distributed over the landscape (Figure C).
 
 
 ```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape to be used in the resevol R package, including 14 separate farms, grassland, forest, and water. The image is represented in the code by a matrix in which element numbers correspond to different terrain colours (e.g., elements corresponding to water are numbered 17)."}
@@ -402,7 +403,7 @@ print(head(population_data_sim1));
 Because the structure of the data frame above depends on the number of crops, pesticides, and evolving traits simulated, there are no pre-set functions in the resevol package for plotting.
 Here we include code for plotting population size, consumption of the two food types, two pesticides types, and evolving trait means.
 Note that because crop and pesticide 3 are dummy variables (not consumed at all), we do not need to plot these.
-Figure 4 shows how population density of pests changes over time.
+Figure D shows how population density of pests changes over time.
 
 ```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest abundance over time in a population simulated using the resevol R package in which pesticides are not rotated over time. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line."}
 mbox <- function(x0, x1, y0, y1){
@@ -431,7 +432,7 @@ abline(v = 81, lwd = 3, col = "red");
 box();
 ```
 
-Figure 5 shows how the mean consumption of different foods and pesticides changes over time.
+Figure E shows how the mean consumption of different foods and pesticides changes over time.
 
 ```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest consumption over time in a population simulated using the resevol R package in which pesticides are not rotated over time. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
@@ -497,7 +498,7 @@ box();
 text(x = 5, y = 0.78, labels = "d", cex = 2);
 ```
 
-Similarly, we can visualise how all four traits evolve over time (Figure 6).
+Similarly, we can visualise how all four traits evolve over time (Figure F).
 
 ```{r, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides are not rotated over time. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
@@ -579,7 +580,7 @@ pop_last_time_step_sim1  <- read.csv(file = last_time_step_file_sim1);
 We can plot the distribution over the landscape using the code below.
 The code identifies the x-locations and y-locations of each pest `i` in `pop_last_time_step_sim1`, and these landscape cells are replaced with the number 18.
 A new land colour for black `#000000` is then included, and the map is reproduced as an image in R.
-Figure 7 shows the same map as above, but with the numbering removed to make the pests (black points) more visible.
+Figure G shows the same map as above, but with the numbering removed to make the pests (black points) more visible.
 
 
 ```{r, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time."}
@@ -683,7 +684,7 @@ population_data_sim2      <- read.csv(file = population_data_file_sim2);
 
 
 To avoid needless repetition, the code for plots will not be included for simulation 2.
-Figure 8 shows population abundance over time for simulation 2.
+Figure H shows population abundance over time for simulation 2.
 
 
 ```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest abundance over time in a population simulated using the resevol R package in which pesticides rotates every 9 time steps. The grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step indicated by the red vertical line."}
@@ -714,7 +715,7 @@ box();
 ```
 
 After pesticides are applied at time step 81, pest population size decreases and does not recover.
-Figure 9 shows crop and pesticide consumption over time.
+Figure I shows crop and pesticide consumption over time.
 
 ```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Pest consumption over time in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Panels show (a) mean amount of crop 1 and (b) crop 2 consumed per pest, and (c) mean amount of pesticide 1 and (d) pesticide 2 consumed per pest. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
@@ -780,7 +781,7 @@ box();
 text(x = 5, y = 0.78, labels = "d", cex = 2);
 ```
 
-Figure 10 shows how pest traits evolve over time when pesticides are rotated.
+Figure J shows how pest traits evolve over time when pesticides are rotated.
 
 ```{r, echo = FALSE, fig.height = 7, fig.width = 7, fig.align = "left", fig.cap = "Mean values of pest traits T1 (crop 1 consumption rate), T2 (crop 2 consumption rate), T3 (pesticide 1 consumption rate), and T4 (pesticide 2 consumption rate) in a population simulated using the resevol R package in which pesticides rotate every 9 time steps. Grey shaded regions show individual crop seasons; pesticides are applied at the start and midpoint of each seasons, beginning at the time step 100."}
 par(mfrow = c(2, 2), mar = c(1, 4, 1, 1));
@@ -845,7 +846,7 @@ box();
 text(x = 5, y = 1.34, labels = "d", cex = 2);
 ```
 
-We can observe the spatial distribution of pests on the landscape in the final time step (Figure 11).
+We can observe the spatial distribution of pests on the landscape in the final time step (Figure K).
 
 
 ```{r, echo = FALSE, fig.width=7, fig.height=7, fig.align = "left", fig.cap = "A complex landscape for simulating the ecology of pests and the evolution of pesticide resistance on farmland in the resevol R package. Terrain includes farms (brown colours), grassland (light green), forest (dark green), and water (blue). Black points show the locations of individual pests after 240 time steps for a simulation in which pesticides are not rotated over time."}
@@ -877,15 +878,15 @@ We can use the outputs above to contrast the population dynamics of pests under 
 ================================================================================
 
 From the output above, we can conclude that when farms rotate the pesticide that they apply between pesticide 1 and pesticide 2, it has a substantial effect on pest density and evolution.
-In the absence of pesticide rotation, the pest population quickly recovers after pesticides are first applied (Figure 4).
-Consequently, pesticides have very little long-term effect on the amount of crops consumed (Figure 5a,b), and while there is an initial spike in the consumption of both pesticides (Figure 5c,d), this consumption quickly declines.
-Despite the positive covariance between crop consumption and pesticide consumption, and the negative covariances between consumption of crop and pesticide types, these trade-offs appear to have only a modest effect on reducing actual crop consumption and maintaining or increasing pesticide consumption (Figure 6).
-Consequently, some farms experience high densities of pests that are resistant to the applied pesticides (Figure 7).
+In the absence of pesticide rotation, the pest population quickly recovers after pesticides are first applied (Figure D).
+Consequently, pesticides have very little long-term effect on the amount of crops consumed (Figure Ea,b), and while there is an initial spike in the consumption of both pesticides (Figure Ec,d), this consumption quickly declines.
+Despite the positive covariance between crop consumption and pesticide consumption, and the negative covariances between consumption of crop and pesticide types, these trade-offs appear to have only a modest effect on reducing actual crop consumption and maintaining or increasing pesticide consumption (Figure F).
+Consequently, some farms experience high densities of pests that are resistant to the applied pesticides (Figure G).
 
-In contrast, when pesticides are rotated every 9 time steps, the pest population density drops after the onset of pesticide application and does not recover (Figure 8).
-The amount of each crop consumed per pests also drops (Figure 9a, b), while the amount of pesticide 1 and 2 consumed is maintained at a much higher rate than occurred in the absence of pesticide rotation (Figure 9c, d).
-Because selection against pesticide consumption was not consistent for a specific farm, and there is a trade-off between pest consumption of pesticide 1 versus 2, local adaptation to a single pesticide did not occur (Figure 10).
-Overall, farms therefore did not experience high densities of pests, and pest resistance to pesticide is well-managed (Figure 11).
+In contrast, when pesticides are rotated every 9 time steps, the pest population density drops after the onset of pesticide application and does not recover (Figure H).
+The amount of each crop consumed per pests also drops (Figure Ia, b), while the amount of pesticide 1 and 2 consumed is maintained at a much higher rate than occurred in the absence of pesticide rotation (Figure Ic, d).
+Because selection against pesticide consumption was not consistent for a specific farm, and there is a trade-off between pest consumption of pesticide 1 versus 2, local adaptation to a single pesticide did not occur (Figure J).
+Overall, farms therefore did not experience high densities of pests, and pest resistance to pesticide is well-managed (Figure K).
 
 Trait covariance differences between simulations 1 and 2 also highlight the effect that pesticide rotation had on pesticide resistance evolution.
 When no pesticide rotation occurred, the trade-off between consumption rate of pesticides 1 and 2 was reflected in a realised trait covariance of `r end_trait_covs[3, 4]`.

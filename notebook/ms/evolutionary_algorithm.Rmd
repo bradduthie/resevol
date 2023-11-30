@@ -9,12 +9,11 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
   UK [2]  alexander.duthie@stir.ac.uk, Biological and Environmental Sciences 3A149
   University of Stirling Stirling, FK9 4LA, UK'
 output:
-  word_document:
-    reference_docx: docx_template.docx
   bookdown::pdf_document2:
-    citation_package: natbib
     fig_caption: yes
     toc: no
+  word_document:
+    reference_docx: docx_template.docx
   pdf_document:
     toc: no
   html_document: default
@@ -29,9 +28,11 @@ linestretch: 1
 link-citations: yes
 linkcolor: blue
 bibliography: resevol.bib
-biblio-style: apalike
+csl: plos-computational-biology.csl
+biblio-style: acm
 ---
 
+\renewcommand\thefigure{\Alph{figure}}
 
 <a name = "introduction">Introduction</a>
 ================================================================================
@@ -78,16 +79,16 @@ for(i in 1:4){
 }
 ```
 
-The objective of the evolutionary algorithm in resevol is to find a set of network values that produce traits (red diamonds above) with the pre-specified covariance structure given allele values (green circles above) that are sampled from a standard normal distribution (i.e., mean of zero and standard deviation of one). Conceptually, the problem is simple; we need to find values for the black arrows above that produce traits that covary in the way that we want them to covary (within some acceptable margin of error). The `mine_gmatrix` function uses an evolutionary algorithm for identifying sets of values that work. An evolutionary algorithm is an algorithm that works especially well for *I know it when I see it* problems [@Hamblin2013]. @Luke2013 explains the idea behind these algorithms in more detail:
+The objective of the evolutionary algorithm in resevol is to find a set of network values that produce traits (red diamonds above) with the pre-specified covariance structure given allele values (green circles above) that are sampled from a standard normal distribution (i.e., mean of zero and standard deviation of one). Conceptually, the problem is simple; we need to find values for the black arrows above that produce traits that covary in the way that we want them to covary (within some acceptable margin of error). The `mine_gmatrix` function uses an evolutionary algorithm for identifying sets of values that work. An evolutionary algorithm is an algorithm that works especially well for *I know it when I see it* problems [@Hamblin2013]. Luke @Luke2013 explains the idea behind these algorithms in more detail:
 
 > They're algorithms used to find answers to problems when you have very little to help you: you don’t know beforehand what the optimal solution looks like, you don’t know how to go about finding it in a principled way, you have very little heuristic information to go on, and brute-force search is out of the question because the space is too large. But if you’re given a candidate solution to your problem, you can test it and assess how good it is. That is, you know a good one when you see it.
 
-In the `mine_gmatrix` function of the resevol package, an evolving population of networks like that in Figure 1 above is initialised. Parent networks produce offspring networks with some recombination and mutation, and offspring networks are selected based on how close their trait covariance matrix is to the pre-specified matrix input into the function. The algorithm is inspired by a similar algorithm within the [GMSE R package](https://confoobio.github.io/gmse/index.html) [@Duthie2018].
+In the `mine_gmatrix` function of the resevol package, an evolving population of networks like that in Figure A above is initialised. Parent networks produce offspring networks with some recombination and mutation, and offspring networks are selected based on how close their trait covariance matrix is to the pre-specified matrix input into the function. The algorithm is inspired by a similar algorithm within the [GMSE R package](https://confoobio.github.io/gmse/index.html) [@Duthie2018].
 
 <a name = "structures">Key data structures used</a>
 ================================================================================
 
-In the code, the arrows in the above Figure 1 are represented by a set of matrices that map loci values to trait values. There are 12 loci in Figure 1, and 4 nodes in each hidden layer (blue squares). Arrow values between loci and the first hidden layer can then be represented by a matrix with 12 rows and 4 columns (i.e., row 1 holds a value for each of 4 arrows that point to the 4 hidden layer nodes). Note that the values below are initialised randomly, which is how they are initialised in the evolutionary algorithm.
+In the code, the arrows in the above Figure A are represented by a set of matrices that map loci values to trait values. There are 12 loci in Figure A, and 4 nodes in each hidden layer (blue squares). Arrow values between loci and the first hidden layer can then be represented by a matrix with 12 rows and 4 columns (i.e., row 1 holds a value for each of 4 arrows that point to the 4 hidden layer nodes). Note that the values below are initialised randomly, which is how they are initialised in the evolutionary algorithm.
 
 ```{r}
 arrows_1_dat <- rnorm(n = 4 * 12, mean = 0, sd = 0.1);
@@ -101,7 +102,7 @@ We can initialise 12 allele values, one for each locus.
 loci <- rnorm(n = 12, mean = 0, sd = 1);
 ```
 
-To then get the value of the first column of four hidden layer nodes (i.e., the first column of blue squares in Figure 1), we can use matrix multiplication.
+To then get the value of the first column of four hidden layer nodes (i.e., the first column of blue squares in Figure A), we can use matrix multiplication.
 
 ```{r}
 print(loci %*% arrows_1_mat);
@@ -126,7 +127,7 @@ This pattern can continue, with 4 by 4 square matrices representing the value of
 <a name = "overview">General overview of the evolutionary algorithm</a>
 ================================================================================
 
-The evolutionary algorithm first initialises a population of networks, with each network having a unique set of values (i.e., black arrows in Figure 1, represented in the code by matrices explained in the [previous selction](#structures)). In each iteration of the evolutionary algorithm, with some probability, networks crossover their values with another randomly selected network. Individual values in each network then mutate with some probability. The fitness of each network is then calculated by comparing its trait covariances with those of a pre-specified covariance matrix. A tournament is then used to select the highest fitness networks, and those selected networks replace the old to comprise the new population. Iterations continue until either a maximum number of iterations is reached or a network is found that produces trait covariances sufficiently close to the pre-specified covariance matrix. Figure 2 below provides a general overview of the evolutionary algorithm.
+The evolutionary algorithm first initialises a population of networks, with each network having a unique set of values (i.e., black arrows in Figure A, represented in the code by matrices explained in the [previous selction](#structures)). In each iteration of the evolutionary algorithm, with some probability, networks crossover their values with another randomly selected network. Individual values in each network then mutate with some probability. The fitness of each network is then calculated by comparing its trait covariances with those of a pre-specified covariance matrix. A tournament is then used to select the highest fitness networks, and those selected networks replace the old to comprise the new population. Iterations continue until either a maximum number of iterations is reached or a network is found that produces trait covariances sufficiently close to the pre-specified covariance matrix. Figure B below provides a general overview of the evolutionary algorithm.
 
 ```{r, echo=FALSE, fig.height=1.75, fig.width=6, fig.cap = "*Conceptual overview of the evolutionary algorithm used in the resevol package.*"}
 mbox <- function(x0, x1, y0, y1){
@@ -192,9 +193,9 @@ At the start of the evolutionary algorithm, a population of `npsize` networks is
 <a name = "crossover">Crossover</a>
 --------------------------------------------------------------------------------
 
-An iteration of the evolutionary algorithm begins with a crossover between the values of networks in the population. For each network in the population, a crossover event will occur in the values linking loci to the first hidden layer (see Figure 1) with a probability of `pr_cross`. And a second independent crossover event will occur in the values linking the first hidden layer to traits, also with a probability of `pr_cross`. The reason that these two crossover events are independent is due to the different dimensions of the underlying arrays (see [key data structures used](#structures) above). A matrix with `loci` rows and a number of columns that matches the number of traits holds the values linking loci to the first hidden layer. A three dimensional array with row and column numbers matching trait number, and a depth matching the number of hidden `layers` (e.g., 3 in Figure 1) holds the remaining values linking the first hidden layer to trait values.
+An iteration of the evolutionary algorithm begins with a crossover between the values of networks in the population. For each network in the population, a crossover event will occur in the values linking loci to the first hidden layer (see Figure A) with a probability of `pr_cross`. And a second independent crossover event will occur in the values linking the first hidden layer to traits, also with a probability of `pr_cross`. The reason that these two crossover events are independent is due to the different dimensions of the underlying arrays (see [key data structures used](#structures) above). A matrix with `loci` rows and a number of columns that matches the number of traits holds the values linking loci to the first hidden layer. A three dimensional array with row and column numbers matching trait number, and a depth matching the number of hidden `layers` (e.g., 3 in Figure A) holds the remaining values linking the first hidden layer to trait values.
 
-If a crossover event occurs for a focal network, then a contiguous set of values is defined and swapped with another randomly selected network in the population. Dimensions of the contiguous set are selected from a random uniform distribution. For example, given that the network in Figure 1 would be represented by a three dimensional array with 4 rows, 4 columns, and 3 layers, three random integers from 1-4, 1-4, and 1-3 would be sampled twice, respectively, with replacement. If the values selected were 1, 3, and 2 in the first sample, then 3, 3, and 1 in the second sample, then all values from rows 1-3, column 3, and layers 1-2 would be swapped between networks. Conceptually, this is the equivalent of drawing a square around set of arrows in Figure 1 and swapping the arrow values with the values of another network. 
+If a crossover event occurs for a focal network, then a contiguous set of values is defined and swapped with another randomly selected network in the population. Dimensions of the contiguous set are selected from a random uniform distribution. For example, given that the network in Figure A would be represented by a three dimensional array with 4 rows, 4 columns, and 3 layers, three random integers from 1-4, 1-4, and 1-3 would be sampled twice, respectively, with replacement. If the values selected were 1, 3, and 2 in the first sample, then 3, 3, and 1 in the second sample, then all values from rows 1-3, column 3, and layers 1-2 would be swapped between networks. Conceptually, this is the equivalent of drawing a square around set of arrows in Figure A and swapping the arrow values with the values of another network. 
 
 <a name = "mutation">Mutation</a>
 --------------------------------------------------------------------------------
@@ -204,7 +205,7 @@ After crossover occurs, all network values mutate independently at a fixed proba
 <a name = "fitness">Fitness evaluation</a>
 --------------------------------------------------------------------------------
 
-After mutation, the fitness of each network in the population is evaluated. For each network, a set of `indivs` loci vectors is created, which represents the allele values of `indivs` potential individuals in a simulated population. Elements of each loci vector are randomly sampled from a standard normal distribution. For example, in the network of Figure 1 where `loci = 12`, `loci * indivs` standard normal values would be generated in total. After these `indivs` loci vectors are initialised, values in each vector are mapped to traits using the focal network, thereby producing `indivs` sets of traits from the focal network. These `indivs` sets of traits are then used to calculate the among trait covariances and build a trait covariance matrix for the network. This trait covariance matrix is then compared to the pre-specified `gmatrix` by calculating stress as the mean squared deviation between matrix elements. Lower stress values correspond to higher network fitness.
+After mutation, the fitness of each network in the population is evaluated. For each network, a set of `indivs` loci vectors is created, which represents the allele values of `indivs` potential individuals in a simulated population. Elements of each loci vector are randomly sampled from a standard normal distribution. For example, in the network of Figure A where `loci = 12`, `loci * indivs` standard normal values would be generated in total. After these `indivs` loci vectors are initialised, values in each vector are mapped to traits using the focal network, thereby producing `indivs` sets of traits from the focal network. These `indivs` sets of traits are then used to calculate the among trait covariances and build a trait covariance matrix for the network. This trait covariance matrix is then compared to the pre-specified `gmatrix` by calculating stress as the mean squared deviation between matrix elements. Lower stress values correspond to higher network fitness.
 
 The stress of each network in the population of `npsize` networks is calculated using the above algorithm. Selection of the next generation of `npsize` networks is then done using a tournament.
 
