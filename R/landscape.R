@@ -227,3 +227,67 @@ initialise_pesticide <- function(pesticide_init = "random", pesticide_N, farms){
     return(init_mat);
 }
 
+initialise_thresholds <- function(pesticide_threshold = "none", farms){
+    if(is.numeric(farms) == FALSE | length(farms) > 1){
+        stop("ERROR: farms must be a numeric scalar")
+    }
+    init_vec <- NA;
+    if(pesticide_threshold == "none"){
+        init_vec <- rep(x = -1, times = farms);
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) == 1){
+        init_vec <- rep(x = pesticide_threshold, times = farms);
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) == farms){
+        init_vec <- pesticide_threshold;
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) != farms & 
+       length(pestiicde_threshold > 1)){
+        stop("ERROR: pesticide_threshold variable must be length 1 or farms.")
+    }
+    if(is.na(init_vec) == TRUE){
+        stop("ERROR: pesticide_threshold needs to be 'none' or numeric")
+    }
+    return(init_vec);
+}
+
+
+initialise_delay <- function(pesticide_delay = 0, farms){
+    if(is.numeric(farms) == FALSE | length(farms) > 1){
+        stop("ERROR: farms must be a numeric scalar")
+    }
+    init_vec <- NA;
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) == 1){
+        init_vec <- rep(x = pesticide_delay, times = farms);
+    }
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) == farms){
+        init_vec <- pesticide_delay;
+    }
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) != farms & 
+       length(pesticide_delay > 1)){
+        stop("ERROR: pesticide_delay variable must be length 1 or farms.")
+    }
+    if(is.na(init_vec) == TRUE){
+        stop("ERROR: pesticide_delay needs to be numeric")
+    }
+    return(init_vec);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
