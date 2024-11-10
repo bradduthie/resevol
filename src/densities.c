@@ -53,7 +53,7 @@ void pest_dense(double **pests, double ***land, double *paras,
             delay_count[i]--;
         }
         if(pest_density < thresholds[i] && delay_count[i] < delay[i]){
-            delay_count[i] = delay[i];
+            delay_count[i] = delay[i] + 1;
         }
     }
 
