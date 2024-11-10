@@ -484,7 +484,7 @@ void land_change(double ***land, double *paras, int ts, double **C_init,
           }
       }
       if(initiate_pesticide == 1){
-          intervene(land, paras, P_init, delay_count)   ;
+          intervene(land, paras, P_init, delay_count);
       }
   }
 }
