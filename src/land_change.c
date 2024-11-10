@@ -40,7 +40,7 @@ double get_pesticide_val(double *paras, int delay){
  *     P_init: The matrix for the initial pesticide positions
  * ========================================================================== */
 void init_pesticide(double ***land, double *paras, double **P_init,
-                    double *delay_count){
+                    int *delay_count){
     
     int i, j, xdim, ydim, owner, own_layer, choice, layer, farms;
     int pesticide_number, pesticide_layer_1, delay, *owner_choice;
@@ -401,7 +401,7 @@ void grow_crops(double ***land, double *grow, double *paras){
  *     delay_count: The counting vector for pesticide application delay
  * ========================================================================== */
 void intervene(double ***land, double *paras, double **P_init,
-               double *delay_count){
+               int *delay_count){
     
     int i, j, xdim, ydim, owner, own_layer, choice, layer, farms;
     int pesticide_number, pesticide_layer_1, delay, *owner_choice;
@@ -453,7 +453,7 @@ void intervene(double ***land, double *paras, double **P_init,
  * ========================================================================== */
 void land_change(double ***land, double *paras, int ts, double **C_init,
                  double **C_change, double **P_init, double **P_change,
-                 double *grow, double *delay_count){
+                 double *grow, int *delay_count){
   
   int i, farms;
   int rotate_crops, rotate_pesticide, start_pesticide, initiate_pesticide;

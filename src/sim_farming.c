@@ -59,6 +59,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     int    *dim_PROT;        /* Dimensions of the pesticide transition matrix */
     int    *dim_CINIT;       /* Dimensions of the crop initialisation matrix */
     int    *dim_PINIT;       /* Dimensions of the pesticide init matrix */
+    int    *delays;        /* Vector on the delay for pesticide application */
+    int    *delay_count;   /* Vector for temporary counter on pesticide delay */
   
     double *imm_sample;
     double *paras_ptr;
@@ -74,8 +76,6 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     double *paras;
     double *grow;          /* Vector on crop growth per time step */
     double *thresholds;    /* Vector on pest density threshold for pesticide */
-    double *delays;        /* Vector on the delay for pesticide application */
-    double *delay_count;   /* Vector for temporary counter on pesticide delay */
     double **pests;        /* The pests array */
     double **offspring;    /* The offspring of pests within a time step */
     double **new_pests;    /* The pest array at the end of a time step */
@@ -178,12 +178,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         vec_pos++; 
     } /* The thresholds vector is now copied into C */
     
-    delays      = (double *) malloc(len_DELAY * sizeof(double));
-    delay_count = (double *) malloc(len_DELAY * sizeof(double));
+    delays      = (int *) malloc(len_DELAY * sizeof(int));
+    delay_count = (int *) malloc(len_DELAY * sizeof(int));
     vec_pos = 0;
     for(i = 0; i < len_DELAY; i++){
-        delays[i]      = delay_ptr[vec_pos];
-        delay_count[i] = delay_ptr[vec_pos];
+        delays[i]      = (int) delay_ptr[vec_pos];
+        delay_count[i] = (int) delay_ptr[vec_pos];
         vec_pos++; 
     } /* The thresholds vector is now copied into C */
 

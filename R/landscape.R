@@ -232,7 +232,7 @@ initialise_thresholds <- function(pesticide_threshold = "none", farms){
         stop("ERROR: farms must be a numeric scalar")
     }
     init_vec <- NA;
-    if(pesticide_threshold == "none"){
+    if(pesticide_threshold[1] == "none"){
         init_vec <- rep(x = -1, times = farms);
     }
     if(is.numeric(pesticide_threshold) == TRUE & 
@@ -255,18 +255,29 @@ initialise_thresholds <- function(pesticide_threshold = "none", farms){
 }
 
 
-initialise_delay <- function(pesticide_delay = 0, farms){
+initialise_delay <- function(pesticide_delay = 0, farms, thresholds){
     if(is.numeric(farms) == FALSE | length(farms) > 1){
         stop("ERROR: farms must be a numeric scalar")
     }
     init_vec <- NA;
+    threshs  <- length(thresholds);
     if(is.numeric(pesticide_delay) == TRUE & 
        length(pesticide_delay) == farms){
         init_vec <- pesticide_delay;
+        for(i in 1:threshs){
+            if(thresholds[i] > 0 & pesticide_delay[i] == 0){
+                stop("ERROR: If farm threshold positive, delay must be > 0.");
+            }
+        }
     }
     if(is.numeric(pesticide_delay) == TRUE & 
        length(pesticide_delay) == 1){
         init_vec <- rep(x = pesticide_delay, times = farms);
+        for(i in 1:threshs){
+            if(thresholds[i] > 0 & pesticide_delay == 0){
+                stop("ERROR: If farm threshold positive, delay must be > 0.");
+            }
+        }
     }
     if(is.numeric(pesticide_delay) == TRUE & 
        length(pesticide_delay) != farms & 
@@ -276,6 +287,8 @@ initialise_delay <- function(pesticide_delay = 0, farms){
     if(is.na(init_vec)[1] == TRUE){
         stop("ERROR: pesticide_delay needs to be numeric")
     }
+
+    
     return(init_vec);
 }
 

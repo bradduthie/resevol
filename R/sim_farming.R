@@ -752,7 +752,7 @@ sim_crops <- function(pests,
   if(is.numeric(crop_growth) == FALSE){
       stop("Crop growth values must be numeric");
   }
-  if(pthr == "none"){
+  if(pthr[1] == "none"){
       pdly <- 0;
   }
   
@@ -950,7 +950,7 @@ sim_crops <- function(pests,
   c_init       <- initialise_crops(crop_init, crpN, farms);
   p_init       <- initialise_pesticide(pesticide_init, pesN, farms); 
   p_thresh     <- initialise_thresholds(pthr, farms);
-  p_delay      <- initialise_delay(pdly, farms);
+  p_delay      <- initialise_delay(pdly, farms, pthr);
 
   if(length(crop_growth) == 1){
       crop_growth <- rep(x = crop_growth, times = crop_number);

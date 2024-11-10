@@ -10,12 +10,14 @@
  *     delay_count: The temporary vector indicating the delay countdown
  * ========================================================================== */
 void pest_dense(double **pests, double ***land, double *paras, 
-                    double *thresholds, double *delay, double *delay_count){
+                    double *thresholds, int *delay, int *delay_count){
     
-    int N, i, j, xdim, ydim, owner, own_layer, farms, xloc, yloc;
+    int N, i, j, xdim, ydim, owner, own_layer, farms, xloc, yloc, xcol, ycol;
     int *pest_count, *farm_size;
     double the_size, the_pests, pest_density;
     
+    xcol      = (int) paras[1];
+    ycol      = (int) paras[2];
     N         = (int) paras[101];
     xdim      = (int) paras[103];
     ydim      = (int) paras[104];
@@ -38,8 +40,8 @@ void pest_dense(double **pests, double ***land, double *paras,
     }
     
     for(i = 0; i < N; i++){
-        xloc   = (int) pests[i][xdim];
-        yloc   = (int) pests[i][ydim];
+        xloc   = (int) pests[i][xcol];
+        yloc   = (int) pests[i][ycol];
         owner  = (int) land[xloc][yloc][own_layer] - 1;
         pest_count[owner]++;
     }
@@ -53,10 +55,11 @@ void pest_dense(double **pests, double ***land, double *paras,
             delay_count[i]--;
         }
         if(pest_density < thresholds[i] && delay_count[i] < delay[i]){
-            delay_count[i] = delay[i] + 1;
+            delay_count[i] = delay[i];
         }
+        
     }
-
+    
     free(pest_count);
     free(farm_size);
 }
