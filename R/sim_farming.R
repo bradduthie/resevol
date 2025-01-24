@@ -945,12 +945,12 @@ sim_crops <- function(pests,
     stop("ERROR: land must be a 3D array.");
   }
   
-  c_rotate     <- crop_transitions(crop_rotation_type, crpN);
-  p_rotate     <- pesticide_transitions(pesticide_rotation_type, pesN); 
-  c_init       <- initialise_crops(crop_init, crpN, farms);
-  p_init       <- initialise_pesticide(pesticide_init, pesN, farms); 
-  p_thresh     <- initialise_thresholds(pthr, farms);
-  p_delay      <- initialise_delay(pdly, farms, pthr);
+  c_rotate   <- crop_transitions(crop_rotation_type, crop_rotation_time, crpN);
+  p_rotate   <- pesticide_transitions(pesticide_rotation_type, prti, pesN); 
+  c_init     <- initialise_crops(crop_init, crpN, farms);
+  p_init     <- initialise_pesticide(pesticide_init, pesN, farms); 
+  p_thresh   <- initialise_thresholds(pthr, farms);
+  p_delay    <- initialise_delay(pdly, farms, pthr);
 
   if(length(crop_growth) == 1){
       crop_growth <- rep(x = crop_growth, times = crop_number);
