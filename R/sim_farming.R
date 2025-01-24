@@ -753,7 +753,7 @@ sim_crops <- function(pests,
       stop("Crop growth values must be numeric");
   }
   if(pthr[1] == "none"){
-      pdly <- 0;
+      pdly <- -1;
   }
   
   paras  <- c( 0.0,   # 00) pests column for ID
