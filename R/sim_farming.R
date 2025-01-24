@@ -339,6 +339,10 @@
 #' If pest density falls below the threshold, pesticide application immediately
 #' stops (i.e., the delay is only in application, not ceasing use, to simulate
 #' the time needed to acquire and apply pesticide).
+#'@param population_filename The name of the population results CSV file to be
+#' saved.
+#'@param last_step_filename The name of the CSV file showing data for the last
+#' time step of the simulation.
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -436,7 +440,9 @@ run_farm_sim <- function(mine_output,
                          crop_growth         = 0,
                          crop_growth_type    = "none",
                          pesticide_threshold = "none",
-                         pesticide_delay     = 0){
+                         pesticide_delay     = 0,
+                         population_filename = "population_data.csv",
+                         last_step_filename  = "last_time_step.csv"){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -635,6 +641,10 @@ run_farm_sim <- function(mine_output,
                              crop_growth_type         = crop_growth_type,
                              pesticide_threshold      = pesticide_threshold,
                              pesticide_delay          = pesticide_delay);
+    
+    rename_pop  <- rename_csv("population_data.csv", population_filename);
+    rename_last <- rename_csv("last_time_step.csv", last_step_filename);
+
     return(sim_results);
 }
 
@@ -959,7 +969,7 @@ sim_crops <- function(pests,
   SIM_RESULTS  <- run_farming_sim(pests, land, paras, c_rotate, p_rotate,
                                   c_init, p_init, crop_growth, p_thresh, 
                                   p_delay);
-
+  
   return(SIM_RESULTS);
 }
 

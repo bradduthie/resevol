@@ -307,13 +307,3 @@ initialise_delay <- function(pesticide_delay = 0, farms, thresholds){
 
 
 
-
-
-
-
-
-
-
-
-
-

@@ -78,7 +78,9 @@ run_farm_sim(
   crop_growth = 0,
   crop_growth_type = "none",
   pesticide_threshold = "none",
-  pesticide_delay = 0
+  pesticide_delay = 0,
+  population_filename = "population_data.csv",
+  last_step_filename = "last_time_step.csv"
 )
 }
 \arguments{
@@ -474,6 +476,12 @@ applied in response to the threshold being crossed until time step 12.
 If pest density falls below the threshold, pesticide application immediately
 stops (i.e., the delay is only in application, not ceasing use, to simulate
 the time needed to acquire and apply pesticide).}
+
+\item{population_filename}{The name of the population results CSV file to be
+saved.}
+
+\item{last_step_filename}{The name of the CSV file showing data for the last
+time step of the simulation.}
 }
 \value{
 The output in the R console is a list with two elements; the first 

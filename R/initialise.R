@@ -354,3 +354,23 @@ build_sexual <- function(mine_output, N, neutral_loci, trait_means){
   
   return(inds);
 }
+
+
+rename_csv <- function(old_name, new_name){
+    in_dir <- list.files();
+    if(old_name %in% in_dir == FALSE){
+        warning(paste("WARNING: Could not rename file to", new_name, "."));
+    }
+    if(old_name != new_name){
+        temp_file <- read.csv(old_name);
+        write.csv(x = temp_file, file = new_name, row.names = FALSE);
+        file.remove(old_name);
+    }
+    return(TRUE);
+}
+
+
+
+
+
+
