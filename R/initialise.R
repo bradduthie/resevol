@@ -101,8 +101,17 @@ initialise_inds <- function(mine_output,
   sp_food   <- length(food_consume);
   sp_pesti  <- length(pesticide_consume);
   
-  food[1:sp_food]       <- food_consume;
-  pesticide[1:sp_pesti] <- pesticide_consume;
+  if(sp_food == 1){
+      food[1:10]  <- food_consume;
+  }else{
+      food[1:sp_food] <- food_consume;
+  }
+  
+  if(sp_pesti == 1){
+      pesticide[1:10] <- pesticide_consume;
+  }else{
+      pesticide[1:sp_pesti] <- pesticide_consume;
+  }
   
   if(is.na(age_food_threshold) == TRUE){
       age_food_threshold <- 0;
