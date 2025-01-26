@@ -10,7 +10,7 @@ run_farm_sim(
   xdim = 100,
   ydim = 100,
   repro = "sexual",
-  neutral_loci = 1000,
+  neutral_loci = 10,
   max_age = 9,
   min_age_move = 0,
   max_age_move = 9,
