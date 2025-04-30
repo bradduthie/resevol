@@ -10,10 +10,10 @@ date: '[1] Biological and Environmental Sciences, University of Stirling, Stirli
 bibliography: '`r system.file("resevol.bib", package = "resevol")`'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes}
   %\usepackage[UTF-8]{inputenc}
-link-citations: yes
+link-citations: TRUE
 linkcolor: blue
 biblio-style: apalike
 ---
