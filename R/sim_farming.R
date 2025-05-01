@@ -642,8 +642,11 @@ run_farm_sim <- function(mine_output,
                              pesticide_threshold      = pesticide_threshold,
                              pesticide_delay          = pesticide_delay);
     
-    rename_pop  <- rename_csv("population_data.csv", population_filename,
-                              colnames = TRUE);
+    pop_data_exists <- file.exists("population_data.csv");
+    if(pop_data_exists == TRUE){
+      rename_pop      <- rename_csv("population_data.csv", population_filename,
+                                    colnames = TRUE);
+    }
     
     last_time_exists <- file.exists("last_time_step.csv");
     if(last_time_exists == TRUE){

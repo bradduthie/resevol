@@ -32,6 +32,6 @@ gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
 diag(gmt) <- 1;
 mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 3, indivs = 100, 
                          npsize = 100, max_gen = 2, prnt_out = FALSE);
-individuals_colnames("last_timestep.csv", gmt);
+individuals_colnames("last_time_step.csv", gmt);
 }
 \keyword{internal}

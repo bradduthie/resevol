@@ -78,7 +78,7 @@ run_farm_sim(
   crop_growth = 0,
   crop_growth_type = "none",
   pesticide_threshold = "none",
-  pesticide_delay = 0,
+  pesticide_delay = 1,
   population_filename = "population_data.csv",
   last_step_filename = "last_time_step.csv"
 )
