@@ -394,7 +394,7 @@ void grow_crops(double ***land, double *grow, double *paras){
 }
 
 /* =============================================================================
- * Intervenes by putting pesticide even when not within typical rotaty cycle
+ * Intervenes by putting pesticide even when not within typical rotate cycle
  *     land:        The landscape array to be adjusted
  *     paras:       The paras vector that holds global information
  *     P_init:      The matrix for the initial (current) pesticide positions
