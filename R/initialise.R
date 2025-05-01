@@ -101,8 +101,17 @@ initialise_inds <- function(mine_output,
   sp_food   <- length(food_consume);
   sp_pesti  <- length(pesticide_consume);
   
-  food[1:sp_food]       <- food_consume;
-  pesticide[1:sp_pesti] <- pesticide_consume;
+  if(sp_food == 1){
+      food[1:10]  <- food_consume;
+  }else{
+      food[1:sp_food] <- food_consume;
+  }
+  
+  if(sp_pesti == 1){
+      pesticide[1:10] <- pesticide_consume;
+  }else{
+      pesticide[1:sp_pesti] <- pesticide_consume;
+  }
   
   if(is.na(age_food_threshold) == TRUE){
       age_food_threshold <- 0;
@@ -345,3 +354,18 @@ build_sexual <- function(mine_output, N, neutral_loci, trait_means){
   
   return(inds);
 }
+
+
+rename_csv <- function(old_name, new_name, colnames = TRUE){
+    in_dir <- list.files();
+    if(old_name %in% in_dir == FALSE){
+        warning(paste("WARNING: Could not rename file to", new_name, "."));
+    }
+    if(old_name != new_name){
+        temp_file <- read.csv(old_name, header = colnames);
+        write.csv(x = temp_file, file = new_name, row.names = FALSE);
+        file.remove(old_name);
+    }
+    return(TRUE);
+}
+

@@ -1,8 +1,9 @@
 #include "utilities.h"
 
-double get_pesticide_val(double *paras);
+double get_pesticide_val(double *paras, int delay);
 
-void init_pesticide(double ***land, double *paras, double **P_init);
+void init_pesticide(double ***land, double *paras, double **P_init,
+                    int *delay_count);
 
 void change_pesticide_choice(double **P_init, double **P_change, double *paras);
 
@@ -20,6 +21,9 @@ void change_crop_choice(double **C_init, double **C_change, double *paras);
 
 void grow_crops(double ***land, double *grow, double *paras);
 
+void intervene(double ***land, double *paras, double **P_init,
+               int *delay_count);
+
 void land_change(double ***land, double *paras, int ts, double **C_init,
                  double **C_change, double **P_init, double **P_change,
-                 double *grow);
+                 double *grow, int *delay_count);

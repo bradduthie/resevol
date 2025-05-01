@@ -10,7 +10,7 @@ run_farm_sim(
   xdim = 100,
   ydim = 100,
   repro = "sexual",
-  neutral_loci = 1000,
+  neutral_loci = 10,
   max_age = 9,
   min_age_move = 0,
   max_age_move = 9,
@@ -76,7 +76,11 @@ run_farm_sim(
   trait_means = NULL,
   land_edge = "torus",
   crop_growth = 0,
-  crop_growth_type = "none"
+  crop_growth_type = "none",
+  pesticide_threshold = "none",
+  pesticide_delay = 1,
+  population_filename = "population_data.csv",
+  last_step_filename = "last_time_step.csv"
 )
 }
 \arguments{
@@ -454,6 +458,30 @@ landscape cell increases to cell_value * (1 + crop_growth). If linear, then
 a fixed value crop_growth is added to the existing cell value. Note that for
 linear growth, this fixed value is only added if the existing cell value is
 greater than zero (else it is assumed that there is no crop to grow).}
+
+\item{pesticide_threshold}{This specifies a pest density per cell above which
+farmers will apply pesticide. All other simulation conditions remain 
+unaffected; farmers will just not apply pesticide unless pest density exceeds
+the threshold. This parameter is 'none' (no threshold applied) by default.
+The argument also accepts a scalar value for densities applying to all farms,
+or a vector of length 'farms' to specify a unique threshold for each farm.
+If pest density falls below the threshold, pesticide application immediately
+stops.}
+
+\item{pesticide_delay}{This specifies a delay between the time step
+at which pest threshold density is exceeded and pesticide is applied. For 
+example if pest density exceeds the threshold set by 'pesticide_threshold' in
+time step 10, and 'pesticide_delay = 2', then pesticide will not be
+applied in response to the threshold being crossed until time step 12. 
+If pest density falls below the threshold, pesticide application immediately
+stops (i.e., the delay is only in application, not ceasing use, to simulate
+the time needed to acquire and apply pesticide).}
+
+\item{population_filename}{The name of the population results CSV file to be
+saved.}
+
+\item{last_step_filename}{The name of the CSV file showing data for the last
+time step of the simulation.}
 }
 \value{
 The output in the R console is a list with two elements; the first 

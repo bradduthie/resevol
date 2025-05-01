@@ -5,7 +5,7 @@
  * Gets an actual value for the crop being inserted into the landscape
  *     paras:  The paras vector that holds global information
  * ========================================================================== */
-double get_pesticide_val(double *paras){
+double get_pesticide_val(double *paras, int delay){
   
   double pesticide_amount, pesticide_sd, pesticide_min, pesticide_max, val;
   
@@ -26,6 +26,9 @@ double get_pesticide_val(double *paras){
   if(val > pesticide_max){
       val = pesticide_max;
   }
+  if(delay > 0){
+      val = 0.0;
+  }
   
   return val;
 }
@@ -36,10 +39,11 @@ double get_pesticide_val(double *paras){
  *     paras:  The paras vector that holds global information
  *     P_init: The matrix for the initial pesticide positions
  * ========================================================================== */
-void init_pesticide(double ***land, double *paras, double **P_init){
+void init_pesticide(double ***land, double *paras, double **P_init,
+                    int *delay_count){
     
     int i, j, xdim, ydim, owner, own_layer, choice, layer, farms;
-    int pesticide_number, pesticide_layer_1, *owner_choice;
+    int pesticide_number, pesticide_layer_1, delay, *owner_choice;
     double *init_vec;
     
     xdim              = (int) paras[103];
@@ -47,7 +51,6 @@ void init_pesticide(double ***land, double *paras, double **P_init){
     farms             = (int) paras[142];
     own_layer         = (int) paras[155];
     pesticide_layer_1 = (int) paras[128];
-    own_layer         = (int) paras[155];
     pesticide_number  = (int) paras[157];
     
     owner_choice = (int *) malloc(farms * sizeof(int));
@@ -65,7 +68,8 @@ void init_pesticide(double ***land, double *paras, double **P_init){
             owner             = (int) land[i][j][own_layer] - 1;
             choice            = (int) owner_choice[owner];
             layer             = choice + pesticide_layer_1;
-            land[i][j][layer] = get_pesticide_val(paras);
+            delay             = delay_count[owner];
+            land[i][j][layer] = get_pesticide_val(paras, delay);
         }
     }
     
@@ -390,22 +394,71 @@ void grow_crops(double ***land, double *grow, double *paras){
 }
 
 /* =============================================================================
+ * Intervenes by putting pesticide even when not within typical rotate cycle
+ *     land:        The landscape array to be adjusted
+ *     paras:       The paras vector that holds global information
+ *     P_init:      The matrix for the initial (current) pesticide positions
+ *     delay_count: The counting vector for pesticide application delay
+ * ========================================================================== */
+void intervene(double ***land, double *paras, double **P_init,
+               int *delay_count){
+    
+    int i, j, xdim, ydim, owner, own_layer, choice, layer, farms;
+    int pesticide_number, pesticide_layer_1, delay, *owner_choice;
+    double *init_vec;
+    
+    xdim              = (int) paras[103];
+    ydim              = (int) paras[104];
+    farms             = (int) paras[142];
+    own_layer         = (int) paras[155];
+    pesticide_layer_1 = (int) paras[128];
+    pesticide_number  = (int) paras[157];
+    
+    owner_choice = (int *) malloc(farms * sizeof(int));
+    for(i = 0; i < farms; i++){
+        init_vec = (double *) malloc(pesticide_number * sizeof(double));
+        for(j = 0; j < pesticide_number; j++){
+            init_vec[j] = P_init[i][j];
+        }
+        owner_choice[i] = sample_pr_vector(init_vec, pesticide_number);
+        free(init_vec);
+    }
+    
+    for(i = 0; i < xdim; i++){
+        for(j = 0; j < ydim; j++){
+            owner             = (int) land[i][j][own_layer] - 1;
+            choice            = (int) owner_choice[owner];
+            layer             = choice + pesticide_layer_1;
+            delay             = delay_count[owner];
+            if(delay == 0){
+                land[i][j][layer] = get_pesticide_val(paras, delay);
+            }
+        }
+    }
+    
+    free(owner_choice);
+}
+
+/* =============================================================================
  * Increases the age of each pest by a single time step
- *     land:     The landscape array to be adjusted
- *     paras:    The paras vector that holds global information
- *     ts:       The time step of the simulation
- *     C_init:   The matrix for the initial (current) crop positions
- *     C_change: The matrix describing how crop changes occur
- *     P_init:   The matrix for the initial (current) pesticide positions
- *     P_change: The matrix describing how pesticide changes occur
- *     grow:     The vector defining how much growth per crop per time step
+ *     land:        The landscape array to be adjusted
+ *     paras:       The paras vector that holds global information
+ *     ts:          The time step of the simulation
+ *     C_init:      The matrix for the initial (current) crop positions
+ *     C_change:    The matrix describing how crop changes occur
+ *     P_init:      The matrix for the initial (current) pesticide positions
+ *     P_change:    The matrix describing how pesticide changes occur
+ *     grow:        The vector defining how much growth per crop per time step
+ *     delay_count: The counting vector for pesticide application delay
  * ========================================================================== */
 void land_change(double ***land, double *paras, int ts, double **C_init,
                  double **C_change, double **P_init, double **P_change,
-                 double *grow){
+                 double *grow, int *delay_count){
   
-  int rotate_crops, rotate_pesticide, start_pesticide;
+  int i, farms;
+  int rotate_crops, rotate_pesticide, start_pesticide, initiate_pesticide;
  
+  farms             = (int) paras[142];
   rotate_crops      = (int) paras[143];
   rotate_pesticide  = (int) paras[149];
   start_pesticide   = (int) paras[168];
@@ -420,8 +473,21 @@ void land_change(double ***land, double *paras, int ts, double **C_init,
   if(ts % rotate_pesticide == 0 && ts >= start_pesticide){
       clean_pesticide(land, paras);
       change_pesticide_choice(P_init, P_change, paras);
-      init_pesticide(land, paras, P_init);
+      init_pesticide(land, paras, P_init, delay_count);
+  }
+  
+  if(ts % rotate_pesticide != 0 && ts >= start_pesticide){
+      initiate_pesticide = 0;
+      for(i = 0; i < farms; i++){
+          if(delay_count[i] == 0){
+              initiate_pesticide = 1;
+          }
+      }
+      if(initiate_pesticide == 1){
+          intervene(land, paras, P_init, delay_count);
+      }
   }
 }
+
 
 

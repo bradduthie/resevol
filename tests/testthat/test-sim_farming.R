@@ -265,13 +265,44 @@ test_that("Linear crop growth", {
 })
 
 
-
-
-
-
-
-
-
+test_that("Pest thresholds applied", {
+    skip_on_cran();
+    gmt       <- matrix(data = 0, nrow = 2, ncol = 2);
+    diag(gmt) <- 1;
+    mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 100, 
+                              npsize = 100, max_gen = 4, prnt_out = FALSE);
+    sim <- run_farm_sim(mine_output = mg_n1, repro = "asexual", 
+                        pesticide_number = 1, pesticide_init = "random", 
+                        pesticide_consume = c("T1"), farms = 5,
+                        pesticide_rotation_time = 2, 
+                        pesticide_rotation_type = 3, get_stats = FALSE,
+                        pesticide_tolerated_surv = 0, pesticide_per_cell = 1,
+                        crop_rotation_time = 4, crop_number = 1, 
+                        crop_per_cell = 8, food_consume = 1, 
+                        reproduction_type = "food_based", food_needed_surv = 1, 
+                        food_needed_repr = 1, max_age = 4, min_age_feed = 0, 
+                        max_age_feed = 2, min_age_move = 3, max_age_move = 4, 
+                        min_age_reproduce = 4, print_gens = FALSE,
+                        max_age_reproduce = 4, age_pesticide_threshold = 2, 
+                        rand_age = TRUE, move_distance = 2, print_inds = FALSE,
+                        immigration_rate = 10, time_steps = 4, 
+                        print_last = FALSE, xdim = 18, ydim = 18,
+                        trait_means = c(1, 1, 1, 1), land_edge = "torus",
+                        pesticide_threshold = c(10000, 0, 0, 3, 10000), 
+                        pesticide_delay = c(1, 1, 10, 1, 10));
+    F1 <- sim[[2]][1,  1,  12];
+    F2 <- sim[[2]][1,  10, 12];
+    F3 <- sim[[2]][1,  18, 12];
+    F4 <- sim[[2]][18, 1,  12];
+    F5 <- sim[[2]][18, 10, 12];
+    F6 <- sim[[2]][18, 18, 12];
+    expect_equal(F1, 0);
+    expect_equal(F2, 1);
+    expect_equal(F3, 0);
+    expect_equal(F4, 0);
+    expect_equal(F5, 0);
+    expect_equal(F6, 0);
+})
 
 
 

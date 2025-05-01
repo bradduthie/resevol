@@ -95,9 +95,15 @@ run_landscape_a <- function(LANDSCAPE_PARAMETERS){
     .Call("build_ownership", LANDSCAPE_PARAMETERS);
 }
 
-crop_transitions <- function(rotation_type = 1, crop_number){
+crop_transitions <- function(rotation_type = 1, rotation_time = 1, crop_number){
     crop_N      <- crop_number;
     custom_land <- is.matrix(rotation_type);
+    if(rotation_type %in% 1:3 == FALSE){
+        stop("ERROR: Crop rotation type needs to be 1, 2, or 3.");
+    }
+    if(rotation_time < 1){
+        stop("ERROR: Crop rotation time cannot be less than 1.")
+    }
     if(custom_land == TRUE){
         check_dims  <- dim(rotation_type);
         if(check_dims[1] != check_dims[2]){
@@ -138,9 +144,16 @@ crop_transitions <- function(rotation_type = 1, crop_number){
     return(tmat);
 }
 
-pesticide_transitions <- function(rotation_type = 1, pesticide_number){
+pesticide_transitions <- function(rotation_type = 1, rotation_time = 1,
+                                  pesticide_number){
     pest_N      <- pesticide_number;
     custom_land <- is.matrix(rotation_type);
+    if(rotation_type %in% 1:3 == FALSE){
+        stop("ERROR: Pesticide rotation type needs to be 1, 2, or 3.");
+    }
+    if(rotation_time < 1){
+        stop("ERROR: Pesticide rotation time cannot be less than 1.");
+    }
     if(custom_land == TRUE){
         check_dims  <- dim(rotation_type);
         if(check_dims[1] != check_dims[2]){
@@ -226,4 +239,74 @@ initialise_pesticide <- function(pesticide_init = "random", pesticide_N, farms){
     }
     return(init_mat);
 }
+
+initialise_thresholds <- function(pesticide_threshold = "none", farms){
+    if(is.numeric(farms) == FALSE | length(farms) > 1){
+        stop("ERROR: farms must be a numeric scalar")
+    }
+    init_vec <- NA;
+    if(pesticide_threshold[1] == "none"){
+        init_vec <- rep(x = -1, times = farms);
+    }
+    if(min(pesticide_threshold) < 0){
+        stop("ERROR: Do not set pesticide_threshold as a negative value.")
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) == farms){
+        init_vec <- pesticide_threshold;
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) == 1){
+        init_vec <- rep(x = pesticide_threshold, times = farms);
+    }
+    if(is.numeric(pesticide_threshold) == TRUE & 
+       length(pesticide_threshold) != farms & 
+       length(pesticide_threshold) > 1){
+        stop("ERROR: pesticide_threshold variable must be length 1 or farms.")
+    }
+    if(is.na(init_vec)[1] == TRUE){
+        stop("ERROR: pesticide_threshold needs to be 'none' or numeric")
+    }
+    return(init_vec);
+}
+
+
+initialise_delay <- function(pesticide_delay = 0, farms, thresholds){
+    if(is.numeric(farms) == FALSE | length(farms) > 1){
+        stop("ERROR: farms must be a numeric scalar")
+    }
+    init_vec <- NA;
+    threshs  <- length(thresholds);
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) == farms){
+        init_vec <- pesticide_delay;
+        for(i in 1:threshs){
+            if(thresholds[i] > 0 & pesticide_delay[i] == 0){
+                stop("ERROR: If farm threshold positive, delay must be > 0.");
+            }
+        }
+    }
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) == 1){
+        init_vec <- rep(x = pesticide_delay, times = farms);
+        for(i in 1:threshs){
+            if(thresholds[i] > 0 & pesticide_delay == 0){
+                stop("ERROR: If farm threshold positive, delay must be > 0.");
+            }
+        }
+    }
+    if(is.numeric(pesticide_delay) == TRUE & 
+       length(pesticide_delay) != farms & 
+       length(pesticide_delay) > 1){
+        stop("ERROR: pesticide_delay variable must be length 1 or farms.")
+    }
+    if(is.na(init_vec)[1] == TRUE){
+        stop("ERROR: pesticide_delay needs to be numeric")
+    }
+
+    
+    return(init_vec);
+}
+
+
 

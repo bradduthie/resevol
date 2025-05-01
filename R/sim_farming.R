@@ -323,6 +323,26 @@
 #' a fixed value crop_growth is added to the existing cell value. Note that for
 #' linear growth, this fixed value is only added if the existing cell value is
 #' greater than zero (else it is assumed that there is no crop to grow).
+#'@param pesticide_threshold This specifies a pest density per cell above which
+#' farmers will apply pesticide. All other simulation conditions remain 
+#' unaffected; farmers will just not apply pesticide unless pest density exceeds
+#' the threshold. This parameter is 'none' (no threshold applied) by default.
+#' The argument also accepts a scalar value for densities applying to all farms,
+#' or a vector of length 'farms' to specify a unique threshold for each farm.
+#' If pest density falls below the threshold, pesticide application immediately
+#' stops.
+#'@param pesticide_delay This specifies a delay between the time step
+#' at which pest threshold density is exceeded and pesticide is applied. For 
+#' example if pest density exceeds the threshold set by 'pesticide_threshold' in
+#' time step 10, and 'pesticide_delay = 2', then pesticide will not be
+#' applied in response to the threshold being crossed until time step 12. 
+#' If pest density falls below the threshold, pesticide application immediately
+#' stops (i.e., the delay is only in application, not ceasing use, to simulate
+#' the time needed to acquire and apply pesticide).
+#'@param population_filename The name of the population results CSV file to be
+#' saved.
+#'@param last_step_filename The name of the CSV file showing data for the last
+#' time step of the simulation.
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -352,7 +372,7 @@ run_farm_sim <- function(mine_output,
                          xdim = 100, 
                          ydim = 100, 
                          repro = "sexual", 
-                         neutral_loci = 1000, 
+                         neutral_loci = 10, 
                          max_age = 9,
                          min_age_move = 0, 
                          max_age_move = 9,
@@ -418,7 +438,11 @@ run_farm_sim <- function(mine_output,
                          trait_means         = NULL,
                          land_edge           = "torus",
                          crop_growth         = 0,
-                         crop_growth_type    = "none"){
+                         crop_growth_type    = "none",
+                         pesticide_threshold = "none",
+                         pesticide_delay     = 1,
+                         population_filename = "population_data.csv",
+                         last_step_filename  = "last_time_step.csv"){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -614,8 +638,22 @@ run_farm_sim <- function(mine_output,
                              farms                    = farms,
                              land_edge                = land_edge,
                              crop_growth              = crop_growth,
-                             crop_growth_type         = crop_growth_type);
-  
+                             crop_growth_type         = crop_growth_type,
+                             pesticide_threshold      = pesticide_threshold,
+                             pesticide_delay          = pesticide_delay);
+    
+    pop_data_exists <- file.exists("population_data.csv");
+    if(pop_data_exists == TRUE){
+      rename_pop      <- rename_csv("population_data.csv", population_filename,
+                                    colnames = TRUE);
+    }
+    
+    last_time_exists <- file.exists("last_time_step.csv");
+    if(last_time_exists == TRUE){
+      rename_last <- rename_csv("last_time_step.csv", last_step_filename,
+                                colnames = FALSE);
+    }
+        
     return(sim_results);
 }
 
@@ -666,7 +704,9 @@ sim_crops <- function(pests,
                       farms = 4,
                       land_edge = "torus",
                       crop_growth         = 0,
-                      crop_growth_type    = "geometric"
+                      crop_growth_type    = "geometric",
+                      pesticide_threshold = "none",
+                      pesticide_delay = 0
                       ){
     
   N    <- dim(pests)[1];
@@ -704,6 +744,8 @@ sim_crops <- function(pests,
   fcoe <- as.numeric(get_f_coef);
   sttt <- as.numeric(get_stats);
   ledg <- 0;
+  pthr <- pesticide_threshold;
+  pdly <- pesticide_delay;
   if(land_edge == "leaky"){
       ledg <- 1;
   }
@@ -728,6 +770,9 @@ sim_crops <- function(pests,
   }
   if(is.numeric(crop_growth) == FALSE){
       stop("Crop growth values must be numeric");
+  }
+  if(pthr[1] == "none"){
+      pdly <- -1;
   }
   
   paras  <- c( 0.0,   # 00) pests column for ID
@@ -919,23 +964,28 @@ sim_crops <- function(pests,
     stop("ERROR: land must be a 3D array.");
   }
   
-  c_rotate     <- crop_transitions(crop_rotation_type, crpN);
-  p_rotate     <- pesticide_transitions(pesticide_rotation_type, pesN); 
-  c_init       <- initialise_crops(crop_init, crpN, farms);
-  p_init       <- initialise_pesticide(pesticide_init, pesN, farms); 
+  c_rotate   <- crop_transitions(crop_rotation_type, crop_rotation_time, crpN);
+  p_rotate   <- pesticide_transitions(pesticide_rotation_type, prti, pesN); 
+  c_init     <- initialise_crops(crop_init, crpN, farms);
+  p_init     <- initialise_pesticide(pesticide_init, pesN, farms); 
+  p_thresh   <- initialise_thresholds(pthr, farms);
+  p_delay    <- initialise_delay(pdly, farms, pthr);
 
   if(length(crop_growth) == 1){
       crop_growth <- rep(x = crop_growth, times = crop_number);
   }
   
   SIM_RESULTS  <- run_farming_sim(pests, land, paras, c_rotate, p_rotate,
-                                  c_init, p_init, crop_growth);
-
+                                  c_init, p_init, crop_growth, p_thresh, 
+                                  p_delay);
+  
   return(SIM_RESULTS);
 }
 
-run_farming_sim <- function(IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW){
-  .Call("sim_farming", IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW);
+run_farming_sim <- function(IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW,
+                            PTHRESH, PDELAY){
+  .Call("sim_farming", IND, LAND, PARAS, CROT, PROT, CINIT, PINIT, CGROW,
+        PTHRESH, PDELAY);
 }
 
 substitute_traits <- function(paras, move_distance, food_needed_surv,

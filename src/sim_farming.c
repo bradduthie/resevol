@@ -11,6 +11,7 @@
 #include "land_change.h"
 #include "statistics.h"
 #include "immigration.h"
+#include "densities.h"
 
 /* =============================================================================
  * This is the outer function for simulating farming and pesticide resistance
@@ -23,9 +24,11 @@
  *      CINIT:   Initial crop choice for each farmer
  *      PINIT:   Initial pesticide choice for each farmer
  *      CGROW:   Rate of growth of each crop type
+ *      PTHRESH: Pest density threshold for applying pesticide for each farmer
+ *      PDELAY:  Delay in the application of pesticide after threshold met
  * ===========================================================================*/
 SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
-                 SEXP CINIT, SEXP PINIT, SEXP CGROW){
+                 SEXP CINIT, SEXP PINIT, SEXP CGROW, SEXP PTHRESH, SEXP PDELAY){
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
@@ -46,6 +49,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     int    protected_n;      /* Number of protected R objects */
     int    len_PARAS;        /* Length of the parameters vector */
     int    len_CGROW;        /* Length of the crop growth vector */
+    int    len_THRESHOLD;    /* Length of the threshold vector */
+    int    len_DELAY;        /* Length of the delay vector */
     int    print_gen;        /* Should the generations be printed */
     int    get_stats;        /* Should print a CSV with statistics */
     int    *dim_IND;         /* Dimensions of the individual array */
@@ -54,9 +59,13 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     int    *dim_PROT;        /* Dimensions of the pesticide transition matrix */
     int    *dim_CINIT;       /* Dimensions of the crop initialisation matrix */
     int    *dim_PINIT;       /* Dimensions of the pesticide init matrix */
+    int    *delays;        /* Vector on the delay for pesticide application */
+    int    *delay_count;   /* Vector for temporary counter on pesticide delay */
   
     double *imm_sample;
     double *paras_ptr;
+    double *threshold_ptr;
+    double *delay_ptr;
     double *IND_ptr;
     double *LAND_ptr;
     double *CROT_ptr;
@@ -66,6 +75,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     double *CGROW_ptr;
     double *paras;
     double *grow;          /* Vector on crop growth per time step */
+    double *thresholds;    /* Vector on pest density threshold for pesticide */
     double **pests;        /* The pests array */
     double **offspring;    /* The offspring of pests within a time step */
     double **new_pests;    /* The pest array at the end of a time step */
@@ -77,6 +87,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
     double time_spent;
+    double max_threshold;
     
     clock_t begin;
     clock_t end;
@@ -120,14 +131,24 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     protected_n++;
     CGROW_ptr = REAL(CGROW);
     
-    len_PARAS   = GET_LENGTH(PARAS);
-    len_CGROW   = GET_LENGTH(CGROW);
-    dim_IND     = INTEGER( GET_DIM(IND) );
-    dim_LAND    = INTEGER( GET_DIM(LAND) );
-    dim_CROT    = INTEGER( GET_DIM(CROT) );
-    dim_PROT    = INTEGER( GET_DIM(PROT) );
-    dim_CINIT   = INTEGER( GET_DIM(CINIT) );
-    dim_PINIT   = INTEGER( GET_DIM(PINIT) );
+    PROTECT( PTHRESH = AS_NUMERIC(PTHRESH) );
+    protected_n++;
+    threshold_ptr = REAL(PTHRESH);
+    
+    PROTECT( PDELAY = AS_NUMERIC(PDELAY) );
+    protected_n++;
+    delay_ptr = REAL(PDELAY);
+    
+    len_PARAS     = GET_LENGTH(PARAS);
+    len_CGROW     = GET_LENGTH(CGROW);
+    dim_IND       = INTEGER( GET_DIM(IND) );
+    dim_LAND      = INTEGER( GET_DIM(LAND) );
+    dim_CROT      = INTEGER( GET_DIM(CROT) );
+    dim_PROT      = INTEGER( GET_DIM(PROT) );
+    dim_CINIT     = INTEGER( GET_DIM(CINIT) );
+    dim_PINIT     = INTEGER( GET_DIM(PINIT) );
+    len_THRESHOLD = GET_LENGTH(PTHRESH);
+    len_DELAY     = GET_LENGTH(PDELAY);
     
     /* The C code for the model itself falls under here */
     /* ====================================================================== */
@@ -145,6 +166,26 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         grow[i] = CGROW_ptr[vec_pos];
         vec_pos++; 
     } /* The grow vector (crop growth) is now copied into C */
+    
+    max_threshold = -1;
+    thresholds    = (double *) malloc(len_THRESHOLD * sizeof(double));
+    vec_pos = 0;
+    for(i = 0; i < len_THRESHOLD; i++){
+        thresholds[i] = threshold_ptr[vec_pos];
+        if(thresholds[i] > max_threshold){
+            max_threshold = thresholds[i];
+        }
+        vec_pos++; 
+    } /* The thresholds vector is now copied into C */
+    
+    delays      = (int *) malloc(len_DELAY * sizeof(int));
+    delay_count = (int *) malloc(len_DELAY * sizeof(int));
+    vec_pos = 0;
+    for(i = 0; i < len_DELAY; i++){
+        delays[i]      = (int) delay_ptr[vec_pos];
+        delay_count[i] = (int) delay_ptr[vec_pos];
+        vec_pos++; 
+    } /* The thresholds vector is now copied into C */
 
     /* Code below remakes the IND matrix for easier use */
     ind_number = dim_IND[0];
@@ -250,7 +291,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     for(col = 0; col < ind_traits; col++){
         imm_sample[col] = pests[0][col];
     }
-    
+
     print_gen  = (int) paras[165];
     get_stats  = (int) paras[172];
     time_steps = (int) paras[140];
@@ -258,7 +299,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     
     while(ts < time_steps){
  
-        land_change(land, paras, ts, C_init, C_change, P_init, P_change, grow); 
+        if(max_threshold > -1){
+            pest_dense(pests, land, paras, thresholds, delays, delay_count);
+        }
+        
+        land_change(land, paras, ts, C_init, C_change, P_init, P_change, grow,
+                    delay_count); 
       
         age_pests(pests, paras); 
         
@@ -424,6 +470,9 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     }
     free(pests);
     
+    free(delay_count);
+    free(delays);
+    free(thresholds);
     free(grow);
     free(paras);
     
