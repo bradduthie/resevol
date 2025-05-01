@@ -1,0 +1,119 @@
+---
+title: "Pesticide thresholds"
+author: "A Bradley Duthie"
+date: "`r Sys.Date()`"
+bibliography: '`r system.file("refs.bib", package = "resevol")`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Pesticide thresholds}
+  %\usepackage[UTF-8]{inputenc}
+link-citations: TRUE
+linkcolor: blue
+biblio-style: apalike
+---
+
+******************************
+
+
+<a name = "introduction">Introduction</a>
+================================================================================
+
+```{r, echo = FALSE}
+oldpar <- par();
+```
+
+To model the process of people observing pests and reacting with an application of pesticide, version 0.4 of the resevol package introduces two new arguments to the `run_farm_sim` function.
+The argument `pesticide_threshold` specifies some pest density per cell above which the owner of the cell (i.e., the farmer) will apply pesticide. 
+Pesticide application is initiated on a per-farm basis, and farmers act independently across farms.
+For example, suppose that there are four farmers on a landscape, and each has a threshold pesticide application of 10 (i.e., `pesticide_threshold = 10`).
+If only one of the four farmers observes a mean pest density exceeding 10 per cell, then only this farmer will begin to apply pesticide and will do so on all of their farm cells.
+The remaining farmers will not begin using pesticide until pest density exceeds 10 per cell on their own farms.
+Note that different pesticide densities can be set for different farmers.
+To do this, the `pesticide_threshold` argument can take a vector of the same length as the number of farms.
+For example, if there are four farmers, the first two with a pesticide application threshold of 10 and the second two with a threshold of 20, then `pesticide_threshold = c(10, 10, 20, 20)`.
+If on any time step, pest density on a farm is observed to fall below the threshold, then pesticide application immediately stops.
+By default, `pesticide_threshold` is set to `none` to indicate that no thresholds are used.
+
+The argument `pesticide_delay` models the time delay between the observation that pests have exceeded their tolerated threshold density and the initiation of pesticide use.
+If, for example, a farmer has a threshold of 10 and observes that pest first exceed this density on time step $t$, then they will wait until `pesticide_delay` time steps have passed before pesticides are applied.
+If $t = 8$ when pest density exceeds 10, and `pesticide_delay = 3`, then the farmer will start applying pesticide at $t = 11$.
+This is intended to model the lag in time between the observance of a pest outbreak and the ability of a farmer to respond with pesticide application.
+As with the `pesticide_threshold` argument, the `pesticide_delay` argument can be set as a scalar value that applies to all farmers, or as a vector of delays with elements defining the delay for each farm.
+Note that if a pesticide threshold is positive, then the delay must be at least 1 time step (i.e., if a farmer notices that a threshold of pests has been exceeded, then the earliest that they can act is on the next time step).
+
+
+<a name = "use">Using thresholds</a>
+================================================================================
+
+To demonstrate thresholds, we can use a network output by `mine_gmatrix` already available within the resevol package.
+
+```{r}
+data(gmatrices);
+```
+
+The `mg_n1` output includes 4 traits with the following covariance structure.
+
+```{r, echo = FALSE}
+print(mg_n1[[6]]);
+```
+
+
+The above was mined with the `mine_gmatrix` function in which the argument `gmatrix` was set to an identity matrix with four rows and columns.
+We can use it in a simulation with a very clear interpretation of farmer thresholds and predicted pesticide applications.
+
+```{r, eval = FALSE}
+sim <- run_farm_sim(mine_output = mg_n1, repro = "asexual", 
+                    pesticide_number = 1, pesticide_init = "random", 
+                    pesticide_consume = c("T1"), farms = 5,
+                    pesticide_rotation_time = 16, pesticide_rotation_type = 3,
+                    pesticide_tolerated_surv = 0, pesticide_per_cell = 1,
+                    crop_rotation_time = 4, crop_number = 1, crop_per_cell = 8, 
+                    food_consume = 1, reproduction_type = "food_based", 
+                    food_needed_surv = 1, food_needed_repr = 1, max_age = 4, 
+                    min_age_feed = 0, max_age_feed = 2, min_age_move = 3, 
+                    max_age_move = 4, min_age_reproduce = 4, print_gens = FALSE,
+                    max_age_reproduce = 4, age_pesticide_threshold = 2, 
+                    rand_age = TRUE, move_distance = 2, immigration_rate = 10, 
+                    time_steps = 50, print_last = FALSE, xdim = 18, ydim = 18,
+                    trait_means = c(1, 1, 1, 1), land_edge = "torus",
+                    pesticide_threshold = c(10000, 0, 0, 4, 10000), 
+                    pesticide_delay = c(1, 1, 10, 10, 10));
+```
+
+
+In the simulation above, there are 5 farms.
+The last two lines specify thresholds and densities for each farm.
+Farmers 1 and 5 have thresholds of 10000, while farmers 2-4 have thresholds of 0.
+Hence, there are two farmers that are very reluctant to apply pesticide, while there are three farmers that are willing to apply pesticide regardless of pest density.
+Farmers 1 and 2 are able to apply pesticides almost immediately because their `pesticide_delay` value equals 1.
+Farmers 3-5, instead, take 10 steps between their threshold being met and the initialisation of pesticide use.
+
+For the above combination, pest population size rises to roughly 600 pests after 10 time steps, 1200 pests after 20 time steps, 1600 pests after 30 time steps, and 1900 pests after 40 time steps.
+Farmer behaviour is predictable.
+Farmers 1 and 5 never apply pesticide because the threshold densities of 10000 pests per cell are nowhere near exceeded.
+Farmer 2 begins applying pesticide immediately given their low threshold of zero and low delay of one.
+Farmer 3 begins applying pesticide at time step 10 given their low threshold but long delay.
+And farmer 4 begins applying pesticide sometime between time step 40 and 50, after their threshold has been reached and 10 time steps of delay have passed.
+Hence, it is possible to model a system in which different farmers have different management strategies and response rates using a combination of `pesticide_threshold` and `pesticide_delay`.
+
+There are some additional factors that are important to recognise when using `pesticide_threshold` and `pesticide_delay`, which stem from how `pesticide_rotation_time` is set.
+Once a farmer decides to set a pesticide, the pesticide will be present on the landscape until the next pesticide rotation, regardless of whether or not pest density drops back below a threshold.
+Pesticide rotation therefore simulates a period in which pesticide is applied on the landscape (which could be the same pesticide depending on other parameter settings).
+Consequently, pest density could, hypothetically, barely surpass the farmer's threshold immediately before pesticide rotation, and if `pesticide_rotation_time` is high, then the pesticide will persist even if pest density plummets.
+Nevertheless, pest density is monitored every time step by farmers, and if pest density exceeds a farmer's threshold, but then drops below the threshold again before a pesticide rotation event, the farmer will not take action (i.e., they will behave as if the pest problem has gone away on its own, and no pesticide needs to be applied).
+
+
+<a name = "conclusion">Conclusion</a>
+================================================================================
+
+The ability to set pesticide thresholds and delays for pesticide initialisation allows for considerable flexibility in model simulation.
+But these parameters should be applied carefully and with an understanding of the effect they are having on farmer behaviour.
+Unless simulating a specific scenario in which farmers are reacting to pesticide densities, it is recommended to simply set the default `pesticide_threshold = none`.
+
+
+
+```{r, echo = FALSE}
+suppressWarnings(par(oldpar));
+```
+
