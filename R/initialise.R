@@ -369,11 +369,3 @@ rename_csv <- function(old_name, new_name, colnames = TRUE){
     return(TRUE);
 }
 
-
-
-
-
-
-
-
-
