@@ -275,7 +275,7 @@ test_that("Pest thresholds applied", {
                         pesticide_number = 1, pesticide_init = "random", 
                         pesticide_consume = c("T1"), farms = 5,
                         pesticide_rotation_time = 2, 
-                        pesticide_rotation_type = 3, 
+                        pesticide_rotation_type = 3, get_stats = FALSE,
                         pesticide_tolerated_surv = 0, pesticide_per_cell = 1,
                         crop_rotation_time = 4, crop_number = 1, 
                         crop_per_cell = 8, food_consume = 1, 
@@ -284,7 +284,7 @@ test_that("Pest thresholds applied", {
                         max_age_feed = 2, min_age_move = 3, max_age_move = 4, 
                         min_age_reproduce = 4, print_gens = FALSE,
                         max_age_reproduce = 4, age_pesticide_threshold = 2, 
-                        rand_age = TRUE, move_distance = 2, 
+                        rand_age = TRUE, move_distance = 2, print_inds = FALSE,
                         immigration_rate = 10, time_steps = 4, 
                         print_last = FALSE, xdim = 18, ydim = 18,
                         trait_means = c(1, 1, 1, 1), land_edge = "torus",
@@ -303,11 +303,6 @@ test_that("Pest thresholds applied", {
     expect_equal(F5, 0);
     expect_equal(F6, 0);
 })
-
-
-
-
-
 
 
 

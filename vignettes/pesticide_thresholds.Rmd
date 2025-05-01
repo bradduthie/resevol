@@ -48,14 +48,19 @@ Note that if a pesticide threshold is positive, then the delay must be at least 
 
 To demonstrate thresholds, we can use a network output by `mine_gmatrix` already available within the resevol package.
 
-```{r}
+```{r, eval = FALSE}
 data(gmatrices);
 ```
 
 The `mg_n1` output includes 4 traits with the following covariance structure.
 
 ```{r, echo = FALSE}
-print(mg_n1[[6]]);
+mg_dat <- c(1.069133287, -0.072243449,  0.064732772, -0.056487174, 
+            -0.072243449,  0.874066557,  0.007063041, -0.007362562, 0.064732772,  
+            0.007063041,  0.948800593, -0.009399430, -0.056487174, -0.007362562, 
+            -0.009399430,  1.001389459);
+mg_n1  <- matrix(data = mg_dat, nrow = 4, ncol = 4, byrow = TRUE);
+print(mg_n1);
 ```
 
 
