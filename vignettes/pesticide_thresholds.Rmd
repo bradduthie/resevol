@@ -114,7 +114,7 @@ Nevertheless, pest density is monitored every time step by farmers, and if pest 
 
 The ability to set pesticide thresholds and delays for pesticide initialisation allows for considerable flexibility in model simulation.
 But these parameters should be applied carefully and with an understanding of the effect they are having on farmer behaviour.
-Unless simulating a specific scenario in which farmers are reacting to pesticide densities, it is recommended to simply set the default `pesticide_threshold = none`.
+Unless simulating a specific scenario in which farmers are reacting to pesticide densities, it is recommended to simply set the default `pesticide_threshold = "none"`.
 
 
 

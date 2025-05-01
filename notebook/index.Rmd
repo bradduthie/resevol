@@ -41,6 +41,10 @@ data(gmatrices);
 
 [Project updates](#updates)
 
+ - **2025**
+   
+   - **MAY** [1](#u-01-MAY-2025)
+
  - **2022**
  
    - **NOV** [24](#u-24-NOV-2022)
@@ -73,6 +77,32 @@ data(gmatrices);
 
 <a name="updates">Project updates:</a>
 ================================================================================
+
+
+> <a name="u-01-MAY-2025">Update: 1 MAY 2025</a>
+
+This package continues to be developed, although I have not written in this notebook much. Since my previous entry, a software note has been published in *PLoS Computational Biology*:
+
+> Duthie, AB, R Mangan, CR McKeon, MC Tinsley, and LF Bussière. 2023. resevol: An R package for spatially explicit models of pesticide resistance given evolving pest genomes. PLoS Computational Biology. 19:e1011691. 10.1371/journal.pcbi.1011691
+
+A new version of resevol 0.3.4.0 was released on CRAN sometime later with a new feature that allowed the user to model crop growth over time. This can make it possible to model crop availability for pests to be quite low until the crop grows over different time steps. Details for how this works are available in the [run_farm_sim](https://bradduthie.github.io/resevol/reference/run_farm_sim.html) documentation. The relevant new arguments to `run_farm_sim` are `crop_growth` and `crop_growth_type`. For `crop_growth`:
+
+> This sets the amount by which landscape cell values increase for each crop from one time step to the next. This might be used to model the increase in biomass caused by plant growth on the landscape cell. The way in which growth is enacted is set by crop_growth_type. Values for crop_growth can either be a single number (in which case, the growth amount applies to all crop types) or a vector of the same length as crop_types (in which case, vector indices give the amount of growth for each crop number).
+
+For `crop_growth_type`:
+
+>     This clarifies whether crop growth should be "none" (default), "geometric", or "linear". If geometric, then the value of a landscape cell increases to cell_value * (1 + crop_growth). If linear, then a fixed value crop_growth is added to the existing cell value. Note that for linear growth, this fixed value is only added if the existing cell value is greater than zero (else it is assumed that there is no crop to grow).
+
+To facilitate an ongoing PhD project, I have also added new features included in a new version of resevol 0.4.0.0. These features include:
+
+- New function to add column names to individuals output CSV
+- Custom file names are allowed for output files
+- New argument `pesticide_threshold` sets density threshold for pesticide
+- New argument `pesticide_threshold_delay` delays pesticide threshold
+
+An explanation of how pesticide thresholds work can be found in a new vignette, [pesticide Thresholds](https://bradduthie.github.io/resevol/articles/pesticide_thresholds.html).
+
+Further development to the package is ongoing with some collaborators applying the package to specific systems, and I hope to apply resevol to address more general evolutionary questions. I will try to update this notebook more frequently. The full history of the project is still version controlled on [GitHub](https://github.com/bradduthie/resevol/).
 
 
 > <a name="u-24-NOV-2022">Update: 24 NOV 2022</a>

@@ -4,98 +4,67 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>The evolutionary algorithm • resevol</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="The evolutionary algorithm">
-<meta property="og:description" content="resevol">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="The evolutionary algorithm">
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../articles/resevol.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/advanced_techniques.html">Advanced techniques</a>
-    </li>
-    <li>
-      <a href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">resevol</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.0</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/resevol.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/advanced_techniques.html">Advanced techniques</a></li>
+    <li><a class="dropdown-item" href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a></li>
+    <li><a class="dropdown-item" href="../articles/pesticide_thresholds.html">Pesticide thresholds</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://bradduthie.github.io/resevol/notebook/" class="external-link">Lab notebook</a>
-</li>
-<li>
-  <a href="https://github.com/bradduthie/resevol" class="external-link">
-    <span class="fa fa-github"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="nav-link" href="https://bradduthie.github.io/resevol/notebook/">Lab notebook</a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/bradduthie/resevol"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>The evolutionary algorithm</h1>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>The evolutionary algorithm</h1>
                         <h4 data-toc-skip class="author">A Bradley
 Duthie</h4>
             
-            <h4 data-toc-skip class="date">2023-07-17</h4>
+            <h4 data-toc-skip class="date">2025-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/evolutionary_algorithm.Rmd" class="external-link"><code>vignettes/evolutionary_algorithm.Rmd</code></a></small>
-      <div class="hidden name"><code>evolutionary_algorithm.Rmd</code></div>
-
+      <div class="d-none name"><code>evolutionary_algorithm.Rmd</code></div>
     </div>
 
     
@@ -125,8 +94,7 @@ traits that covary in the way that we want them to covary (within some
 acceptable margin of error). The <code>mine_gmatrix</code> function uses
 an evolutionary algorithm for identifying sets of values that work. An
 evolutionary algorithm is an algorithm that works especially well for
-<em>I know it when I see it</em> problems <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span>.
-<span class="citation">(<a href="#ref-Luke2013" role="doc-biblioref"><strong>Luke2013?</strong></a>)</span> explains the
+<em>I know it when I see it</em> problems <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>)</span>. <span class="citation">(<a href="#ref-Luke2013"><strong>Luke2013?</strong></a>)</span> explains the
 idea behind these algorithms in more detail:</p>
 <blockquote>
 <p>They’re algorithms used to find answers to problems when you have
@@ -145,7 +113,8 @@ recombination and mutation, and offspring networks are selected based on
 how close their trait covariance matrix is to the pre-specified matrix
 input into the function. The algorithm is inspired by a similar
 algorithm within the <a href="https://confoobio.github.io/gmse/index.html" class="external-link">GMSE R package</a>
-<span class="citation">(<a href="#ref-Duthie2018" role="doc-biblioref">Duthie et al. 2018</a>)</span>.</p>
+<span class="citation">(<a href="#ref-Duthie2018">Duthie et al.
+2018</a>)</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="key-data-structures-used">
@@ -163,19 +132,19 @@ in the evolutionary algorithm.</p>
 <code class="sourceCode R"><span><span class="va">arrows_1_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;</span>
 <span><span class="va">arrows_1_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_1_dat</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_1_mat</span><span class="op">)</span>;</span></code></pre></div>
-<pre><code><span><span class="co">##               [,1]          [,2]         [,3]         [,4]</span></span>
-<span><span class="co">##  [1,] -0.054755597 -1.942439e-02  0.070132911 -0.069820616</span></span>
-<span><span class="co">##  [2,] -0.147963419  5.076909e-03  0.108143148  0.071747155</span></span>
-<span><span class="co">##  [3,] -0.071510469 -3.124883e-02  0.063270443 -0.102680437</span></span>
-<span><span class="co">##  [4,] -0.099783963 -8.746083e-05  0.094408390 -0.052076830</span></span>
-<span><span class="co">##  [5,]  0.004183119 -5.415041e-02 -0.101553783 -0.036695222</span></span>
-<span><span class="co">##  [6,]  0.052715105  8.343997e-02 -0.071181852 -0.053471899</span></span>
-<span><span class="co">##  [7,] -0.036486560 -1.080079e-01  0.081360377  0.132467704</span></span>
-<span><span class="co">##  [8,] -0.022429765 -2.446444e-01  0.013433733 -0.104464637</span></span>
-<span><span class="co">##  [9,] -0.197676844  3.528884e-02  0.082531925  0.008970843</span></span>
-<span><span class="co">## [10,]  0.159766080 -4.575650e-02  0.051946868 -0.038767297</span></span>
-<span><span class="co">## [11,]  0.173768257  2.213950e-01 -0.006895847 -0.043475510</span></span>
-<span><span class="co">## [12,]  0.309569312  6.378350e-02  0.165115767 -0.055636251</span></span></code></pre>
+<pre><code><span><span class="co">##                [,1]         [,2]         [,3]         [,4]</span></span>
+<span><span class="co">##  [1,] -0.1400043517  0.206502490  0.188850493 -0.191008747</span></span>
+<span><span class="co">##  [2,]  0.0255317055 -0.163098940 -0.009744510 -0.027923724</span></span>
+<span><span class="co">##  [3,] -0.2437263611  0.051242695 -0.093584735 -0.031344598</span></span>
+<span><span class="co">##  [4,] -0.0005571287 -0.186301149 -0.001595031  0.106730788</span></span>
+<span><span class="co">##  [5,]  0.0621552721 -0.052201251 -0.082678895  0.007003485</span></span>
+<span><span class="co">##  [6,]  0.1148411606 -0.005260191 -0.151239965 -0.063912332</span></span>
+<span><span class="co">##  [7,] -0.1821817661  0.054299634  0.093536319 -0.004996490</span></span>
+<span><span class="co">##  [8,] -0.0247325302 -0.091407483  0.017648861 -0.025148344</span></span>
+<span><span class="co">##  [9,] -0.0244199607  0.046815442  0.024368546  0.044479712</span></span>
+<span><span class="co">## [10,] -0.0282705449  0.036295126  0.162354888  0.275541758</span></span>
+<span><span class="co">## [11,] -0.0553699384 -0.130454355  0.011203808  0.004653138</span></span>
+<span><span class="co">## [12,]  0.0628982042  0.073777632 -0.013399701  0.057770907</span></span></code></pre>
 <p>We can initialise 12 allele values, one for each locus.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">loci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>;</span></code></pre></div>
@@ -184,8 +153,8 @@ in the evolutionary algorithm.</p>
 multiplication.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span><span class="op">)</span>;</span></code></pre></div>
-<pre><code><span><span class="co">##            [,1]       [,2]      [,3]        [,4]</span></span>
-<span><span class="co">## [1,] -0.6119858 -0.5933667 0.1472518 -0.05463176</span></span></code></pre>
+<pre><code><span><span class="co">##            [,1]      [,2]      [,3]     [,4]</span></span>
+<span><span class="co">## [1,] -0.2918091 0.4414658 0.3604707 0.609829</span></span></code></pre>
 <p>We can likewise use a 4 by 4 square matrix to represent the values of
 the arrows from the first column of four hidden layer nodes to the
 second column of hidden layer nodes.</p>
@@ -193,17 +162,17 @@ second column of hidden layer nodes.</p>
 <code class="sourceCode R"><span><span class="va">arrows_2_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fl">4</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>;</span>
 <span><span class="va">arrows_2_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">arrows_2_dat</span>, nrow <span class="op">=</span> <span class="fl">4</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>;</span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">arrows_2_mat</span><span class="op">)</span>;</span></code></pre></div>
-<pre><code><span><span class="co">##             [,1]        [,2]        [,3]        [,4]</span></span>
-<span><span class="co">## [1,]  0.04248824 -0.04794355  0.28558191 -0.09961147</span></span>
-<span><span class="co">## [2,] -0.04626484  0.12246338  0.26077279 -0.06763937</span></span>
-<span><span class="co">## [3,] -0.02741208 -0.13055501 -0.12255296  0.03807466</span></span>
-<span><span class="co">## [4,]  0.12343652  0.12826297 -0.02013695 -0.07330131</span></span></code></pre>
+<pre><code><span><span class="co">##             [,1]        [,2]        [,3]       [,4]</span></span>
+<span><span class="co">## [1,]  0.10743459 -0.11775633  0.04886288 0.13373204</span></span>
+<span><span class="co">## [2,] -0.06650882 -0.09758506 -0.16994506 0.02366963</span></span>
+<span><span class="co">## [3,]  0.11139524  0.10650573 -0.14707363 0.13182934</span></span>
+<span><span class="co">## [4,] -0.02458964  0.01316706  0.02841503 0.05239098</span></span></code></pre>
 <p>We can then use matrix multiplication to map the 12 allele values to
 the values of the second column of hidden layer nodes.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">loci</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_1_mat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">arrows_2_mat</span><span class="op">)</span>;</span></code></pre></div>
-<pre><code><span><span class="co">##              [,1]        [,2]      [,3]      [,4]</span></span>
-<span><span class="co">## [1,] -0.009330218 -0.06955662 -0.346452 0.1107069</span></span></code></pre>
+<pre><code><span><span class="co">##             [,1]       [,2]      [,3]       [,4]</span></span>
+<span><span class="co">## [1,] -0.03555252 0.03770376 -0.124971 0.05089525</span></span></code></pre>
 <p>This pattern can continue, with 4 by 4 square matrices representing
 the value of arrows between columns of hidden layer nodes, and between
 the last hidden layer column and traits (note that the number of hidden
@@ -332,15 +301,16 @@ tournament.</p>
 <p>After fitness evaluation, networks in the population compete in a
 series of tournaments to determine the composition of the next
 generation of <code>npsize</code> networks. Tournament selection is a
-flexible way to choose the fittest subset of the population <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span>. It starts by randomly
-selecting <code>sampleK</code> networks with replacement to form the
-competitors in a tournament (note that <code>sampleK</code> is
-constrained to be less than or equal to <code>npsize</code>). Of those
-<code>sampleK</code> networks, the <code>chooseK</code> networks with
-the highest fitness (i.e., lowest stress) are set aside to be placed in
-the new population (note that <code>chooseK</code> must be less than or
-equal to <code>sampleK</code>). More tournaments continue until a total
-of <code>npsize</code> new networks are set aside to form the new
+flexible way to choose the fittest subset of the population <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>)</span>.
+It starts by randomly selecting <code>sampleK</code> networks with
+replacement to form the competitors in a tournament (note that
+<code>sampleK</code> is constrained to be less than or equal to
+<code>npsize</code>). Of those <code>sampleK</code> networks, the
+<code>chooseK</code> networks with the highest fitness (i.e., lowest
+stress) are set aside to be placed in the new population (note that
+<code>chooseK</code> must be less than or equal to
+<code>sampleK</code>). More tournaments continue until a total of
+<code>npsize</code> new networks are set aside to form the new
 generation of networks.</p>
 </div>
 <div class="section level3">
@@ -384,7 +354,7 @@ summed, thereby producing the expected trait covariance structure.</p>
 <h2 class="unnumbered" id="literature-cited">
 <a name="lit">Literature Cited</a><a class="anchor" aria-label="anchor" href="#literature-cited"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-Duthie2018" class="csl-entry">
 Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen,
 Rocio A Pozo, O. Sarobidy Rakotonarivo, Bram Van Moorter, and Nils
@@ -399,35 +369,26 @@ usage of genetic algorithms in ecology and evolution</span>.”</span>
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by A. Bradley Duthie, Rose McKeon.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by A. Bradley Duthie, Rose McKeon.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
 
 
-  
+
 
   </body>
 </html>

@@ -4,94 +4,70 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes • resevol</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes">
-<meta property="og:description" content="resevol">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes">
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">resevol</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.4.0</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../articles/resevol.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/advanced_techniques.html">Advanced techniques</a>
-    </li>
-    <li>
-      <a href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">resevol</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.0</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="active nav-item"><a class="nav-link" href="../articles/resevol.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/advanced_techniques.html">Advanced techniques</a></li>
+    <li><a class="dropdown-item" href="../articles/evolutionary_algorithm.html">The evolutionary algorithm</a></li>
+    <li><a class="dropdown-item" href="../articles/pesticide_thresholds.html">Pesticide thresholds</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://bradduthie.github.io/resevol/notebook/" class="external-link">Lab notebook</a>
-</li>
-<li>
-  <a href="https://github.com/bradduthie/resevol" class="external-link">
-    <span class="fa fa-github"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="nav-link" href="https://bradduthie.github.io/resevol/notebook/">Lab notebook</a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/bradduthie/resevol"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>resevol: an R package for spatially explicit
-models of pesticide resistance given evolving pest genomes</h1>
-                        <h4 data-toc-skip class="author"><div class="line-block">A. Bradley Duthie<span class="math inline">\(^{1,4}\)</span>, Rosie Mangan<span class="math inline">\(^{1}\)</span>, C. Rose McKeon<span class="math inline">\(^{1}\)</span>,<br>
-Matthew C. Tinsley<span class="math inline">\(^{1}\)</span>, and Luc F.
-Bussière<span class="math inline">\(^{2,3}\)</span>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes</h1>
+                        <h4 data-toc-skip class="author"><div class="line-block">A. Bradley
+Duthie<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mn>1</mn><mo>,</mo><mn>4</mn></mrow></msup><annotation encoding="application/x-tex">^{1,4}</annotation></semantics></math>,
+Rosie
+Mangan<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>1</mn></msup><annotation encoding="application/x-tex">^{1}</annotation></semantics></math>,
+C. Rose
+McKeon<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>1</mn></msup><annotation encoding="application/x-tex">^{1}</annotation></semantics></math>,<br>
+Matthew C.
+Tinsley<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>1</mn></msup><annotation encoding="application/x-tex">^{1}</annotation></semantics></math>,
+and Luc F.
+Bussière<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mn>2</mn><mo>,</mo><mn>3</mn></mrow></msup><annotation encoding="application/x-tex">^{2,3}</annotation></semantics></math>
 </div></h4>
             
             <h4 data-toc-skip class="date">[1] Biological and
@@ -103,8 +79,7 @@ Environmental Sciences 3A149 University of Stirling Stirling, FK9 4LA,
 UK</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/resevol.Rmd" class="external-link"><code>vignettes/resevol.Rmd</code></a></small>
-      <div class="hidden name"><code>resevol.Rmd</code></div>
-
+      <div class="d-none name"><code>resevol.Rmd</code></div>
     </div>
 
     
@@ -134,41 +109,35 @@ security</em>, <em>ecological modelling</em>, <em>pesticide</em>,
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>Insect resistance to pesticides is a wicked and widespread problem
-<span class="citation">(<a href="#ref-Gould2018" role="doc-biblioref">Gould, Brown, and Kuzma 2018</a>)</span>.
-Predicting, identifying, and ultimately delaying the evolution of
-insecticide resistance is therefore critical for ensuring sustainable
-global food security <span class="citation">(<a href="#ref-Hawkins2019" role="doc-biblioref">Hawkins et al. 2019</a>; <a href="#ref-Lykogianni2021" role="doc-biblioref">Lykogianni et al.
-2021</a>)</span>. To manage pesticide resistance, various strategies
-have been proposed to disrupt or weaken selection. These strategies
-often focus on varying the location and timing of pesticide application,
-and therefore varying the strength of selection for pesticide
-resistance, so that pest susceptibility to one or more pesticides is
-maintained <span class="citation">(<a href="#ref-Ives2002" role="doc-biblioref">Ives and Andow 2002</a>; <a href="#ref-Liang2013" role="doc-biblioref">Liang et al. 2013</a>; <a href="#ref-Carriere2016" role="doc-biblioref">Carrière, Fabrick, and Tabashnik 2016</a>; <a href="#ref-Liang2018" role="doc-biblioref">Liang, Tang, and Cheke
-2018</a>; <a href="#ref-South2018" role="doc-biblioref">South and
-Hastings 2018</a>; <a href="#ref-Sudo2018" role="doc-biblioref">Sudo et
-al. 2018</a>; <a href="#ref-Saikai2021" role="doc-biblioref">Saikai,
-Hurley, and Mitchell 2021</a>)</span>. Pesticide resistance management
-has mostly been associated with the effect of single genes. In such
-cases, resistance alleles have binary effects on phenotype, enabling
-resistant phenotypes to arise from genetic changes at single or a small
-number of loci <span class="citation">(<a href="#ref-Raymond2001" role="doc-biblioref">Raymond et al. 2001</a>; <a href="#ref-Ffrench-Constant2004" role="doc-biblioref">Richard H.
-Ffrench-Constant, Daborn, and Le Goff 2004</a>; <a href="#ref-Ffrench-Constant2013" role="doc-biblioref">Richard H.
-Ffrench-Constant 2013</a>; <a href="#ref-Mangan2023" role="doc-biblioref">Mangan et al. 2023</a>)</span>. Nevertheless,
-resistance attributable to polygenic effects is also well-established
-<span class="citation">(<a href="#ref-Via1986" role="doc-biblioref">Via
-1986</a>; <a href="#ref-Firko1990" role="doc-biblioref">Firko and Hayes
-1990</a>; <a href="#ref-Busi2013" role="doc-biblioref">Busi, Neve, and
-Powles 2013</a>; <a href="#ref-Haridas2018" role="doc-biblioref">Haridas
-and Tenhumberg 2018</a>; <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>)</span>. And
-the relevance of polygenic resistance is likely to further increase
+<span class="citation">(<a href="#ref-Gould2018">Gould, Brown, and Kuzma
+2018</a>)</span>. Predicting, identifying, and ultimately delaying the
+evolution of insecticide resistance is therefore critical for ensuring
+sustainable global food security <span class="citation">(<a href="#ref-Hawkins2019">Hawkins et al. 2019</a>; <a href="#ref-Lykogianni2021">Lykogianni et al. 2021</a>)</span>. To manage
+pesticide resistance, various strategies have been proposed to disrupt
+or weaken selection. These strategies often focus on varying the
+location and timing of pesticide application, and therefore varying the
+strength of selection for pesticide resistance, so that pest
+susceptibility to one or more pesticides is maintained <span class="citation">(<a href="#ref-Ives2002">Ives and Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>; <a href="#ref-Carriere2016">Carrière, Fabrick, and Tabashnik 2016</a>; <a href="#ref-Liang2018">Liang, Tang, and Cheke 2018</a>; <a href="#ref-South2018">South and Hastings 2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai, Hurley, and Mitchell 2021</a>)</span>.
+Pesticide resistance management has mostly been associated with the
+effect of single genes. In such cases, resistance alleles have binary
+effects on phenotype, enabling resistant phenotypes to arise from
+genetic changes at single or a small number of loci <span class="citation">(<a href="#ref-Raymond2001">Raymond et al. 2001</a>; <a href="#ref-Ffrench-Constant2004">Richard H. Ffrench-Constant, Daborn,
+and Le Goff 2004</a>; <a href="#ref-Ffrench-Constant2013">Richard H.
+Ffrench-Constant 2013</a>; <a href="#ref-Mangan2023">Mangan et al.
+2023</a>)</span>. Nevertheless, resistance attributable to polygenic
+effects is also well-established <span class="citation">(<a href="#ref-Via1986">Via 1986</a>; <a href="#ref-Firko1990">Firko and
+Hayes 1990</a>; <a href="#ref-Busi2013">Busi, Neve, and Powles 2013</a>;
+<a href="#ref-Haridas2018">Haridas and Tenhumberg 2018</a>; <a href="#ref-Green2020">Green, Stenberg, and Lankinen 2020</a>)</span>.
+And the relevance of polygenic resistance is likely to further increase
 given a rising interest in biological controls for sustainable crop
-protection <span class="citation">(e.g., <a href="#ref-Green2020" role="doc-biblioref">Green, Stenberg, and Lankinen 2020</a>; <a href="#ref-Elnahal2022" role="doc-biblioref">Elnahal et al. 2022</a>; <a href="#ref-Mangan2023" role="doc-biblioref">Mangan et al.
-2023</a>)</span>. Developing strategies to maximise the efficacy of
-these tools is critical, and such strategies should be well-informed by
-predictions made from detailed, quantitative genetic models. Here we
-introduce the resevol R package as a tool for building individual-based
-models and simulating pest management <span class="citation">(<a href="#ref-Daly2022" role="doc-biblioref">Daly et al.
-2022</a>)</span>.</p>
+protection <span class="citation">(e.g., <a href="#ref-Green2020">Green,
+Stenberg, and Lankinen 2020</a>; <a href="#ref-Elnahal2022">Elnahal et
+al. 2022</a>; <a href="#ref-Mangan2023">Mangan et al. 2023</a>)</span>.
+Developing strategies to maximise the efficacy of these tools is
+critical, and such strategies should be well-informed by predictions
+made from detailed, quantitative genetic models. Here we introduce the
+resevol R package as a tool for building individual-based models and
+simulating pest management <span class="citation">(<a href="#ref-Daly2022">Daly et al. 2022</a>)</span>.</p>
 <p>The resevol package applies individual-based modelling and a
 quantitative genetics approach to simulate the evolution of a pest
 population on a changing landscape. Multiple traits determine the
@@ -178,23 +147,26 @@ presence of that pesticide, they could also impose reproductive fitness
 costs. Such trade-offs can be quantified by the genetic covariance
 between traits. A focal goal of the resevol package is to model traits
 with a pre-specified, but potentially evolving, genetic covariance
-structure. To achieve this goal, each individual has a genome with <span class="math inline">\(L\)</span> loci that underlie a set of <span class="math inline">\(T\)</span> potentially evolving traits.
-Pleiotropic loci can vary in their effects on the direction and
-magnitude of polygenic traits, causing population-wide trait covariance
-to arise mechanistically from the underlying genetic architecture of
-individuals. To achieve this, two separate steps are necessary. First,
-an evolutionary algorithm is used to find a network of internal nodes
-that map standard random normal loci values to covarying traits. Values
-used to map loci to traits are incorporated into individual genomes.
-Second, a population of asexual or sexual individuals is initialised and
-simulated on a spatially explicit landscape separated into distinct
-units (e.g., farms). Land units can apply one of up to 10 pesticides,
-and one of up to 10 landscape types at a given time (for simplicity,
-here we interpret landscape types to be crop types). Pesticides and
-crops rotate independently within farms over time in a pre-specified
-way. The resevol package can thereby model complex and evolving
-agricultural pest traits over realistic landscapes that undergo
-different pesticide use and crop regimes.</p>
+structure. To achieve this goal, each individual has a genome with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+loci that underlie a set of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+potentially evolving traits. Pleiotropic loci can vary in their effects
+on the direction and magnitude of polygenic traits, causing
+population-wide trait covariance to arise mechanistically from the
+underlying genetic architecture of individuals. To achieve this, two
+separate steps are necessary. First, an evolutionary algorithm is used
+to find a network of internal nodes that map standard random normal loci
+values to covarying traits. Values used to map loci to traits are
+incorporated into individual genomes. Second, a population of asexual or
+sexual individuals is initialised and simulated on a spatially explicit
+landscape separated into distinct units (e.g., farms). Land units can
+apply one of up to 10 pesticides, and one of up to 10 landscape types at
+a given time (for simplicity, here we interpret landscape types to be
+crop types). Pesticides and crops rotate independently within farms over
+time in a pre-specified way. The resevol package can thereby model
+complex and evolving agricultural pest traits over realistic landscapes
+that undergo different pesticide use and crop regimes.</p>
 </div>
 <div class="section level2">
 <h2 id="mine_gmatrix">Covarying pest quantitative traits<a class="anchor" aria-label="anchor" href="#mine_gmatrix"></a>
@@ -228,24 +200,29 @@ for illustration.</em>
 <p>Conceptually, the relationship between individual genotypes and
 traits is defined by a network connecting loci to traits through a set
 of hidden internal nodes (Figure 1). Values for loci are randomly drawn
-from a standard normal distribution, <span class="math inline">\(\mathcal{N}\left(0, 1\right)\)</span>. Links
-between loci, internal nodes, and traits, can take any real value and
-are represented by black arrows in Figure 1. Traits can take any real
-value, and are calculated as the summed effects of all preceding nodes
-(i.e., the blue squares immediately to the left of the traits in Figure
-1). Mathematically, loci are represented by a row vector of length <span class="math inline">\(L\)</span>. Effects of loci on the first layer of
-internal nodes (black arrows emanating from loci in Figure 1) are
-represented by an <span class="math inline">\(L \times T\)</span>
+from a standard normal distribution,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝒩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathcal{N}\left(0, 1\right)</annotation></semantics></math>.
+Links between loci, internal nodes, and traits, can take any real value
+and are represented by black arrows in Figure 1. Traits can take any
+real value, and are calculated as the summed effects of all preceding
+nodes (i.e., the blue squares immediately to the left of the traits in
+Figure 1). Mathematically, loci are represented by a row vector of
+length
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>.
+Effects of loci on the first layer of internal nodes (black arrows
+emanating from loci in Figure 1) are represented by an
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>×</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">L \times T</annotation></semantics></math>
 matrix, and transitions between internal nodes, and between the last set
-of internal nodes and the final traits, are represented by <span class="math inline">\(T \times T\)</span> matrices. For the example in
-Figure 1,</p>
-<p><span class="math display">\[
+of internal nodes and the final traits, are represented by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>×</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">T \times T</annotation></semantics></math>
+matrices. For the example in Figure 1,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0.1</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>0.1</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mn>0.2</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0.4</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mn>0.1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1.2</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>0.6</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0.2</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mn>2.2</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1.3</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>0.5</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>0.1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0.0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>2.2</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mn>0.9</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1.6</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0.8</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0.2998</mn><mo>,</mo></mtd><mtd columnalign="center" style="text-align: center"><mn>0.1081</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
 \begin{pmatrix}
   0.1, &amp; -0.1, &amp; 0.2 \\
-\end{pmatrix}
+\end{pmatrix} 
 \begin{pmatrix}
   0.4, &amp;  0.1 \\
--1.2, &amp; -0.6 \\
+ -1.2, &amp; -0.6 \\
   0.2, &amp;  2.2 \\
 \end{pmatrix}
 \begin{pmatrix}
@@ -255,11 +232,11 @@ Figure 1,</p>
 \begin{pmatrix}
    2.2, &amp;  0.9 \\
    1.6  &amp;  0.8 \\
-\end{pmatrix} =
+\end{pmatrix} = 
 \begin{pmatrix}
   0.2998, &amp; 0.1081 \\
 \end{pmatrix}.
-\]</span></p>
+</annotation></semantics></math></p>
 <p>Values mapping loci to traits become part of an individual’s genome,
 so the genome for the individual represented by Figure 1 is stored in
 the model as shown below:</p>
@@ -271,7 +248,7 @@ in each genome. Individuals can be haploid (as in Figure 1) or diploid
 <p>An evolutionary algorithm is used to find appropriate values that
 produce covarying traits from loci (see Supporting Information 1 for
 details). Evolutionary algorithms are heuristic tools that can simulate
-adaptive evolution to find solutions for a broad range of problems <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>; <a href="#ref-Duthie2018" role="doc-biblioref">Duthie et al. 2018</a>)</span>. In the resevol
+adaptive evolution to find solutions for a broad range of problems <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>; <a href="#ref-Duthie2018">Duthie et al. 2018</a>)</span>. In the resevol
 package, the <code>mine_gmatrix</code> function runs an evolutionary
 algorithm and requires the argument <code>gmatrix</code>, which
 specifies the desired trait covariance matrix. The function initialises
@@ -286,14 +263,14 @@ trait covariances produced for each network are estimated by initalising
 <code>indivs</code> individuals with loci sampled from a standard normal
 distribution. Network stress is calculated as the logged mean squared
 deviation between estimated covariances and those in
-<code>gmatrix</code>. Tournament selection <span class="citation">(<a href="#ref-Hamblin2013" role="doc-biblioref">Hamblin 2013</a>)</span> is
-then used to determine the networks for the next iteration of the
-algorithm. Networks with the lowest estimated stress have the highest
-fitness, so these networks are disproportionately represented in the
-next iteration. Throughout the evolutionary algorithm, the lowest stress
-network is saved and returned upon network termination. The robustness
-of this network’s stress to sets of individuals with different loci
-values can be tested using the <code>stress_test</code> function.</p>
+<code>gmatrix</code>. Tournament selection <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>)</span> is then used to
+determine the networks for the next iteration of the algorithm. Networks
+with the lowest estimated stress have the highest fitness, so these
+networks are disproportionately represented in the next iteration.
+Throughout the evolutionary algorithm, the lowest stress network is
+saved and returned upon network termination. The robustness of this
+network’s stress to sets of individuals with different loci values can
+be tested using the <code>stress_test</code> function.</p>
 <p>An example run of <code>mine_gmatrix</code> with the same number of
 loci and internal nodes as in Figure 1 is shown below for traits that
 have an intended covariance of -0.4:</p>
@@ -340,10 +317,10 @@ defines a unique farm, but values do not need to be contiguous. These
 ‘farms’ could even model non-farmland (e.g., water, roads), if
 pesticides and crops on them are invisible to pests (see Supporting
 Information 2), or they could more broadly be interpreted as
-heterogenous landscape properties across an arbitrary scale <span class="citation">(e.g., <a href="#ref-Newman2023" role="doc-biblioref">Newman et al. 2023</a>)</span>. This
-<code>terrain</code> customisation therefore allows for a high degree of
-landscape detail, and offers the potential for modelling real-world
-landscapes from raster images <span class="citation">(e.g., <a href="#ref-Millington2021" role="doc-biblioref">Millington et al.
+heterogenous landscape properties across an arbitrary scale <span class="citation">(e.g., <a href="#ref-Newman2023">Newman et al.
+2023</a>)</span>. This <code>terrain</code> customisation therefore
+allows for a high degree of landscape detail, and offers the potential
+for modelling real-world landscapes from raster images <span class="citation">(e.g., <a href="#ref-Millington2021">Millington et al.
 2021</a>)</span>. Edge effects are set using the <code>land_edge</code>
 argument. Edge options include <code>"leaky"</code> (pests disappear
 from the landscape), <code>"reflect"</code> (pests bounce off of the
@@ -367,13 +344,14 @@ take either an integer value from 1-3, or a matrix. Integer values
 specify (1) no rotation, (2) random transition from one type to another,
 or (3) cycling through each available crop or pesticide in numeric
 order. Square matrices can be used to define the probability that a
-given crop or pesticide in row <span class="math inline">\(i\)</span>
-transitions to that in column <span class="math inline">\(j\)</span>.
+given crop or pesticide in row
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+transitions to that in column
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
 Hence, any possible Markov chain can be used to model transition between
 crop or pesticide types on farms, potentially integrating real crop use
-or pesticide use patterns <span class="citation">(<a href="#ref-Zhang2020" role="doc-biblioref">Zhang et al.
-2020</a>)</span>. Upon rotation, crop and pesticide values are reset on
-each farm.</p>
+or pesticide use patterns <span class="citation">(<a href="#ref-Zhang2020">Zhang et al. 2020</a>)</span>. Upon rotation, crop
+and pesticide values are reset on each farm.</p>
 <p>Values for <code>crop_per_cell</code> and
 <code>pesticide_per_cell</code> determine the quantity of crops and
 pesticides initialised per cell upon crop or pesticide rotation,
@@ -408,7 +386,7 @@ during aging if <code>baseline_metabolism &gt; 0</code> and pest age is
 within <code>min_age_metabolism</code> and
 <code>max_age_metabolism</code>. The option to set minimum and maximum
 ages for events makes it possible to model pests with much different
-life histories <span class="citation">(e.g., <a href="#ref-Sudo2018" role="doc-biblioref">Sudo et al. 2018</a>)</span>.</p>
+life histories <span class="citation">(e.g., <a href="#ref-Sudo2018">Sudo et al. 2018</a>)</span>.</p>
 <div class="figure">
 <img src="resevol_files/figure-html/flowchart-1.png" alt="**Figure 2**. *Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed to a CSV file.*" width="768"><p class="caption">
 <strong>Figure 2</strong>. <em>Overview of simulated events in the
@@ -587,10 +565,12 @@ which traits 1 and 2 have variances of 1.0008181 and 1.027134,
 respectively, with a covariance of -0.3925799.</p>
 <p>Traits 1 and 2 will define the realised rate of uptake of the two
 separate pesticides, so we model a system in which there is a potential
-trade-off for pesticide susceptibility. We use a simple <span class="math inline">\(64 \times 64\)</span> cell landscape with nine
-farms. Each farm grows the same crop and uses one of two randomly
-intialised pesticides, which are rotated every 16 time steps. Hence, we
-can conceptualise 16 time steps as a single growing season.</p>
+trade-off for pesticide susceptibility. We use a simple
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>64</mn><mo>×</mo><mn>64</mn></mrow><annotation encoding="application/x-tex">64 \times 64</annotation></semantics></math>
+cell landscape with nine farms. Each farm grows the same crop and uses
+one of two randomly intialised pesticides, which are rotated every 16
+time steps. Hence, we can conceptualise 16 time steps as a single
+growing season.</p>
 <p>In our example, each cell produces four crop units, all of which can
 potentially be consumed. Pests consume up to one unit of crop on their
 landscape cell per time step. Pest survival and reproduction is
@@ -670,27 +650,22 @@ grey).</em>
 <h2 id="conclusions">Conclusions<a class="anchor" aria-label="anchor" href="#conclusions"></a>
 </h2>
 <p>Insecticide resistance to pesticides is a widespread problem that
-affects global food security <span class="citation">(<a href="#ref-Tabashnik2014" role="doc-biblioref">Tabashnik et al.
-2014</a>; <a href="#ref-Bradshaw2016" role="doc-biblioref">Bradshaw et
-al. 2016</a>; <a href="#ref-Lykogianni2021" role="doc-biblioref">Lykogianni et al. 2021</a>)</span>. Many models
-have been developed to investigate the evolution of resistance under
-different ecological and evolutionary conditions <span class="citation">(e.g., <a href="#ref-Curtis1985" role="doc-biblioref">Curtis 1985</a>; <a href="#ref-Mani1985" role="doc-biblioref">Mani 1985</a>; <a href="#ref-Ives2002" role="doc-biblioref">Ives and Andow 2002</a>; <a href="#ref-Liang2013" role="doc-biblioref">Liang et al. 2013</a>; <a href="#ref-Liang2018" role="doc-biblioref">Liang, Tang, and Cheke 2018</a>; <a href="#ref-Haridas2018" role="doc-biblioref">Haridas and Tenhumberg
-2018</a>; <a href="#ref-South2018" role="doc-biblioref">South and
-Hastings 2018</a>; <a href="#ref-Sudo2018" role="doc-biblioref">Sudo et
-al. 2018</a>; <a href="#ref-Saikai2021" role="doc-biblioref">Saikai,
-Hurley, and Mitchell 2021</a>)</span>. The resevol R package makes it
-possible to rapidly develop and simulate myriad individual-based models
-of resistance evolution. It also introduces a novel approach to
-modelling complex pest genetic architecture, using an evolutionary
-algorithm to generate haploid or diploid loci that map to pest traits
-with pre-specified covariances (Figure 1; Supporting Information 1).
-Agricultural landscapes and pest life histories are highly customisable,
-allowing targetted models that can simulate specific real-world case
-studies (Supporting Information 2). The breadth of possible models that
-can be simulated with resevol also makes it a useful tool for developing
-theory on pest management, and even more generally on the evolution and
-ecology of individuals with complex traits on a heterogeneous
-landscape.</p>
+affects global food security <span class="citation">(<a href="#ref-Tabashnik2014">Tabashnik et al. 2014</a>; <a href="#ref-Bradshaw2016">Bradshaw et al. 2016</a>; <a href="#ref-Lykogianni2021">Lykogianni et al. 2021</a>)</span>. Many
+models have been developed to investigate the evolution of resistance
+under different ecological and evolutionary conditions <span class="citation">(e.g., <a href="#ref-Curtis1985">Curtis 1985</a>; <a href="#ref-Mani1985">Mani 1985</a>; <a href="#ref-Ives2002">Ives and
+Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>; <a href="#ref-Liang2018">Liang, Tang, and Cheke 2018</a>; <a href="#ref-Haridas2018">Haridas and Tenhumberg 2018</a>; <a href="#ref-South2018">South and Hastings 2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai, Hurley, and Mitchell 2021</a>)</span>.
+The resevol R package makes it possible to rapidly develop and simulate
+myriad individual-based models of resistance evolution. It also
+introduces a novel approach to modelling complex pest genetic
+architecture, using an evolutionary algorithm to generate haploid or
+diploid loci that map to pest traits with pre-specified covariances
+(Figure 1; Supporting Information 1). Agricultural landscapes and pest
+life histories are highly customisable, allowing targetted models that
+can simulate specific real-world case studies (Supporting Information
+2). The breadth of possible models that can be simulated with resevol
+also makes it a useful tool for developing theory on pest management,
+and even more generally on the evolution and ecology of individuals with
+complex traits on a heterogeneous landscape.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -716,13 +691,13 @@ visualisation.</p>
 <h2 id="availability">Availability<a class="anchor" aria-label="anchor" href="#availability"></a>
 </h2>
 <p>The resevol R package can be downloaded from CRAN (<a href="https://cran.r-project.org/package=resevol" class="external-link uri">https://cran.r-project.org/package=resevol</a>) or GitHub
-(<a href="https://bradduthie.github.io/resevol/" class="external-link uri">https://bradduthie.github.io/resevol/</a>). The package is
+(<a href="https://bradduthie.github.io/resevol/" class="uri">https://bradduthie.github.io/resevol/</a>). The package is
 open source under GNU Public License.</p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-Bradshaw2016" class="csl-entry">
 Bradshaw, Corey J A, Boris Leroy, Céline Bellard, David Roiz, Céline
 Albert, Alice Fournier, Morgane Barbet-Massin, Jean Michel Salles,
@@ -909,35 +884,26 @@ Engine</span>.”</span> <em>Environmental Modelling and Software</em>
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by A. Bradley Duthie, Rose McKeon.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by A. Bradley Duthie, Rose McKeon.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
 
 
-  
+
 
   </body>
 </html>

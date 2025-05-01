@@ -1,9 +1,15 @@
+template:
+  bootstrap: 5
+  
+url: https://bradduthie.github.io/resevol
+
 reference:
     - title: Simulation functions
       contents:
       - mine_gmatrix
       - run_farm_sim
       - stress_test
+      - individuals_colnames
 
 navbar:
     right:
