@@ -248,6 +248,9 @@ initialise_thresholds <- function(pesticide_threshold = "none", farms){
     if(pesticide_threshold[1] == "none"){
         init_vec <- rep(x = -1, times = farms);
     }
+    if(min(pesticide_threshold) < 0){
+        stop("ERROR: Do not set pesticide_threshold as a negative value.")
+    }
     if(is.numeric(pesticide_threshold) == TRUE & 
        length(pesticide_threshold) == farms){
         init_vec <- pesticide_threshold;
