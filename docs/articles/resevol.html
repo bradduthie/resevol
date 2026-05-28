@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes • resevol</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="resevol: an R package for spatially explicit models of pesticide resistance given evolving pest genomes">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">resevol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,7 +109,7 @@ security</em>, <em>ecological modelling</em>, <em>pesticide</em>,
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>Insect resistance to pesticides is a wicked and widespread problem
-<span class="citation">(<a href="#ref-Gould2018">Gould, Brown, and Kuzma
+<span class="citation">(<a href="#ref-Gould2018">Gould et al.
 2018</a>)</span>. Predicting, identifying, and ultimately delaying the
 evolution of insecticide resistance is therefore critical for ensuring
 sustainable global food security <span class="citation">(<a href="#ref-Hawkins2019">Hawkins et al. 2019</a>; <a href="#ref-Lykogianni2021">Lykogianni et al. 2021</a>)</span>. To manage
@@ -117,27 +117,23 @@ pesticide resistance, various strategies have been proposed to disrupt
 or weaken selection. These strategies often focus on varying the
 location and timing of pesticide application, and therefore varying the
 strength of selection for pesticide resistance, so that pest
-susceptibility to one or more pesticides is maintained <span class="citation">(<a href="#ref-Ives2002">Ives and Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>; <a href="#ref-Carriere2016">Carrière, Fabrick, and Tabashnik 2016</a>; <a href="#ref-Liang2018">Liang, Tang, and Cheke 2018</a>; <a href="#ref-South2018">South and Hastings 2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai, Hurley, and Mitchell 2021</a>)</span>.
-Pesticide resistance management has mostly been associated with the
-effect of single genes. In such cases, resistance alleles have binary
-effects on phenotype, enabling resistant phenotypes to arise from
-genetic changes at single or a small number of loci <span class="citation">(<a href="#ref-Raymond2001">Raymond et al. 2001</a>; <a href="#ref-Ffrench-Constant2004">Richard H. Ffrench-Constant, Daborn,
-and Le Goff 2004</a>; <a href="#ref-Ffrench-Constant2013">Richard H.
-Ffrench-Constant 2013</a>; <a href="#ref-Mangan2023">Mangan et al.
-2023</a>)</span>. Nevertheless, resistance attributable to polygenic
-effects is also well-established <span class="citation">(<a href="#ref-Via1986">Via 1986</a>; <a href="#ref-Firko1990">Firko and
-Hayes 1990</a>; <a href="#ref-Busi2013">Busi, Neve, and Powles 2013</a>;
-<a href="#ref-Haridas2018">Haridas and Tenhumberg 2018</a>; <a href="#ref-Green2020">Green, Stenberg, and Lankinen 2020</a>)</span>.
-And the relevance of polygenic resistance is likely to further increase
-given a rising interest in biological controls for sustainable crop
-protection <span class="citation">(e.g., <a href="#ref-Green2020">Green,
-Stenberg, and Lankinen 2020</a>; <a href="#ref-Elnahal2022">Elnahal et
-al. 2022</a>; <a href="#ref-Mangan2023">Mangan et al. 2023</a>)</span>.
-Developing strategies to maximise the efficacy of these tools is
-critical, and such strategies should be well-informed by predictions
-made from detailed, quantitative genetic models. Here we introduce the
-resevol R package as a tool for building individual-based models and
-simulating pest management <span class="citation">(<a href="#ref-Daly2022">Daly et al. 2022</a>)</span>.</p>
+susceptibility to one or more pesticides is maintained <span class="citation">(<a href="#ref-Ives2002">Ives and Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>, <a href="#ref-Liang2018">2018</a>; <a href="#ref-Carriere2016">Carrière et
+al. 2016</a>; <a href="#ref-South2018">South and Hastings 2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai et al. 2021</a>)</span>. Pesticide
+resistance management has mostly been associated with the effect of
+single genes. In such cases, resistance alleles have binary effects on
+phenotype, enabling resistant phenotypes to arise from genetic changes
+at single or a small number of loci <span class="citation">(<a href="#ref-Raymond2001">Raymond et al. 2001</a>; <a href="#ref-Ffrench-Constant2004">Ffrench-Constant et al. 2004</a>; <a href="#ref-Ffrench-Constant2013">Ffrench-Constant 2013</a>; <a href="#ref-Mangan2023">Mangan et al. 2023</a>)</span>. Nevertheless,
+resistance attributable to polygenic effects is also well-established
+<span class="citation">(<a href="#ref-Via1986">Via 1986</a>; <a href="#ref-Firko1990">Firko and Hayes 1990</a>; <a href="#ref-Busi2013">Busi et al. 2013</a>; <a href="#ref-Haridas2018">Haridas and Tenhumberg 2018</a>; <a href="#ref-Green2020">Green et al. 2020</a>)</span>. And the relevance
+of polygenic resistance is likely to further increase given a rising
+interest in biological controls for sustainable crop protection <span class="citation">(e.g., <a href="#ref-Green2020">Green et al. 2020</a>;
+<a href="#ref-Elnahal2022">Elnahal et al. 2022</a>; <a href="#ref-Mangan2023">Mangan et al. 2023</a>)</span>. Developing
+strategies to maximise the efficacy of these tools is critical, and such
+strategies should be well-informed by predictions made from detailed,
+quantitative genetic models. Here we introduce the resevol R package as
+a tool for building individual-based models and simulating pest
+management <span class="citation">(<a href="#ref-Daly2022">Daly et al.
+2022</a>)</span>.</p>
 <p>The resevol package applies individual-based modelling and a
 quantitative genetics approach to simulate the evolution of a pest
 population on a changing landscape. Multiple traits determine the
@@ -187,7 +183,7 @@ modelling individual genomes and traits thereby increases the complexity
 of questions that can be addressed for simulating evolution in
 agricultural pests.</p>
 <div class="figure">
-<img src="resevol_files/figure-html/network-1.png" alt="**Figure 1**. *Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the `mine_gmatrix` function. Individual genomes in the resevol R package consist of standard random normal values for loci, real values for black arrows linking nodes, and real values for traits. Values shown for loci and arrows are an example for illustration.*" width="576"><p class="caption">
+<img src="resevol_files/figure-html/network-1.png" class="r-plt" alt="**Figure 1**. *Example network mapping loci (green circles) to traits (red diamonds) through an intermediate set of hidden layers (blue squares) in the `mine_gmatrix` function. Individual genomes in the resevol R package consist of standard random normal values for loci, real values for black arrows linking nodes, and real values for traits. Values shown for loci and arrows are an example for illustration.*" width="576"><p class="caption">
 <strong>Figure 1</strong>. <em>Example network mapping loci (green
 circles) to traits (red diamonds) through an intermediate set of hidden
 layers (blue squares) in the <code>mine_gmatrix</code> function.
@@ -388,7 +384,7 @@ within <code>min_age_metabolism</code> and
 ages for events makes it possible to model pests with much different
 life histories <span class="citation">(e.g., <a href="#ref-Sudo2018">Sudo et al. 2018</a>)</span>.</p>
 <div class="figure">
-<img src="resevol_files/figure-html/flowchart-1.png" alt="**Figure 2**. *Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed to a CSV file.*" width="768"><p class="caption">
+<img src="resevol_files/figure-html/flowchart-1.png" class="r-plt" alt="**Figure 2**. *Overview of simulated events in the resevol R package. Note that metabolism, feeding, pesticide consumption, movement, and reproduction are all subject to a minimum and maximum pest age. Consequently, simulation order might not reflect the order of events from the perspective of a focal pest (e.g., pests might move from ages 1-2, but only feed from ages 2-4). Crops and pesticides are also not necessarily rotated in each time step (see Landscape). Statistics collected within a time step are printed to a CSV file.*" width="768"><p class="caption">
 <strong>Figure 2</strong>. <em>Overview of simulated events in the
 resevol R package. Note that metabolism, feeding, pesticide consumption,
 movement, and reproduction are all subject to a minimum and maximum pest
@@ -621,7 +617,7 @@ plotting functions are introduced in the resevol package. Instead,
 methods and code for producing plots such as those in Figures 3 and 4
 are explained in Supporting Information 2.</p>
 <div class="figure">
-<img src="resevol_files/figure-html/overtime-1.png" alt="**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken per pest, (c) mean food consumed per pest, and (d) mean value of evolving traits 1 and 2 underlying pest uptake over time. Note that only pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or 2, respectively. Pests with negative trait values will be unaffected by corresponding pesticides (i.e., pesticide consumption is a threshold trait), hence the difference between realised pesticide consumption (b) and the traits underlying it (d). White and grey vertical stripes indicate seasons of a single crop and pesticide application.*" width="768"><p class="caption">
+<img src="resevol_files/figure-html/overtime-1.png" class="r-plt" alt="**Figure 3**. *Agricultural pest ecological and evolutionary dynamics over 160 time steps from an individual-based simulation using the resevol R package. Panels show (a) pesticide abundance change, (b) mean realised amount of pesticides 1 and 2 uptaken per pest, (c) mean food consumed per pest, and (d) mean value of evolving traits 1 and 2 underlying pest uptake over time. Note that only pests with positive values for Traits 1 or 2 can uptake Pesticide 1 or 2, respectively. Pests with negative trait values will be unaffected by corresponding pesticides (i.e., pesticide consumption is a threshold trait), hence the difference between realised pesticide consumption (b) and the traits underlying it (d). White and grey vertical stripes indicate seasons of a single crop and pesticide application.*" width="768"><p class="caption">
 <strong>Figure 3</strong>. <em>Agricultural pest ecological and
 evolutionary dynamics over 160 time steps from an individual-based
 simulation using the resevol R package. Panels show (a) pesticide
@@ -637,7 +633,7 @@ indicate seasons of a single crop and pesticide application.</em>
 </p>
 </div>
 <div class="figure">
-<img src="resevol_files/figure-html/landscape-1.png" alt="**Figure 4**. *Locations of pests (black) across a landscape that includes nine farms (coloured blocks) in the last time step of a simulation using the resevol R package (left panel). The right panel shows which farms apply pesticide 1 (dark grey) and 2 (light grey).*" width="614.4"><p class="caption">
+<img src="resevol_files/figure-html/landscape-1.png" class="r-plt" alt="**Figure 4**. *Locations of pests (black) across a landscape that includes nine farms (coloured blocks) in the last time step of a simulation using the resevol R package (left panel). The right panel shows which farms apply pesticide 1 (dark grey) and 2 (light grey).*" width="614.4"><p class="caption">
 <strong>Figure 4</strong>. <em>Locations of pests (black) across a
 landscape that includes nine farms (coloured blocks) in the last time
 step of a simulation using the resevol R package (left panel). The right
@@ -653,19 +649,21 @@ grey).</em>
 affects global food security <span class="citation">(<a href="#ref-Tabashnik2014">Tabashnik et al. 2014</a>; <a href="#ref-Bradshaw2016">Bradshaw et al. 2016</a>; <a href="#ref-Lykogianni2021">Lykogianni et al. 2021</a>)</span>. Many
 models have been developed to investigate the evolution of resistance
 under different ecological and evolutionary conditions <span class="citation">(e.g., <a href="#ref-Curtis1985">Curtis 1985</a>; <a href="#ref-Mani1985">Mani 1985</a>; <a href="#ref-Ives2002">Ives and
-Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>; <a href="#ref-Liang2018">Liang, Tang, and Cheke 2018</a>; <a href="#ref-Haridas2018">Haridas and Tenhumberg 2018</a>; <a href="#ref-South2018">South and Hastings 2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai, Hurley, and Mitchell 2021</a>)</span>.
-The resevol R package makes it possible to rapidly develop and simulate
-myriad individual-based models of resistance evolution. It also
-introduces a novel approach to modelling complex pest genetic
-architecture, using an evolutionary algorithm to generate haploid or
-diploid loci that map to pest traits with pre-specified covariances
-(Figure 1; Supporting Information 1). Agricultural landscapes and pest
-life histories are highly customisable, allowing targetted models that
-can simulate specific real-world case studies (Supporting Information
-2). The breadth of possible models that can be simulated with resevol
-also makes it a useful tool for developing theory on pest management,
-and even more generally on the evolution and ecology of individuals with
-complex traits on a heterogeneous landscape.</p>
+Andow 2002</a>; <a href="#ref-Liang2013">Liang et al. 2013</a>, <a href="#ref-Liang2018">2018</a>; <a href="#ref-Haridas2018">Haridas and
+Tenhumberg 2018</a>; <a href="#ref-South2018">South and Hastings
+2018</a>; <a href="#ref-Sudo2018">Sudo et al. 2018</a>; <a href="#ref-Saikai2021">Saikai et al. 2021</a>)</span>. The resevol R
+package makes it possible to rapidly develop and simulate myriad
+individual-based models of resistance evolution. It also introduces a
+novel approach to modelling complex pest genetic architecture, using an
+evolutionary algorithm to generate haploid or diploid loci that map to
+pest traits with pre-specified covariances (Figure 1; Supporting
+Information 1). Agricultural landscapes and pest life histories are
+highly customisable, allowing targetted models that can simulate
+specific real-world case studies (Supporting Information 2). The breadth
+of possible models that can be simulated with resevol also makes it a
+useful tool for developing theory on pest management, and even more
+generally on the evolution and ecology of individuals with complex
+traits on a heterogeneous landscape.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -697,13 +695,12 @@ open source under GNU Public License.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Bradshaw2016" class="csl-entry">
-Bradshaw, Corey J A, Boris Leroy, Céline Bellard, David Roiz, Céline
-Albert, Alice Fournier, Morgane Barbet-Massin, Jean Michel Salles,
-Frédéric Simard, and Franck Courchamp. 2016. <span>“<span class="nocase">Massive yet grossly underestimated global costs of
-invasive insects</span>.”</span> <em>Nature Communications</em> 7:
-12986. <a href="https://doi.org/10.1038/ncomms12986" class="external-link">https://doi.org/10.1038/ncomms12986</a>.
+Bradshaw, Corey J A, Boris Leroy, Céline Bellard, et al. 2016.
+<span>“<span class="nocase">Massive yet grossly underestimated global
+costs of invasive insects</span>.”</span> <em>Nature Communications</em>
+7: 12986. <a href="https://doi.org/10.1038/ncomms12986" class="external-link">https://doi.org/10.1038/ncomms12986</a>.
 </div>
 <div id="ref-Busi2013" class="csl-entry">
 Busi, Roberto, Paul Neve, and Stephen Powles. 2013. <span>“<span class="nocase">Evolved polygenic herbicide resistance in Lolium rigidum
@@ -730,19 +727,16 @@ modelling tools?</span>”</span> <em>Environmental Modelling and
 Software</em> 157: 105514. <a href="https://doi.org/10.1016/j.envsoft.2022.105514" class="external-link">https://doi.org/10.1016/j.envsoft.2022.105514</a>.
 </div>
 <div id="ref-Duthie2018" class="csl-entry">
-Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen,
-Rocio A Pozo, O. Sarobidy Rakotonarivo, Bram Van Moorter, and Nils
-Bunnefeld. 2018. <span>“<span class="nocase">GMSE: an R package for
-generalised management strategy evaluation</span>.”</span> <em>Methods
-in Ecology and Evolution</em> 9: 2396–2401. <a href="https://doi.org/10.1101/221432" class="external-link">https://doi.org/10.1101/221432</a>.
+Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, et al. 2018.
+<span>“<span class="nocase">GMSE: an R package for generalised
+management strategy evaluation</span>.”</span> <em>Methods in Ecology
+and Evolution</em> 9: 2396–401. <a href="https://doi.org/10.1101/221432" class="external-link">https://doi.org/10.1101/221432</a>.
 </div>
 <div id="ref-Elnahal2022" class="csl-entry">
-Elnahal, Ahmed SM, Mohamed T El-Saadony, Ahmed M Saad, El Sayed M
-Desoky, Amira M El-Tahan, Mostafa M Rady, Synan F AbuQamar, and Khaled A
-El-Tarabily. 2022. <em><span class="nocase">The use of microbial
-inoculants for biological control, plant growth promotion, and
-sustainable agriculture: A review</span></em>. Vol. 162. 4. Springer
-Netherlands. <a href="https://doi.org/10.1007/s10658-021-02393-7" class="external-link">https://doi.org/10.1007/s10658-021-02393-7</a>.
+Elnahal, Ahmed SM, Mohamed T El-Saadony, Ahmed M Saad, et al. 2022.
+<em><span class="nocase">The use of microbial inoculants for biological
+control, plant growth promotion, and sustainable agriculture: A
+review</span></em>. Vol. 162. Springer Netherlands. <a href="https://doi.org/10.1007/s10658-021-02393-7" class="external-link">https://doi.org/10.1007/s10658-021-02393-7</a>.
 </div>
 <div id="ref-Ffrench-Constant2013" class="csl-entry">
 Ffrench-Constant, Richard H. 2013. <span>“<span class="nocase">The
@@ -770,7 +764,7 @@ dilemma of pesticide resistance?</span>”</span> <em>Science</em> 360
 Green, Kristina Karlsson, Johan A Stenberg, and Åsa Lankinen. 2020.
 <span>“<span class="nocase">Making sense of Integrated Pest Management
 (IPM) in the light of evolution</span>.”</span> <em>Evolutionary
-Applications</em> 13 (8): 1791–1805. <a href="https://doi.org/10.1111/eva.13067" class="external-link">https://doi.org/10.1111/eva.13067</a>.
+Applications</em> 13 (8): 1791–805. <a href="https://doi.org/10.1111/eva.13067" class="external-link">https://doi.org/10.1111/eva.13067</a>.
 </div>
 <div id="ref-Hamblin2013" class="csl-entry">
 Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical
@@ -871,9 +865,9 @@ Entomology</em> 107 (2): 496–507. <a href="https://doi.org/10.1603/EC13458" cl
 </div>
 <div id="ref-Via1986" class="csl-entry">
 Via, Sara. 1986. <span>“<span class="nocase">Quantitative genetic models
-and the evolution of pesticide resistance</span>.”</span> In
-<em>Pesticide Resistance: Strategies and Tactics for Management</em>,
-222–35. Washington, DC: National Academy Press.
+and the evolution of pesticide resistance</span>.”</span> Chap. 3 in
+<em>Pesticide Resistance: Strategies and Tactics for Management</em>.
+National Academy Press.
 </div>
 <div id="ref-Zhang2020" class="csl-entry">
 Zhang, Chen, Liping Di, Zhengwei Yang, Li Lin, and Pengyu Hao. 2020.
@@ -895,7 +889,7 @@ Engine</span>.”</span> <em>Environmental Modelling and Software</em>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

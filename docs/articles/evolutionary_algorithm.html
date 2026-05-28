@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>The evolutionary algorithm • resevol</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="The evolutionary algorithm">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">resevol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">A Bradley
 Duthie</h4>
             
-            <h4 data-toc-skip class="date">2025-05-01</h4>
+            <h4 data-toc-skip class="date">2026-05-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/vignettes/evolutionary_algorithm.Rmd" class="external-link"><code>vignettes/evolutionary_algorithm.Rmd</code></a></small>
       <div class="d-none name"><code>evolutionary_algorithm.Rmd</code></div>
@@ -79,7 +79,7 @@ with an arbitrary pre-specified covariance structure. It does this by
 using a complex network mapping a path from the allele values at each
 loci to the covarying trait values of individuals.</p>
 <div class="figure">
-<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-2-1.png" alt="**Figure 1:** *Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function*" width="672"><p class="caption">
+<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="**Figure 1:** *Network mapping loci to traits through an intermediate set of hidden layers in the mine_gmatrix function*" width="672"><p class="caption">
 <strong>Figure 1:</strong> <em>Network mapping loci to traits through an
 intermediate set of hidden layers in the mine_gmatrix function</em>
 </p>
@@ -94,8 +94,8 @@ traits that covary in the way that we want them to covary (within some
 acceptable margin of error). The <code>mine_gmatrix</code> function uses
 an evolutionary algorithm for identifying sets of values that work. An
 evolutionary algorithm is an algorithm that works especially well for
-<em>I know it when I see it</em> problems <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>)</span>. <span class="citation">(<a href="#ref-Luke2013"><strong>Luke2013?</strong></a>)</span> explains the
-idea behind these algorithms in more detail:</p>
+<em>I know it when I see it</em> problems <span class="citation">(<a href="#ref-Hamblin2013">Hamblin 2013</a>)</span>. <span class="citation">Luke (<a href="#ref-Luke2013">2013</a>)</span> explains
+the idea behind these algorithms in more detail:</p>
 <blockquote>
 <p>They’re algorithms used to find answers to problems when you have
 very little to help you: you don’t know beforehand what the optimal
@@ -207,7 +207,7 @@ trait covariances sufficiently close to the pre-specified covariance
 matrix. Figure 2 below provides a general overview of the evolutionary
 algorithm.</p>
 <div class="figure">
-<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-8-1.png" alt="Figure 2: Conceptual overview of the evolutionary algorithm used in the resevol package." width="576"><p class="caption">
+<img src="evolutionary_algorithm_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Figure 2: Conceptual overview of the evolutionary algorithm used in the resevol package." width="576"><p class="caption">
 Figure 2: Conceptual overview of the evolutionary algorithm used in the
 resevol package.
 </p>
@@ -354,18 +354,20 @@ summed, thereby producing the expected trait covariance structure.</p>
 <h2 class="unnumbered" id="literature-cited">
 <a name="lit">Literature Cited</a><a class="anchor" aria-label="anchor" href="#literature-cited"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Duthie2018" class="csl-entry">
-Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, Erlend B Nilsen,
-Rocio A Pozo, O. Sarobidy Rakotonarivo, Bram Van Moorter, and Nils
-Bunnefeld. 2018. <span>“<span class="nocase">GMSE: an R package for
-generalised management strategy evaluation</span>.”</span> <em>Methods
-in Ecology and Evolution</em> 9: 2396–2401. <a href="https://doi.org/10.1101/221432" class="external-link">https://doi.org/10.1101/221432</a>.
+Duthie, A Bradley, Jeremy J Cusack, Isabel L Jones, et al. 2018.
+<span>“<span class="nocase">GMSE: an R package for generalised
+management strategy evaluation</span>.”</span> <em>Methods in Ecology
+and Evolution</em> 9: 2396–401. <a href="https://doi.org/10.1101/221432" class="external-link">https://doi.org/10.1101/221432</a>.
 </div>
 <div id="ref-Hamblin2013" class="csl-entry">
 Hamblin, Steven. 2013. <span>“<span class="nocase">On the practical
 usage of genetic algorithms in ecology and evolution</span>.”</span>
 <em>Methods in Ecology and Evolution</em> 4 (2): 184–94. <a href="https://doi.org/10.1111/2041-210X.12000" class="external-link">https://doi.org/10.1111/2041-210X.12000</a>.
+</div>
+<div id="ref-Luke2013" class="csl-entry">
+Luke, Sean. 2013. <em>Essentials of Metaheuristics</em>. Second. Lulu.
 </div>
 </div>
 </div>
@@ -380,7 +382,7 @@ usage of genetic algorithms in ecology and evolution</span>.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
