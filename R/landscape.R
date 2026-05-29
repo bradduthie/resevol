@@ -98,12 +98,6 @@ run_landscape_a <- function(LANDSCAPE_PARAMETERS){
 crop_transitions <- function(rotation_type = 1, rotation_time = 1, crop_number){
     crop_N      <- crop_number;
     custom_land <- is.matrix(rotation_type);
-    if(rotation_type %in% 1:3 == FALSE & custom_land == FALSE){
-        stop("ERROR: Crop rotation type needs to be 1, 2, or 3.");
-    }
-    if(rotation_time < 1){
-        stop("ERROR: Crop rotation time cannot be less than 1.")
-    }
     if(custom_land == TRUE){
         check_dims  <- dim(rotation_type);
         if(check_dims[1] != check_dims[2]){
@@ -119,6 +113,12 @@ crop_transitions <- function(rotation_type = 1, rotation_time = 1, crop_number){
         }
         tmat <- rotation_type;
     }else{
+        if(rotation_type %in% 1:3 == FALSE & custom_land == FALSE){
+            stop("ERROR: Crop rotation type needs to be 1, 2, or 3.");
+        }
+        if(rotation_time < 1){
+            stop("ERROR: Crop rotation time cannot be less than 1.")
+        }
         tmat <- NA;
         if(rotation_type == 1){
             tmat       <- matrix(data = 0, nrow = crop_N, ncol = crop_N);
@@ -148,12 +148,6 @@ pesticide_transitions <- function(rotation_type = 1, rotation_time = 1,
                                   pesticide_number){
     pest_N      <- pesticide_number;
     custom_land <- is.matrix(rotation_type);
-    if(rotation_type %in% 1:3 == FALSE & custom_land == FALSE){
-        stop("ERROR: Pesticide rotation type needs to be 1, 2, or 3.");
-    }
-    if(rotation_time < 1){
-        stop("ERROR: Pesticide rotation time cannot be less than 1.");
-    }
     if(custom_land == TRUE){
         check_dims  <- dim(rotation_type);
         if(check_dims[1] != check_dims[2]){
@@ -169,6 +163,12 @@ pesticide_transitions <- function(rotation_type = 1, rotation_time = 1,
         }
         tmat <- rotation_type;
     }else{
+        if(rotation_type %in% 1:3 == FALSE & custom_land == FALSE){
+            stop("ERROR: Pesticide rotation type needs to be 1, 2, or 3.");
+        }
+        if(rotation_time < 1){
+            stop("ERROR: Pesticide rotation time cannot be less than 1.");
+        }
         tmat <- NA;
         if(rotation_type == 1){
             tmat       <- matrix(data = 0, nrow = pest_N, ncol = pest_N);
