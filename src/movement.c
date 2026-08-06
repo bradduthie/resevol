@@ -27,6 +27,7 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
                 if(pos < edge_1){
                     pos = -1;
                 }
+                break;
             case 2: /* Reflective edge */
                 if(pos >= edge_2){
                     pos = edge_2 - (pos - edge_2) - 1;
@@ -34,13 +35,15 @@ int edge_effect(int pos, int edge_1, int edge_2, int edge_type){
                 if(pos < edge_1){
                     pos = edge_1 - (pos - edge_1);
                 }
+                break;
             case 3: /* Sticky edge */
                 if(pos >= edge_2){
                     pos = edge_2 - 1;
                 }
                 if(pos < edge_1){
                     pos = edge_1;
-                }            
+                }
+                break;
             default: /* Torus landscape */
                 while(pos >= edge_2){
                     pos = pos - edge_2;   
@@ -163,8 +166,4 @@ void movement(double **pests, double *paras, double ***land){
       free(bout_vec);
   }
 }
-
-
-
-
 
