@@ -4,6 +4,12 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+double **make_2D_array(int rows, int cols);
+    
+void free_2D_array(double **array, int rows);
+
+double **grow_2D_array(double **array, int *capacity, int new_rows, int cols);
+
 void matrix_multiply(double **m1, double **m2, int m1_rows, int m1_cols,
                      int m2_rows, int m2_cols, double **m_out);
 

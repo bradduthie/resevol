@@ -1,7 +1,65 @@
+#include <stdlib.h>
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include <Rmath.h>
+
+/* =============================================================================
+ * This function makes a 2D array so that malloc isn't needed repeatedly
+ *     rows: Number of array rows
+ *     cols: Number of array columns
+ * ========================================================================== */
+double **make_2D_array(int rows, int cols){
+    
+    double **array;
+    int row;
+    
+    array = (double **) malloc(rows * sizeof(double *));
+    for(row = 0; row < rows; row++){
+        array[row] = (double *) malloc(cols * sizeof(double));
+    }
+
+    return array;
+}
+
+/* =============================================================================
+ * This function frees the 2D array
+ *     array: The array to be freed
+ *     rows: Number of array rows
+ * ========================================================================== */
+void free_2D_array(double **array, int rows){
+    
+    int row;
+
+    if(array != NULL){
+        for(row = 0; row < rows; row++){
+            free(array[row]);
+        }
+        free(array);
+    }
+}
+
+/* =============================================================================
+ * This function increases the number of rows given to a 2D array
+ *     array: The array to be increased in rows
+ *     capacity: The number of rows that are allocated in array
+ *     new_rows: The number of rows that are needed
+ *     cols: The number of columns in the array
+ * ========================================================================== */
+double **grow_2D_array(double **array, int *capacity, int new_rows, int cols){
+    
+    int row;
+
+    if(new_rows > *capacity){
+        array = (double **) realloc(array, new_rows * sizeof(double *));
+        for(row = *capacity; row < new_rows; row++){
+            array[row] = (double *) malloc(cols * sizeof(double));
+        }
+        *capacity = new_rows;
+    }
+    
+    return array;
+}
 
 /* =============================================================================
  * This is a generic function to multiply two matrices together
