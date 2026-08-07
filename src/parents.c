@@ -167,20 +167,9 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     net_st    = trait_st + traits;    /* Column where net locations start     */
     loci_st   = net_st + layers + 2;  /* Col where first loci values start    */
     
-    T  = (double **) malloc(1 * sizeof(double *));
-    for(row = 0; row < 1; row++){
-        T[row] = (double *) malloc(traits * sizeof(double));   
-    }
-    
-    L  = (double **) malloc(1 * sizeof(double *));
-    for(row = 0; row < 1; row++){
-        L[row] = (double *) malloc(loci * sizeof(double));   
-    }
-    
-    loc_layer  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loc_layer[row] = (double *) malloc(traits * sizeof(double));   
-    }
+    T         = make_2D_array(1, traits);
+    L         = make_2D_array(1, loci);
+    loc_layer = make_2D_array(loci, traits);
     
     net   = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
@@ -190,15 +179,8 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
         }
     }
     
-    net_sum = (double **) malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        net_sum[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-    
-    loci_to_traits  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
-    } 
+    net_sum = make_2D_array(traits, traits);
+    loci_to_traits = make_2D_array(loci, traits);
     
     vec_pos = loci_st;
     for(i = 0; i < loci; i++){
@@ -243,20 +225,9 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
         vec_pos++;
     }
     
-    for(row = 0; row < loci; row++){
-        free(loci_to_traits[row]);
-    }
-    free(loci_to_traits);
-    
-    for(row = 0; row < traits; row++){
-        free(net_sum[row]);
-    }
-    free(net_sum);
-    
-    for(row = 0; row < loci; row++){
-        free(loc_layer[row]);
-    }
-    free(loc_layer);
+    free_2D_array(loci_to_traits, loci);
+    free_2D_array(net_sum, traits);
+    free_2D_array(loc_layer, loci);
     
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
@@ -266,15 +237,8 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     }
     free(net); 
     
-    for(row = 0; row < 1; row++){
-        free(L[row]);
-    }
-    free(L);
-    
-    for(row = 0; row < 1; row++){
-        free(T[row]);
-    }
-    free(T);
+    free_2D_array(L, 1);
+    free_2D_array(T, 1);
 }
 
 /* =============================================================================
