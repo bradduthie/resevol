@@ -148,10 +148,7 @@ SEXP build_ownership(SEXP PARAMETERS){
     /* ====================================================================== */
     bin    = (int *) malloc(1 * sizeof(int));
     count  = (int *) malloc(1 * sizeof(int));
-    land   = (double **) malloc(dim_x * sizeof(double *));
-    for(xloc = 0; xloc < dim_x; xloc++){
-        land[xloc] = (double *) malloc(dim_y * sizeof(double));   
-    } 
+    land   = make_2D_array(dim_x, dim_y);
     
     (*bin)   = 0;
     (*count) = 1;
@@ -198,9 +195,7 @@ SEXP build_ownership(SEXP PARAMETERS){
 
     UNPROTECT(protected_n);
     
-    for(xloc = 0; xloc < dim_x; xloc++){
-        free(land[xloc]);
-    }
+    free_2D_array(land, dim_x);
     free(land);
     free(count);
     free(bin);

@@ -229,11 +229,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the crop rotation matrix for easier use */
     CROT_d1   = dim_CROT[0];
     CROT_d2   = dim_CROT[1];
-    C_change  = (double **) malloc(CROT_d1 * sizeof(double *));
-    for(row = 0; row < CROT_d1; row++){
-        C_change[row] = (double *) malloc(CROT_d2 * sizeof(double));   
-    } 
-    vec_pos = 0;
+    C_change  = make_2D_array(CROT_d1, CROT_d2);
+    vec_pos   = 0;
     for(col = 0; col < CROT_d2; col++){
         for(row = 0; row < CROT_d1; row++){
             C_change[row][col] = CROT_ptr[vec_pos]; 
@@ -244,11 +241,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the pesticide rotation matrix for easier use */
     PROT_d1   = dim_PROT[0];
     PROT_d2   = dim_PROT[1];
-    P_change  = (double **) malloc(PROT_d1 * sizeof(double *));
-    for(row = 0; row < PROT_d1; row++){
-        P_change[row] = (double *) malloc(PROT_d2 * sizeof(double));   
-    } 
-    vec_pos = 0;
+    P_change  = make_2D_array(PROT_d1, PROT_d2);
+    vec_pos   = 0;
     for(col = 0; col < PROT_d2; col++){
         for(row = 0; row < PROT_d1; row++){
             P_change[row][col] = PROT_ptr[vec_pos]; 
@@ -259,10 +253,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the crop initialisation matrix for easier use */
     CINIT_d1   = dim_CINIT[0];
     CINIT_d2   = dim_CINIT[1];
-    C_init     = (double **) malloc(CINIT_d1 * sizeof(double *));
-    for(row = 0; row < CINIT_d1; row++){
-        C_init[row] = (double *) malloc(CINIT_d2 * sizeof(double));   
-    } 
+    C_init     = make_2D_array(CINIT_d1, CINIT_d2);
     vec_pos = 0;
     for(col = 0; col < CINIT_d2; col++){
         for(row = 0; row < CINIT_d1; row++){
@@ -274,10 +265,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     /* Code below remakes the pesticide initialisation matrix for easier use */
     PINIT_d1   = dim_PINIT[0];
     PINIT_d2   = dim_PINIT[1];
-    P_init     = (double **) malloc(PINIT_d1 * sizeof(double *));
-    for(row = 0; row < PINIT_d1; row++){
-        P_init[row] = (double *) malloc(PINIT_d2 * sizeof(double));   
-    } 
+    P_init     = make_2D_array(PINIT_d1, PINIT_d2);
     vec_pos = 0;
     for(col = 0; col < PINIT_d2; col++){
         for(row = 0; row < PINIT_d1; row++){
@@ -320,10 +308,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         calculate_offspring(pests, paras);
     
         offspring_number = (int) paras[106]; 
-        offspring  = (double **) malloc(offspring_number * sizeof(double *));
-        for(row = 0; row < offspring_number; row++){
-            offspring[row] = (double *) malloc(ind_traits * sizeof(double));   
-        } 
+        offspring        = make_2D_array(offspring_number, ind_traits);
 
         if(offspring_number > 0){
             make_offspring(pests, offspring, paras);
@@ -344,10 +329,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         paras[139]  = (double) new_total_N; 
 
         if(new_total_N < 6){
-            for(row = 0; row < offspring_number; row++){
-                free(offspring[row]);
-            }
-            free(offspring);
+            free_2D_array(offspring, offspring_number);
             paras[141] = 1;
             break;
         }
@@ -366,10 +348,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         ind_number = new_total_N;
         paras[101] = (double) new_total_N;
         
-        for(row = 0; row < offspring_number; row++){
-            free(offspring[row]);
-        }
-        free(offspring);
+        free_2D_array(offspring, offspring_number);
 
         ts++;
         
@@ -422,25 +401,10 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     UNPROTECT(protected_n);
      
     /* Free all of the allocated memory used in arrays */
-    for(row = 0; row < PINIT_d1; row++){
-        free(P_init[row]);
-    }
-    free(P_init);
-    
-    for(row = 0; row < CINIT_d1; row++){
-        free(C_init[row]);
-    }
-    free(C_init);
-    
-    for(row = 0; row < PROT_d1; row++){
-        free(P_change[row]);
-    }
-    free(P_change);
-    
-    for(row = 0; row < CROT_d1; row++){
-        free(C_change[row]);
-    }
-    free(C_change);
+    free_2D_array(P_init, PINIT_d1);
+    free_2D_array(C_init, CINIT_d1);
+    free_2D_array(P_change, PROT_d1);
+    free_2D_array(C_change, CROT_d1);
     
     free(imm_sample);
     for(xloc = 0; xloc < land_x; xloc++){
