@@ -196,7 +196,6 @@ SEXP build_ownership(SEXP PARAMETERS){
     UNPROTECT(protected_n);
     
     free_2D_array(land, dim_x);
-    free(land);
     free(count);
     free(bin);
     free(build_paras);
