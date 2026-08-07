@@ -17,7 +17,11 @@ assets/npm-debug.log
 admin*
 data*
 
+mg_hang.pid
+
+notebook/scrap*
 notebook/feedback*
 notebook/grant_part_2*
 /doc/
 /Meta/
+.positai
