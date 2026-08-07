@@ -312,25 +312,10 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
   indivs   = (int) paras[2]; /* Individuals in the population */
   use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
 
-  T  = (double **) malloc(indivs * sizeof(double *));
-  for(row = 0; row < indivs; row++){
-    T[row] = (double *) malloc(traits * sizeof(double));   
-  }
-
-  L  = (double **) malloc(indivs * sizeof(double *));
-  for(row = 0; row < indivs; row++){
-    L[row] = (double *) malloc(loci * sizeof(double));   
-  }
-
-  net_sum = (double **) malloc(traits * sizeof(double *));
-  for(row = 0; row < traits; row++){
-    net_sum[row] = (double *) malloc(traits * sizeof(double));   
-  } 
-
-  loci_to_traits  = (double **) malloc(loci * sizeof(double *));
-  for(row = 0; row < loci; row++){
-    loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
-  } 
+  T              = make_2D_array(indivs, traits);
+  L              = make_2D_array(indivs, loci);
+  net_sum        = make_2D_array(traits, traits);
+  loci_to_traits = make_2D_array(loci, traits);
 
   ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
 
@@ -347,22 +332,10 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
   /* Calculate the variance covariance of traits */
   calc_VCV(T, indivs, traits, VCV, use_cor);
 
-  for(row = 0; row < loci; row++){
-    free(loci_to_traits[row]);
-  }
-  free(loci_to_traits);
-  for(row = 0; row < traits; row++){
-    free(net_sum[row]);
-  }
-  free(net_sum);
-  for(row = 0; row < indivs; row++){
-    free(L[row]);
-  }
-  free(L);
-  for(row = 0; row < indivs; row++){
-    free(T[row]);
-  }
-  free(T);
+  free_2D_array(loci_to_traits, loci);
+  free_2D_array(net_sum, traits);
+  free_2D_array(L, indivs);
+  free_2D_array(T, indivs);
 }
 
 /* =============================================================================
@@ -388,30 +361,11 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
   indivs   = (int) paras[2]; /* Individuals in the population */
   use_cor  = (int) paras[12]; /* Whether the correlation matrix is used */
   
-  T  = (double **) malloc(indivs * sizeof(double *));
-  for(row = 0; row < indivs; row++){
-    T[row] = (double *) malloc(traits * sizeof(double));   
-  }
-
-  L  = (double **) malloc(indivs * sizeof(double *));
-  for(row = 0; row < indivs; row++){
-    L[row] = (double *) malloc(loci * sizeof(double));   
-  }
-  
-  net_sum = (double **) malloc(traits * sizeof(double *));
-  for(row = 0; row < traits; row++){
-    net_sum[row] = (double *) malloc(traits * sizeof(double));   
-  } 
-  
-  loci_to_traits  = (double **) malloc(loci * sizeof(double *));
-  for(row = 0; row < loci; row++){
-    loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
-  } 
-  
-  VCV = (double **) malloc(traits * sizeof(double *));
-  for(row = 0; row < traits; row++){
-    VCV[row] = (double *) malloc(traits * sizeof(double));   
-  } 
+  T              = make_2D_array(indivs, traits);
+  L              = make_2D_array(indivs, loci);
+  net_sum        = make_2D_array(traits, traits);
+  loci_to_traits = make_2D_array(loci, traits);
+  VCV            = make_2D_array(traits, traits);
   
   ea_pop_ini(L, indivs, loci); /* Initialise with rand standard normals */
   
@@ -430,26 +384,11 @@ double fitness(double ***ltnpop, double ****netpop, double **gmatrix,
   
   stress = stress_VCV(gmatrix, traits, VCV);
 
-  for(row = 0; row < traits; row++){
-    free(VCV[row]);
-  }
-  free(VCV);
-  for(row = 0; row < loci; row++){
-    free(loci_to_traits[row]);
-  }
-  free(loci_to_traits);
-  for(row = 0; row < traits; row++){
-    free(net_sum[row]);
-  }
-  free(net_sum);
-  for(row = 0; row < indivs; row++){
-    free(L[row]);
-  }
-  free(L);
-  for(row = 0; row < indivs; row++){
-    free(T[row]);
-  }
-  free(T);
+  free_2D_array(VCV, traits);
+  free_2D_array(loci_to_traits, loci);
+  free_2D_array(net_sum, traits);
+  free_2D_array(L, indivs);
+  free_2D_array(T, indivs);
   
   return stress;
 }
@@ -887,11 +826,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
 
     /* Code below remakes the GMATRIX matrix for easier use */
     traits   = dim_GMATRIX[0];
-    gmatrix  = (double **) malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        gmatrix[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-    vec_pos = 0;
+    gmatrix  = make_2D_array(traits, traits);
+    vec_pos  = 0;
     for(col = 0; col < traits; col++){
         for(row = 0; row < traits; row++){
             gmatrix[row][col] = G_ptr[vec_pos]; 
@@ -915,10 +851,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     /* Allocate memory for the appropriate loci array, 3D network, sum net,
      * and loci_to_trait values
      */ 
-    loci_layer_one  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loci_layer_one[row] = (double *) malloc(traits * sizeof(double));   
-    }
+    loci_layer_one = make_2D_array(loci, traits);
 
     net   = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
@@ -928,20 +861,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     } 
 
-    net_sum = (double **) malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        net_sum[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-    
-    loci_to_traits  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-    
-    inds = (double **) malloc(indivs * sizeof(double *));
-    for(row = 0; row < indivs; row++){
-        inds[row] = (double *) malloc(loci * sizeof(double));
-    }
+    net_sum = make_2D_array(traits, traits);
+    loci_to_traits = make_2D_array(loci, traits);
+    inds = make_2D_array(indivs, loci);
 
     ltnpop = (double ***) malloc(npsize * sizeof(double **));
     for(k = 0; k < npsize; k++){
@@ -962,15 +884,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
         }
     } 
  
-    VCV = (double **) malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        VCV[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-    
-    win_loci_layer_one  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-      win_loci_layer_one[row] = (double *)  malloc(traits * sizeof(double));   
-    }
+    VCV                = make_2D_array(traits, traits);
+    win_loci_layer_one = make_2D_array(loci, traits);
     
     win_net   = (double ***) malloc(layers * sizeof(double **));
     for(k = 0; k < layers; k++){
@@ -1170,14 +1085,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       free(win_net[k]);        
     }
     free(win_net); 
-    for(row = 0; row < loci; row++){
-      free(win_loci_layer_one[row]);
-    }
-    free(win_loci_layer_one);
-    for(row = 0; row < traits; row++){
-      free(VCV[row]);
-    }
-    free(VCV);
+    free_2D_array(win_loci_layer_one, loci);
+    free_2D_array(VCV, traits);
     for(k = 0; k < npsize; k++){
         for(i = 0; i < layers; i++){
             for(j = 0; j < traits; j++){
@@ -1197,20 +1106,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     }
     free(ltnpop); 
 
-    for(row = 0; row < indivs; row++){
-        free(inds[row]);
-    }
-    free(inds);
-    
-    for(row = 0; row < traits; row++){
-        free(gmatrix[row]);
-    }
-    free(gmatrix);
-    
-    for(row = 0; row < loci; row++){
-        free(loci_to_traits[row]);
-    }
-    free(loci_to_traits);
+    free_2D_array(inds, indivs);
+    free_2D_array(gmatrix, traits);
+    free_2D_array(loci_to_traits, loci);
     
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
@@ -1220,15 +1118,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     }
     free(net); 
     
-    for(row = 0; row < loci; row++){
-        free(loci_layer_one[row]);
-    }
-    free(loci_layer_one);
-    
-    for(row = 0; row < traits; row++){
-        free(net_sum[row]);
-    }
-    free(net_sum);
+    free_2D_array(loci_layer_one, loci);
+    free_2D_array(net_sum, traits);
 
     free(paras);
     free(winners);
