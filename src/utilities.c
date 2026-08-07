@@ -11,7 +11,7 @@
  *     layers: Number of layers in the array
  *     slices: The slices within layers (or just dimension 4)
  * ========================================================================== */
-double **** make_4D_array(int rows, int cols, int layers, int slices){
+double ****make_4D_array(int rows, int cols, int layers, int slices){
     
     double ****A;
     int row, col, layer;
@@ -60,7 +60,7 @@ void free_4D_array(double ****array, int rows, int cols, int layers){
  *     cols: Number of array columns
  *     layers: Number of layers in the array
  * ========================================================================== */
-double *** make_3D_array(int rows, int cols, int layers){
+double ***make_3D_array(int rows, int cols, int layers){
     
     double ***array;
     int row, col;
@@ -196,13 +196,7 @@ void sum_network_layers(int traits, int layers, double ***net,
     int i, j, k;
     double ***net_temp;
     
-    net_temp = (double ***) malloc(layers * sizeof(double **));
-    for(k = 0; k < layers; k++){
-        net_temp[k] = (double **) malloc(traits * sizeof(double *));
-        for(i = 0; i < traits; i++){
-            net_temp[k][i] = (double *)  malloc(traits * sizeof(double));   
-        }
-    }
+    net_temp = make_3D_array(layers, traits, traits);
     for(k = 0; k < layers; k++){
         for(i = 0; i < traits; i++){
             for(j = 0; j < traits; j++){
@@ -223,13 +217,7 @@ void sum_network_layers(int traits, int layers, double ***net,
         }
     }
     
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            free(net_temp[k][i]);
-        }
-        free(net_temp[k]);        
-    }
-    free(net_temp); 
+    free_3D_array(net_temp, layers, traits);
 }
 
 /* =============================================================================

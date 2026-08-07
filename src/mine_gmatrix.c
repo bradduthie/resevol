@@ -40,24 +40,8 @@ void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
   layers   = (int) paras[1]; /* Layers in the network from loci to trait */
   npsize   = (int) paras[3]; /* Size of the strategy population */
 
-  NEW_LTN = (double ***) malloc(npsize * sizeof(double **));
-  for(k = 0; k < npsize; k++){
-    NEW_LTN[k] = (double **) malloc(loci * sizeof(double *));
-    for(i = 0; i < loci; i++){
-      NEW_LTN[k][i] = (double *) malloc(traits * sizeof(double));   
-    }
-  } 
-  
-  NEW_NET = (double ****) malloc(npsize * sizeof(double ***));
-  for(k = 0; k < npsize; k++){
-    NEW_NET[k] = (double ***) malloc(layers * sizeof(double **));
-    for(j = 0; j < layers; j++){
-      NEW_NET[k][j] = (double **) malloc(traits * sizeof(double *));
-      for(i = 0; i < traits; i++){
-        NEW_NET[k][j][i] = (double *) malloc(traits * sizeof(double));
-      }
-    }
-  } 
+  NEW_LTN = make_3D_array(npsize, loci, traits);
+  NEW_NET = make_4D_array(npsize, layers, traits, traits);
   
   for(i = 0; i < npsize; i++){
     winner = winners[i];
@@ -84,24 +68,8 @@ void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
   swap_arrays((void*)&(*ltnpop), (void*)&NEW_LTN);
   swap_arrays((void*)&(*netpop), (void*)&NEW_NET);
   
-  for(k = 0; k < npsize; k++){
-    for(i = 0; i < layers; i++){
-      for(j = 0; j < traits; j++){
-        free(NEW_NET[k][i][j]);
-      }
-      free(NEW_NET[k][i]);
-    }
-    free(NEW_NET[k]);
-  }
-  free(NEW_NET);
-  
-  for(k = 0; k < npsize; k++){
-    for(i = 0; i < loci; i++){
-      free(NEW_LTN[k][i]);
-    }
-    free(NEW_LTN[k]);        
-  }
-  free(NEW_LTN); 
+  free_4D_array(NEW_NET, npsize, layers, traits);
+  free_3D_array(NEW_LTN, npsize, loci);
 }
 
 /* =============================================================================
@@ -848,57 +816,21 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     sd_ini   = (double) paras[11]; /* StDev of initialised network values */
     prnt_out = (int) paras[13]; /* Whether or not to print anything out */
     
-    /* Allocate memory for the appropriate loci array, 3D network, sum net,
-     * and loci_to_trait values
-     */ 
-    loci_layer_one = make_2D_array(loci, traits);
-
-    net   = (double ***) malloc(layers * sizeof(double **));
-    for(k = 0; k < layers; k++){
-        net[k] = (double **) malloc(traits * sizeof(double *));
-        for(i = 0; i < traits; i++){
-            net[k][i] = (double *) malloc(traits * sizeof(double));   
-        }
-    } 
-
-    net_sum = make_2D_array(traits, traits);
-    loci_to_traits = make_2D_array(loci, traits);
-    inds = make_2D_array(indivs, loci);
-
-    ltnpop = (double ***) malloc(npsize * sizeof(double **));
-    for(k = 0; k < npsize; k++){
-        ltnpop[k] = (double **) malloc(loci * sizeof(double *));
-        for(i = 0; i < loci; i++){
-            ltnpop[k][i] = (double *) malloc(traits * sizeof(double));   
-        }
-    } 
-
-    netpop = (double ****) malloc(npsize * sizeof(double ***));
-    for(k = 0; k < npsize; k++){
-        netpop[k] = (double ***) malloc(layers * sizeof(double **));
-        for(j = 0; j < layers; j++){
-            netpop[k][j] = (double **) malloc(traits * sizeof(double *));
-            for(i = 0; i < traits; i++){
-                netpop[k][j][i] = (double *) malloc(traits * sizeof(double));
-            }
-        }
-    } 
- 
+    /* Memory for loci array, 3D network, sum net, and loci_to_trait values */ 
+    loci_layer_one     = make_2D_array(loci, traits);
+    net                = make_3D_array(layers, traits, traits);
+    net_sum            = make_2D_array(traits, traits);
+    loci_to_traits     = make_2D_array(loci, traits);
+    inds               = make_2D_array(indivs, loci);
+    ltnpop             = make_3D_array(npsize, loci, traits);
+    netpop             = make_4D_array(npsize, layers, traits, traits);
     VCV                = make_2D_array(traits, traits);
     win_loci_layer_one = make_2D_array(loci, traits);
-    
-    win_net   = (double ***) malloc(layers * sizeof(double **));
-    for(k = 0; k < layers; k++){
-      win_net[k] = (double **) malloc(traits * sizeof(double *));
-      for(i = 0; i < traits; i++){
-        win_net[k][i] = (double *) malloc(traits * sizeof(double));   
-      }
-    }
- 
-    W            = (double *) malloc(npsize * sizeof(double));
-    winners      = (int *) malloc(npsize * sizeof(int));
-    mean_fitness = (double *) malloc(max_gen * sizeof(double));
-    high_fitness = (double *) malloc(sizeof(double));
+    win_net            = make_3D_array(layers, traits, traits);
+    W                  = (double *) malloc(npsize * sizeof(double));
+    winners            = (int *) malloc(npsize * sizeof(int));
+    mean_fitness       = (double *) malloc(max_gen * sizeof(double));
+    high_fitness       = (double *) malloc(sizeof(double));
 
     /* Initialise values of matrices to zero */
     matrix_zeros(traits, traits, net_sum);
@@ -1078,46 +1010,15 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     
     /* Free all of the allocated memory used in arrays */
     free(high_fitness);
-    for(k = 0; k < layers; k++){
-      for(i = 0; i < traits; i++){
-        free(win_net[k][i]);
-      }
-      free(win_net[k]);        
-    }
-    free(win_net); 
+    free_3D_array(win_net, layers, traits);
     free_2D_array(win_loci_layer_one, loci);
     free_2D_array(VCV, traits);
-    for(k = 0; k < npsize; k++){
-        for(i = 0; i < layers; i++){
-            for(j = 0; j < traits; j++){
-                free(netpop[k][i][j]);
-            }
-            free(netpop[k][i]);
-        }
-        free(netpop[k]);
-    }
-    free(netpop);
- 
-    for(k = 0; k < npsize; k++){
-        for(i = 0; i < loci; i++){
-            free(ltnpop[k][i]);
-        }
-        free(ltnpop[k]);        
-    }
-    free(ltnpop); 
-
+    free_4D_array(netpop, npsize, layers, traits);
+    free_3D_array(ltnpop, npsize, loci);
     free_2D_array(inds, indivs);
     free_2D_array(gmatrix, traits);
     free_2D_array(loci_to_traits, loci);
-    
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            free(net[k][i]);
-        }
-        free(net[k]);        
-    }
-    free(net); 
-    
+    free_3D_array(net, layers, traits);
     free_2D_array(loci_layer_one, loci);
     free_2D_array(net_sum, traits);
 

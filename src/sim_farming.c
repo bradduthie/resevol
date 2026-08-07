@@ -209,13 +209,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     land_y = dim_LAND[0];
     land_z = dim_LAND[2];
     
-    land   = (double ***) malloc(land_x * sizeof(double **));
-    for(xloc = 0; xloc < land_x; xloc++){
-      land[xloc] = (double **) malloc(land_y * sizeof(double *));
-      for(yloc = 0; yloc < land_y; yloc++){
-        land[xloc][yloc] = (double *) malloc(land_z * sizeof(double));   
-      }
-    } 
+    land    = make_3D_array(land_x, land_y, land_z);
     vec_pos = 0;
     for(zloc = 0; zloc < land_z; zloc++){
       for(yloc = 0; yloc < land_y; yloc++){
@@ -405,16 +399,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     free_2D_array(C_init, CINIT_d1);
     free_2D_array(P_change, PROT_d1);
     free_2D_array(C_change, CROT_d1);
-    
-    free(imm_sample);
-    for(xloc = 0; xloc < land_x; xloc++){
-      for(yloc = 0; yloc < land_y; yloc++){
-        free(land[xloc][yloc]);   
-      }
-      free(land[xloc]);        
-    }
-    free(land); 
-
+    free_3D_array(land, land_x, land_y);
     free_2D_array(pests, pests_capacity);
     free_2D_array(new_pests, new_pests_capacity);
     

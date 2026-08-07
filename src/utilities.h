@@ -4,6 +4,14 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+double ****make_4D_array(int rows, int cols, int layers, int slices);
+
+void free_4D_array(double ****array, int rows, int cols, int layers);
+
+double ***make_3D_array(int rows, int cols, int layers);
+
+void free_3D_array(double ***array, int rows, int cols);
+
 double **make_2D_array(int rows, int cols);
     
 void free_2D_array(double **array, int rows);

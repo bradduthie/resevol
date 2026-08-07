@@ -26,38 +26,12 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
     loci_st   = net_st + layers + 3;  /* Col where first loci values start    */
     net_vals  = (loci * traits) + (layers * traits * traits);
     
-    T  = (double **) malloc(1 * sizeof(double *));
-    for(row = 0; row < 1; row++){
-        T[row] = (double *) malloc(traits * sizeof(double));   
-    }
-
-    L  = (double **) malloc(1 * sizeof(double *));
-    for(row = 0; row < 1; row++){
-        L[row] = (double *) malloc(loci * sizeof(double));   
-    }
-
-    loc_layer  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loc_layer[row] = (double *) malloc(traits * sizeof(double));   
-    }
-
-    net   = (double ***) malloc(layers * sizeof(double **));
-    for(k = 0; k < layers; k++){
-        net[k] = (double **) malloc(traits * sizeof(double *));
-        for(i = 0; i < traits; i++){
-            net[k][i] = (double *) malloc(traits * sizeof(double));   
-        }
-    }
-
-    net_sum = (double **) malloc(traits * sizeof(double *));
-    for(row = 0; row < traits; row++){
-        net_sum[row] = (double *) malloc(traits * sizeof(double));   
-    } 
-
-    loci_to_traits  = (double **) malloc(loci * sizeof(double *));
-    for(row = 0; row < loci; row++){
-        loci_to_traits[row] = (double *) malloc(traits * sizeof(double));   
-    } 
+    T              = make_2D_array(1, traits);
+    L              = make_2D_array(1, loci);
+    loc_layer      = make_2D_array(loci, traits);
+    net            = make_3D_array(layers, traits, traits);
+    net_sum        = make_2D_array(traits, traits);
+    loci_to_traits = make_2D_array(loci, traits);
     
     vec_pos = loci_st;
     for(i = 0; i < loci; i++){
@@ -109,38 +83,12 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
         vec_pos++;
     }
 
-    for(row = 0; row < loci; row++){
-        free(loci_to_traits[row]);
-    }
-    free(loci_to_traits);
-
-    for(row = 0; row < traits; row++){
-        free(net_sum[row]);
-    }
-    free(net_sum);
-
-    for(row = 0; row < loci; row++){
-        free(loc_layer[row]);
-    }
-    free(loc_layer);
-
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            free(net[k][i]);
-        }
-        free(net[k]);        
-    }
-    free(net); 
-
-    for(row = 0; row < 1; row++){
-        free(L[row]);
-    }
-    free(L);
-
-    for(row = 0; row < 1; row++){
-        free(T[row]);
-    }
-    free(T);
+    free_2D_array(loci_to_traits, loci);
+    free_2D_array(net_sum, traits);
+    free_2D_array(loc_layer, loci);
+    free_3D_array(net, layers, traits);
+    free_2D_array(L, 1);
+    free_2D_array(T, 1);
 }
 
 /* =============================================================================
@@ -171,15 +119,8 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     L         = make_2D_array(1, loci);
     loc_layer = make_2D_array(loci, traits);
     
-    net   = (double ***) malloc(layers * sizeof(double **));
-    for(k = 0; k < layers; k++){
-        net[k] = (double **) malloc(traits * sizeof(double *));
-        for(i = 0; i < traits; i++){
-            net[k][i] = (double *) malloc(traits * sizeof(double));   
-        }
-    }
-    
-    net_sum = make_2D_array(traits, traits);
+    net            = make_3D_array(layers, traits, traits);
+    net_sum        = make_2D_array(traits, traits);
     loci_to_traits = make_2D_array(loci, traits);
     
     vec_pos = loci_st;
@@ -228,14 +169,7 @@ void insert_haploid_traits(double **offspring, double *paras, int offspr){
     free_2D_array(loci_to_traits, loci);
     free_2D_array(net_sum, traits);
     free_2D_array(loc_layer, loci);
-    
-    for(k = 0; k < layers; k++){
-        for(i = 0; i < traits; i++){
-            free(net[k][i]);
-        }
-        free(net[k]);        
-    }
-    free(net); 
+    free_3D_array(net, layers, traits);
     
     free_2D_array(L, 1);
     free_2D_array(T, 1);
