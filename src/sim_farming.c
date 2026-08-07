@@ -42,25 +42,28 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     int    time_steps;
     int    ind_number;
     int    ind_traits;
-    int    offspring_number; /* New number of individuals post reproduction */
-    int    new_total_N;      /* Total number of individuals after a time step */
-    int    surviving_N;      /* Surviving individuals after a time step */
-    int    immigrants;       /* Immigrants in a time step */
-    int    protected_n;      /* Number of protected R objects */
-    int    len_PARAS;        /* Length of the parameters vector */
-    int    len_CGROW;        /* Length of the crop growth vector */
-    int    len_THRESHOLD;    /* Length of the threshold vector */
-    int    len_DELAY;        /* Length of the delay vector */
-    int    print_gen;        /* Should the generations be printed */
-    int    get_stats;        /* Should print a CSV with statistics */
-    int    *dim_IND;         /* Dimensions of the individual array */
-    int    *dim_LAND;        /* Dimensions of the landscape */
-    int    *dim_CROT;        /* Dimensions of the crop transition matrix */
-    int    *dim_PROT;        /* Dimensions of the pesticide transition matrix */
-    int    *dim_CINIT;       /* Dimensions of the crop initialisation matrix */
-    int    *dim_PINIT;       /* Dimensions of the pesticide init matrix */
-    int    *delays;        /* Vector on the delay for pesticide application */
-    int    *delay_count;   /* Vector for temporary counter on pesticide delay */
+    int    offspring_number;   /* New number of individuals post reproduction */
+    int    new_total_N;        /* Total number of individuals after time step */
+    int    surviving_N;        /* Surviving individuals after a time step */
+    int    immigrants;         /* Immigrants in a time step */
+    int    protected_n;        /* Number of protected R objects */
+    int    len_PARAS;          /* Length of the parameters vector */
+    int    len_CGROW;          /* Length of the crop growth vector */
+    int    len_THRESHOLD;      /* Length of the threshold vector */
+    int    len_DELAY;          /* Length of the delay vector */
+    int    print_gen;          /* Should the generations be printed */
+    int    get_stats;          /* Should print a CSV with statistics */
+    int    pests_capacity;     /* Rows allocated int he pest array */
+    int    new_pests_capacity; /* Rows allocated in new_pests array */
+    int    temp_capacity;      /* Needed to temporarily hold capacity */
+    int    *dim_IND;           /* Dimensions of the individual array */
+    int    *dim_LAND;          /* Dimensions of the landscape */
+    int    *dim_CROT;          /* Dimensions of the crop transition matrix */
+    int    *dim_PROT;          /* Dimensions of pesticide transition matrix */
+    int    *dim_CINIT;         /* Dimensions of crop initialisation matrix */
+    int    *dim_PINIT;         /* Dimensions of the pesticide init matrix */
+    int    *delays;            /* Vector on delay for pesticide application */
+    int    *delay_count;       /* Vector for temp counter on pesticide delay */
   
     double *imm_sample;
     double *paras_ptr;
@@ -191,10 +194,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     ind_number = dim_IND[0];
     ind_traits = dim_IND[1];
     
-    pests  = (double **) malloc(ind_number * sizeof(double *));
-    for(row = 0; row < ind_number; row++){
-        pests[row] = (double *) malloc(ind_traits * sizeof(double));   
-    } 
+    pests          = make_2D_array(ind_number, ind_traits);
+    pests_capacity = ind_number;
     vec_pos = 0;
     for(col = 0; col < ind_traits; col++){
         for(row = 0; row < ind_number; row++){
@@ -292,10 +293,12 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         imm_sample[col] = pests[0][col];
     }
 
-    print_gen  = (int) paras[165];
-    get_stats  = (int) paras[172];
-    time_steps = (int) paras[140];
-    ts         = 0;
+    print_gen          = (int) paras[165];
+    get_stats          = (int) paras[172];
+    time_steps         = (int) paras[140];
+    ts                 = 0;
+    new_pests_capacity = 0;
+    new_pests          = NULL;
     
     while(ts < time_steps){
  
@@ -349,40 +352,24 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
             break;
         }
         
-        new_pests   = (double **) malloc(new_total_N * sizeof(double *));
-        for(row = 0; row < new_total_N; row++){
-            new_pests[row] = (double *) malloc(ind_traits * sizeof(double));   
-        } 
+        new_pests = grow_2D_array(new_pests, &new_pests_capacity, new_total_N, 
+                                  ind_traits);
         
         fill_new_pests(pests, offspring, new_pests, paras, imm_sample);
+        
+        swap_arrays((void **) &pests, (void **) &new_pests);
+        
+        temp_capacity      = pests_capacity;
+        pests_capacity     = new_pests_capacity;
+        new_pests_capacity = temp_capacity;
+        
+        ind_number = new_total_N;
+        paras[101] = (double) new_total_N;
         
         for(row = 0; row < offspring_number; row++){
             free(offspring[row]);
         }
         free(offspring);
-        
-        ind_number = (int) paras[101];
-        for(row = 0; row < ind_number; row++){
-            free(pests[row]);
-        }
-        free(pests);
-        
-        paras[101] = (double) new_total_N; 
-        pests      = (double **) malloc(new_total_N * sizeof(double *));
-        for(row = 0; row < new_total_N; row++){
-            pests[row] = (double *) malloc(ind_traits * sizeof(double));   
-        } 
-        
-        for(row = 0; row < new_total_N; row++){
-            for(col = 0; col < ind_traits; col++){
-                pests[row][col] = new_pests[row][col];
-            }
-        }
-        
-        for(row = 0; row < new_total_N; row++){
-            free(new_pests[row]);
-        }
-        free(new_pests);
 
         ts++;
         
@@ -464,11 +451,8 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     }
     free(land); 
 
-    ind_number = (int) paras[101];
-    for(row = 0; row < ind_number; row++){
-      free(pests[row]);
-    }
-    free(pests);
+    free_2D_array(pests, pests_capacity);
+    free_2D_array(new_pests, new_pests_capacity);
     
     free(delay_count);
     free(delays);
