@@ -4,6 +4,10 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
+void *safe_malloc(size_t n);
+
+void *safe_realloc(void *ptr, size_t n);
+
 double ****make_4D_array(int rows, int cols, int layers, int slices);
 
 void free_4D_array(double ****array, int rows, int cols, int layers);

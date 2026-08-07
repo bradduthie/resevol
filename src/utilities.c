@@ -4,6 +4,57 @@
 #include <Rinternals.h>
 #include <Rmath.h>
 
+
+/* =============================================================================
+ * This function throws up an R error if memory cannot be allocated
+ *     n: The number of bytes to allocate
+ * ========================================================================== */
+void *safe_malloc(size_t n){
+    
+    void *ptr;
+    size_t n_bytes;
+
+    if(n == 0){
+        n_bytes = 1; /* malloc(0) can return NULL; a 1-byte request cannot */
+    }else{
+        n_bytes = n;
+    }
+
+    ptr = malloc(n_bytes);
+    if(ptr == NULL){
+        Rf_error("ERROR: Could not allocate %lu bytes.", 
+                 (unsigned long) n_bytes);
+    }
+
+    return ptr;
+}
+
+/* =============================================================================
+ * This function throws up an R error if memory cannot be allocated
+ *     ptr: The location of the memory to be reallocated
+ *     n: The number of bytes to allocate
+ * ========================================================================== */
+void *safe_realloc(void *ptr, size_t n){
+    
+    void *new_ptr;
+    size_t n_bytes;
+    
+    if(n == 0){
+        n_bytes = 1;
+    }else{
+        n_bytes = n;
+    }
+
+    new_ptr = realloc(ptr, n_bytes);
+    if(new_ptr == NULL){
+        Rf_error("ERROR: Could not reallocate %lu bytes.", 
+                 (unsigned long) n_bytes);
+    }
+
+    return new_ptr;
+}
+
+
 /* =============================================================================
  * This function makes a 4D array so that malloc isn't needed repeatedly
  *     rows: Number of array rows
@@ -16,13 +67,14 @@ double ****make_4D_array(int rows, int cols, int layers, int slices){
     double ****A;
     int row, col, layer;
     
-    A = (double ****) malloc(rows * sizeof(double ***));
+    A = (double ****) safe_malloc(rows * sizeof(double ***));
     for(row = 0; row < rows; row++){
-        A[row] = (double ***) malloc(cols * sizeof(double **));
+      A[row] = (double ***) safe_malloc(cols * sizeof(double **));
         for(col = 0; col < cols; col++){
-            A[row][col] = (double **) malloc(layers * sizeof(double *));
+          A[row][col] = (double **) safe_malloc(layers * sizeof(double *));
             for(layer = 0; layer < layers; layer++){
-                A[row][col][layer] = (double *) malloc(slices * sizeof(double));
+              A[row][col][layer] = (double *) 
+                safe_malloc(slices * sizeof(double));
             }
         }
     }
@@ -65,11 +117,11 @@ double ***make_3D_array(int rows, int cols, int layers){
     double ***array;
     int row, col;
 
-    array = (double ***) malloc(rows * sizeof(double **));
+    array = (double ***) safe_malloc(rows * sizeof(double **));
     for(row = 0; row < rows; row++){
-        array[row] = (double **) malloc(cols * sizeof(double *));
+        array[row] = (double **) safe_malloc(cols * sizeof(double *));
         for(col = 0; col < cols; col++){
-            array[row][col] = (double *) malloc(layers * sizeof(double));
+            array[row][col] = (double *) safe_malloc(layers * sizeof(double));
         }
     }
 
@@ -107,9 +159,9 @@ double **make_2D_array(int rows, int cols){
     double **array;
     int row;
     
-    array = (double **) malloc(rows * sizeof(double *));
+    array = (double **) safe_malloc(rows * sizeof(double *));
     for(row = 0; row < rows; row++){
-        array[row] = (double *) malloc(cols * sizeof(double));
+        array[row] = (double *) safe_malloc(cols * sizeof(double));
     }
 
     return array;
@@ -144,9 +196,9 @@ double **grow_2D_array(double **array, int *capacity, int new_rows, int cols){
     int row;
 
     if(new_rows > *capacity){
-        array = (double **) realloc(array, new_rows * sizeof(double *));
+        array = (double **) safe_realloc(array, new_rows * sizeof(double *));
         for(row = *capacity; row < new_rows; row++){
-            array[row] = (double *) malloc(cols * sizeof(double));
+            array[row] = (double *) safe_malloc(cols * sizeof(double));
         }
         *capacity = new_rows;
     }
