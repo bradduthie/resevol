@@ -5,6 +5,99 @@
 #include <Rmath.h>
 
 /* =============================================================================
+ * This function makes a 4D array so that malloc isn't needed repeatedly
+ *     rows: Number of array rows
+ *     cols: Number of array columns
+ *     layers: Number of layers in the array
+ *     slices: The slices within layers (or just dimension 4)
+ * ========================================================================== */
+double **** make_4D_array(int rows, int cols, int layers, int slices){
+    
+    double ****A;
+    int row, col, layer;
+    
+    A = (double ****) malloc(rows * sizeof(double ***));
+    for(row = 0; row < rows; row++){
+        A[row] = (double ***) malloc(cols * sizeof(double **));
+        for(col = 0; col < cols; col++){
+            A[row][col] = (double **) malloc(layers * sizeof(double *));
+            for(layer = 0; layer < layers; layer++){
+                A[row][col][layer] = (double *) malloc(slices * sizeof(double));
+            }
+        }
+    }
+    
+    return A;
+}
+
+/* =============================================================================
+ * This function frees a 4D array
+ *     rows: Number of array rows
+ *     cols: Number of array columns
+ *     layers: Number of layers in the array
+ * ========================================================================== */
+void free_4D_array(double ****array, int rows, int cols, int layers){
+    
+    int row, col, layer;
+    
+    if(array != NULL){
+        for(row = 0; row < rows; row++){
+            for(col = 0; col < cols; col++){
+                for(layer = 0; layer < layers; layer++){
+                    free(array[row][col][layer]);
+                }
+                free(array[row][col]);
+            }
+            free(array[row]);
+        }
+        free(array);
+    }
+}
+
+/* =============================================================================
+ * This function makes a 3D array so that malloc isn't needed repeatedly
+ *     rows: Number of array rows
+ *     cols: Number of array columns
+ *     layers: Number of layers in the array
+ * ========================================================================== */
+double *** make_3D_array(int rows, int cols, int layers){
+    
+    double ***array;
+    int row, col;
+
+    array = (double ***) malloc(rows * sizeof(double **));
+    for(row = 0; row < rows; row++){
+        array[row] = (double **) malloc(cols * sizeof(double *));
+        for(col = 0; col < cols; col++){
+            array[row][col] = (double *) malloc(layers * sizeof(double));
+        }
+    }
+
+    return array;
+}
+
+/* =============================================================================
+ * This function frees a 3D array
+ *     rows: Number of array rows
+ *     cols: Number of array columns
+ * ========================================================================== */
+void free_3D_array(double ***array, int rows, int cols){
+    
+    int row, col;
+
+    if(array != NULL){
+        for(row = 0; row < rows; row++){
+            for(col = 0; col < cols; col++){
+                free(array[row][col]);
+            }
+            free(array[row]);
+        }
+        free(array);
+    }
+}
+
+
+/* =============================================================================
  * This function makes a 2D array so that malloc isn't needed repeatedly
  *     rows: Number of array rows
  *     cols: Number of array columns
