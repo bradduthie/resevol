@@ -356,15 +356,14 @@ build_sexual <- function(mine_output, N, neutral_loci, trait_means){
 }
 
 
-rename_csv <- function(old_name, new_name, colnames = TRUE){
-    in_dir <- list.files();
-    if(old_name %in% in_dir == FALSE){
-        warning(paste("WARNING: Could not rename file to", new_name, "."));
+rename_csv <- function(old_name, new_name){
+    if(!file.exists(old_name)){
+        stop("Cannot rename ", old_name, " because it does not exist.")
     }
-    if(old_name != new_name){
-        temp_file <- read.csv(old_name, header = colnames);
-        write.csv(x = temp_file, file = new_name, row.names = FALSE);
-        file.remove(old_name);
+    
+    renamed_file <- file.rename(from = old_name, to = new_name);
+    if(renamed_file == FALSE){
+        stop("Cannot rename ", old_name, " to ", new_name, ".")
     }
     return(TRUE);
 }

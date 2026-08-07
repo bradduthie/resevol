@@ -644,14 +644,12 @@ run_farm_sim <- function(mine_output,
     
     pop_data_exists <- file.exists("population_data.csv");
     if(pop_data_exists == TRUE){
-      rename_pop      <- rename_csv("population_data.csv", population_filename,
-                                    colnames = TRUE);
+      rename_pop      <- rename_csv("population_data.csv", population_filename);
     }
     
     last_time_exists <- file.exists("last_time_step.csv");
     if(last_time_exists == TRUE){
-      rename_last <- rename_csv("last_time_step.csv", last_step_filename,
-                                colnames = FALSE);
+      rename_last <- rename_csv("last_time_step.csv", last_step_filename);
     }
         
     return(sim_results);
