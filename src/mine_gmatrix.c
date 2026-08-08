@@ -65,8 +65,8 @@ void set_win(double ****ltnpop, double *****netpop, int *winners, double *paras,
     }
   }
   
-  swap_arrays((void*)&(*ltnpop), (void*)&NEW_LTN);
-  swap_arrays((void*)&(*netpop), (void*)&NEW_NET);
+  swap_arrays((void **) &(*ltnpop), (void **) &NEW_LTN);
+  swap_arrays((void **) &(*netpop), (void **) &NEW_NET);
   
   free_4D_array(NEW_NET, npsize, layers, traits);
   free_3D_array(NEW_LTN, npsize, loci);
@@ -272,7 +272,7 @@ void ea_pop_ini(double **inds, int indivs, int loci){
 void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV, 
              int traits, double *paras){
   
-  int indivs, loci, layers, use_cor, row;
+  int indivs, loci, layers, use_cor;
   double **T, **L, **net_sum, **loci_to_traits;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
@@ -321,7 +321,7 @@ void get_vcv(double **loc2net, double ***net, double **gmatrix, double **VCV,
 double fitness(double ***ltnpop, double ****netpop, double **gmatrix, 
                int traits, double *paras, int k){
   
-  int indivs, loci, layers, use_cor, row;
+  int indivs, loci, layers, use_cor;
   double stress, **T, **L, **net_sum, **loci_to_traits, **VCV;
   
   loci     = (int) paras[0]; /* Number of loci for an individual */
@@ -859,13 +859,13 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       net_fit(ltnpop, netpop, gmatrix, traits, paras, W);
       tournament(W, winners, paras);
 
+      retain_best(netpop, ltnpop, win_net, win_loci_layer_one, traits, paras,
+                  W, high_fitness, gen); 
+      
       set_win(&ltnpop, &netpop, winners, paras, traits);
       
       estress           = get_mean_fitness(W, npsize);
       mean_fitness[gen] = estress; 
-
-      retain_best(netpop, ltnpop, win_net, win_loci_layer_one, traits, paras,
-                  W, high_fitness, gen); 
       
       /* Add print of highest fitness found */
       if(prnt_out > 0){
@@ -1005,6 +1005,19 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     SET_VECTOR_ELT(GOUT, 5, VCV_MATRIX);
     SET_VECTOR_ELT(GOUT, 6, GENOME);
     SET_VECTOR_ELT(GOUT, 7, FINAL_STRESS);
+    
+    SEXP NAMES;
+    PROTECT( NAMES = allocVector(STRSXP, 8) );
+    protected_n++;
+    SET_STRING_ELT(NAMES, 0, mkChar("PARAMETERS"));
+    SET_STRING_ELT(NAMES, 1, mkChar("GMATRIX"));
+    SET_STRING_ELT(NAMES, 2, mkChar("LOCI_TO_NET"));
+    SET_STRING_ELT(NAMES, 3, mkChar("NETWORK"));
+    SET_STRING_ELT(NAMES, 4, mkChar("LOCI_EFFECTS"));
+    SET_STRING_ELT(NAMES, 5, mkChar("VCV_MATRIX"));
+    SET_STRING_ELT(NAMES, 6, mkChar("GENOME"));
+    SET_STRING_ELT(NAMES, 7, mkChar("FINAL_STRESS"));
+    setAttrib(GOUT, R_NamesSymbol, NAMES);
     
     UNPROTECT(protected_n);
     
