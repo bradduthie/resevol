@@ -449,8 +449,8 @@ void crossover_ltn(double ***ltnpop, int npsize, int loci, int traits,
 void mutation_ltn(double ***ltnpop, int npsize, int loci, int traits, 
                   double *paras){
   
-  int k, i, j, mu;
-  double mu_pr, mu_sd;
+  int k, i, j;
+  double mu_pr, mu_sd, mu;
   
   mu_pr = paras[4]; /* Mutation rate in the evolutionary algorithm */
   mu_sd = paras[5]; /* Standard deviation of mutation effect size  */  
@@ -545,8 +545,8 @@ void crossover_net(double ****netpop, int npsize, int layers, int traits,
 void mutation_net(double ****netpop, int npsize, int layers, int traits, 
                   double *paras){
   
-  int k, l, i, j, mu;
-  double mu_pr, mu_sd;
+  int k, l, i, j;
+  double mu_pr, mu_sd, mu;
   
   mu_pr = paras[4]; /* Mutation rate in the evolutionary algorithm */
   mu_sd = paras[5]; /* Standard deviation of mutatino effect size  */  
