@@ -111,6 +111,7 @@ void small_public_land(double **land, int dim_x, int dim_y, double public_land){
  *  dimensional array to be added to a landscape array in GMSE.
  * ===========================================================================*/
 SEXP build_ownership(SEXP PARAMETERS){
+    GetRNGstate();
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
@@ -199,6 +200,7 @@ SEXP build_ownership(SEXP PARAMETERS){
     free(count);
     free(bin);
     free(build_paras);
+    PutRNGstate();
     
     return(LAND_NEW); 
 }

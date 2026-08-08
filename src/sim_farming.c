@@ -29,7 +29,8 @@
  * ===========================================================================*/
 SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
                  SEXP CINIT, SEXP PINIT, SEXP CGROW, SEXP PTHRESH, SEXP PDELAY){
- 
+     GetRNGstate();
+    
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
     int    i, ts;
@@ -408,6 +409,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     free(thresholds);
     free(grow);
     free(paras);
+    PutRNGstate();
     
     return(OUTPUT);
 }

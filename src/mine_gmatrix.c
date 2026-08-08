@@ -716,6 +716,7 @@ void retain_best(double ****netpop, double ***ltnpop, double ***win_net,
  *      GMATRIX: Holds the g-matrix that guides evolutionary algorithm fitness
  * ===========================================================================*/
 SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
+    GetRNGstate();
  
     /* SOME STANDARD DECLARATIONS OF KEY VARIABLES AND POINTERS               */
     /* ====================================================================== */
@@ -1039,6 +1040,8 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     free(winners);
     free(mean_fitness);
     free(W);
+    
+    PutRNGstate();
     
     return(GOUT); 
 }
