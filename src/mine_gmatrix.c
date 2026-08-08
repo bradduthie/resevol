@@ -663,7 +663,7 @@ void initialise_net(int traits, int layers, double ***net){
 
 /* =============================================================================
  * This function retains the highest fitness network from loci to traits
- *     
+ *   
  * ========================================================================== */
 void retain_best(double ****netpop, double ***ltnpop, double ***win_net,
                  double **win_loci_layer_one, int traits, double *paras,
@@ -844,9 +844,9 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
     gen     = 0;
     estress = term_cri + 1000;
     if(prnt_out > 0){
-        Rprintf("===============================================\n");
-        Rprintf("Initialising gmatrix mining...                 \n");
-        Rprintf("===============================================\n");
+        Rprintf("==================================\n");
+        Rprintf("Initialising gmatrix mining...    \n");
+        Rprintf("==================================\n");
     }
     high_fitness[0] = estress;
     while(gen < max_gen && estress > term_cri){
@@ -870,8 +870,7 @@ SEXP mine_gmatrix(SEXP PARAS, SEXP GMATRIX){
       
       /* Add print of highest fitness found */
       if(prnt_out > 0){
-          Rprintf("Gen: %d\t Stress: %f\t Lowest: %f\n", 
-                  gen, estress, high_fitness[0]);
+          Rprintf("Gen: %d\t Stress: %f\n", gen, estress);
       }
       gen++;
     }
