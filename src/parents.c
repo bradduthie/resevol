@@ -8,7 +8,7 @@
  * ========================================================================== */
 void insert_diploid_traits(double **offspring, double *paras, int offspr){
     
-    int i, k, vec_pos, row, col, layer, loci, traits, layers, net_vals;
+    int i, vec_pos, row, col, layer, loci, traits, layers, net_vals;
     int loci_col, trait_col, layer_col, trait_st, net_st, loci_st, T_mean_pos;
     double **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
     double T_mean, L1, L2;
@@ -99,7 +99,7 @@ void insert_diploid_traits(double **offspring, double *paras, int offspr){
  * ========================================================================== */
 void insert_haploid_traits(double **offspring, double *paras, int offspr){
     
-    int i, k, vec_pos, row, col, layer, loci, traits, layers, T_mean_pos;
+    int i, vec_pos, row, col, layer, loci, traits, layers, T_mean_pos;
     int loci_col, trait_col, layer_col, trait_st, net_st, loci_st;
     double T_mean, **loc_layer, ***net, **net_sum, **loci_to_traits, **L, **T;
 
