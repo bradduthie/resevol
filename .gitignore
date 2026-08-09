@@ -5,6 +5,7 @@
 *.docx
 *.docx#
 src/*.o
+src/*.so
 *.o
 
 .DS_Store
