@@ -16,6 +16,9 @@ assets/node_modules
 assets/npm-debug.log
 
 admin*
+notebook/data*
+notebook/presentation*
+notebook/toy_model*
 
 mg_hang.pid
 
