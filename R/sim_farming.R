@@ -347,18 +347,19 @@
 #' run_farm_sim call to continue a simulation from rather than  initialising a 
 #' new population. Individuals are passed through exactly as they are. The NULL 
 #' default builds individuals from scratch.
-#'@return The output in the R console is a list with two elements; the first 
-#'element is a vector of parameter values used by the model, and the second 
-#'element is the landscape in the simulation. The most relevant output will be
-#'produced as CSV files within the working directory. When get_stats = TRUE, 
-#'a file named 'population_data.csv' is produced in the working directory. When
-#'print_last = TRUE, a complete array of all individuals and their 
-#'characteristics is printed for the last time step in the working directory in
-#' a file named 'last_time_step.csv' (for large simulations, this file can be 
-#' > 1GB in size). When print_inds = TRUE, a complete array of all individuals 
-#' in all time steps is produced in the working directory in a file named
-#' 'individuals.csv' (use this option with extreme caution for all but the
-#' smallest simulations).
+#'@return The output in the R console is a list with three elements; the first 
+#'element is a vector of parameter values used by the model, the second 
+#'element is the landscape in the simulation, and the third element is a data
+#'frame of individuals and all of their traits in the last time step of the
+#'simulation run. Output will also be produced as CSV files within the working 
+#'directory. When get_stats = TRUE, a file named 'population_data.csv' is 
+#'produced in the working directory. When print_last = TRUE, a complete array of
+#'all individuals and their characteristics is printed for the last time step in
+#'the working directory in a file named 'last_time_step.csv' (for large 
+#'simulations, this file can be > 1GB in size). When print_inds = TRUE, a 
+#'complete array of all individuals in all time steps is produced in the working
+#'directory in a file named 'individuals.csv' (use this option with extreme 
+#'caution for all but the smallest simulations).
 #'@examples
 #'gmt       <- matrix(data = 0, nrow = 4, ncol = 4);
 #'diag(gmt) <- 1;
@@ -755,7 +756,8 @@ sim_crops <- function(pests,
                       pesticide_delay = 0
                       ){
     
-  N    <- max(pests[,1]);
+  N    <- dim(pests)[1];
+  mID  <- max(pests[,1]);
   W    <- dim(pests)[2];
   X    <- dim(land)[2];
   Y    <- dim(land)[1];
@@ -929,7 +931,7 @@ sim_crops <- function(pests,
               Z,      # 105) z dimension (depth) of the landscape
               0,      # 106) Dynamic count of total offspring
               W,      # 107) Number of cols in the pest array
-              N,      # 108) Highest ID of an individual
+              mID,    # 108) Highest ID of an individual
               100,    # 109) Column where the traits start
               crpr,   # 110) Crossover probability for sexual reproduction
               mutp,   # 111) Mutation type (0 = new allele; 1 = vary existing)

@@ -47,8 +47,17 @@ individuals_colnames <- function(last_step_filename, mine_output){
         return(dat);
     }
     
-    inds <- build_individuals_colnames(mine_output, ploidy = dat[1, 30],
-                                       k = ind_dim[2]);
+    N_loci   <- mine_output[[1]][1];
+    N_layers <- mine_output[[1]][2];
+    N_traits <- dim(mine_output[[2]])[1];
+    N_ploidy <- dat[1, 30];
+    N_genom  <- length(mine_output[[7]]);
+    inds     <- build_individuals_colnames(loci   = N_loci,
+                                           layers = N_layers,
+                                           traits = N_traits,
+                                           ploidy = N_ploidy,
+                                           gl     = N_genom,
+                                           k      = ind_dim[2]);
     
     colnames(dat) <- inds;
     write.csv(x = dat, file = last_step_filename, row.names = FALSE);
@@ -57,7 +66,7 @@ individuals_colnames <- function(last_step_filename, mine_output){
 }
 
 
-add_colnames <- function(dat, mine_output){
+add_colnames <- function(dat){
     
     ind_dim    <- dim(dat);
     ind_dims   <- length(ind_dim);
@@ -69,7 +78,12 @@ add_colnames <- function(dat, mine_output){
     }
     
     k     <- ind_dim[2] + 2;
-    inds  <- build_individuals_colnames(mine_output, ploidy = dat[1, 29],
+    g_len <- dat[1, 12] * dat[1, 12];
+    inds  <- build_individuals_colnames(loci   = dat[1, 12],
+                                        layers = dat[1, 14],
+                                        traits = dat[1, 13],
+                                        ploidy = dat[1, 29],
+                                        gl     = g_len,
                                         k = k);
     colnames(dat) <- inds[-c(1, k)];
     
@@ -77,7 +91,7 @@ add_colnames <- function(dat, mine_output){
 }
 
 
-build_individuals_colnames <- function(mine_output, ploidy, k){
+build_individuals_colnames <- function(loci, layers, traits, ploidy, gl, k){
     
     inds       <- rep(x = NA, times = k);
     
@@ -183,24 +197,18 @@ build_individuals_colnames <- function(mine_output, ploidy, k){
     inds[100]  <- "ini_mean_trait_9";
     inds[101]  <- "ini_mean_trait_10";
     
-    
-    loci       <- mine_output[[1]][1];
-    layers     <- mine_output[[1]][2];
-    traits     <- dim(mine_output[[2]])[1];
-    genome     <- mine_output[[7]];
-    
     if(ploidy == 1){
         trait_start_col   <- 102;
         layers_start_col  <- trait_start_col + traits;
         loci_start_col    <- layers_start_col + layers + 2;
         genome_start_col  <- loci_start_col + loci;
-        genome_end_col    <- genome_start_col + length(genome) - 1;
+        genome_end_col    <- genome_start_col + gl - 1;
         
         trait_cols   <- trait_start_col:(layers_start_col - 1);
         layers_cols  <- layers_start_col:(loci_start_col - 1);
         loci_cols    <- loci_start_col:(genome_start_col - 1);
         genome_cols  <- genome_start_col:genome_end_col;
-        neutral_cols <- (genome_end_col + 1):w;
+        neutral_cols <- (genome_end_col + 1):k;
         
         t_col        <- paste("trait_", 1:traits, sep = "");
         n_col        <- paste("net_pos_", 1:length(layers_cols), sep = "");
@@ -213,7 +221,7 @@ build_individuals_colnames <- function(mine_output, ploidy, k){
         inds[loci_cols]      <- l_col;
         inds[genome_cols]    <- v_col;
         inds[neutral_cols]   <- u_col;
-        inds[w]              <- "empty";
+        inds[k]              <- "empty";
     }
     
     if(ploidy == 2){
@@ -221,14 +229,14 @@ build_individuals_colnames <- function(mine_output, ploidy, k){
         layers_start_col  <- trait_start_col + traits;
         loci_start_col    <- layers_start_col + layers + 3;
         genome_start_col  <- loci_start_col + (2 * loci);
-        genome_end_col    <- genome_start_col + length(genome);
-        dip_geno_end_col  <- genome_start_col + (2 * length(genome)) - 1;
+        genome_end_col    <- genome_start_col + gl;
+        dip_geno_end_col  <- genome_start_col + (2 * gl) - 1;
         
         trait_cols   <- trait_start_col:(layers_start_col - 1);
         layers_cols  <- layers_start_col:(loci_start_col - 1);
         loci_cols    <- loci_start_col:(genome_start_col - 1);
         genome_cols  <- genome_start_col:dip_geno_end_col;
-        neutral_cols <- (dip_geno_end_col + 1):w;
+        neutral_cols <- (dip_geno_end_col + 1):k;
         
         t_col        <- paste("trait_", 1:traits, sep = "");
         n_col        <- paste("net_pos_", 1:length(layers_cols), sep = "");
@@ -271,15 +279,10 @@ build_individuals_colnames <- function(mine_output, ploidy, k){
         inds[loci_cols]      <- l_col;
         inds[genome_cols]    <- v_col;
         inds[neutral_cols]   <- u_col;
-        inds[w]              <- "empty";
+        inds[k]              <- "empty";
     }
     
     return(inds);
 }
-
-
-
-
-
 
 

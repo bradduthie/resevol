@@ -386,7 +386,7 @@ prep_initialise_inds <- function(initial_inds, ref_pest){
     schema_cols <- c(12, 13, 14, 29, 30);  
     for(i in schema_cols){
         if(initial_inds[1, i] != ref_pest[1, i]){
-            stop("ERROR: initial_inds column", i, "is wrong");
+            stop("ERROR: initial_inds column ", i, " is wrong");
         }
     }
     
@@ -400,11 +400,3 @@ prep_initialise_inds <- function(initial_inds, ref_pest){
 
     return(initial_inds);
 }
-
-    
-    
-    
-    
-    
-    
-    

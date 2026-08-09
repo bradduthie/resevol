@@ -80,7 +80,8 @@ run_farm_sim(
   pesticide_threshold = "none",
   pesticide_delay = 1,
   population_filename = "population_data.csv",
-  last_step_filename = "last_time_step.csv"
+  last_step_filename = "last_time_step.csv",
+  initial_inds = NULL
 )
 }
 \arguments{
@@ -482,20 +483,26 @@ saved.}
 
 \item{last_step_filename}{The name of the CSV file showing data for the last
 time step of the simulation.}
+
+\item{initial_inds}{A set of individuals from the output of a  previous 
+run_farm_sim call to continue a simulation from rather than  initialising a 
+new population. Individuals are passed through exactly as they are. The NULL 
+default builds individuals from scratch.}
 }
 \value{
-The output in the R console is a list with two elements; the first 
-element is a vector of parameter values used by the model, and the second 
-element is the landscape in the simulation. The most relevant output will be
-produced as CSV files within the working directory. When get_stats = TRUE, 
-a file named 'population_data.csv' is produced in the working directory. When
-print_last = TRUE, a complete array of all individuals and their 
-characteristics is printed for the last time step in the working directory in
-a file named 'last_time_step.csv' (for large simulations, this file can be 
-> 1GB in size). When print_inds = TRUE, a complete array of all individuals 
-in all time steps is produced in the working directory in a file named
-'individuals.csv' (use this option with extreme caution for all but the
-smallest simulations).
+The output in the R console is a list with three elements; the first 
+element is a vector of parameter values used by the model, the second 
+element is the landscape in the simulation, and the third element is a data
+frame of individuals and all of their traits in the last time step of the
+simulation run. Output will also be produced as CSV files within the working 
+directory. When get_stats = TRUE, a file named 'population_data.csv' is 
+produced in the working directory. When print_last = TRUE, a complete array of
+all individuals and their characteristics is printed for the last time step in
+the working directory in a file named 'last_time_step.csv' (for large 
+simulations, this file can be > 1GB in size). When print_inds = TRUE, a 
+complete array of all individuals in all time steps is produced in the working
+directory in a file named 'individuals.csv' (use this option with extreme 
+caution for all but the smallest simulations).
 }
 \description{
 Initialises a new set of individuals and then simulates farming over time.

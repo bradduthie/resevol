@@ -404,7 +404,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     }
   
     SEXP OUTPUT;
-    OUTPUT = PROTECT( allocVector(VECSXP, 2) );
+    OUTPUT = PROTECT( allocVector(VECSXP, 3) );
     protected_n++;
     SET_VECTOR_ELT(OUTPUT, 0, PARAMETERS_NEW);
     SET_VECTOR_ELT(OUTPUT, 1, LAND_NEW);
