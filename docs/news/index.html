@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">resevol</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,66 @@
       <small>Source: <a href="https://github.com/bradduthie/resevol/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.1.0" id="resevol-0410">resevol 0.4.1.0<a class="anchor" aria-label="anchor" href="#resevol-0410"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4-1-0">NEW FEATURES<a class="anchor" aria-label="anchor" href="#new-features-0-4-1-0"></a></h3>
+<ul><li>New <code>initial_inds</code> argument for <code>run_farm_sim</code> to continue a simulation from the final individuals of a previous run. <code>initial_inds</code> can be a matrix or data frame</li>
+<li>
+<code>run_farm_sim</code> now returns a list of three elements; the third element is a matrix of all individuals and their traits in the final time step, with column names attached, which can be passed directly to <code>initial_inds</code> in a new <code>run_farm_sim</code> call</li>
+<li>When individuals are passed with <code>initial_inds</code>, generation time and individual IDs continue from the previous simulation instead of resetting, so individuals remain uniquely identifiable across chained runs</li>
+</ul></div>
+<div class="section level3">
+<h3 id="major-changes-0-4-1-0">MAJOR CHANGES<a class="anchor" aria-label="anchor" href="#major-changes-0-4-1-0"></a></h3>
+<ul><li>Population buffers are now swapped between time steps (double buffering) instead of freed and re-allocated each step, greatly reducing memory churn for large simulations</li>
+<li>
+<code>mine_gmatrix</code> now brackets all random number draws with <code>GetRNGstate</code> / <code>PutRNGstate</code>, fixing a hang and degenerate random numbers when <code>mine_gmatrix</code> was the first random number use in a fresh R session</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-1-0">BUG FIXES<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-1-0"></a></h3>
+<ul><li>
+<code>rename_csv</code> now renames output files directly instead of reading and re-writing them, fixing intermittent corruption of large individual output files</li>
+<li>Edge effects no longer fall through to the toroidal wrap: leaky, reflective, and sticky edges behaved like wrapping edges; leaky edges now correctly remove individuals from the landscape</li>
+<li>Population buffers are now tracked by size and freed exactly once on all simulation paths, fixing a memory leak and reads past the end of buffers when populations went extinct</li>
+<li>Failed memory allocations now raise a clean R error instead of crashing</li>
+<li>
+<code>mine_gmatrix</code> now returns the lowest-stress network found during the evolutionary search instead of a random tournament winner</li>
+<li>The mutation rate in the <code>mine_gmatrix</code> evolutionary search is now correctly applied; previously every network element was mutated every generation (issue 66)</li>
+<li>Fixed an error in the <code>individuals_colnames</code> example</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-0-4-1-0">OTHER<a class="anchor" aria-label="anchor" href="#other-0-4-1-0"></a></h3>
+<ul><li>Added tests for file renaming, edge effects, extinction, and passing individuals between runs</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0.5" id="resevol-0405">resevol 0.4.0.5<a class="anchor" aria-label="anchor" href="#resevol-0405"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-0-5">BUG FIXES<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0-5"></a></h3>
+<ul><li>Validation of rotation type and rotation time now only applies when <code>rotation_type</code> is not a custom matrix, so custom crop and pesticide rotation matrices work as intended</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0.4" id="resevol-0404">resevol 0.4.0.4<a class="anchor" aria-label="anchor" href="#resevol-0404"></a></h2><p class="text-muted">CRAN release: 2026-05-28</p>
+<div class="section level3">
+<h3 id="documentation-0-4-0-4">DOCUMENTATION<a class="anchor" aria-label="anchor" href="#documentation-0-4-0-4"></a></h3>
+<ul><li>Added a reference for the evolutionary algorithm (Luke 2013) and other documentation updates (issues 55, 56)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0.3" id="resevol-0403">resevol 0.4.0.3<a class="anchor" aria-label="anchor" href="#resevol-0403"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-4-0-3">BUG FIXES<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0-3"></a></h3>
+<ul><li>Crop and pesticide rotation type is no longer required to be 1, 2, or 3 when a custom rotation matrix is supplied</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0.2" id="resevol-0402">resevol 0.4.0.2<a class="anchor" aria-label="anchor" href="#resevol-0402"></a></h2><p class="text-muted">CRAN release: 2025-05-01</p>
+<div class="section level3">
+<h3 id="documentation-0-4-0-2">DOCUMENTATION<a class="anchor" aria-label="anchor" href="#documentation-0-4-0-2"></a></h3>
+<ul><li>Updated package references and fixed a DOI issue reported on win-builder</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0.0" id="resevol-0400">resevol 0.4.0.0<a class="anchor" aria-label="anchor" href="#resevol-0400"></a></h2>
 <div class="section level3">
