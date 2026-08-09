@@ -5,3 +5,5 @@ assets*
 ^docs$
 ^Meta$
 _pkgdown.yml
+^\.positai$
+^\.claude$
