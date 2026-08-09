@@ -90,6 +90,7 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
     double **P_init;       /* Initialisation array for pesticides */
     double *paras_ptr_new; /* Pointer to new paras (interface R and C) */
     double *land_ptr_new;  /* Pointer to LAND_NEW (interface R and C) */
+    double *IND_ptr_new;   /* Pointer to IND_NEW (interface R and C) */
     double time_spent;
     double max_threshold;
     
@@ -386,12 +387,28 @@ SEXP sim_farming(SEXP IND, SEXP LAND, SEXP PARAS, SEXP CROT, SEXP PROT,
         }
       }
     }
+    
+    ind_number = (int) paras[101];
+    SEXP IND_NEW;
+    PROTECT( IND_NEW = allocMatrix(REALSXP, ind_number, ind_traits) );
+    protected_n++;
+    
+    IND_ptr_new = REAL(IND_NEW);
+    
+    vec_pos = 0;
+    for(col = 0; col < ind_traits; col++){
+        for(row = 0; row < ind_number; row++){
+            IND_ptr_new[vec_pos] = pests[row][col];
+            vec_pos++;
+        }
+    }
   
     SEXP OUTPUT;
     OUTPUT = PROTECT( allocVector(VECSXP, 2) );
     protected_n++;
     SET_VECTOR_ELT(OUTPUT, 0, PARAMETERS_NEW);
     SET_VECTOR_ELT(OUTPUT, 1, LAND_NEW);
+    SET_VECTOR_ELT(OUTPUT, 2, IND_NEW);
 
     UNPROTECT(protected_n);
      

@@ -755,7 +755,7 @@ sim_crops <- function(pests,
                       pesticide_delay = 0
                       ){
     
-  N    <- dim(pests)[1];
+  N    <- max(pests[,1]);
   W    <- dim(pests)[2];
   X    <- dim(land)[2];
   Y    <- dim(land)[1];
@@ -1025,6 +1025,7 @@ sim_crops <- function(pests,
                                   c_init, p_init, crop_growth, p_thresh, 
                                   p_delay);
   
+  SIM_RESULTS[[3]] <- add_colnames(SIM_RESULTS[[3]]);
   return(SIM_RESULTS);
 }
 

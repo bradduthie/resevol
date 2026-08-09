@@ -35,7 +35,7 @@ individuals_colnames <- function(last_step_filename, mine_output){
     
     dat <- read.csv(last_step_filename, header = TRUE);
     if(is.numeric(dat[1, 1]) == FALSE){
-        stop("ERROR: It looks like this file already has column names.")
+        stop("ERROR: It looks like this file already has column names.");
     }
 
     ind_dim    <- dim(dat);
@@ -47,7 +47,39 @@ individuals_colnames <- function(last_step_filename, mine_output){
         return(dat);
     }
     
-    inds       <- rep(x = NA, times = ind_dim[2]);
+    inds <- build_individuals_colnames(mine_output, ploidy = dat[1, 30],
+                                       k = ind_dim[2]);
+    
+    colnames(dat) <- inds;
+    write.csv(x = dat, file = last_step_filename, row.names = FALSE);
+    
+    return("Successfully added columns.");
+}
+
+
+add_colnames <- function(dat, mine_output){
+    
+    ind_dim    <- dim(dat);
+    ind_dims   <- length(ind_dim);
+    if(ind_dims != 2){
+        return(dat);
+    }
+    if(ind_dim[1] < 1){
+        return(dat);
+    }
+    
+    k     <- ind_dim[2] + 2;
+    inds  <- build_individuals_colnames(mine_output, ploidy = dat[1, 29],
+                                        k = k);
+    colnames(dat) <- inds[-c(1, k)];
+    
+    return(dat);
+}
+
+
+build_individuals_colnames <- function(mine_output, ploidy, k){
+    
+    inds       <- rep(x = NA, times = k);
     
     inds[1]    <- "time";
     inds[2]    <- "ID";
@@ -156,7 +188,6 @@ individuals_colnames <- function(last_step_filename, mine_output){
     layers     <- mine_output[[1]][2];
     traits     <- dim(mine_output[[2]])[1];
     genome     <- mine_output[[7]];
-    ploidy     <- dat[1, 30];
     
     if(ploidy == 1){
         trait_start_col   <- 102;
@@ -169,7 +200,7 @@ individuals_colnames <- function(last_step_filename, mine_output){
         layers_cols  <- layers_start_col:(loci_start_col - 1);
         loci_cols    <- loci_start_col:(genome_start_col - 1);
         genome_cols  <- genome_start_col:genome_end_col;
-        neutral_cols <- (genome_end_col + 1):ind_dim[2];
+        neutral_cols <- (genome_end_col + 1):w;
         
         t_col        <- paste("trait_", 1:traits, sep = "");
         n_col        <- paste("net_pos_", 1:length(layers_cols), sep = "");
@@ -182,7 +213,7 @@ individuals_colnames <- function(last_step_filename, mine_output){
         inds[loci_cols]      <- l_col;
         inds[genome_cols]    <- v_col;
         inds[neutral_cols]   <- u_col;
-        inds[ind_dim[2]]     <- "empty";
+        inds[w]              <- "empty";
     }
     
     if(ploidy == 2){
@@ -197,7 +228,7 @@ individuals_colnames <- function(last_step_filename, mine_output){
         layers_cols  <- layers_start_col:(loci_start_col - 1);
         loci_cols    <- loci_start_col:(genome_start_col - 1);
         genome_cols  <- genome_start_col:dip_geno_end_col;
-        neutral_cols <- (dip_geno_end_col + 1):ind_dim[2];
+        neutral_cols <- (dip_geno_end_col + 1):w;
         
         t_col        <- paste("trait_", 1:traits, sep = "");
         n_col        <- paste("net_pos_", 1:length(layers_cols), sep = "");
@@ -240,15 +271,15 @@ individuals_colnames <- function(last_step_filename, mine_output){
         inds[loci_cols]      <- l_col;
         inds[genome_cols]    <- v_col;
         inds[neutral_cols]   <- u_col;
-        inds[ind_dim[2]]     <- "empty";
-        
+        inds[w]              <- "empty";
     }
     
-    colnames(dat) <- inds;
-    
-    write.csv(x = dat, file = last_step_filename, row.names = FALSE);
-    
-    return("Successfully added columns.");
+    return(inds);
 }
+
+
+
+
+
 
 
