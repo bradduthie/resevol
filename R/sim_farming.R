@@ -343,6 +343,10 @@
 #' saved.
 #'@param last_step_filename The name of the CSV file showing data for the last
 #' time step of the simulation.
+#'@param initial_inds  A set of individuals from the output of a  previous 
+#' run_farm_sim call to continue a simulation from rather than  initialising a 
+#' new population. Individuals are passed through exactly as they are. The NULL 
+#' default builds individuals from scratch.
 #'@return The output in the R console is a list with two elements; the first 
 #'element is a vector of parameter values used by the model, and the second 
 #'element is the landscape in the simulation. The most relevant output will be
@@ -442,7 +446,8 @@ run_farm_sim <- function(mine_output,
                          pesticide_threshold = "none",
                          pesticide_delay     = 1,
                          population_filename = "population_data.csv",
-                         last_step_filename  = "last_time_step.csv"){
+                         last_step_filename  = "last_time_step.csv",
+                         initial_inds        = NULL){
   
     if(is.na(terrain)[1] == FALSE){
         xdim  <- dim(terrain)[1];
@@ -554,42 +559,85 @@ run_farm_sim <- function(mine_output,
         }
     }
     
-    pest <- initialise_inds(mine_output              = mine_output, 
-                            N                        = N, 
-                            xdim                     = xdim, 
-                            ydim                     = ydim, 
-                            repro                    = repro, 
-                            neutral_loci             = neutral_loci, 
-                            max_age                  = max_age,
-                            min_age_move             = min_age_move, 
-                            max_age_move             = max_age_move,
-                            min_age_reproduce        = min_age_reproduce, 
-                            max_age_reproduce        = max_age_reproduce, 
-                            min_age_feed             = min_age_feed, 
-                            max_age_feed             = max_age_feed,
-                            food_consume             = food_cons, 
-                            pesticide_consume        = pest_cons,
-                            rand_age                 = rand_age, 
-                            move_distance            = move_dist, 
-                            food_needed_surv         = food_n_surv, 
-                            pesticide_tolerated_surv = pest_t_surv,
-                            food_needed_repr         = food_n_repr,
-                            pesticide_tolerated_repr = pest_t_repr,
-                            reproduction_type        = reproduction_type,
-                            mating_distance          = mate_dist,
-                            lambda_value             = lamb_val,
-                            movement_bouts           = move_bout,
-                            selfing                  = selfing,
-                            feed_while_moving        = feed_while_moving,
-                            pesticide_while_moving   = pesticide_while_moving,
-                            mortality_type           = mortality_type,
-                            age_food_threshold       = age_food_threshold,
-                            age_pesticide_threshold  = age_pesticide_threshold,
-                            metabolism               = metab_rate,
-                            baseline_metabolism      = baseline_metabolism,
-                            min_age_metabolism       = min_age_metabolism,
-                            max_age_metabolism       = max_age_metabolism,
-                            trait_means              = trait_means);
+    pest_while_move <- pesticide_while_moving;
+    age_pest_thresh <- age_pesticide_threshold;
+    
+    if(is.null(initial_inds) == TRUE){
+        pest <- initialise_inds(mine_output              = mine_output, 
+                                N                        = N, 
+                                xdim                     = xdim, 
+                                ydim                     = ydim, 
+                                repro                    = repro, 
+                                neutral_loci             = neutral_loci, 
+                                max_age                  = max_age,
+                                min_age_move             = min_age_move, 
+                                max_age_move             = max_age_move,
+                                min_age_reproduce        = min_age_reproduce, 
+                                max_age_reproduce        = max_age_reproduce, 
+                                min_age_feed             = min_age_feed, 
+                                max_age_feed             = max_age_feed,
+                                food_consume             = food_cons, 
+                                pesticide_consume        = pest_cons,
+                                rand_age                 = rand_age, 
+                                move_distance            = move_dist, 
+                                food_needed_surv         = food_n_surv, 
+                                pesticide_tolerated_surv = pest_t_surv,
+                                food_needed_repr         = food_n_repr,
+                                pesticide_tolerated_repr = pest_t_repr,
+                                reproduction_type        = reproduction_type,
+                                mating_distance          = mate_dist,
+                                lambda_value             = lamb_val,
+                                movement_bouts           = move_bout,
+                                selfing                  = selfing,
+                                feed_while_moving        = feed_while_moving,
+                                pesticide_while_moving   = pest_while_move,
+                                mortality_type           = mortality_type,
+                                age_food_threshold       = age_food_threshold,
+                                age_pesticide_threshold  = age_pest_thresh,
+                                metabolism               = metab_rate,
+                                baseline_metabolism      = baseline_metabolism,
+                                min_age_metabolism       = min_age_metabolism,
+                                max_age_metabolism       = max_age_metabolism,
+                                trait_means              = trait_means);
+    }else{
+        refp <- initialise_inds(mine_output              = mine_output, 
+                                N                        = 5, 
+                                xdim                     = xdim, 
+                                ydim                     = ydim, 
+                                repro                    = repro, 
+                                neutral_loci             = neutral_loci, 
+                                max_age                  = max_age,
+                                min_age_move             = min_age_move, 
+                                max_age_move             = max_age_move,
+                                min_age_reproduce        = min_age_reproduce, 
+                                max_age_reproduce        = max_age_reproduce, 
+                                min_age_feed             = min_age_feed, 
+                                max_age_feed             = max_age_feed,
+                                food_consume             = food_cons, 
+                                pesticide_consume        = pest_cons,
+                                rand_age                 = rand_age, 
+                                move_distance            = move_dist, 
+                                food_needed_surv         = food_n_surv, 
+                                pesticide_tolerated_surv = pest_t_surv,
+                                food_needed_repr         = food_n_repr,
+                                pesticide_tolerated_repr = pest_t_repr,
+                                reproduction_type        = reproduction_type,
+                                mating_distance          = mate_dist,
+                                lambda_value             = lamb_val,
+                                movement_bouts           = move_bout,
+                                selfing                  = selfing,
+                                feed_while_moving        = feed_while_moving,
+                                pesticide_while_moving   = pest_while_move,
+                                mortality_type           = mortality_type,
+                                age_food_threshold       = age_food_threshold,
+                                age_pesticide_threshold  = age_pest_thresh,
+                                metabolism               = metab_rate,
+                                baseline_metabolism      = baseline_metabolism,
+                                min_age_metabolism       = min_age_metabolism,
+                                max_age_metabolism       = max_age_metabolism,
+                                trait_means              = trait_means);
+        pest <- prep_initialise_inds(initial_inds, refp);
+    }
     
     sim_results <- sim_crops(pests                    = pest, 
                              land                     = land,

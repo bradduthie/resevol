@@ -368,3 +368,43 @@ rename_csv <- function(old_name, new_name){
     return(TRUE);
 }
 
+
+prep_initialise_inds <- function(initial_inds, ref_pest){
+    n_ref        <- dim(ref_pest)[2];
+    n_old        <- dim(initial_inds)[2];
+    initial_inds <- as.matrix(initial_inds);
+    if(is.numeric(initial_inds) == FALSE){
+        stop("ERROR: initial_inds must be numeric.");
+    }
+    if(n_old != n_ref){
+        stop(paste("ERROR: initial_inds has", n_old, "columns but",
+                   "individuals for these simulation settings must have", n_ref,
+                   "columns."));
+    }
+    
+    # loci, traits, layers, ploidy, neutral_loci value locations
+    schema_cols <- c(12, 13, 14, 29, 30);  
+    for(i in schema_cols){
+        if(initial_inds[1, i] != ref_pest[1, i]){
+            stop("ERROR: initial_inds column", i, "is wrong");
+        }
+    }
+    
+    if(min(initial_inds[, 1]) < 1){
+        stop("ERROR: First column of initial_inds must be positive integers")
+    }
+
+    if(dim(initial_inds)[1] < 5){
+        stop("ERROR: initial_inds must have at least 5 individuals");
+    }
+
+    return(initial_inds);
+}
+
+    
+    
+    
+    
+    
+    
+    
