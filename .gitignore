@@ -16,7 +16,6 @@ assets/node_modules
 assets/npm-debug.log
 
 admin*
-data*
 
 mg_hang.pid
 
