@@ -35,7 +35,7 @@
 * `mine_gmatrix` now returns the lowest-stress network found during the evolutionary
   search instead of a random tournament winner 
 * The mutation rate in the `mine_gmatrix` evolutionary search is now correctly
-  applied; previously every network element was mutated every generation (issue 66)
+  applied; previously every network element was mutated every generation
 * Fixed an error in the `individuals_colnames` example
 
 ## OTHER
