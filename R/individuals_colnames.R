@@ -78,7 +78,7 @@ add_colnames <- function(dat){
     }
     
     k     <- ind_dim[2] + 2;
-    g_len <- dat[1, 12] * dat[1, 12];
+    g_len <- (dat[1, 12] * dat[1, 13]) + (dat[1, 13] * dat[1, 13] * dat[1, 14]);
     inds  <- build_individuals_colnames(loci   = dat[1, 12],
                                         layers = dat[1, 14],
                                         traits = dat[1, 13],
