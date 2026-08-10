@@ -27,17 +27,14 @@ edge_args <- list(N = 5, xdim = 10, ydim = 10, repro = "asexual",
                   pesticide_sd = 0, crop_min = 0, crop_max = 1000,
                   pesticide_min = 0, pesticide_max = 1000, crop_number = 2,
                   pesticide_number = 1, print_inds = FALSE, print_gens = FALSE,
-                  print_last = TRUE, K_on_birth = 1000, pesticide_start = 0,
+                  print_last = FALSE, K_on_birth = 1000, pesticide_start = 0,
                   immigration_rate = 0, get_f_coef = FALSE, get_stats = FALSE,
                   metabolism = 0);
 
-alive_in_last_csv <- function(){
-    # last_time_step.csv has NO header: each line is
-    # "ts,<pest col 0>,...,<pest col 135>,". The died flag is pest column 81,
-    # i.e. CSV column 83.
-    dat <- read.csv("last_time_step.csv", header = FALSE);
+alive_in_last_csv <- function(sim){
+    dat <- sim[[3]];
     expect_equal(nrow(dat), 5);
-    sum(dat[, 83] == 0);
+    sum(dat[, "died"] == 0);
 }
 
 test_that("Leaky edge loses individuals that leave the landscape", {
@@ -46,16 +43,10 @@ test_that("Leaky edge loses individuals that leave the landscape", {
     diag(gmt) <- 1;
     mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 50,
                               npsize = 50, max_gen = 2, prnt_out = FALSE);
-    wd <- tempdir();
-    old_wd <- getwd();
-    on.exit(setwd(old_wd));
-    setwd(wd);
-    unlink("last_time_step.csv");
-
     edge_args$mine_output <- mg;
     edge_args$land_edge   <- "leaky";
     sim_leaky <- do.call(run_farm_sim, edge_args);
-    leaky_alive <- alive_in_last_csv();
+    leaky_alive <- alive_in_last_csv(sim_leaky);
     expect_equal(leaky_alive, 0);
 })
 
@@ -65,26 +56,20 @@ test_that("Torus, sticky and reflect edges keep everyone alive", {
     diag(gmt) <- 1;
     mg        <- mine_gmatrix(gmatrix = gmt, loci = 4, layers = 2, indivs = 50,
                               npsize = 50, max_gen = 2, prnt_out = FALSE);
-    wd <- tempdir();
-    old_wd <- getwd();
-    on.exit(setwd(old_wd));
-    setwd(wd);
-    unlink("last_time_step.csv");
-
     edge_args$mine_output <- mg;
 
     edge_args$land_edge <- "torus";
     sim_torus <- do.call(run_farm_sim, edge_args);
-    expect_equal(alive_in_last_csv(), 5);
+    expect_equal(alive_in_last_csv(sim_torus), 5);
 
     edge_args$land_edge <- "sticky";
     sim_sticky <- do.call(run_farm_sim, edge_args);
-    expect_equal(alive_in_last_csv(), 5);
+    expect_equal(alive_in_last_csv(sim_sticky), 5);
 
     # Reflect only reflects correctly for overshoots smaller than the grid
     # dimension, so use a small move_distance here.
     edge_args$land_edge     <- "reflect";
     edge_args$move_distance <- 5;
     sim_reflect <- do.call(run_farm_sim, edge_args);
-    expect_equal(alive_in_last_csv(), 5);
+    expect_equal(alive_in_last_csv(sim_reflect), 5);
 })

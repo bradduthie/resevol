@@ -394,7 +394,7 @@ summary statistics for each time step. This is set to TRUE by default.}
 \item{metabolism}{This determines the rate at which food consumed in previous 
 time steps is lost in subsequent time steps, which can be especially relevant
 if food consumed determines survival or reproductive output. Values of 0 mean
-that stored gains will always persist throughout an individual’s lifetime, 
+that stored gains will always persist throughout an individual's lifetime, 
 while very high values will model the gains of one time step being wiped out 
 in subsequent time steps (if, e.g., the objective is to model individuals 
 needing to consume food successfully in each time step to survive or 

@@ -338,7 +338,8 @@ test_that("Column names match the individuals matrix for any loci/layers/traits"
                               pesticide_min = 0, pesticide_max = 1000,
                               crop_number = 2, pesticide_number = 1, 
                               print_inds = FALSE, print_gens = FALSE,
-                              print_last = FALSE, K_on_birth = 1000);
+                              print_last = FALSE, get_stats = FALSE,
+                              K_on_birth = 1000);
     expect_equal(length(colnames(sim[[3]])), ncol(sim[[3]]));
     expect_equal(sum(is.na(colnames(sim[[3]]))), 0);
     expect_equal(colnames(sim[[3]])[1], "ID");
